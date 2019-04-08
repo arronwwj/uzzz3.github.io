@@ -1,0 +1,70 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <p><strong>交易所的充值与提币开发</strong></p> 
+  <p>&nbsp;</p> 
+  <p>本教程针对希望自动存取符合标准的EOSIO令牌合约的交易所。 EOSIO区块链的本地标记符合标准。在本教程中，我们展示了充值和提币交易所的方法，但对于自动化过程可能更重要，可以监控和报告活动的方式。</p> 
+  <p>&nbsp;</p> 
+  <p><strong>建立</strong></p> 
+  <p><strong>先决条件</strong></p> 
+  <p>&nbsp;</p> 
+  <p>假设您有一个本地nodeos服务器连接到EOSIO区块链;为eosio.token创建了一个帐户;并且已经部署了eosio.token合同。完成智能合同入门和Eosio.token，Exchange和Eosio.msig合同教程之前，本教程将满足这些先决条件。</p> 
+  <p>&nbsp;</p> 
+  <p>本教程使用eosio.token合同的转移操作处理存款和取款。它不使用随EOSIO源代码分发提供的样本交换合同，该合同已加载到Eosio.token，Exchange和Eosio.msig合同中。</p> 
+  <p>&nbsp;</p> 
+  <p>确保eosio :: history_api_plugin正在运行</p> 
+  <p>&nbsp;</p> 
+  <p>本教程使用cleos命令行工具来查询帐户的日志历史记录。这需要安装eosio :: history_api_plugin。如果您的nodeos未使用此插件启动，则需要重新启动nodeos并在命令行中添加--plugin eosio :: history_api_plugin。</p> 
+  <p>&nbsp;</p> 
+  <p><strong>激活日志过滤</strong></p> 
+  <p>&nbsp;</p> 
+  <p>本教程依赖于来自nodeos的事务日志记录。在较早版本的nodeos中，历史记录插件默认记录所有帐户的历史记录。现在，默认情况下，历史插件根本不会记录transactiona，也不会显式指定过滤。要记录事务，请使用过滤器选项并指定您希望记录的内容。格式为--filter-on &lt;receiver&gt;：&lt;action&gt;：[&lt;actor&gt;]（actor可以为空以获取全部内容）。将以下选项添加到yournodeos命令行以激活对所有帐户进行的认证xchangereceiver，transfer`操作的日志过滤（不要忘记尾部的“：”）：</p> 
+  <p>&nbsp;</p> 
+  <p>--filter-on&nbsp;tokenxchange:transfer:</p> 
+  <p>&nbsp;</p> 
+  <p>您需要筛选您想要跟踪的每个接收器。 在这种情况下，将以下选项添加到nodeos：</p> 
+  <p>&nbsp;</p> 
+  <p>&nbsp;&nbsp;--filter-on&nbsp;tokenxchange:transfer:&nbsp;--filter-on&nbsp;scott:transfer:&nbsp;--filter-on&nbsp;eosio.token:transfer:</p> 
+  <p>&nbsp;</p> 
+  <p><strong>重译区块链</strong></p> 
+  <p>&nbsp;</p> 
+  <p>如果您已经在没有历史插件的情况下同步了区块链，那么您可能需要重译区块链以获取任何历史活动。 将以下选项添加到您的nodeos命令行以重播区块链。</p> 
+  <p>&nbsp;</p> 
+  <p>&nbsp;&nbsp;--replay-blockchain</p> 
+  <p>&nbsp;</p> 
+  <p>你只需要重译一次。随后的节点运行不应使用重译标志，因为这可能会导致启动时间过长。</p> 
+  <p>&nbsp;</p> 
+  <p><strong>设置其他帐户</strong></p> 
+  <p>&nbsp;</p> 
+  <p>这里设置的交易所将被称为tokenxchange，以避免与交易账户和合约混淆。使用您从以前的教程中学到的知识创建一个名为tokenxchange的帐户。</p> 
+  <p>&nbsp;</p> 
+  <p>本教程使用名为scott的帐户。使用你在前面的教程中学到的知识，创建一个名为scott的账户并存入900.0000 SYS。</p> 
+  <p>&nbsp;</p> 
+  <p><strong>接受充值</strong></p> 
+  <p>&nbsp;</p> 
+  <p>在本教程中，我们假设交易所将针对传入交易对节点进行轮询，并希望知道传输何时被认为是不可逆转或最终的。</p> 
+  <p>&nbsp;</p> 
+  <p>使用基于eosio的链，一旦2/3 + 1的块生产者直接或间接确认该块，交易就会发生终结。这可能需要不到一秒到几分钟的时间，但无论采用哪种方式，nodeos都会让您发布状态。</p> 
+  <p>&nbsp;</p> 
+  <p><strong>初始条件</strong></p> 
+  <p>&nbsp;</p> 
+  <p>确认帐户scott具有正确的令牌余额。</p> 
+  <p>&nbsp;</p> 
+  <pre>
+
+&nbsp;</pre> 
+  <p>$&nbsp;cleos&nbsp;get&nbsp;currency&nbsp;balance&nbsp;eosio.token&nbsp;scott&nbsp;SYS<br> 900.0000&nbsp;SYS</p> 
+  <p>&nbsp;</p> 
+  <p>现在我们将一些资金存入tokenxchange。在转账备忘录中，我们将为scott使用一个独特的内部标识符，在这种情况下，值为“12345”。</p> 
+  <p>&nbsp;</p> 
+  <p>&nbsp;$&nbsp;cleos&nbsp;transfer&nbsp;scott&nbsp;tokenxchange&nbsp;"1.0000&nbsp;SYS"&nbsp;12345<br> executed&nbsp;transaction:&nbsp;ce32ac1fbc96e74ea9318d5b18769be9d84f704c9c0f0eab23c6ce95e4b9ce49&nbsp;&nbsp;136&nbsp;bytes&nbsp;&nbsp;505&nbsp;us<br> #&nbsp;&nbsp;&nbsp;eosio.token&nbsp;&lt;=&nbsp;eosio.token::transfer&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{"from":"scott","to":"tokenxchange","quantity":"1.0000&nbsp;SYS","memo":"12345"}<br> #&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scott&nbsp;&lt;=&nbsp;eosio.token::transfer&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{"from":"scott","to":"tokenxchange","quantity":"1.0000&nbsp;SYS","memo":"12345"}<br> #&nbsp;&nbsp;tokenxchange&nbsp;&lt;=&nbsp;eosio.token::transfer&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{"from":"scott","to":"tokenxchange","quantity":"1.0000&nbsp;SYS","memo":"12345"}</p> 
+  <p>&nbsp;</p> 
+  <p>此输出表明行动eosio.token :: transfer已交付给三个帐户/合同：“eosio.token”，“scott”和“tokenxchange”。 eosio令牌标准要求发送方和接收方帐户/合同都应得到所有传输操作的通知，以便这些帐户可以运行自定义逻辑。此时，scott和tokenxchange都没有任何合约集来处理此类通知，但事务日志仍将显示他们已收到通知。</p> 
+  <p>&nbsp;</p> 
+  <p>区块链技术社区</p> 
+  <p><img alt="" class="has" src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180813160523948?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dpbGxhbTE=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/willam1/article/details/81631751,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/willam1/article/details/81631751,&quot;}">阅读更多</a> 
+</div>

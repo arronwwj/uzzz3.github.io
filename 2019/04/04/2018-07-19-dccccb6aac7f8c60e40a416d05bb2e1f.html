@@ -1,0 +1,15 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div class="markdown_views"> 
+  <p>Q1 請比較 bitcoin 及其它最少兩種 blockchain。</p> 
+  <p>1.比特币、以太坊和hyperledger三者的为公开的三代区块链系统。比特币里没有账户概念，所有余额均通过UTXO计算而得。而以太坊和hyperledger里均有账户概念。 <br> 2.对比以太坊，hyperledger更加适合商用场景，通过多channel的方式来做更好的权限控制。 <br> 3.另外这三者的worldstate的存储方式也不一样。比特币是全链上的数据存储，而后两者更多类似链下存储，通过区块里面存储worldstate-hash的形式通过该hash再找到两者系统中的存储文件。以太坊存储在/.ethereumi 里面，而hyperledger存储在production/db里面。 <br> 4.共识机制及出块速度也不一样。比特币是PoW，以太坊是PoW+PoS。fabric是PBFT。</p> 
+  <p>Q2 請給出智能合約的一個實際例子。這與傳統合約有什麼不一樣? <br> 一般来说，存在性证明是一个最基础的实际例子：ProofofExistence的智能合约。 主要思想就是创建一个数字公证，它存储了文档的哈希值作为存在的证明。与传统合约的区别在于智能合约通过技术实现来永久存在于区块链网络中，且不可篡改。而传统合约一般是纸制合约，通常通过现实社会的法律体系来保障合约的执行。同时两者的区别还在于前者是自动执行，而后者需要依赖执行者的自主意识才能执行。</p> 
+  <p>Q3 給定任一個哈希如 sha2，是沒有、不可能、很難、還是相對容易找到collision? 這對區塊鏈有什麼影響? <br> Sha256的哈希很难产生哈希碰撞，但是还是可能发生。就目前而言，产生比特币SHA256哈希算法的一个哈希碰撞大约需要200多年左右，但随着量子计算机等新计算技术的发展，未来非对称加密算法具有一定的破解可能性，会破解用户的私钥，带来损失。</p> 
+  <p>Q4 請比較 proof of work 跟 proof of stake。除了這兩種之外，還有什麼共識機制?</p> 
+  <p>PoW： <br> 比特币在Block的生成过程中使用了POW机制，要得到合理的Block Hash需要经过大量尝试计算，类似于竞猜计算，计算出正确结果的时候会得到发现新区块的奖励。 <br> PoS： <br> PoS称股权证明，类似于财产储存在银行，这种模式会根据你持有数字货币的量和时间，分配给你相应的利息。 简单来说，就是一个根据你持有货币的量和时间，给你发利息的一个制度。 <br> DPoS： <br> 它的原理是让每一个持有比特股的人进行投票，由此产生101位代表 , 我们可以将其理解为101个超级节点或者矿池，而这101个超级节点彼此的权利是完全相等的。从某种角度来看，DPOS有点像是议会制度或人民代表大会制度。</p> 
+  <p>Q5 請說明你認為區塊鏈最好跟最差的應用埸景分別是什麼。 <br> 没有所谓最好最差，只有最适合和最基本的场景应用。最基本的应用主要是针对区块链的基本特性出发，做存在性证明，存证服务。最适合的场景主要是运用在供应链及供应链金融中，主要是契合其信息追溯和价值传递的属性出发来提供的场景服务。</p> 
+ </div> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/markdown_views-ea0013b516.css"> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/lsttoy/article/details/81121499,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/lsttoy/article/details/81121499,&quot;}">阅读更多</a> 
+</div>

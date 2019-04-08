@@ -1,0 +1,165 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-f57960eb32.css"> 
+ <div class="htmledit_views" id="content_views"> 
+  <div class="show-content-free"> 
+   <h2>一、概述</h2> 
+   <p>  OpenCV提供了非常全面且灵活的图像处理接口，不过高度的灵活也意味着用户需要投入更多精力以实现算法在特定场景的最佳效果。具体来说，很多算法接口有丰富的输入参数，调节这些参数对于算法的性能往往具有决定性的影响。然而，即便是简单的图像处理任务也需要apply 多个函数组成的pipeline，其中每个函数的参数都可能对最终的结果产生影响，手动调节不同参数一遍遍运行脚本比较结果是非常不便甚至不现实的。出于这个动机，我们可以考虑使用OpenCV提供的<code>Trackerbar</code>相关模块来生成一个带有滑动条的视窗来调节参数并实时查看结果。效果如下图：<br></p>
+   <div class="image-package"> 
+    <div class="image-container"> 
+     <div class="image-container-fill"></div> 
+     <div class="image-view">
+      <img src="https://upload-images.jianshu.io/upload_images/14755769-0f52287dcf61c4ca.png" alt="14755769-0f52287dcf61c4ca.png">
+     </div> 
+    </div> 
+    <div class="image-caption">
+     Fig. 1 Trackerbar示意图
+    </div> 
+   </div>
+   <p></p> 
+   <h2>二、使用Trackerbar实现简单图形分割</h2> 
+   <h4>2.1 基于边缘分割算法的大致流程</h4> 
+   <p>  计算机视觉中一个常见的任务是将（简单场景中）图像的前景分割出来。如下图所示。传统的图像分割方法（不包括神经网络）有很多种，可以基于阈值、边缘、区域，还有一些更复杂的，如active contour和graph cut等，详细了解见<a href="https://zhuanlan.zhihu.com/p/30732385" rel="nofollow">这里</a>。</p> 
+   <p>  本文采用基于边缘的分割方法。该方法对噪声相对敏感，因此通常需要先进行blur。具体来说，本文将图像灰度化之后送入一个双边滤波器进行模糊（双边滤波相比高斯滤波，可以更好地保留边缘。不过高斯模糊用的更多，因为更方便些），然后用Canny算子获取近似轮廓，最后得到目标的mask。故这个流程涉及到双边滤波和canny算子函数的几个参数：</p> 
+   <ul>
+    <li> <code>cv2.bilateralFilter</code>: 双边滤波</li> 
+   </ul>
+   <p>特点：去除噪声的同时可以较好地保留边缘信息；速度慢<br> 主要参数:<br></p>
+   <div class="image-package"> 
+    <div class="image-container"> 
+     <div class="image-container-fill"></div> 
+     <div class="image-view">
+      <img src="https://upload-images.jianshu.io/upload_images/14755769-8acf2e999a56cac4.png" alt="14755769-8acf2e999a56cac4.png">
+     </div> 
+    </div> 
+    <div class="image-caption">
+     Fig. 2 双边滤波参数
+    </div> 
+   </div>
+   <br>
+   <em>经验：</em> 关于参数
+   <code>d</code>:
+   <br> ①参数d如果大于5，执行效率会较低；② 对于实际应用建议d=5； ③ 对于需要过滤严重噪声的离线应用，可取d=9; ④d&lt;=0时，d会自动由sigmaSpace的值确定，且d与sigmaSpace成正比。
+   <p></p> 
+   <p><em>经验：</em> 关于两个参数<code>sigma</code>：<br> ①简单起见可以令两个sigma取相同值；②sigma小于10时，滤波器几乎没效果；sigma大于150时，效果会很强</p> 
+   <ul>
+    <li> <code>cv2.Canny</code>: Canny边缘检测子<br> （注意：Canny算子涉及之前感兴趣的，对梯度做NMS~）</li> 
+   </ul>
+   <pre><code class="python">edge = cv2.Canny(image, threshold1, threshold2[, edges[, apertureSize[, L2gradient ]]]) 
+</code></pre> 
+   <p>  其中threshold1,2 分别代表两个阈值，第一个较小，第二个较大。其中较大的阈值2用于检测图像中明显的边缘，但一般情况下检测的效果不会那么完美，边缘检测出来是断断续续的。所以这时候用较小的第一个阈值用于将这些间断的边缘连接起来。</p> 
+   <h4>2.2 关于OpenCV中的Trackbar</h4> 
+   <h5>2.2.1 主要接口函数介绍:</h5> 
+   <ul>
+    <li> <code>createTrackbar</code><br> 参数：<br>
+     <div class="image-package"> 
+      <div class="image-container"> 
+       <div class="image-container-fill"></div> 
+       <div class="image-view">
+        <img src="https://upload-images.jianshu.io/upload_images/14755769-e2a83c439e13039c.png" alt="14755769-e2a83c439e13039c.png">
+       </div> 
+      </div> 
+      <div class="image-caption">
+       Fig. 3 createTrackbar函数
+      </div> 
+     </div> </li> 
+   </ul>
+   <p>  其中前两个参数为字符串，分布为滑动条名称和<strong>和滑动条绑定的窗口</strong>名称； value为滑动条初始滑块的位置；count代表滑动条最大值（最小值通常为0），最后一个参数指定回调函数callback，通常设为一个接受单个参数的空函数。</p> 
+   <ul>
+    <li> <code>getTrackbarPos</code>： 获取指定滑动条上当前时刻滑块对应值<br> 参数：<br> 比较简单，第一个参数为要获取的滑动条名称；第二个参数为滑动条绑定的窗口名称。</li> 
+   </ul>
+   <h5>2.2.2 练习目标：</h5> 
+   <ol>
+    <li>创建一个setup_trackbars函数，用于管理所有滑动条的创建，其入参为一个由滑动条名称组成的list；</li> 
+    <li>创建一个函数get_trackbar_values用于接收当前时刻所有滑动条上滑块的值的函数</li> 
+    <li>在循环中调整滑动条的值并不断更新get_trackbar_values的返回值，并展示出当前分割效果</li> 
+    <li>当用户按指定键位时，滑动条功能结束，并保存最后的值，用最后的值对函数进行后续处理。</li> 
+   </ol>
+   <h4>2.3 代码实现：</h4> 
+   <pre><code>import cv2
+import numpy as np
+import argparse
+import pdb
+
+args = argparse.ArgumentParser()
+args.add_argument("-i", "--imgName",help="image dir")
+args.add_argument("-r","--canny_ratio", default=3, type=int,
+                     help="canny ratio")
+args = args.parse_args()
+
+class TrackerProp:
+    def __init__(self,_name, _curr, _max):
+        self.name = _name
+        self.curr = _curr
+        self.max = _max
+
+def callbacks(x):
+    pass
+
+def get_trackbar_values(win_name, trackbars):
+    values = []
+    for bar in trackbars:
+        values.append(cv2.getTrackbarPos(bar.name, win_name))
+    return values
+
+def setup_trackbars(win_name, trackbars):
+    cv2.namedWindow(win_name)
+    cv2.resizeWindow(win_name,500,500)
+    for bar in trackbars:
+        cv2.createTrackbar(bar.name, win_name, bar.curr, bar.max, callbacks)
+        
+if __name__ == "__main__":
+    img = cv2.imread(args.imgName)
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    
+    bar_diameter = TrackerProp("bi_diameter", 15, 300)
+    bar_bisigma = TrackerProp("bi_sigma", 88, 200)
+    bar_canny = TrackerProp("canny", 37, 300)
+    # setup initial values
+    bi_diameter, bi_sigma, canny_thresh = bar_diameter.curr, bar_bisigma.curr, bar_canny.curr
+    trackbars = [bar_diameter, bar_bisigma, bar_canny]
+    
+    win_name = "test_trackbar"  # 15, 88, 37
+    setup_trackbars(win_name, trackbars)
+    
+    while(1):
+        values = get_trackbar_values(win_name, trackbars)
+        bi_diameter, bi_sigma, canny_thresh = values
+        outline = np.zeros_like(gray, dtype='uint8') 
+        canny_ratio = args.canny_ratio
+        gray_bifilt = cv2.bilateralFilter(gray, bi_diameter, bi_sigma, bi_sigma)
+        edged = cv2.Canny(gray_bifilt, canny_thresh, canny_thresh*canny_ratio)
+        cnts = cv2.findContours(edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)[1]
+        cnts = sorted(cnts, key=cv2.contourArea, reverse=True)[0]
+        cv2.drawContours(outline, [cnts], -1, 255, -1)
+        cv2.imshow("img", outline)
+    
+        if cv2.waitKey(1) &amp; 0xFF is ord('q'):
+            print(values)
+            break
+    bg_thresh = cv2.bitwise_not(outline)
+    img[bg_thresh&gt;0]=0
+    cv2.imwrite("result.jpg", img)
+
+        
+</code></pre> 
+   <h4>2.4 改进（TODO）：</h4> 
+   <ol>
+    <li> <p>图1为使用基于边缘方法分割的结果。对比原图可以看出中间有一块三角形区域被错误分割为前景。下图是使用imagepy中up and down watershed结合少量形态学分析之后分割的结果。不过目前imagepy用的不是很熟，暂时不会将操作翻译为代码。</p> <br>
+     <div class="image-package"> 
+      <div class="image-container"> 
+       <div class="image-container-fill"></div> 
+       <div class="image-view">
+        <img src="https://upload-images.jianshu.io/upload_images/14755769-749ab5617e7e8997.png" alt="14755769-749ab5617e7e8997.png">
+       </div> 
+      </div> 
+      <div class="image-caption">
+       seg_demo_watershed.png
+      </div> 
+     </div> </li> 
+    <li><p>将列表扩展dict，每个dict元素包含trackerbar name, val_min, val_max 三个参数。让脚本更加简洁</p></li> 
+    <li><p>能否考虑接收用户输入的处理函数，然后可以随意在window上增添trackbar？</p></li> 
+   </ol>
+   <p>参考：<br><a href="https://zhuanlan.zhihu.com/p/30732385" rel="nofollow">https://zhuanlan.zhihu.com/p/30732385</a><br><a href="https://blog.csdn.net/sunny2038/article/details/9202641" rel="nofollow">https://blog.csdn.net/sunny2038/article/details/9202641</a><br><a href="https://blog.csdn.net/u012005313/article/details/69675803" rel="nofollow">https://blog.csdn.net/u012005313/article/details/69675803</a><br><a href="https://blog.csdn.net/wangleixian/article/details/78164475" rel="nofollow">https://blog.csdn.net/wangleixian/article/details/78164475</a><br> 代码主要参考：<br><a href="https://www.programcreek.com/python/example/70426/cv2.createTrackbar" rel="nofollow">https://www.programcreek.com/python/example/70426/cv2.createTrackbar</a> 中的Example 26</p> 
+  </div> 
+ </div> 
+</div>

@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>300行 Golang 实现区块链 | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="300行 Golang 实现区块链" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="作者&nbsp;疯魔慕薇 0x1 开篇   区块链，时下最火的技术。前段时间一篇《A blockchain in 200 lines of code》更是在技术圈里刷屏。在读过 Lauri Hartikka 写的这篇文章和代码后，我愈发对区块链兴趣浓厚。  纸上得来终觉浅，要深入了解一门技术，终究是需要自己造一次轮子。于是，我着手用 Go 语言仿造着实现了一个&nbsp;naivechain。 0x2 区块数据结构   和 Lauri Hartikka 一样，数据结构上我们一切从简，只使用&nbsp;Index，PreviousHash，Timestamp，Data，Hash&nbsp;这几个必要的字段。 0x3 区块哈希   区块哈希用于验证区块数据的完整性，使用&nbsp;SHA-256&nbsp;算法生成Index，&nbsp;PreviousHash，Timestamp，&nbsp;Data&nbsp;拼接字符串的摘要。 0x4 创建新区块   为了生成新区块，我们需要知道前区块和新区块的必要数据（Index，Hash，Timestamp，&nbsp;Data）;区块数据由终端用户提供。 0x5 创世块   区块链的第一个区块被称之为创世块，被硬编码在程序内。 0x6 区块存储   这里使用 Go 语言的 Slice 存储区块。区块链是有序 List，为了保证有序性，需要对内存中保存区块的数组进行排序。定义按&nbsp;Index&nbsp;排序的结构体&nbsp;ByIndex，并实现&nbsp;sort.Interface： 0x7 区块完整性验证 0x8 节点通讯   每个节点在启动时监听一个端口（由&nbsp;-p2p&nbsp;参数指定），使用&nbsp;websocket&nbsp;协议和其它节点通讯。 0x9 节点控制   没个节点在启动时监听一个端口（由&nbsp;-api&nbsp;参数指定），接收&nbsp;HTTP&nbsp;协议的&nbsp;JSON&nbsp;控制命令。使用示例： 查看区块 1 curl http://localhost:3001/blocks 创建区块 1 curl -H &quot;Content-type:application/json&quot; --data &#39;{&quot;data&quot; : &quot;Some data to the first block&quot;}&#39; http://localhost:3001/mine_block 添加节点 1 curl -H &quot;Content-type:application/json&quot; --data &#39;{&quot;peer&quot; : &quot;ws://localhost:6002&quot;}&#39; http://localhost:3001/add_peer 查看节点 1 curl http://localhost:3001/peers 0xA 结语   这是一个最简单的区块链实现，用于学习区块链的工作原理，因为没用实现工作量证明这一类的挖矿算法，不适宜在公共网络使用。更多的细节请访问 Github:&nbsp;https://github.com/kofj/naivechain。 阅读更多" />
+<meta property="og:description" content="作者&nbsp;疯魔慕薇 0x1 开篇   区块链，时下最火的技术。前段时间一篇《A blockchain in 200 lines of code》更是在技术圈里刷屏。在读过 Lauri Hartikka 写的这篇文章和代码后，我愈发对区块链兴趣浓厚。  纸上得来终觉浅，要深入了解一门技术，终究是需要自己造一次轮子。于是，我着手用 Go 语言仿造着实现了一个&nbsp;naivechain。 0x2 区块数据结构   和 Lauri Hartikka 一样，数据结构上我们一切从简，只使用&nbsp;Index，PreviousHash，Timestamp，Data，Hash&nbsp;这几个必要的字段。 0x3 区块哈希   区块哈希用于验证区块数据的完整性，使用&nbsp;SHA-256&nbsp;算法生成Index，&nbsp;PreviousHash，Timestamp，&nbsp;Data&nbsp;拼接字符串的摘要。 0x4 创建新区块   为了生成新区块，我们需要知道前区块和新区块的必要数据（Index，Hash，Timestamp，&nbsp;Data）;区块数据由终端用户提供。 0x5 创世块   区块链的第一个区块被称之为创世块，被硬编码在程序内。 0x6 区块存储   这里使用 Go 语言的 Slice 存储区块。区块链是有序 List，为了保证有序性，需要对内存中保存区块的数组进行排序。定义按&nbsp;Index&nbsp;排序的结构体&nbsp;ByIndex，并实现&nbsp;sort.Interface： 0x7 区块完整性验证 0x8 节点通讯   每个节点在启动时监听一个端口（由&nbsp;-p2p&nbsp;参数指定），使用&nbsp;websocket&nbsp;协议和其它节点通讯。 0x9 节点控制   没个节点在启动时监听一个端口（由&nbsp;-api&nbsp;参数指定），接收&nbsp;HTTP&nbsp;协议的&nbsp;JSON&nbsp;控制命令。使用示例： 查看区块 1 curl http://localhost:3001/blocks 创建区块 1 curl -H &quot;Content-type:application/json&quot; --data &#39;{&quot;data&quot; : &quot;Some data to the first block&quot;}&#39; http://localhost:3001/mine_block 添加节点 1 curl -H &quot;Content-type:application/json&quot; --data &#39;{&quot;peer&quot; : &quot;ws://localhost:6002&quot;}&#39; http://localhost:3001/add_peer 查看节点 1 curl http://localhost:3001/peers 0xA 结语   这是一个最简单的区块链实现，用于学习区块链的工作原理，因为没用实现工作量证明这一类的挖矿算法，不适宜在公共网络使用。更多的细节请访问 Github:&nbsp;https://github.com/kofj/naivechain。 阅读更多" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/05/12/300%E8%A1%8C-Golang-%E5%AE%9E%E7%8E%B0%E5%8C%BA%E5%9D%97%E9%93%BE.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/05/12/300%E8%A1%8C-Golang-%E5%AE%9E%E7%8E%B0%E5%8C%BA%E5%9D%97%E9%93%BE.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-05-12T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"作者&nbsp;疯魔慕薇 0x1 开篇   区块链，时下最火的技术。前段时间一篇《A blockchain in 200 lines of code》更是在技术圈里刷屏。在读过 Lauri Hartikka 写的这篇文章和代码后，我愈发对区块链兴趣浓厚。  纸上得来终觉浅，要深入了解一门技术，终究是需要自己造一次轮子。于是，我着手用 Go 语言仿造着实现了一个&nbsp;naivechain。 0x2 区块数据结构   和 Lauri Hartikka 一样，数据结构上我们一切从简，只使用&nbsp;Index，PreviousHash，Timestamp，Data，Hash&nbsp;这几个必要的字段。 0x3 区块哈希   区块哈希用于验证区块数据的完整性，使用&nbsp;SHA-256&nbsp;算法生成Index，&nbsp;PreviousHash，Timestamp，&nbsp;Data&nbsp;拼接字符串的摘要。 0x4 创建新区块   为了生成新区块，我们需要知道前区块和新区块的必要数据（Index，Hash，Timestamp，&nbsp;Data）;区块数据由终端用户提供。 0x5 创世块   区块链的第一个区块被称之为创世块，被硬编码在程序内。 0x6 区块存储   这里使用 Go 语言的 Slice 存储区块。区块链是有序 List，为了保证有序性，需要对内存中保存区块的数组进行排序。定义按&nbsp;Index&nbsp;排序的结构体&nbsp;ByIndex，并实现&nbsp;sort.Interface： 0x7 区块完整性验证 0x8 节点通讯   每个节点在启动时监听一个端口（由&nbsp;-p2p&nbsp;参数指定），使用&nbsp;websocket&nbsp;协议和其它节点通讯。 0x9 节点控制   没个节点在启动时监听一个端口（由&nbsp;-api&nbsp;参数指定），接收&nbsp;HTTP&nbsp;协议的&nbsp;JSON&nbsp;控制命令。使用示例： 查看区块 1 curl http://localhost:3001/blocks 创建区块 1 curl -H &quot;Content-type:application/json&quot; --data &#39;{&quot;data&quot; : &quot;Some data to the first block&quot;}&#39; http://localhost:3001/mine_block 添加节点 1 curl -H &quot;Content-type:application/json&quot; --data &#39;{&quot;peer&quot; : &quot;ws://localhost:6002&quot;}&#39; http://localhost:3001/add_peer 查看节点 1 curl http://localhost:3001/peers 0xA 结语   这是一个最简单的区块链实现，用于学习区块链的工作原理，因为没用实现工作量证明这一类的挖矿算法，不适宜在公共网络使用。更多的细节请访问 Github:&nbsp;https://github.com/kofj/naivechain。 阅读更多","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/05/12/300%E8%A1%8C-Golang-%E5%AE%9E%E7%8E%B0%E5%8C%BA%E5%9D%97%E9%93%BE.html","headline":"300行 Golang 实现区块链","dateModified":"2018-05-12T00:00:00+08:00","datePublished":"2018-05-12T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/05/12/300%E8%A1%8C-Golang-%E5%AE%9E%E7%8E%B0%E5%8C%BA%E5%9D%97%E9%93%BE.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>300行 Golang 实现区块链</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <h3 style="font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;letter-spacing:.544px;background-color:rgb(255,255,255);line-height:1.10526;color:rgb(87,76,76);border-bottom:1px solid rgb(221,221,221);"><span style="color:rgb(136,136,136);font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;font-size:14px;letter-spacing:.544px;background-color:rgb(255,255,255);">作者&nbsp;疯魔慕薇</span><br></h3>
+  <h3 style="font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;letter-spacing:.544px;background-color:rgb(255,255,255);line-height:1.10526;color:rgb(87,76,76);border-bottom:1px solid rgb(221,221,221);">0x1 开篇</h3>
+  <p style="clear:both;min-height:1em;font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;font-size:17px;letter-spacing:.544px;background-color:rgb(255,255,255);color:rgb(102,102,102);">  <span>区块链，时下最火的技术。前段时间一篇</span>《A blockchain in 200 lines of code》<span>更是在技术圈里刷屏。在读过 Lauri Hartikka 写的这篇文章和代码后，我愈发对区块链兴趣浓厚。</span><br><span>  纸上得来终觉浅，要深入了解一门技术，终究是需要自己造一次轮子。于是，我着手用 Go 语言仿造着实现了一个&nbsp;</span><span style="font-weight:700;">naivechain</span><span>。</span></p>
+  <p style="clear:both;min-height:1em;color:rgb(51,51,51);font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;font-size:17px;letter-spacing:.544px;background-color:rgb(255,255,255);"><span style="color:rgb(102,102,102);"></span></p>
+  <h3 style="font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;letter-spacing:.544px;background-color:rgb(255,255,255);line-height:1.10526;color:rgb(87,76,76);border-bottom:1px solid rgb(221,221,221);">0x2 区块数据结构</h3>
+  <p style="clear:both;min-height:1em;font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;font-size:17px;letter-spacing:.544px;background-color:rgb(255,255,255);color:rgb(102,102,102);">  <span>和 Lauri Hartikka 一样，数据结构上我们一切从简，只使用&nbsp;</span><code>Index</code><span>，</span><code>PreviousHash</code><span>，</span><code>Timestamp</code><span>，</span><code>Data</code><span>，</span><code>Hash</code><span>&nbsp;这几个必要的字段。</span></p>
+  <p style="clear:both;min-height:1em;color:rgb(51,51,51);font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;font-size:17px;letter-spacing:.544px;background-color:rgb(255,255,255);"><img src="http://mmbiz.qpic.cn/mmbiz_jpg/gpF61NQswzlpedS0Ob99osWplyAy6EGctzwNKRicmeT8IwNTStN6P3rBbwhZuDXxQtb7OpLSfib4ia4jIdtBTKFWg/640?wx_fmt=jpeg&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt=""></p>
+  <p style="clear:both;min-height:1em;color:rgb(51,51,51);font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;font-size:17px;letter-spacing:.544px;background-color:rgb(255,255,255);"><br></p>
+  <h3 style="font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;letter-spacing:.544px;background-color:rgb(255,255,255);line-height:1.10526;color:rgb(87,76,76);border-bottom:1px solid rgb(221,221,221);">0x3 区块哈希</h3>
+  <p style="clear:both;min-height:1em;font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;font-size:17px;letter-spacing:.544px;background-color:rgb(255,255,255);color:rgb(102,102,102);">  <code></code><code>区块哈希</code><span>用于验证</span><code>区块数据</code><span>的完整性，使用&nbsp;</span><span style="font-weight:700;">SHA-256</span><span>&nbsp;算法生成</span><code>Index</code><span>，&nbsp;</span><code>PreviousHash</code><span>，</span><code>Timestamp</code><span>，&nbsp;</span><code>Data</code><span>&nbsp;拼接字符串的摘要。</span></p>
+  <p style="clear:both;min-height:1em;color:rgb(51,51,51);font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;font-size:17px;letter-spacing:.544px;background-color:rgb(255,255,255);"><img src="http://mmbiz.qpic.cn/mmbiz_jpg/gpF61NQswzlpedS0Ob99osWplyAy6EGc2UfDeVJuibSgEejxBboibswLKwdfkGYlg4lWSUJ4ickiaqY5Xx9QsNKcvw/640?wx_fmt=jpeg&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt=""></p>
+  <p style="clear:both;min-height:1em;color:rgb(51,51,51);font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;font-size:17px;letter-spacing:.544px;background-color:rgb(255,255,255);"><br></p>
+  <h3 style="font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;letter-spacing:.544px;background-color:rgb(255,255,255);line-height:1.10526;color:rgb(87,76,76);border-bottom:1px solid rgb(221,221,221);">0x4 创建新区块</h3>
+  <p style="clear:both;min-height:1em;font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;font-size:17px;letter-spacing:.544px;background-color:rgb(255,255,255);color:rgb(102,102,102);">  <span>为了生成新区块，我们需要知道</span><code>前区块</code><span>和新区块的必要数据（</span><code>Index</code><span>，</span><code>Hash</code><span>，</span><code>Timestamp</code><span>，&nbsp;</span><code>Data</code><span>）;</span><code>区块数据</code><span>由终端用户提供。</span></p>
+  <p style="clear:both;min-height:1em;color:rgb(51,51,51);font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;font-size:17px;letter-spacing:.544px;background-color:rgb(255,255,255);"><img src="http://mmbiz.qpic.cn/mmbiz_jpg/gpF61NQswzlpedS0Ob99osWplyAy6EGchRAacM9EnawtbSfUlicWz8rmXmB5sZBZVccU4VukVGQzGShXWuO2v4Q/640?wx_fmt=jpeg&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt=""></p>
+  <p style="clear:both;min-height:1em;color:rgb(51,51,51);font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;font-size:17px;letter-spacing:.544px;background-color:rgb(255,255,255);"><br></p>
+  <h3 style="font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;letter-spacing:.544px;background-color:rgb(255,255,255);line-height:1.10526;color:rgb(87,76,76);border-bottom:1px solid rgb(221,221,221);">0x5 创世块</h3>
+  <p style="clear:both;min-height:1em;font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;font-size:17px;letter-spacing:.544px;background-color:rgb(255,255,255);color:rgb(102,102,102);">  <span>区块链的第一个区块被称之为</span><code>创世块</code><span>，被硬编码在程序内。</span></p>
+  <p style="clear:both;min-height:1em;color:rgb(51,51,51);font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;font-size:17px;letter-spacing:.544px;background-color:rgb(255,255,255);"><img src="http://mmbiz.qpic.cn/mmbiz_jpg/gpF61NQswzlpedS0Ob99osWplyAy6EGcwq3KMGNJ18ic4Z8NbDbyoI5IcxcbLBkY35Xqk8fU1OrsLib9hF4SibE2g/640?wx_fmt=jpeg&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt=""></p>
+  <p style="clear:both;min-height:1em;color:rgb(51,51,51);font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;font-size:17px;letter-spacing:.544px;background-color:rgb(255,255,255);"><br></p>
+  <h3 style="font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;letter-spacing:.544px;background-color:rgb(255,255,255);line-height:1.10526;color:rgb(87,76,76);border-bottom:1px solid rgb(221,221,221);">0x6 区块存储</h3>
+  <p style="clear:both;min-height:1em;font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;font-size:17px;letter-spacing:.544px;background-color:rgb(255,255,255);color:rgb(102,102,102);">  <span>这里使用 Go 语言的 Slice 存储区块。区块链是有序 List，为了保证有序性，需要对内存中保存区块的数组进行排序。定义按&nbsp;</span><code>Index</code><span>&nbsp;排序的结构体&nbsp;</span><code>ByIndex</code><span>，并实现&nbsp;</span><code>sort.Interface</code><span>：</span></p>
+  <p style="clear:both;min-height:1em;color:rgb(51,51,51);font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;font-size:17px;letter-spacing:.544px;background-color:rgb(255,255,255);"><img src="http://mmbiz.qpic.cn/mmbiz_jpg/gpF61NQswzlpedS0Ob99osWplyAy6EGcZeOco8wceTvAzWUkUwutmic2s41R36EUm8g64OInrswcbqtwQCb5wcg/640?wx_fmt=jpeg&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt=""></p>
+  <p style="clear:both;min-height:1em;color:rgb(51,51,51);font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;font-size:17px;letter-spacing:.544px;background-color:rgb(255,255,255);"><br></p>
+  <h3 style="font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;letter-spacing:.544px;background-color:rgb(255,255,255);line-height:1.10526;color:rgb(87,76,76);border-bottom:1px solid rgb(221,221,221);">0x7 区块完整性验证</h3>
+  <p style="clear:both;min-height:1em;color:rgb(51,51,51);font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;font-size:17px;letter-spacing:.544px;background-color:rgb(255,255,255);"><img src="http://mmbiz.qpic.cn/mmbiz_jpg/gpF61NQswzlpedS0Ob99osWplyAy6EGc8DxBiaMxsnEjAduWYfM7N7roGEIRkvmkrPbMJPiaqUWD3gGFzaDickic6Q/640?wx_fmt=jpeg&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt=""></p>
+  <p style="clear:both;min-height:1em;color:rgb(51,51,51);font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;font-size:17px;letter-spacing:.544px;background-color:rgb(255,255,255);"><br></p>
+  <h3 style="font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;letter-spacing:.544px;background-color:rgb(255,255,255);line-height:1.10526;color:rgb(87,76,76);border-bottom:1px solid rgb(221,221,221);">0x8 节点通讯</h3>
+  <p style="clear:both;min-height:1em;font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;font-size:17px;letter-spacing:.544px;background-color:rgb(255,255,255);color:rgb(102,102,102);">  <span>每个节点在启动时监听一个端口（由&nbsp;</span><code>-p2p</code><span>&nbsp;参数指定），使用&nbsp;</span><span style="font-weight:700;">websocket</span><span>&nbsp;协议和其它节点通讯。</span></p>
+  <h3 style="font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;letter-spacing:.544px;background-color:rgb(255,255,255);line-height:1.10526;color:rgb(87,76,76);border-bottom:1px solid rgb(221,221,221);">0x9 节点控制</h3>
+  <p style="clear:both;min-height:1em;font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;font-size:17px;letter-spacing:.544px;background-color:rgb(255,255,255);color:rgb(102,102,102);">  <span>没个节点在启动时监听一个端口（由&nbsp;</span><code>-api</code><span>&nbsp;参数指定），接收&nbsp;</span><span style="font-weight:700;">HTTP</span><span>&nbsp;协议的&nbsp;</span><span style="font-weight:700;">JSON</span><span>&nbsp;控制命令。使用示例：</span></p>
+  <ul class="list-paddingleft-2" style="color:rgb(51,51,51);font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;font-size:17px;letter-spacing:.544px;background-color:rgb(255,255,255);list-style-type:none;">
+   <li style="margin-left:0px;"><p style="clear:both;min-height:1em;">查看区块</p>
+    <table style="width:594.167px;">
+     <tbody>
+      <tr>
+       <td style="border-style:none;"><pre></pre><p style="clear:both;min-height:1em;">1</p></td>
+       <td style="border-style:none;"><pre></pre><p style="clear:both;min-height:1em;">curl http://localhost:3001/blocks</p></td>
+      </tr>
+     </tbody>
+    </table></li>
+   <li style="margin-left:0px;"><p style="clear:both;min-height:1em;">创建区块</p>
+    <table style="width:594.167px;">
+     <tbody>
+      <tr>
+       <td style="border-style:none;"><pre></pre><p style="clear:both;min-height:1em;">1</p></td>
+       <td style="border-style:none;"><pre></pre><p style="clear:both;min-height:1em;">curl -H <span style="color:rgb(230,219,116);">"Content-type:application/json"</span> --data <span style="color:rgb(230,219,116);">'{"data" : "Some data to the first block"}'</span> http://localhost:3001/mine_block</p></td>
+      </tr>
+     </tbody>
+    </table></li>
+   <li style="margin-left:0px;"><p style="clear:both;min-height:1em;">添加节点</p>
+    <table style="width:594.167px;">
+     <tbody>
+      <tr>
+       <td style="border-style:none;"><pre></pre><p style="clear:both;min-height:1em;">1</p></td>
+       <td style="border-style:none;"><pre></pre><p style="clear:both;min-height:1em;">curl -H <span style="color:rgb(230,219,116);">"Content-type:application/json"</span> --data <span style="color:rgb(230,219,116);">'{"peer" : "ws://localhost:6002"}'</span> http://localhost:3001/add_peer</p></td>
+      </tr>
+     </tbody>
+    </table></li>
+   <li style="margin-left:0px;"><p style="clear:both;min-height:1em;">查看节点</p>
+    <table style="width:594.167px;">
+     <tbody>
+      <tr>
+       <td style="border-style:none;"><pre></pre><p style="clear:both;min-height:1em;">1</p></td>
+       <td style="border-style:none;"><pre></pre><p style="clear:both;min-height:1em;">curl http://localhost:3001/peers</p></td>
+      </tr>
+     </tbody>
+    </table></li>
+  </ul>
+  <p style="clear:both;min-height:1em;color:rgb(51,51,51);font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;font-size:17px;letter-spacing:.544px;background-color:rgb(255,255,255);"><br></p>
+  <h3 style="font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;letter-spacing:.544px;background-color:rgb(255,255,255);line-height:1.10526;color:rgb(87,76,76);border-bottom:1px solid rgb(221,221,221);">0xA 结语<br></h3>
+  <p style="clear:both;min-height:1em;font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;font-size:17px;letter-spacing:.544px;background-color:rgb(255,255,255);color:rgb(102,102,102);">  这是一个最简单的区块链实现，用于学习区块链的工作原理，因为没用实现工作量证明这一类的挖矿算法，不适宜在公共网络使用。更多的细节请访问 Github:&nbsp;https://github.com/kofj/naivechain。</p> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/u013929635/article/details/80295643,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/u013929635/article/details/80295643,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

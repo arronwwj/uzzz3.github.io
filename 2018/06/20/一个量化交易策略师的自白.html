@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>一个量化交易策略师的自白 | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="一个量化交易策略师的自白" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="&nbsp; &nbsp; &nbsp; &nbsp; 我之前在全球top5券商工作时也主要以CTA研究为主，每天都在不停的进行各种回测和开发。彼时，部门的CTA交易主要集中在股指期货的日内投机上，基本市场上能搜集到的各种书籍和报告我都浏览过。不过，从实际运用的角度来看，不同的技术分析方法，指标类切线类也好，形态类波浪类也罢，无论其历史背景和基本原理如何，其实质都是基于证券交易过程中量价时空等历史资料基础上的统计、分析和计算。 &nbsp; &nbsp; &nbsp; &nbsp;由于可供交易的期货标的只有沪深300股指期货，虽然所在部门同时跑了多个日内交易模型，但基本都是一荣俱荣，一损俱损。更为关键的是，一般趋势跟踪系统的获胜概率都低于40%，真正幅度大的单次盈利都是好不容易才熬来的，这说明大部分交易其实都是瞎折腾，当账户资金在短期内出现较大回撤的时候，很容易对自己的模型失去信心，继而陷入反复优化的怪圈。要知道，部门的考核都是以年为单位的，如果一年下来赚不到什么钱甚至亏钱，后果你懂的。 &nbsp; &nbsp; &nbsp; &nbsp; 我在读研究生期间，有过一段奇妙的际遇，至于这段际遇是如何而来，至今想想都觉得传奇。当时，我作为一个博士一年级的学生，曾帮一私募大佬全权管理了一只3000万的CTA量化基金，为期一年，金字塔决策交易系统全自动下单，偶尔也人工干预。就是这段经历，让我在毕业求职时的简历比同龄人丰富了不少。也正是这段交易经历，让我知道了趋势交易就是一种煎熬，因为趋势交易是反！人！性！的：几乎总在最高点开多，最低点开空，所以每次下单都是如履薄冰。最致命的是，由于日内单边走势的下单滑点一般都比较大，如果你因为限价单没能成交，基本这千年等一回的机会就和你说拜拜了；而如果你不顾一切去追单，则很大可能刚成交一会就触发了止损命令，实际亏损是理论亏损的2倍还多。 &nbsp; &nbsp; &nbsp; &nbsp;正因为知道了交易执行的艰难，毕业后进入全球top5券商后，对于交易下单和盯盘，一开始我就是拒绝的。部门的交易一直都是另一海归博士GG在做，而我只负责模型的研发和维护。他每日的工作流程就是，每天早上打开电脑，检查数据流是否正常，然后打开模型，让程序自动执行，盘中各种纠结，盘后各种悔恨。而这，基本就是一天的生活。 &nbsp; &nbsp; &nbsp; 盘中纠结：由于资金量巨大，股指期货随便一个波动，就是几十万的盈亏。落袋为安（干预模型）还是让坚决执行模型？这是个问题。毕竟一切浮盈皆是虚妄。 盘后悔恨：今天曾浮盈过百万，最后居然止损出局，唉；今天要是不干预的话，本！可！以！盈利数百万的，结果少赚了近一半，唉，唉。 &nbsp; &nbsp; &nbsp; 别问我为啥总想干预模型。事实上，任何一个趋势跟踪系统都是很难坚持的，因为它们都是以捕捉相对罕见的大趋势为基础的，而大趋势通常难得一见。在漫长的等待中，交易者很容易对自己的系统产生怀疑，转而相信自己能够战胜概率。 别问我一年下来赚了多少。事实上，CTA的容量是非常有限的，相比于部门的中介业务动辄上亿的利润，CTA的盈利基本可以忽略。虽然后来我们又把趋势交易拓展到了商品期货上，同时交易了十几个品种，但随后很多商品期货都开启了夜盘模式，遂逐步放弃。 &nbsp; &nbsp; &nbsp; &nbsp;因为选择了CTA，导致我每天都在对自己的职业生涯产生怀疑，直到后来我跳槽到阳光私募开始管理对冲产品，开始了股票alpha模型的盈利模式。 此是后话，有时间慢慢表来。 在中国的股票、期货市场，几乎所有的投资者多多少少都懂点技术分析，什么MA、MACD、KDJ等等，诸如此类，不一而足。至于自己所理解的技术指标能否盈利，另当别论。 &nbsp; &nbsp; &nbsp; 由于量化投资的门槛实在太低，大凡交易过商品期货的朋友（尤其是理工科学生，毕业后想进入金融机构以此为职业的），基本都在用自己编译的模型进行程序化自动下单，或按模型提示的信号进行手撸。至于所交易的品种，究竟是橡胶、螺纹钢，还是豆粕、焦炭（股指期货的开户门槛太高，在校生一般玩不起），则不是他所要关心的。相信大家都有这样的体验，如果有朋友邀请你去打麻将或斗地主，而你却不怎么会玩，你多半会拒绝。但期货市场不同，对于一个自己几乎一无所知的品种，却也敢用真金白银去交易。 &nbsp; &nbsp; &nbsp; &nbsp;这是为什么呢？ &nbsp; &nbsp; &nbsp; &nbsp;因为交易者用自己所构建的模型对该产品的历史数据进行过回测，每个月均实现了正收益。这TM不就是传说中的印！钞！机！么！ &nbsp; &nbsp; &nbsp; &nbsp;然而，只有真正交易过的人才知道，要想在期货市场凭自己所理解的技术分析去赚钱，太难！太难！要写一个回测结果很好的趋势跟踪模型，对于熟手来说，基本就是分分钟的事。但如果你把测试和实盘等同，我只能说你too young too simple。因为历史测试充其量只是对未来的粗略估计，它或许夸大了系统的内在优势本来是纯随机的现象，结果导致一个在历史回测中看似有效或曾经有效的系统不再有效。并且，很多初入期市的朋友，在写模型时或多或少都犯了过度优化的毛病，对于历史上那些模型本没抓住的单边走势，改个参数就抓住了；对于那些模型反复开仓的震荡走势，加个限制就避免了。可惜的是，要是可以交易历史数据的话，这个市场上还有亏货么？ &nbsp; &nbsp; &nbsp; &nbsp;更为致命的是，即便你写的模型确实符合逻辑，也没有过度拟合，你以为就可以一劳永逸，躺着数钱了吗？那是因为你忘了，测试时，你可以把几年的模拟交易集中在几分钟之内完成，即使有几个月的回撤期，你也不觉得有啥，因为你知道了净值曲线的未来走势。但实盘交易时，分分钟都是煎熬，盘中每一个波动都会刺激你的神经。此外，模型测试时，你关注的全是盈利带来的喜悦；而实盘交易时，你感受到的全是亏损带来的痛楚。 &nbsp; &nbsp; &nbsp; &nbsp;在实盘交易中，交易者的行为是复杂多变的，很多模型都由于与历史的吻合度太高，市场行为的一个轻微变化就会造成效果的明显恶化。再加上投资者某些情绪化和草率的出入场，承担了一些本没有必要承担的风险，再加上佣金和滑点，如此，根据市场的实际结构来说，大部分投机者注定就应该发生亏损。 &nbsp; &nbsp; &nbsp; 事实上，真正在市场上赚大钱的人，大都是悲观者和幸运者。说悲观，是因为他们都曾有过亏得睡不着觉的经历，知道赚钱的艰难；说幸运，是因为他们起起伏伏，但最终都活下来了。 还记得，当年部门年会时，领导让我作为新人代表发言，我balabala，洋洋洒洒上千言，直听得他们无不击掌。但作为结尾，我话锋一转，说了下面的话： &nbsp; &nbsp; &nbsp; &nbsp;要想在期货市场上用技术分析赚到大钱，无它，两个字而已，靠命！ 周末去了一趟王府井书店，没想到这年头到实体店买书的人还挺多。在里面转悠了一圈，来到股票板块，那家伙，各种分析、战法，直叫人应接不暇。我随意挑了几本翻阅了一下，看完后甚是惆怅，原来自己这么多年的书都白念了，这么多年的交易体验都白瞎了，因为所有的书都给人一种感觉：“炒股太简单啦！”“股市就是提款机！”“我们的目标是星辰大海！”。 回家路上，我对老婆说：“要不咱别做交易了，怪辛苦的，改写书吧？” &nbsp; &nbsp; &nbsp; “我看你有这个潜质。” &nbsp; &nbsp; &nbsp; &nbsp; 在期货市场，散户凭借技术分析是能赚钱的，但前提是你能够战胜自己的内心。但即便你战胜了自己的内心，要指望大赚特赚，基本还得靠命。 --------------------------------------------------------------------------------------------------------------------------------------------------------------- 关联文章阅读： 2018：数据科学20个最好的Python库 https://www.myquant.cn/community/topic/664 七种量化选股模型 https://www.myquant.cn/community/topic/663 一个量化交易策略师的自白 https://www.myquant.cn/community/topic/652/2 分享几本量化和python方面的书，可以直接下载 https://www.myquant.cn/community/topic/89/2 高频交易：为了0.07毫秒的比拼，竟然花费了1400万美金 https://www.myquant.cn/community/topic/634/2 史上最全的量化交易资源合集 https://www.myquant.cn/community/topic/624/2 《利用Python进行数据分析》PDF电子书下载 https://www.myquant.cn/community/topic/618 谈资金管理 https://www.myquant.cn/community/topic/579/2 《投资中最简单的事》读书笔记 https://www.myquant.cn/community/topic/575/2 分享一个python均线策略 https://www.myquant.cn/community/topic/78/2 量化交易入门 https://www.myquant.cn/community/topic/28/2 阅读更多" />
+<meta property="og:description" content="&nbsp; &nbsp; &nbsp; &nbsp; 我之前在全球top5券商工作时也主要以CTA研究为主，每天都在不停的进行各种回测和开发。彼时，部门的CTA交易主要集中在股指期货的日内投机上，基本市场上能搜集到的各种书籍和报告我都浏览过。不过，从实际运用的角度来看，不同的技术分析方法，指标类切线类也好，形态类波浪类也罢，无论其历史背景和基本原理如何，其实质都是基于证券交易过程中量价时空等历史资料基础上的统计、分析和计算。 &nbsp; &nbsp; &nbsp; &nbsp;由于可供交易的期货标的只有沪深300股指期货，虽然所在部门同时跑了多个日内交易模型，但基本都是一荣俱荣，一损俱损。更为关键的是，一般趋势跟踪系统的获胜概率都低于40%，真正幅度大的单次盈利都是好不容易才熬来的，这说明大部分交易其实都是瞎折腾，当账户资金在短期内出现较大回撤的时候，很容易对自己的模型失去信心，继而陷入反复优化的怪圈。要知道，部门的考核都是以年为单位的，如果一年下来赚不到什么钱甚至亏钱，后果你懂的。 &nbsp; &nbsp; &nbsp; &nbsp; 我在读研究生期间，有过一段奇妙的际遇，至于这段际遇是如何而来，至今想想都觉得传奇。当时，我作为一个博士一年级的学生，曾帮一私募大佬全权管理了一只3000万的CTA量化基金，为期一年，金字塔决策交易系统全自动下单，偶尔也人工干预。就是这段经历，让我在毕业求职时的简历比同龄人丰富了不少。也正是这段交易经历，让我知道了趋势交易就是一种煎熬，因为趋势交易是反！人！性！的：几乎总在最高点开多，最低点开空，所以每次下单都是如履薄冰。最致命的是，由于日内单边走势的下单滑点一般都比较大，如果你因为限价单没能成交，基本这千年等一回的机会就和你说拜拜了；而如果你不顾一切去追单，则很大可能刚成交一会就触发了止损命令，实际亏损是理论亏损的2倍还多。 &nbsp; &nbsp; &nbsp; &nbsp;正因为知道了交易执行的艰难，毕业后进入全球top5券商后，对于交易下单和盯盘，一开始我就是拒绝的。部门的交易一直都是另一海归博士GG在做，而我只负责模型的研发和维护。他每日的工作流程就是，每天早上打开电脑，检查数据流是否正常，然后打开模型，让程序自动执行，盘中各种纠结，盘后各种悔恨。而这，基本就是一天的生活。 &nbsp; &nbsp; &nbsp; 盘中纠结：由于资金量巨大，股指期货随便一个波动，就是几十万的盈亏。落袋为安（干预模型）还是让坚决执行模型？这是个问题。毕竟一切浮盈皆是虚妄。 盘后悔恨：今天曾浮盈过百万，最后居然止损出局，唉；今天要是不干预的话，本！可！以！盈利数百万的，结果少赚了近一半，唉，唉。 &nbsp; &nbsp; &nbsp; 别问我为啥总想干预模型。事实上，任何一个趋势跟踪系统都是很难坚持的，因为它们都是以捕捉相对罕见的大趋势为基础的，而大趋势通常难得一见。在漫长的等待中，交易者很容易对自己的系统产生怀疑，转而相信自己能够战胜概率。 别问我一年下来赚了多少。事实上，CTA的容量是非常有限的，相比于部门的中介业务动辄上亿的利润，CTA的盈利基本可以忽略。虽然后来我们又把趋势交易拓展到了商品期货上，同时交易了十几个品种，但随后很多商品期货都开启了夜盘模式，遂逐步放弃。 &nbsp; &nbsp; &nbsp; &nbsp;因为选择了CTA，导致我每天都在对自己的职业生涯产生怀疑，直到后来我跳槽到阳光私募开始管理对冲产品，开始了股票alpha模型的盈利模式。 此是后话，有时间慢慢表来。 在中国的股票、期货市场，几乎所有的投资者多多少少都懂点技术分析，什么MA、MACD、KDJ等等，诸如此类，不一而足。至于自己所理解的技术指标能否盈利，另当别论。 &nbsp; &nbsp; &nbsp; 由于量化投资的门槛实在太低，大凡交易过商品期货的朋友（尤其是理工科学生，毕业后想进入金融机构以此为职业的），基本都在用自己编译的模型进行程序化自动下单，或按模型提示的信号进行手撸。至于所交易的品种，究竟是橡胶、螺纹钢，还是豆粕、焦炭（股指期货的开户门槛太高，在校生一般玩不起），则不是他所要关心的。相信大家都有这样的体验，如果有朋友邀请你去打麻将或斗地主，而你却不怎么会玩，你多半会拒绝。但期货市场不同，对于一个自己几乎一无所知的品种，却也敢用真金白银去交易。 &nbsp; &nbsp; &nbsp; &nbsp;这是为什么呢？ &nbsp; &nbsp; &nbsp; &nbsp;因为交易者用自己所构建的模型对该产品的历史数据进行过回测，每个月均实现了正收益。这TM不就是传说中的印！钞！机！么！ &nbsp; &nbsp; &nbsp; &nbsp;然而，只有真正交易过的人才知道，要想在期货市场凭自己所理解的技术分析去赚钱，太难！太难！要写一个回测结果很好的趋势跟踪模型，对于熟手来说，基本就是分分钟的事。但如果你把测试和实盘等同，我只能说你too young too simple。因为历史测试充其量只是对未来的粗略估计，它或许夸大了系统的内在优势本来是纯随机的现象，结果导致一个在历史回测中看似有效或曾经有效的系统不再有效。并且，很多初入期市的朋友，在写模型时或多或少都犯了过度优化的毛病，对于历史上那些模型本没抓住的单边走势，改个参数就抓住了；对于那些模型反复开仓的震荡走势，加个限制就避免了。可惜的是，要是可以交易历史数据的话，这个市场上还有亏货么？ &nbsp; &nbsp; &nbsp; &nbsp;更为致命的是，即便你写的模型确实符合逻辑，也没有过度拟合，你以为就可以一劳永逸，躺着数钱了吗？那是因为你忘了，测试时，你可以把几年的模拟交易集中在几分钟之内完成，即使有几个月的回撤期，你也不觉得有啥，因为你知道了净值曲线的未来走势。但实盘交易时，分分钟都是煎熬，盘中每一个波动都会刺激你的神经。此外，模型测试时，你关注的全是盈利带来的喜悦；而实盘交易时，你感受到的全是亏损带来的痛楚。 &nbsp; &nbsp; &nbsp; &nbsp;在实盘交易中，交易者的行为是复杂多变的，很多模型都由于与历史的吻合度太高，市场行为的一个轻微变化就会造成效果的明显恶化。再加上投资者某些情绪化和草率的出入场，承担了一些本没有必要承担的风险，再加上佣金和滑点，如此，根据市场的实际结构来说，大部分投机者注定就应该发生亏损。 &nbsp; &nbsp; &nbsp; 事实上，真正在市场上赚大钱的人，大都是悲观者和幸运者。说悲观，是因为他们都曾有过亏得睡不着觉的经历，知道赚钱的艰难；说幸运，是因为他们起起伏伏，但最终都活下来了。 还记得，当年部门年会时，领导让我作为新人代表发言，我balabala，洋洋洒洒上千言，直听得他们无不击掌。但作为结尾，我话锋一转，说了下面的话： &nbsp; &nbsp; &nbsp; &nbsp;要想在期货市场上用技术分析赚到大钱，无它，两个字而已，靠命！ 周末去了一趟王府井书店，没想到这年头到实体店买书的人还挺多。在里面转悠了一圈，来到股票板块，那家伙，各种分析、战法，直叫人应接不暇。我随意挑了几本翻阅了一下，看完后甚是惆怅，原来自己这么多年的书都白念了，这么多年的交易体验都白瞎了，因为所有的书都给人一种感觉：“炒股太简单啦！”“股市就是提款机！”“我们的目标是星辰大海！”。 回家路上，我对老婆说：“要不咱别做交易了，怪辛苦的，改写书吧？” &nbsp; &nbsp; &nbsp; “我看你有这个潜质。” &nbsp; &nbsp; &nbsp; &nbsp; 在期货市场，散户凭借技术分析是能赚钱的，但前提是你能够战胜自己的内心。但即便你战胜了自己的内心，要指望大赚特赚，基本还得靠命。 --------------------------------------------------------------------------------------------------------------------------------------------------------------- 关联文章阅读： 2018：数据科学20个最好的Python库 https://www.myquant.cn/community/topic/664 七种量化选股模型 https://www.myquant.cn/community/topic/663 一个量化交易策略师的自白 https://www.myquant.cn/community/topic/652/2 分享几本量化和python方面的书，可以直接下载 https://www.myquant.cn/community/topic/89/2 高频交易：为了0.07毫秒的比拼，竟然花费了1400万美金 https://www.myquant.cn/community/topic/634/2 史上最全的量化交易资源合集 https://www.myquant.cn/community/topic/624/2 《利用Python进行数据分析》PDF电子书下载 https://www.myquant.cn/community/topic/618 谈资金管理 https://www.myquant.cn/community/topic/579/2 《投资中最简单的事》读书笔记 https://www.myquant.cn/community/topic/575/2 分享一个python均线策略 https://www.myquant.cn/community/topic/78/2 量化交易入门 https://www.myquant.cn/community/topic/28/2 阅读更多" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/06/20/%E4%B8%80%E4%B8%AA%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93%E7%AD%96%E7%95%A5%E5%B8%88%E7%9A%84%E8%87%AA%E7%99%BD.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/06/20/%E4%B8%80%E4%B8%AA%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93%E7%AD%96%E7%95%A5%E5%B8%88%E7%9A%84%E8%87%AA%E7%99%BD.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-06-20T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"&nbsp; &nbsp; &nbsp; &nbsp; 我之前在全球top5券商工作时也主要以CTA研究为主，每天都在不停的进行各种回测和开发。彼时，部门的CTA交易主要集中在股指期货的日内投机上，基本市场上能搜集到的各种书籍和报告我都浏览过。不过，从实际运用的角度来看，不同的技术分析方法，指标类切线类也好，形态类波浪类也罢，无论其历史背景和基本原理如何，其实质都是基于证券交易过程中量价时空等历史资料基础上的统计、分析和计算。 &nbsp; &nbsp; &nbsp; &nbsp;由于可供交易的期货标的只有沪深300股指期货，虽然所在部门同时跑了多个日内交易模型，但基本都是一荣俱荣，一损俱损。更为关键的是，一般趋势跟踪系统的获胜概率都低于40%，真正幅度大的单次盈利都是好不容易才熬来的，这说明大部分交易其实都是瞎折腾，当账户资金在短期内出现较大回撤的时候，很容易对自己的模型失去信心，继而陷入反复优化的怪圈。要知道，部门的考核都是以年为单位的，如果一年下来赚不到什么钱甚至亏钱，后果你懂的。 &nbsp; &nbsp; &nbsp; &nbsp; 我在读研究生期间，有过一段奇妙的际遇，至于这段际遇是如何而来，至今想想都觉得传奇。当时，我作为一个博士一年级的学生，曾帮一私募大佬全权管理了一只3000万的CTA量化基金，为期一年，金字塔决策交易系统全自动下单，偶尔也人工干预。就是这段经历，让我在毕业求职时的简历比同龄人丰富了不少。也正是这段交易经历，让我知道了趋势交易就是一种煎熬，因为趋势交易是反！人！性！的：几乎总在最高点开多，最低点开空，所以每次下单都是如履薄冰。最致命的是，由于日内单边走势的下单滑点一般都比较大，如果你因为限价单没能成交，基本这千年等一回的机会就和你说拜拜了；而如果你不顾一切去追单，则很大可能刚成交一会就触发了止损命令，实际亏损是理论亏损的2倍还多。 &nbsp; &nbsp; &nbsp; &nbsp;正因为知道了交易执行的艰难，毕业后进入全球top5券商后，对于交易下单和盯盘，一开始我就是拒绝的。部门的交易一直都是另一海归博士GG在做，而我只负责模型的研发和维护。他每日的工作流程就是，每天早上打开电脑，检查数据流是否正常，然后打开模型，让程序自动执行，盘中各种纠结，盘后各种悔恨。而这，基本就是一天的生活。 &nbsp; &nbsp; &nbsp; 盘中纠结：由于资金量巨大，股指期货随便一个波动，就是几十万的盈亏。落袋为安（干预模型）还是让坚决执行模型？这是个问题。毕竟一切浮盈皆是虚妄。 盘后悔恨：今天曾浮盈过百万，最后居然止损出局，唉；今天要是不干预的话，本！可！以！盈利数百万的，结果少赚了近一半，唉，唉。 &nbsp; &nbsp; &nbsp; 别问我为啥总想干预模型。事实上，任何一个趋势跟踪系统都是很难坚持的，因为它们都是以捕捉相对罕见的大趋势为基础的，而大趋势通常难得一见。在漫长的等待中，交易者很容易对自己的系统产生怀疑，转而相信自己能够战胜概率。 别问我一年下来赚了多少。事实上，CTA的容量是非常有限的，相比于部门的中介业务动辄上亿的利润，CTA的盈利基本可以忽略。虽然后来我们又把趋势交易拓展到了商品期货上，同时交易了十几个品种，但随后很多商品期货都开启了夜盘模式，遂逐步放弃。 &nbsp; &nbsp; &nbsp; &nbsp;因为选择了CTA，导致我每天都在对自己的职业生涯产生怀疑，直到后来我跳槽到阳光私募开始管理对冲产品，开始了股票alpha模型的盈利模式。 此是后话，有时间慢慢表来。 在中国的股票、期货市场，几乎所有的投资者多多少少都懂点技术分析，什么MA、MACD、KDJ等等，诸如此类，不一而足。至于自己所理解的技术指标能否盈利，另当别论。 &nbsp; &nbsp; &nbsp; 由于量化投资的门槛实在太低，大凡交易过商品期货的朋友（尤其是理工科学生，毕业后想进入金融机构以此为职业的），基本都在用自己编译的模型进行程序化自动下单，或按模型提示的信号进行手撸。至于所交易的品种，究竟是橡胶、螺纹钢，还是豆粕、焦炭（股指期货的开户门槛太高，在校生一般玩不起），则不是他所要关心的。相信大家都有这样的体验，如果有朋友邀请你去打麻将或斗地主，而你却不怎么会玩，你多半会拒绝。但期货市场不同，对于一个自己几乎一无所知的品种，却也敢用真金白银去交易。 &nbsp; &nbsp; &nbsp; &nbsp;这是为什么呢？ &nbsp; &nbsp; &nbsp; &nbsp;因为交易者用自己所构建的模型对该产品的历史数据进行过回测，每个月均实现了正收益。这TM不就是传说中的印！钞！机！么！ &nbsp; &nbsp; &nbsp; &nbsp;然而，只有真正交易过的人才知道，要想在期货市场凭自己所理解的技术分析去赚钱，太难！太难！要写一个回测结果很好的趋势跟踪模型，对于熟手来说，基本就是分分钟的事。但如果你把测试和实盘等同，我只能说你too young too simple。因为历史测试充其量只是对未来的粗略估计，它或许夸大了系统的内在优势本来是纯随机的现象，结果导致一个在历史回测中看似有效或曾经有效的系统不再有效。并且，很多初入期市的朋友，在写模型时或多或少都犯了过度优化的毛病，对于历史上那些模型本没抓住的单边走势，改个参数就抓住了；对于那些模型反复开仓的震荡走势，加个限制就避免了。可惜的是，要是可以交易历史数据的话，这个市场上还有亏货么？ &nbsp; &nbsp; &nbsp; &nbsp;更为致命的是，即便你写的模型确实符合逻辑，也没有过度拟合，你以为就可以一劳永逸，躺着数钱了吗？那是因为你忘了，测试时，你可以把几年的模拟交易集中在几分钟之内完成，即使有几个月的回撤期，你也不觉得有啥，因为你知道了净值曲线的未来走势。但实盘交易时，分分钟都是煎熬，盘中每一个波动都会刺激你的神经。此外，模型测试时，你关注的全是盈利带来的喜悦；而实盘交易时，你感受到的全是亏损带来的痛楚。 &nbsp; &nbsp; &nbsp; &nbsp;在实盘交易中，交易者的行为是复杂多变的，很多模型都由于与历史的吻合度太高，市场行为的一个轻微变化就会造成效果的明显恶化。再加上投资者某些情绪化和草率的出入场，承担了一些本没有必要承担的风险，再加上佣金和滑点，如此，根据市场的实际结构来说，大部分投机者注定就应该发生亏损。 &nbsp; &nbsp; &nbsp; 事实上，真正在市场上赚大钱的人，大都是悲观者和幸运者。说悲观，是因为他们都曾有过亏得睡不着觉的经历，知道赚钱的艰难；说幸运，是因为他们起起伏伏，但最终都活下来了。 还记得，当年部门年会时，领导让我作为新人代表发言，我balabala，洋洋洒洒上千言，直听得他们无不击掌。但作为结尾，我话锋一转，说了下面的话： &nbsp; &nbsp; &nbsp; &nbsp;要想在期货市场上用技术分析赚到大钱，无它，两个字而已，靠命！ 周末去了一趟王府井书店，没想到这年头到实体店买书的人还挺多。在里面转悠了一圈，来到股票板块，那家伙，各种分析、战法，直叫人应接不暇。我随意挑了几本翻阅了一下，看完后甚是惆怅，原来自己这么多年的书都白念了，这么多年的交易体验都白瞎了，因为所有的书都给人一种感觉：“炒股太简单啦！”“股市就是提款机！”“我们的目标是星辰大海！”。 回家路上，我对老婆说：“要不咱别做交易了，怪辛苦的，改写书吧？” &nbsp; &nbsp; &nbsp; “我看你有这个潜质。” &nbsp; &nbsp; &nbsp; &nbsp; 在期货市场，散户凭借技术分析是能赚钱的，但前提是你能够战胜自己的内心。但即便你战胜了自己的内心，要指望大赚特赚，基本还得靠命。 --------------------------------------------------------------------------------------------------------------------------------------------------------------- 关联文章阅读： 2018：数据科学20个最好的Python库 https://www.myquant.cn/community/topic/664 七种量化选股模型 https://www.myquant.cn/community/topic/663 一个量化交易策略师的自白 https://www.myquant.cn/community/topic/652/2 分享几本量化和python方面的书，可以直接下载 https://www.myquant.cn/community/topic/89/2 高频交易：为了0.07毫秒的比拼，竟然花费了1400万美金 https://www.myquant.cn/community/topic/634/2 史上最全的量化交易资源合集 https://www.myquant.cn/community/topic/624/2 《利用Python进行数据分析》PDF电子书下载 https://www.myquant.cn/community/topic/618 谈资金管理 https://www.myquant.cn/community/topic/579/2 《投资中最简单的事》读书笔记 https://www.myquant.cn/community/topic/575/2 分享一个python均线策略 https://www.myquant.cn/community/topic/78/2 量化交易入门 https://www.myquant.cn/community/topic/28/2 阅读更多","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/06/20/%E4%B8%80%E4%B8%AA%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93%E7%AD%96%E7%95%A5%E5%B8%88%E7%9A%84%E8%87%AA%E7%99%BD.html","headline":"一个量化交易策略师的自白","dateModified":"2018-06-20T00:00:00+08:00","datePublished":"2018-06-20T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/06/20/%E4%B8%80%E4%B8%AA%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93%E7%AD%96%E7%95%A5%E5%B8%88%E7%9A%84%E8%87%AA%E7%99%BD.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>一个量化交易策略师的自白</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <p>&nbsp; &nbsp; &nbsp; &nbsp; 我之前在全球top5券商工作时也主要以CTA研究为主，每天都在不停的进行各种回测和开发。彼时，部门的CTA交易主要集中在股指期货的日内投机上，基本市场上能搜集到的各种书籍和报告我都浏览过。不过，从实际运用的角度来看，不同的技术分析方法，指标类切线类也好，形态类波浪类也罢，无论其历史背景和基本原理如何，其实质都是基于证券交易过程中量价时空等历史资料基础上的统计、分析和计算。</p> 
+  <p>&nbsp; &nbsp; &nbsp; &nbsp;由于可供交易的期货标的只有沪深300股指期货，虽然所在部门同时跑了多个日内交易模型，但基本都是一荣俱荣，一损俱损。更为关键的是，一般趋势跟踪系统的获胜概率都低于40%，真正幅度大的单次盈利都是好不容易才熬来的，这说明大部分交易其实都是瞎折腾，当账户资金在短期内出现较大回撤的时候，很容易对自己的模型失去信心，继而陷入反复优化的怪圈。要知道，部门的考核都是以年为单位的，如果一年下来赚不到什么钱甚至亏钱，后果你懂的。</p> 
+  <p>&nbsp; &nbsp; &nbsp; &nbsp; 我在读研究生期间，有过一段奇妙的际遇，至于这段际遇是如何而来，至今想想都觉得传奇。当时，我作为一个博士一年级的学生，曾帮一私募大佬全权管理了一只3000万的CTA量化基金，为期一年，金字塔决策交易系统全自动下单，偶尔也人工干预。就是这段经历，让我在毕业求职时的简历比同龄人丰富了不少。也正是这段交易经历，让我知道了趋势交易就是一种煎熬，因为趋势交易是反！人！性！的：几乎总在最高点开多，最低点开空，所以每次下单都是如履薄冰。最致命的是，由于日内单边走势的下单滑点一般都比较大，如果你因为限价单没能成交，基本这千年等一回的机会就和你说拜拜了；而如果你不顾一切去追单，则很大可能刚成交一会就触发了止损命令，实际亏损是理论亏损的2倍还多。</p> 
+  <p>&nbsp; &nbsp; &nbsp; &nbsp;正因为知道了交易执行的艰难，毕业后进入全球top5券商后，对于交易下单和盯盘，一开始我就是拒绝的。部门的交易一直都是另一海归博士GG在做，而我只负责模型的研发和维护。他每日的工作流程就是，每天早上打开电脑，检查数据流是否正常，然后打开模型，让程序自动执行，盘中各种纠结，盘后各种悔恨。而这，基本就是一天的生活。</p> 
+  <p>&nbsp; &nbsp; &nbsp; 盘中纠结：由于资金量巨大，股指期货随便一个波动，就是几十万的盈亏。落袋为安（干预模型）还是让坚决执行模型？这是个问题。毕竟一切浮盈皆是虚妄。</p> 
+  <p>盘后悔恨：今天曾浮盈过百万，最后居然止损出局，唉；今天要是不干预的话，本！可！以！盈利数百万的，结果少赚了近一半，唉，唉。</p> 
+  <p>&nbsp; &nbsp; &nbsp; 别问我为啥总想干预模型。事实上，任何一个趋势跟踪系统都是很难坚持的，因为它们都是以捕捉相对罕见的大趋势为基础的，而大趋势通常难得一见。在漫长的等待中，交易者很容易对自己的系统产生怀疑，转而相信自己能够战胜概率。</p> 
+  <p>别问我一年下来赚了多少。事实上，CTA的容量是非常有限的，相比于部门的中介业务动辄上亿的利润，CTA的盈利基本可以忽略。虽然后来我们又把趋势交易拓展到了商品期货上，同时交易了十几个品种，但随后很多商品期货都开启了夜盘模式，遂逐步放弃。</p> 
+  <p>&nbsp; &nbsp; &nbsp; &nbsp;因为选择了CTA，导致我每天都在对自己的职业生涯产生怀疑，直到后来我跳槽到阳光私募开始管理对冲产品，开始了股票alpha模型的盈利模式。</p> 
+  <p>此是后话，有时间慢慢表来。</p> 
+  <p>在中国的股票、期货市场，几乎所有的投资者多多少少都懂点技术分析，什么MA、MACD、KDJ等等，诸如此类，不一而足。至于自己所理解的技术指标能否盈利，另当别论。</p> 
+  <p>&nbsp; &nbsp; &nbsp; 由于量化投资的门槛实在太低，大凡交易过商品期货的朋友（尤其是理工科学生，毕业后想进入金融机构以此为职业的），基本都在用自己编译的模型进行程序化自动下单，或按模型提示的信号进行手撸。至于所交易的品种，究竟是橡胶、螺纹钢，还是豆粕、焦炭（股指期货的开户门槛太高，在校生一般玩不起），则不是他所要关心的。相信大家都有这样的体验，如果有朋友邀请你去打麻将或斗地主，而你却不怎么会玩，你多半会拒绝。但期货市场不同，对于一个自己几乎一无所知的品种，却也敢用真金白银去交易。</p> 
+  <p>&nbsp; &nbsp; &nbsp; &nbsp;这是为什么呢？</p> 
+  <p>&nbsp; &nbsp; &nbsp; &nbsp;因为交易者用自己所构建的模型对该产品的历史数据进行过回测，每个月均实现了正收益。这TM不就是传说中的印！钞！机！么！</p> 
+  <p>&nbsp; &nbsp; &nbsp; &nbsp;然而，只有真正交易过的人才知道，要想在期货市场凭自己所理解的技术分析去赚钱，太难！太难！要写一个回测结果很好的趋势跟踪模型，对于熟手来说，基本就是分分钟的事。但如果你把测试和实盘等同，我只能说你too young too simple。因为历史测试充其量只是对未来的粗略估计，它或许夸大了系统的内在优势本来是纯随机的现象，结果导致一个在历史回测中看似有效或曾经有效的系统不再有效。并且，很多初入期市的朋友，在写模型时或多或少都犯了过度优化的毛病，对于历史上那些模型本没抓住的单边走势，改个参数就抓住了；对于那些模型反复开仓的震荡走势，加个限制就避免了。可惜的是，要是可以交易历史数据的话，这个市场上还有亏货么？</p> 
+  <p>&nbsp; &nbsp; &nbsp; &nbsp;更为致命的是，即便你写的模型确实符合逻辑，也没有过度拟合，你以为就可以一劳永逸，躺着数钱了吗？那是因为你忘了，测试时，你可以把几年的模拟交易集中在几分钟之内完成，即使有几个月的回撤期，你也不觉得有啥，因为你知道了净值曲线的未来走势。但实盘交易时，分分钟都是煎熬，盘中每一个波动都会刺激你的神经。此外，模型测试时，你关注的全是盈利带来的喜悦；而实盘交易时，你感受到的全是亏损带来的痛楚。</p> 
+  <p>&nbsp; &nbsp; &nbsp; &nbsp;在实盘交易中，交易者的行为是复杂多变的，很多模型都由于与历史的吻合度太高，市场行为的一个轻微变化就会造成效果的明显恶化。再加上投资者某些情绪化和草率的出入场，承担了一些本没有必要承担的风险，再加上佣金和滑点，如此，根据市场的实际结构来说，大部分投机者注定就应该发生亏损。</p> 
+  <p>&nbsp; &nbsp; &nbsp; 事实上，真正在市场上赚大钱的人，大都是悲观者和幸运者。说悲观，是因为他们都曾有过亏得睡不着觉的经历，知道赚钱的艰难；说幸运，是因为他们起起伏伏，但最终都活下来了。</p> 
+  <p>还记得，当年部门年会时，领导让我作为新人代表发言，我balabala，洋洋洒洒上千言，直听得他们无不击掌。但作为结尾，我话锋一转，说了下面的话：</p> 
+  <p>&nbsp; &nbsp; &nbsp; &nbsp;要想在期货市场上用技术分析赚到大钱，无它，两个字而已，靠命！</p> 
+  <p>周末去了一趟王府井书店，没想到这年头到实体店买书的人还挺多。在里面转悠了一圈，来到股票板块，那家伙，各种分析、战法，直叫人应接不暇。我随意挑了几本翻阅了一下，看完后甚是惆怅，原来自己这么多年的书都白念了，这么多年的交易体验都白瞎了，因为所有的书都给人一种感觉：“炒股太简单啦！”“股市就是提款机！”“我们的目标是星辰大海！”。</p> 
+  <p>回家路上，我对老婆说：“要不咱别做交易了，怪辛苦的，改写书吧？”</p> 
+  <p>&nbsp; &nbsp; &nbsp; “我看你有这个潜质。”</p> 
+  <p>&nbsp; &nbsp; &nbsp; &nbsp; 在期货市场，散户凭借技术分析是能赚钱的，但前提是你能够战胜自己的内心。但即便你战胜了自己的内心，要指望大赚特赚，基本还得靠命。</p> 
+  <p>---------------------------------------------------------------------------------------------------------------------------------------------------------------</p> 
+  <p><strong>关联文章阅读：</strong></p> 
+  <table cellspacing="0" style="width:476pt;">
+   <tbody>
+    <tr>
+     <td style="vertical-align:bottom;width:197pt;"><span style="color:#000000;">2018：数据科学20个最好的Python库</span></td> 
+     <td style="vertical-align:bottom;width:279pt;"><span style="color:#0563c1;"><u><a href="https://www.myquant.cn/community/topic/664" rel="nofollow">https://www.myquant.cn/community/topic/664</a></u></span></td> 
+    </tr>
+    <tr>
+     <td style="vertical-align:bottom;"><span style="color:#000000;">七种量化选股模型</span></td> 
+     <td style="vertical-align:bottom;"><span style="color:#0563c1;"><u><a href="https://www.myquant.cn/community/topic/663" rel="nofollow">https://www.myquant.cn/community/topic/663</a></u></span></td> 
+    </tr>
+    <tr>
+     <td style="vertical-align:bottom;"><span style="color:#000000;">一个量化交易策略师的自白</span></td> 
+     <td style="vertical-align:bottom;"><span style="color:#0563c1;"><u><a href="https://www.myquant.cn/community/topic/652/2" rel="nofollow">https://www.myquant.cn/community/topic/652/2</a></u></span></td> 
+    </tr>
+    <tr>
+     <td style="vertical-align:bottom;"><span style="color:#000000;">分享几本量化和python方面的书，可以直接下载</span></td> 
+     <td style="vertical-align:bottom;"><span style="color:#0563c1;"><u><a href="https://www.myquant.cn/community/topic/89/2" rel="nofollow">https://www.myquant.cn/community/topic/89/2</a></u></span></td> 
+    </tr>
+    <tr>
+     <td style="vertical-align:bottom;"><span style="color:#000000;">高频交易：为了0.07毫秒的比拼，竟然花费了1400万美金</span></td> 
+     <td style="vertical-align:bottom;"><span style="color:#0563c1;"><u><a href="https://www.myquant.cn/community/topic/634/2" rel="nofollow">https://www.myquant.cn/community/topic/634/2</a></u></span></td> 
+    </tr>
+    <tr>
+     <td style="vertical-align:bottom;"><span style="color:#000000;">史上最全的量化交易资源合集</span></td> 
+     <td style="vertical-align:bottom;"><span style="color:#0563c1;"><u><a href="https://www.myquant.cn/community/topic/624/2" rel="nofollow">https://www.myquant.cn/community/topic/624/2</a></u></span></td> 
+    </tr>
+    <tr>
+     <td style="vertical-align:bottom;"><span style="color:#000000;">《利用Python进行数据分析》PDF电子书下载</span></td> 
+     <td style="vertical-align:bottom;"><span style="color:#0563c1;"><u><a href="https://www.myquant.cn/community/topic/618" rel="nofollow">https://www.myquant.cn/community/topic/618</a></u></span></td> 
+    </tr>
+    <tr>
+     <td style="vertical-align:bottom;"><span style="color:#000000;">谈资金管理</span></td> 
+     <td style="vertical-align:bottom;"><span style="color:#0563c1;"><u><a href="https://www.myquant.cn/community/topic/579/2" rel="nofollow">https://www.myquant.cn/community/topic/579/2</a></u></span></td> 
+    </tr>
+    <tr>
+     <td style="vertical-align:bottom;"><span style="color:#000000;">《投资中最简单的事》读书笔记</span></td> 
+     <td style="vertical-align:bottom;"><span style="color:#0563c1;"><u><a href="https://www.myquant.cn/community/topic/575/2" rel="nofollow">https://www.myquant.cn/community/topic/575/2</a></u></span></td> 
+    </tr>
+    <tr>
+     <td style="vertical-align:bottom;"><span style="color:#000000;">分享一个python均线策略</span></td> 
+     <td style="vertical-align:bottom;"><span style="color:#0563c1;"><u><a href="https://www.myquant.cn/community/topic/78/2" rel="nofollow">https://www.myquant.cn/community/topic/78/2</a></u></span></td> 
+    </tr>
+    <tr>
+     <td style="vertical-align:bottom;"><span style="color:#000000;">量化交易入门</span></td> 
+     <td style="vertical-align:bottom;"><span style="color:#0563c1;"><u><a href="https://www.myquant.cn/community/topic/28/2" rel="nofollow">https://www.myquant.cn/community/topic/28/2</a></u></span></td> 
+    </tr>
+   </tbody>
+  </table> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/myquant/article/details/80745665,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/myquant/article/details/80745665,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

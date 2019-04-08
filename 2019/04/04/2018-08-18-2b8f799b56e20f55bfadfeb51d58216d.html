@@ -1,0 +1,700 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div class="markdown_views"> 
+  <h1 id="添加一个组织org到通道channel中">添加一个组织（Org）到通道（Channel）中</h1> 
+  <blockquote> 
+   <p>确认你已经下载了在 :doc:<code>samples</code> 和 :doc:<code>prereqs</code> 中列出来的和当前文档版本 <br> （位于左侧目录栏底部）匹配的相应镜像(images)和二进制文件。特别是，你的 <br> <code>fabric-samples</code> 版本的文件夹中必须有 <code>eyfn.sh</code> 脚本和起相关的脚本。</p> 
+  </blockquote> 
+  <p>本教程是基于 :doc:<code>build_network</code> (BYFN) 教程，将演示如何增加一个新的组织 – <code>Org3</code> – <br> 到由BYFN自动生成的程序通道（<code>mychannel</code>）。假定你已经非常明白BYFN，包括前面提及到的工具 <br> 使用和功能。</p> 
+  <p>虽然这里我们只是聚焦于新组织的集成，但同样的方法适用于完成其他通道配置更新（例如：更新修改 <br> 策略或者改变批量大小）。 学习更多关于通道配置总体更新的过程和可能性，请参考 :doc:<code>config_update</code> 。 <br> 像这里演示的通道配置更新通常是一个组织管理员（而不是链码或者程序开发者）的职责也是不足为奇了。</p> 
+  <blockquote> 
+   <p>在继续之前，请确认自动化脚本 <code>byfn.sh</code> 在你的机器上运行没有错误。如果你已经在你的 <br> 系统PATH变量中包含了你的二进制文件和相关的工具（<code>cryptogen</code>, <code>configtxgen</code> 等）， <br> 你可以对一些命令做相应的修改，无需传入完整的路径。</p> 
+  </blockquote> 
+  <h2 id="设置环境">设置环境</h2> 
+  <p>我们将从你本地克隆的 <code>fabric-samples</code> 子目录 <code>first-network</code> 开始操作。现在进到该目录， <br> 为了操作方便，建议你打开几个新的控制台。</p> 
+  <p>首先，使用脚本 <code>byfn.sh</code> 做初始化准备。这个命令将杀掉所有的活跃和非活跃状态的docker容器， <br> 同事删除之前自动生成的artifacts目录中的内容。为了完成通道（Channel）配置更新任务，绝对 <br> <strong>没必要</strong> 停止Fabric网络。但是，为了本教程的目的，我们想从一个大家都熟悉的初始化状态开始操作。 <br> 因此，请执行下面的命令，用来清理之前的环境变量：</p> 
+  <pre class="prettyprint"><code class="language-bash hljs "> ./byfn.sh -m down</code></pre> 
+  <p>现在产生默认的BYFN 一些必要的文件在artifacts目录：</p> 
+  <p>.. code:: bash</p> 
+  <p>./byfn.sh -m generate</p> 
+  <p>然后在CLI容器中利用下面的脚本来启动网络：</p> 
+  <p>.. code:: bash</p> 
+  <p>./byfn.sh -m up</p> 
+  <p>现在在你的机器上运行一个干净的BYFN版本，你有两个不同的方式可以继续进行。首先，我们提供一个 <br> 有详细注解的脚本文件用来执行一个配置事务更新，使得把Org3加入到网络中来。</p> 
+  <p>其次，我们也会展示一个同样操作流程的“手动”版本，显示每一步操作并解释其做了什么（在这个手动 <br> 操作之前我们会向你演示停止你的Fabric网络，你也可以运行该脚本然后观察你每一步）</p> 
+  <p>用脚本把Org3加入到通道 <br> <del>~</del>~~~~~~~~~~~~~~~~~~</p> 
+  <p>进入到目录 <code>first-network</code> 。要使用该脚本，只需要简单执行下面的命令:</p> 
+  <pre class="prettyprint"><code class="language-bash hljs ">./eyfn.sh up</code></pre> 
+  <p>该脚本的输出内容应该仔细阅读一下。你将会看到正在添加Org3的加密资料，正在创建并签名配置更新， <br> 然后正在安装用来允许Org3执行账本查询的链码。</p> 
+  <p>如果一切进展顺利，你将会看到这样的消息：</p> 
+  <pre class="prettyprint"><code class="language-bash hljs ">========= All GOOD, EYFN test execution completed ===========</code></pre> 
+  <p>通过执行下面的命令（不是 <code>./byfn.sh -m -up` ），</code>eyfn.sh<code>也可以选择执行相同的Node.js <br> 版本的链码，也可以传递数据库参数给</code>byfn.sh“ :</p> 
+  <p>.. code:: bash</p> 
+  <p>./byfn.sh up -c testchannel -s couchdb -l node</p> 
+  <p>然后执行:</p> 
+  <p>.. code:: bash</p> 
+  <p>./eyfn.sh up -c testchannel -s couchdb -l node</p> 
+  <p>对于那些需要进一步了解这个过程的读者来说，本文档接下来将向你展示用来完成一个通道更新的每一个 <br> 命令以及该命令做了什么。</p> 
+  <p>手动把Org3加入到通道中 <br> <del>~</del>~~~~~~~~~~~~~~~~~~</p> 
+  <p>.. note:: 下面列出来的手动操作步骤前提条件是 <code>cli</code> 和 `Org3cli<code>容器的 <br> </code>CORE_LOGGING_LEVEL<code>被设置为</code>DEBUG“。</p> 
+  <pre><code>      对 ``cli`` 容器，你可以通过修改在 ``first-network`` 目录中的 
+      ``docker-compose-cli.yaml`` 文件来设置它。
+      例如：
+
+      .. code::
+
+        cli:
+          container_name: cli
+          image: hyperledger/fabric-tools:$IMAGE_TAG
+          tty: true
+          stdin_open: true
+          environment:
+            - GOPATH=/opt/gopath
+            - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+            #- CORE_LOGGING_LEVEL=INFO
+            - CORE_LOGGING_LEVEL=DEBUG
+
+      对 ``Org3cli`` 容器，你可以通过修改在 ``first-network`` 目录中的 
+      ``docker-compose-org3.yaml`` 文件来设置它。
+      例如：
+
+      .. code::
+
+        Org3cli:
+          container_name: Org3cli
+          image: hyperledger/fabric-tools:$IMAGE_TAG
+          tty: true
+          stdin_open: true
+          environment:
+            - GOPATH=/opt/gopath
+            - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+            #- CORE_LOGGING_LEVEL=INFO
+            - CORE_LOGGING_LEVEL=DEBUG
+</code></pre> 
+  <p>如果你之前已经执行过 <code>eyfn.sh</code> 脚本，那么你需要先停掉Fabric网络。 <br> 这个可以通过执行以下命令完成：</p> 
+  <p>.. code:: bash</p> 
+  <p>./eyfn.sh down</p> 
+  <p>这将停止Fabric网络，删除所有的容器(Fabric容器，译者注)，以及回撤增加Org3的所有操作。</p> 
+  <p>当网络停止，再重启启动它。</p> 
+  <p>.. code:: bash</p> 
+  <p>./byfn.sh -m generate</p> 
+  <p>然后:</p> 
+  <p>.. code:: bash</p> 
+  <p>./byfn.sh -m up</p> 
+  <p>这样你的网络又恢复到执行 <code>eyfn.sh</code> 脚本之前的同样状态了。</p> 
+  <p>现在你可以开始手动添加Org3了。第一步，你得先生成Org3的加密资料。</p> 
+  <p>生成Org3加密资料 <br> <del>~</del>~~~~~~~~~~~~~</p> 
+  <p>开启另外一个终端，从 <code>first-network</code> 进入到 <code>org3-artifacts</code> 子目录中。</p> 
+  <p>.. code:: bash</p> 
+  <p>cd org3-artifacts</p> 
+  <p>那里有两个我们需要关注的 <code>yaml</code> 文件： <code>org3-crypto.yaml</code> 和 <code>configtx.yaml</code> 。 <br> 首先，为Org3生成加密资料：</p> 
+  <p>.. code:: bash</p> 
+  <p>../../bin/cryptogen generate –config=./org3-crypto.yaml</p> 
+  <p>该命令读取我们新的加密 <code>yaml</code> 文件 – <code>org3-crypto.yaml</code> – ，然后利用 <code>cryptogen</code> <br> 为Org3 CA生成密钥和证书，而且生成两个节点（peer）归属于这个新的Org（组织）。根据BYFN实现， <br> 这些加密资料放在当前所在目录的一个新建的 <code>crypto-config</code> 文件夹中（在本例子中是 <code>org3-artifacts</code> ）。</p> 
+  <p>现在使用 <code>configtxgen</code> 工具打印出Org3专用的JSON格式配置材料。 在开始该命令之前，我们得告诉它 <br> 需要从当前目录来读取 <code>configtx.yaml</code> 文件（该工具需要用的的配置信息文件，译者注）。</p> 
+  <p>.. code:: bash</p> 
+  <pre><code>export FABRIC_CFG_PATH=$PWD &amp;&amp; ../../bin/configtxgen -printOrg Org3MSP &gt; ../channel-artifacts/org3.json
+</code></pre> 
+  <p>上面命令会创建一个JSON文件 – <code>org3.json</code> – 同时把它写到 <code>first-network</code> 根路径下面的 <br> <code>channel-artifacts</code> 子目录。 这个文件包括Org3的策略定义，以及三个重要的以base64格式呈现的证书： <br> 管理员用户证书（将来需要用来充当Org3的管理员）， 一个CA根证书，以及一个TLS根证书。在接下来一步， <br> 我们将给通道配置附上这个JSON文件。</p> 
+  <p>我们最终的内务处理块将携带排序组织（Orderer Org）的MSP资料到Org3的 <code>crypto-config</code> 目录中。 <br> 特别是，我们关心的Orderer的TLS根证书，是用来在Org3实体和网络的排序节点之间保障安全通讯的。</p> 
+  <p>.. code:: bash</p> 
+  <p>cd ../ &amp;&amp; cp -r crypto-config/ordererOrganizations org3-artifacts/crypto-config/</p> 
+  <p>现在我们准备更新通道配置…</p> 
+  <p>准备CLI环境 <br> <del>~</del>~~~~~~~</p> 
+  <p>更新处理过程使用配置解析工具 – <code>configtxlator</code> 。这工具提供一个不依赖SDK的无状态的REST API。 <br> 另外还提供一个CLI，用来在Fabric网络中简化配置任务。该工具可以方便在不同的等价数据表现/格式之间 <br> （在本例中是protobuf和JSON格式， Google Protocol Buffer简称protobuf，译者注）进行转换。另外， <br> 该工具可以基于两个通道配置之间的差异计算一个配置更新事务。</p> 
+  <p>首先，通过exec命令进入CLI容器。回想一下该容器已经被BYFN <code>crypto-config</code> 库程序加载，其允许我们 <br> 访问两个原始节点组织和排序组织（Orderer Org）的MSP资料。引导身份是Org1的管理员，意味着我们想作为 <br> Org2的任何一步操作都需要MSP明确的环境变量输出。</p> 
+  <p>.. code:: bash</p> 
+  <p>docker exec -it cli bash</p> 
+  <p>现在安装 <code>jq</code> 工具到容器中。该工具允许与由 <code>configtxlator</code> 工具返回的JSON文件进行脚本交互：</p> 
+  <p>.. code:: bash</p> 
+  <p>apt update &amp;&amp; apt install -y jq</p> 
+  <p>Export出 <code>ORDERER_CA</code> 和 <code>CHANNEL_NAME</code> 变量:</p> 
+  <p>.. code:: bash</p> 
+  <p>export ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem &amp;&amp; export CHANNEL_NAME=mychannel</p> 
+  <p>检查确认变量已经被正确设置：</p> 
+  <p>.. code:: bash</p> 
+  <p>echo <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-115-Frame" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><merror><mtext>ORDERER_CA&amp;#xA0;&amp;amp;&amp;amp;&amp;#xA0;echo</mtext></merror></math>" role="presentation" style="position: relative;"><span class="math" id="MathJax-Span-2503" style="" aria-hidden="true"><span class="noError" id="MathJax-Span-2504" style="display: inline-block;">ORDERER_CA&nbsp;&amp;&amp;&nbsp;echo</span></span><span class="MJX_Assistive_MathML" role="presentation">
+     <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <merror>
+       <mtext>
+        ORDERER_CA&nbsp;&amp;&amp;&nbsp;echo
+       </mtext>
+      </merror>
+     </math></span></span><script type="math/tex" id="MathJax-Element-115">ORDERER_CA && echo </script>CHANNEL_NAME</p> 
+  <p>.. note:: 如果因为任何原因你需要重启CLI容器，你也需要重新Export出两个环境变量 – <code>ORDERER_CA</code> <br> 和 <code>CHANNEL_NAME</code> 。jq安装会保留，无需再次安装它。</p> 
+  <p>读取配置 <br> <del>~</del>~~~~</p> 
+  <p>现在我们已经在CLI容器中定义好了两个变量 – <code>ORDERER_CA</code> 和 <code>CHANNEL_NAME</code> 。咱们开始读取 <br> 最新的通道（ <code>mychannel</code> ）配置区块。</p> 
+  <p>之所以我们拿最新版本的配置，是因为通道配置元素是版本区分的。版本化在几个方面表现很重要。首先，版本化防 <br> 止配置更新重复或者重现（例如：回退一个使用旧的CRL的通道配置意味着安全风险）。 其次，版本化帮助确保并发（例 <br> 如：在添加了一个新的组织Org之后，如果你想从你的通道中删除一个组织Org，版本化将帮助你防止一起删除这两个 <br> 组织Org，而是只删除你想要删除的那个组织Org）。</p> 
+  <p>.. code:: bash</p> 
+  <p>peer channel fetch config config_block.pb -o orderer.example.com:7050 -c <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-116-Frame" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><mi>C</mi><mi>H</mi><mi>A</mi><mi>N</mi><mi>N</mi><mi>E</mi><msub><mi>L</mi><mi>N</mi></msub><mi>A</mi><mi>M</mi><mi>E</mi><mo>&amp;#x2212;</mo><mo>&amp;#x2212;</mo><mi>t</mi><mi>l</mi><mi>s</mi><mo>&amp;#x2212;</mo><mo>&amp;#x2212;</mo><mi>c</mi><mi>a</mi><mi>f</mi><mi>i</mi><mi>l</mi><mi>e</mi></math>" role="presentation" style="position: relative;">
+    <nobr aria-hidden="true">
+     <span class="math" id="MathJax-Span-2505" style="width: 17.398em; display: inline-block;"><span style="display: inline-block; position: relative; width: 14.482em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.669em, 1014.43em, 2.867em, -999.997em); top: -2.497em; left: 0em;"><span class="mrow" id="MathJax-Span-2506"><span class="mi" id="MathJax-Span-2507" style="font-family: STIXGeneral-Italic;">C<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="mi" id="MathJax-Span-2508" style="font-family: STIXGeneral-Italic;">H<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.055em;"></span></span><span class="mi" id="MathJax-Span-2509" style="font-family: STIXGeneral-Italic;">A</span><span class="mi" id="MathJax-Span-2510" style="font-family: STIXGeneral-Italic;">N<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.055em;"></span></span><span class="mi" id="MathJax-Span-2511" style="font-family: STIXGeneral-Italic;">N<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.055em;"></span></span><span class="mi" id="MathJax-Span-2512" style="font-family: STIXGeneral-Italic;">E<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="msubsup" id="MathJax-Span-2513"><span style="display: inline-block; position: relative; width: 1.148em; height: 0px;"><span style="position: absolute; clip: rect(3.18em, 1000.58em, 4.169em, -999.997em); top: -4.008em; left: 0em;"><span class="mi" id="MathJax-Span-2514" style="font-family: STIXGeneral-Italic;">L<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span style="display: inline-block; width: 0px; height: 4.013em;"></span></span><span style="position: absolute; top: -3.852em; left: 0.576em;"><span class="mi" id="MathJax-Span-2515" style="font-size: 70.7%; font-family: STIXGeneral-Italic;">N<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.055em;"></span></span><span style="display: inline-block; width: 0px; height: 4.013em;"></span></span></span></span><span class="mi" id="MathJax-Span-2516" style="font-family: STIXGeneral-Italic;">A</span><span class="mi" id="MathJax-Span-2517" style="font-family: STIXGeneral-Italic;">M<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.055em;"></span></span><span class="mi" id="MathJax-Span-2518" style="font-family: STIXGeneral-Italic;">E<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="mo" id="MathJax-Span-2519" style="font-family: STIXGeneral-Regular; padding-left: 0.263em;">−</span><span class="mo" id="MathJax-Span-2520" style="font-family: STIXGeneral-Regular; padding-left: 0.263em;">−</span><span class="mi" id="MathJax-Span-2521" style="font-family: STIXGeneral-Italic;">t<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="mi" id="MathJax-Span-2522" style="font-family: STIXGeneral-Italic;">l<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="mi" id="MathJax-Span-2523" style="font-family: STIXGeneral-Italic;">s</span><span class="mo" id="MathJax-Span-2524" style="font-family: STIXGeneral-Regular; padding-left: 0.263em;">−</span><span class="mo" id="MathJax-Span-2525" style="font-family: STIXGeneral-Regular; padding-left: 0.263em;">−</span><span class="mi" id="MathJax-Span-2526" style="font-family: STIXGeneral-Italic;">c</span><span class="mi" id="MathJax-Span-2527" style="font-family: STIXGeneral-Italic;">a</span><span class="mi" id="MathJax-Span-2528" style="font-family: STIXGeneral-Italic;">f<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.159em;"></span></span><span class="mi" id="MathJax-Span-2529" style="font-family: STIXGeneral-Italic;">i</span><span class="mi" id="MathJax-Span-2530" style="font-family: STIXGeneral-Italic;">l<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="mi" id="MathJax-Span-2531" style="font-family: STIXGeneral-Italic;">e</span></span><span style="display: inline-block; width: 0px; height: 2.503em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.309em; border-left: 0px solid; width: 0px; height: 1.191em;"></span></span>
+    </nobr><span class="MJX_Assistive_MathML" role="presentation">
+     <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mi>
+       C
+      </mi>
+      <mi>
+       H
+      </mi>
+      <mi>
+       A
+      </mi>
+      <mi>
+       N
+      </mi>
+      <mi>
+       N
+      </mi>
+      <mi>
+       E
+      </mi>
+      <msub>
+       <mi>
+        L
+       </mi>
+       <mi>
+        N
+       </mi>
+      </msub>
+      <mi>
+       A
+      </mi>
+      <mi>
+       M
+      </mi>
+      <mi>
+       E
+      </mi>
+      <mo>
+       −
+      </mo>
+      <mo>
+       −
+      </mo>
+      <mi>
+       t
+      </mi>
+      <mi>
+       l
+      </mi>
+      <mi>
+       s
+      </mi>
+      <mo>
+       −
+      </mo>
+      <mo>
+       −
+      </mo>
+      <mi>
+       c
+      </mi>
+      <mi>
+       a
+      </mi>
+      <mi>
+       f
+      </mi>
+      <mi>
+       i
+      </mi>
+      <mi>
+       l
+      </mi>
+      <mi>
+       e
+      </mi>
+     </math></span></span><script type="math/tex" id="MathJax-Element-116">CHANNEL_NAME --tls --cafile </script>ORDERER_CA</p> 
+  <p>该命令保存二进制protobuf通道配置区块到 <code>config_block.pb</code> 文件。注意，你可以随意输入文件名和扩张名。 <br> 但是，建议遵循一个约定：其方便识别文件数据类型和编码格式（protobuf或者JSON）。</p> 
+  <p>当你运行 <code>peer channel fetch</code> 命令，在终端会有大量输出，日志中最后一行需要关注的是：</p> 
+  <p>.. code:: bash</p> 
+  <p>2017-11-07 17:17:57.383 UTC [channelCmd] readBlock -&gt; DEBU 011 Received block: 2</p> 
+  <p>这行日志告诉我们最新的 <code>mychannel</code> 配置区块实际上是区块2，<strong>不是</strong> 初始区块。默认情况下， <br> <code>peer channel fetch config</code> 命令返回指定通道的最 <strong>新</strong> 配置区块，在本例中是第三个区块。 <br> 这是因为BYFN脚本为 <code>Org1</code> 和 <code>Org2</code> 两个组织（在两个单独的通道更新交易）定义了锚节点。</p> 
+  <p>结果，我们有下列配置序列：</p> 
+  <ul> 
+   <li>区块 0: 初始区块</li> 
+   <li>区块 1: Org1锚节点更新</li> 
+   <li>区块 2: Org2锚节点更新</li> 
+  </ul> 
+  <p>转换配置内容到JSON格式，然后裁剪 <br> <del>~</del>~~~~~~~~~~~~~~~~~~~~~~~~~~</p> 
+  <p>现在我们使用 <code>configtxlator</code> 工具来解码通道配置区块成JSON格式（我们可以读和修改的格式） <br> 我们也必须去掉所有的header、metadata、创建者签名等和我们需要做的修改不相关的内容。我们通 <br> 过 <code>jq</code> 工具来完成该操作：</p> 
+  <p>.. code:: bash</p> 
+  <p>configtxlator proto_decode –input config_block.pb –type common.Block | jq .data.data[0].payload.data.config &gt; config.json</p> 
+  <p>这会给我们生成一个裁剪后的JSON对象 – <code>config.json</code> ，被放在 <code>first-network</code> 目录 <br> 下 <code>fabric-samples</code> 的文件夹中（其将用作我们配置更新的基准）。</p> 
+  <p>花一点时间在文件编辑器中打开这个文件（也可以在浏览器中打开）。即使你已经学习完该教材，也还 <br> 是值得去研究一下它，因为它解析了基础配置架构以及可以实施的其通道更新操作。我们会在 <br> :doc:<code>config_update</code> 中详细地讨论这些。</p> 
+  <p>添加Org3的加密资料 <br> <del>~</del>~~~~~~~~~~~~~</p> 
+  <p>.. note:: 不管你做哪种配置更新，你执行的步骤到目前为止基本上都是相同的。 在本教程，我们之 <br> 所以选择增加一个组织，因为这是你可以尝试操作的最复杂的通道配置更新。</p> 
+  <p>我们将再次使用 <code>jq</code> 工具来添加Org3的配置定义 – <code>org3.json</code> – 到通道的程序组域，然 <br> 后输出到文件 – <code>modified_config.json</code> 。</p> 
+  <p>.. code:: bash</p> 
+  <p>jq -s ‘.[0] * {“channel_group”:{“groups”:{“Application”:{“groups”: {“Org3MSP”:.[1]}}}}}’ config.json ./channel-artifacts/org3.json &gt; modified_config.json</p> 
+  <p>现在，在CLI容器中我们有两个需要关注的文件 – <code>config.json</code> 和 <code>modified_config.json</code> 。 <br> 初始文件内容只包括Org1和Org2资料，但是“修改后”的文件包括三个组织Org。在这一步，这是对两个JSON <br> 文件做一个简单的重新编码，计算方差。</p> 
+  <p>首先，翻译 <code>config.json</code> 成一个protobuf文件，文件名为 <code>config.pb</code>:</p> 
+  <p>.. code:: bash</p> 
+  <p>configtxlator proto_encode –input config.json –type common.Config –output config.pb</p> 
+  <p>接下来，编码 <code>modified_config.json</code> 成 <code>modified_config.pb</code>:</p> 
+  <p>.. code:: bash</p> 
+  <p>configtxlator proto_encode –input modified_config.json –type common.Config –output modified_config.pb</p> 
+  <p>现在使用 <code>configtxlator</code> 来计算这两个配置protobuf文件直接的方差delta。该命令将输入一个新的 <br> protobuf二进制文件叫 <code>org3_update.pb</code>:</p> 
+  <p>.. code:: bash</p> 
+  <p>configtxlator compute_update –channel_id $CHANNEL_NAME –original config.pb –updated modified_config.pb –output org3_update.pb</p> 
+  <p>这个新的proto文件 – <code>org3_update.pb</code> – 包含Org3定义和高标准关联指向Org1和Org2资料。 <br> 我们可以先不去想大量MSP资料和对Org1和Org2的修改策略信息，因为这个数据已经在通道的初始区块中展示 <br> 了。同样，我们只需要这两个配置之间的方差。</p> 
+  <p>在提交通道更新之前，我们需要完成最后几步。首先，让我们解码一下这个对象成可编辑的JSON格式并取名 <br> 为 <code>org3_update.json</code>:</p> 
+  <p>.. code:: bash</p> 
+  <p>configtxlator proto_decode –input org3_update.pb –type common.ConfigUpdate | jq . &gt; org3_update.json</p> 
+  <p>现在，我们有一个解码后的更新文件 – <code>org3_update.json</code> – 我们需要把它装入一个信封消息。 <br> 这一步将给回我们在之前去掉的header信息。我们取名这个文件叫 <code>org3_update_in_envelope.json</code>:</p> 
+  <p>.. code:: bash</p> 
+  <p>echo ‘{“payload”:{“header”:{“channel_header”:{“channel_id”:”mychannel”, “type”:2}},”data”:{“config_update”:’$(cat org3_update.json)’}}}’ | jq . &gt; org3_update_in_envelope.json</p> 
+  <p>使用我们正确的JSON文件 – <code>org3_update_in_envelope.json</code> – 我们将最后一次利用工具 <code>configtxlator</code> 来转换成Fabric要求的完全系列化格式的文件。我们将命名我们最后的更新对象为 <code>org3_update_in_envelope.pb</code> :</p> 
+  <p>.. code:: bash</p> 
+  <p>configtxlator proto_encode –input org3_update_in_envelope.json –type common.Envelope –output org3_update_in_envelope.pb</p> 
+  <p>签名和提交配置更新 <br> <del>~</del>~~~~~~~~~~~~</p> 
+  <p>到这差不多已经完成了！</p> 
+  <p>我们现在在我们的CLI容器中有一个系列化二进制文件 – <code>org3_update_in_envelope.pb</code> – 。 <br> 但是，在配置可以写到账本中之前，我们需要所有相关Admin用户的签名。我们的通道程序组修改策略 (mod_policy) <br> 被设置成默认值”MAJORITY”，意味着我们需要多数现存组织管理员去对它签名。因为我们只有两个组织 – <br> Org1 and Org2 – ，两个的多数就是两个，所以我们需要这两个组织的管理员都签名。没有这两个签名，排序服务将 <br> 会因为不满足策略二拒绝交易。</p> 
+  <p>首先，咱们让Org1管理员签名这个更新原型。记住，CLI容器启动时带有Org1 MSP资料，因此我们只需要简单执行 <br> <code>peer channel signconfigtx</code> 命令:</p> 
+  <p>.. code:: bash</p> 
+  <p>peer channel signconfigtx -f org3_update_in_envelope.pb</p> 
+  <p>最后一步是切换CLI容器的身份来反射Org2 Admin用户。 我们通过在Org2 MSP中设置四个环境变量来完成该操作。</p> 
+  <p>.. note:: 在组织之间轮流签名一个配置事务（或者做其他事情）不能算一个Fabric真实操作。一个当容器从来不会 <br> 存放一个整个网络的加密材料。相反，配置更新将需要安全地带外传递给一个Org2的Admin，以便检查和批 <br> 准同意。</p> 
+  <p>设置Org2环境变量:</p> 
+  <p>.. code:: bash</p> 
+  <p># you can issue all of these commands at once</p> 
+  <p>export CORE_PEER_LOCALMSPID=”Org2MSP”</p> 
+  <p>export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt</p> 
+  <p>export CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp</p> 
+  <p>export CORE_PEER_ADDRESS=peer0.org2.example.com:7051</p> 
+  <p>最后，你需要执行命令 <code>peer channel update</code> 。Org2管理员签名将在这次调用时一起被附带上，以至于不需要 <br> 人工再次签名这个系列化数据:</p> 
+  <p>.. note:: 接下来的排序服务的更新调用将经历一系列的系统签名和策略检查。因此，你可能会发现输出并检查排序节 <br> 点的日志将会很有用的。在另外一个Shell终端，执行一个命令 <code>docker logs -f orderer.example.com</code> <br> 可以用来显示他们。</p> 
+  <p>发送更新调用：</p> 
+  <p>.. code:: bash</p> 
+  <p>peer channel update -f org3_update_in_envelope.pb -c <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-117-Frame" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><mi>C</mi><mi>H</mi><mi>A</mi><mi>N</mi><mi>N</mi><mi>E</mi><msub><mi>L</mi><mi>N</mi></msub><mi>A</mi><mi>M</mi><mi>E</mi><mo>&amp;#x2212;</mo><mi>o</mi><mi>o</mi><mi>r</mi><mi>d</mi><mi>e</mi><mi>r</mi><mi>e</mi><mi>r</mi><mo>.</mo><mi>e</mi><mi>x</mi><mi>a</mi><mi>m</mi><mi>p</mi><mi>l</mi><mi>e</mi><mo>.</mo><mi>c</mi><mi>o</mi><mi>m</mi><mo>:</mo><mn>7050</mn><mo>&amp;#x2212;</mo><mo>&amp;#x2212;</mo><mi>t</mi><mi>l</mi><mi>s</mi><mo>&amp;#x2212;</mo><mo>&amp;#x2212;</mo><mi>c</mi><mi>a</mi><mi>f</mi><mi>i</mi><mi>l</mi><mi>e</mi></math>" role="presentation" style="position: relative;">
+    <nobr aria-hidden="true">
+     <span class="math" id="MathJax-Span-2532" style="width: 33.753em; display: inline-block;"><span style="display: inline-block; position: relative; width: 28.128em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.669em, 1028.08em, 2.867em, -999.997em); top: -2.497em; left: 0em;"><span class="mrow" id="MathJax-Span-2533"><span class="mi" id="MathJax-Span-2534" style="font-family: STIXGeneral-Italic;">C<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="mi" id="MathJax-Span-2535" style="font-family: STIXGeneral-Italic;">H<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.055em;"></span></span><span class="mi" id="MathJax-Span-2536" style="font-family: STIXGeneral-Italic;">A</span><span class="mi" id="MathJax-Span-2537" style="font-family: STIXGeneral-Italic;">N<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.055em;"></span></span><span class="mi" id="MathJax-Span-2538" style="font-family: STIXGeneral-Italic;">N<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.055em;"></span></span><span class="mi" id="MathJax-Span-2539" style="font-family: STIXGeneral-Italic;">E<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="msubsup" id="MathJax-Span-2540"><span style="display: inline-block; position: relative; width: 1.148em; height: 0px;"><span style="position: absolute; clip: rect(3.18em, 1000.58em, 4.169em, -999.997em); top: -4.008em; left: 0em;"><span class="mi" id="MathJax-Span-2541" style="font-family: STIXGeneral-Italic;">L<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span style="display: inline-block; width: 0px; height: 4.013em;"></span></span><span style="position: absolute; top: -3.852em; left: 0.576em;"><span class="mi" id="MathJax-Span-2542" style="font-size: 70.7%; font-family: STIXGeneral-Italic;">N<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.055em;"></span></span><span style="display: inline-block; width: 0px; height: 4.013em;"></span></span></span></span><span class="mi" id="MathJax-Span-2543" style="font-family: STIXGeneral-Italic;">A</span><span class="mi" id="MathJax-Span-2544" style="font-family: STIXGeneral-Italic;">M<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.055em;"></span></span><span class="mi" id="MathJax-Span-2545" style="font-family: STIXGeneral-Italic;">E<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="mo" id="MathJax-Span-2546" style="font-family: STIXGeneral-Regular; padding-left: 0.263em;">−</span><span class="mi" id="MathJax-Span-2547" style="font-family: STIXGeneral-Italic; padding-left: 0.263em;">o</span><span class="mi" id="MathJax-Span-2548" style="font-family: STIXGeneral-Italic;">o</span><span class="mi" id="MathJax-Span-2549" style="font-family: STIXGeneral-Italic;">r<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="mi" id="MathJax-Span-2550" style="font-family: STIXGeneral-Italic;">d<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.055em;"></span></span><span class="mi" id="MathJax-Span-2551" style="font-family: STIXGeneral-Italic;">e</span><span class="mi" id="MathJax-Span-2552" style="font-family: STIXGeneral-Italic;">r<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="mi" id="MathJax-Span-2553" style="font-family: STIXGeneral-Italic;">e</span><span class="mi" id="MathJax-Span-2554" style="font-family: STIXGeneral-Italic;">r<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="mo" id="MathJax-Span-2555" style="font-family: STIXGeneral-Regular;">.</span><span class="mi" id="MathJax-Span-2556" style="font-family: STIXGeneral-Italic; padding-left: 0.211em;">e</span><span class="mi" id="MathJax-Span-2557" style="font-family: STIXGeneral-Italic;">x<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="mi" id="MathJax-Span-2558" style="font-family: STIXGeneral-Italic;">a</span><span class="mi" id="MathJax-Span-2559" style="font-family: STIXGeneral-Italic;">m</span><span class="mi" id="MathJax-Span-2560" style="font-family: STIXGeneral-Italic;">p</span><span class="mi" id="MathJax-Span-2561" style="font-family: STIXGeneral-Italic;">l<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="mi" id="MathJax-Span-2562" style="font-family: STIXGeneral-Italic;">e</span><span class="mo" id="MathJax-Span-2563" style="font-family: STIXGeneral-Regular;">.</span><span class="mi" id="MathJax-Span-2564" style="font-family: STIXGeneral-Italic; padding-left: 0.211em;">c</span><span class="mi" id="MathJax-Span-2565" style="font-family: STIXGeneral-Italic;">o</span><span class="mi" id="MathJax-Span-2566" style="font-family: STIXGeneral-Italic;">m</span><span class="mo" id="MathJax-Span-2567" style="font-family: STIXGeneral-Regular; padding-left: 0.315em;">:</span><span class="mn" id="MathJax-Span-2568" style="font-family: STIXGeneral-Regular; padding-left: 0.315em;">7050</span><span class="mo" id="MathJax-Span-2569" style="font-family: STIXGeneral-Regular; padding-left: 0.263em;">−</span><span class="mo" id="MathJax-Span-2570" style="font-family: STIXGeneral-Regular; padding-left: 0.263em;">−</span><span class="mi" id="MathJax-Span-2571" style="font-family: STIXGeneral-Italic;">t<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="mi" id="MathJax-Span-2572" style="font-family: STIXGeneral-Italic;">l<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="mi" id="MathJax-Span-2573" style="font-family: STIXGeneral-Italic;">s</span><span class="mo" id="MathJax-Span-2574" style="font-family: STIXGeneral-Regular; padding-left: 0.263em;">−</span><span class="mo" id="MathJax-Span-2575" style="font-family: STIXGeneral-Regular; padding-left: 0.263em;">−</span><span class="mi" id="MathJax-Span-2576" style="font-family: STIXGeneral-Italic;">c</span><span class="mi" id="MathJax-Span-2577" style="font-family: STIXGeneral-Italic;">a</span><span class="mi" id="MathJax-Span-2578" style="font-family: STIXGeneral-Italic;">f<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.159em;"></span></span><span class="mi" id="MathJax-Span-2579" style="font-family: STIXGeneral-Italic;">i</span><span class="mi" id="MathJax-Span-2580" style="font-family: STIXGeneral-Italic;">l<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="mi" id="MathJax-Span-2581" style="font-family: STIXGeneral-Italic;">e</span></span><span style="display: inline-block; width: 0px; height: 2.503em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.309em; border-left: 0px solid; width: 0px; height: 1.191em;"></span></span>
+    </nobr><span class="MJX_Assistive_MathML" role="presentation">
+     <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mi>
+       C
+      </mi>
+      <mi>
+       H
+      </mi>
+      <mi>
+       A
+      </mi>
+      <mi>
+       N
+      </mi>
+      <mi>
+       N
+      </mi>
+      <mi>
+       E
+      </mi>
+      <msub>
+       <mi>
+        L
+       </mi>
+       <mi>
+        N
+       </mi>
+      </msub>
+      <mi>
+       A
+      </mi>
+      <mi>
+       M
+      </mi>
+      <mi>
+       E
+      </mi>
+      <mo>
+       −
+      </mo>
+      <mi>
+       o
+      </mi>
+      <mi>
+       o
+      </mi>
+      <mi>
+       r
+      </mi>
+      <mi>
+       d
+      </mi>
+      <mi>
+       e
+      </mi>
+      <mi>
+       r
+      </mi>
+      <mi>
+       e
+      </mi>
+      <mi>
+       r
+      </mi>
+      <mo>
+       .
+      </mo>
+      <mi>
+       e
+      </mi>
+      <mi>
+       x
+      </mi>
+      <mi>
+       a
+      </mi>
+      <mi>
+       m
+      </mi>
+      <mi>
+       p
+      </mi>
+      <mi>
+       l
+      </mi>
+      <mi>
+       e
+      </mi>
+      <mo>
+       .
+      </mo>
+      <mi>
+       c
+      </mi>
+      <mi>
+       o
+      </mi>
+      <mi>
+       m
+      </mi>
+      <mo>
+       :
+      </mo>
+      <mn>
+       7050
+      </mn>
+      <mo>
+       −
+      </mo>
+      <mo>
+       −
+      </mo>
+      <mi>
+       t
+      </mi>
+      <mi>
+       l
+      </mi>
+      <mi>
+       s
+      </mi>
+      <mo>
+       −
+      </mo>
+      <mo>
+       −
+      </mo>
+      <mi>
+       c
+      </mi>
+      <mi>
+       a
+      </mi>
+      <mi>
+       f
+      </mi>
+      <mi>
+       i
+      </mi>
+      <mi>
+       l
+      </mi>
+      <mi>
+       e
+      </mi>
+     </math></span></span><script type="math/tex" id="MathJax-Element-117">CHANNEL_NAME -o orderer.example.com:7050 --tls --cafile </script>ORDERER_CA</p> 
+  <p>如果你的更新被成功提交，你应该可以看到一个类似下面的消息摘要信息：</p> 
+  <p>.. code:: bash</p> 
+  <p>2018-02-24 18:56:33.499 UTC [msp/identity] Sign -&gt; DEBU 00f Sign: digest: 3207B24E40DE2FAB87A2E42BC004FEAA1E6FDCA42977CB78C64F05A88E556ABA</p> 
+  <p>你也将看到我们配置交易的提交信息：</p> 
+  <p>.. code:: bash</p> 
+  <p>2018-02-24 18:56:33.499 UTC [channelCmd] update -&gt; INFO 010 Successfully submitted channel update</p> 
+  <p>该成功的通道更新调用返回一个新的区块 – 区块 5 – 到通道上所有的节点。如果你记得， <br> 区块0-2是初始化通道配置区块，而区块3和区块4分别是实例化以及调用 <code>mycc</code> 链码。同理，区块5是由最近的有关Org3 <br> 的通道配置更新生成的，该配置更新使得Org3现在已经定义在通道上了。</p> 
+  <p>查看有关 <code>peer0.org1.example.com</code> 日志信息 :</p> 
+  <p>.. code:: bash</p> 
+  <pre><code>  docker logs -f peer0.org1.example.com
+</code></pre> 
+  <p>如果你想查看其内容，按照演示流程获取并解码新的配置区块。</p> 
+  <p>配置领导者选举 <br> <del>~</del>~~~~~~~~</p> 
+  <p>.. note:: 在初始通道配置完成后将组织添加到网络时，该章节被引入作为一个一般参考，用来 <br> 理解领导者选举设置。在本例中的 <code>peer-base.yaml</code> 中的所有网络节点被默认设置为动 <br> 态领导者选举。</p> 
+  <p>新加入的节点都是以原始区块启动，其不含正要被加入到通道配置更新的组织信息。因此新节点不能利用 <br> gossip通讯，因为他们不能验证其他节点从他们自己组织转发过来的区块，直到他们拿到把其组织加入到 <br> 通道的配置事务。新增加的节点因此必须有下面配置中的其中一个，这样他们才可以接受从培训服务发来 <br> 的区块：</p> 
+  <ol> 
+   <li>使用静态领导者模式，配置该节点为一个组织的领导：</li> 
+  </ol> 
+  <p>::</p> 
+  <pre><code>CORE_PEER_GOSSIP_USELEADERELECTION=false
+CORE_PEER_GOSSIP_ORGLEADER=true
+</code></pre> 
+  <p>.. note:: 这个配置必须对加入到该通道中的所有新节点都一样。</p> 
+  <ol> 
+   <li>使用动态领导者选举，配置该节点成使用领导者选举：</li> 
+  </ol> 
+  <p>::</p> 
+  <pre><code>CORE_PEER_GOSSIP_USELEADERELECTION=true
+CORE_PEER_GOSSIP_ORGLEADER=false
+</code></pre> 
+  <p>.. note:: 因为新增加的组织中的节点不能产生成员视图，该选项类似于静态配置，因为每个 <br> 节点将宣布自己为领导者。然后，一旦他们获得增加该组织到通道的配置事务的更 <br> 新，他们将成为该组织的唯一合法领导者。因此，如果你最终想该组织的所有节点 <br> 使用领导选举，推荐使用该选项。</p> 
+  <p>把Org3加入到通道 <br> <del>~</del>~~~~~~~~~~~~</p> 
+  <p>这时候，通道配置已经被更新至包含我们新的组织 – <code>Org3</code> – ，意味着所有与之相关的节 <br> 点都能加入 <code>mychannel</code> 。</p> 
+  <p>首先，咱们启动Org3的节点容器和一个Org3相对应的CLI容器。</p> 
+  <p>打开一个新的终端，进入到 <code>first-network</code> 目录，并启动Org3的 docker compose:</p> 
+  <p>.. code:: bash</p> 
+  <p>docker-compose -f docker-compose-org3.yaml up -d</p> 
+  <p>这个新的compose文件已经被配置为我们初始网络的桥接。因此这两个节点和CLI容器将能够与现存 <br> 的节点和排序节点一起解决问题。现在三个容器同时在运行，exec进入Org3相对应的CLI容器：</p> 
+  <p>.. code:: bash</p> 
+  <p>docker exec -it Org3cli bash</p> 
+  <p>只按照我们在初始CLI容器中所做的一样，export这两个关键环境变量： <code>ORDERER_CA</code> 和 <br> <code>CHANNEL_NAME</code>:</p> 
+  <p>.. code:: bash</p> 
+  <p>export ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem &amp;&amp; export CHANNEL_NAME=mychannel</p> 
+  <p>检查确保这些变量已经被正确设置：</p> 
+  <p>.. code:: bash</p> 
+  <p>echo <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-118-Frame" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><merror><mtext>ORDERER_CA&amp;#xA0;&amp;amp;&amp;amp;&amp;#xA0;echo</mtext></merror></math>" role="presentation" style="position: relative;"><span class="math" id="MathJax-Span-2582" aria-hidden="true" style=""><span class="noError" id="MathJax-Span-2583" style="display: inline-block;">ORDERER_CA&nbsp;&amp;&amp;&nbsp;echo</span></span><span class="MJX_Assistive_MathML" role="presentation">
+     <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <merror>
+       <mtext>
+        ORDERER_CA&nbsp;&amp;&amp;&nbsp;echo
+       </mtext>
+      </merror>
+     </math></span></span><script type="math/tex" id="MathJax-Element-118">ORDERER_CA && echo </script>CHANNEL_NAME</p> 
+  <p>现在让我们发送一个调用到排序服务查看 <code>mychannel</code> 的原始区块。因为我们成功更新 <br> 了通道，所以排序服务能够验证这次调用附带的Org3签名。如果Org3没有成功加入到通道配 <br> 置中，排序服务将拒绝这次请求。</p> 
+  <p>.. note:: 再次说明，你可能发现打印出排序节点的日志很有用，可以显示签名/验证逻辑， <br> 以及策略检查。</p> 
+  <p>使用命令 <code>peer channel fetch</code> 来检索该区块：</p> 
+  <p>.. code:: bash</p> 
+  <p>peer channel fetch 0 mychannel.block -o orderer.example.com:7050 -c <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-119-Frame" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><mi>C</mi><mi>H</mi><mi>A</mi><mi>N</mi><mi>N</mi><mi>E</mi><msub><mi>L</mi><mi>N</mi></msub><mi>A</mi><mi>M</mi><mi>E</mi><mo>&amp;#x2212;</mo><mo>&amp;#x2212;</mo><mi>t</mi><mi>l</mi><mi>s</mi><mo>&amp;#x2212;</mo><mo>&amp;#x2212;</mo><mi>c</mi><mi>a</mi><mi>f</mi><mi>i</mi><mi>l</mi><mi>e</mi></math>" role="presentation" style="position: relative;">
+    <nobr aria-hidden="true">
+     <span class="math" id="MathJax-Span-2584" style="width: 17.398em; display: inline-block;"><span style="display: inline-block; position: relative; width: 14.482em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.669em, 1014.43em, 2.867em, -999.997em); top: -2.497em; left: 0em;"><span class="mrow" id="MathJax-Span-2585"><span class="mi" id="MathJax-Span-2586" style="font-family: STIXGeneral-Italic;">C<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="mi" id="MathJax-Span-2587" style="font-family: STIXGeneral-Italic;">H<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.055em;"></span></span><span class="mi" id="MathJax-Span-2588" style="font-family: STIXGeneral-Italic;">A</span><span class="mi" id="MathJax-Span-2589" style="font-family: STIXGeneral-Italic;">N<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.055em;"></span></span><span class="mi" id="MathJax-Span-2590" style="font-family: STIXGeneral-Italic;">N<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.055em;"></span></span><span class="mi" id="MathJax-Span-2591" style="font-family: STIXGeneral-Italic;">E<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="msubsup" id="MathJax-Span-2592"><span style="display: inline-block; position: relative; width: 1.148em; height: 0px;"><span style="position: absolute; clip: rect(3.18em, 1000.58em, 4.169em, -999.997em); top: -4.008em; left: 0em;"><span class="mi" id="MathJax-Span-2593" style="font-family: STIXGeneral-Italic;">L<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span style="display: inline-block; width: 0px; height: 4.013em;"></span></span><span style="position: absolute; top: -3.852em; left: 0.576em;"><span class="mi" id="MathJax-Span-2594" style="font-size: 70.7%; font-family: STIXGeneral-Italic;">N<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.055em;"></span></span><span style="display: inline-block; width: 0px; height: 4.013em;"></span></span></span></span><span class="mi" id="MathJax-Span-2595" style="font-family: STIXGeneral-Italic;">A</span><span class="mi" id="MathJax-Span-2596" style="font-family: STIXGeneral-Italic;">M<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.055em;"></span></span><span class="mi" id="MathJax-Span-2597" style="font-family: STIXGeneral-Italic;">E<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="mo" id="MathJax-Span-2598" style="font-family: STIXGeneral-Regular; padding-left: 0.263em;">−</span><span class="mo" id="MathJax-Span-2599" style="font-family: STIXGeneral-Regular; padding-left: 0.263em;">−</span><span class="mi" id="MathJax-Span-2600" style="font-family: STIXGeneral-Italic;">t<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="mi" id="MathJax-Span-2601" style="font-family: STIXGeneral-Italic;">l<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="mi" id="MathJax-Span-2602" style="font-family: STIXGeneral-Italic;">s</span><span class="mo" id="MathJax-Span-2603" style="font-family: STIXGeneral-Regular; padding-left: 0.263em;">−</span><span class="mo" id="MathJax-Span-2604" style="font-family: STIXGeneral-Regular; padding-left: 0.263em;">−</span><span class="mi" id="MathJax-Span-2605" style="font-family: STIXGeneral-Italic;">c</span><span class="mi" id="MathJax-Span-2606" style="font-family: STIXGeneral-Italic;">a</span><span class="mi" id="MathJax-Span-2607" style="font-family: STIXGeneral-Italic;">f<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.159em;"></span></span><span class="mi" id="MathJax-Span-2608" style="font-family: STIXGeneral-Italic;">i</span><span class="mi" id="MathJax-Span-2609" style="font-family: STIXGeneral-Italic;">l<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="mi" id="MathJax-Span-2610" style="font-family: STIXGeneral-Italic;">e</span></span><span style="display: inline-block; width: 0px; height: 2.503em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.309em; border-left: 0px solid; width: 0px; height: 1.191em;"></span></span>
+    </nobr><span class="MJX_Assistive_MathML" role="presentation">
+     <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mi>
+       C
+      </mi>
+      <mi>
+       H
+      </mi>
+      <mi>
+       A
+      </mi>
+      <mi>
+       N
+      </mi>
+      <mi>
+       N
+      </mi>
+      <mi>
+       E
+      </mi>
+      <msub>
+       <mi>
+        L
+       </mi>
+       <mi>
+        N
+       </mi>
+      </msub>
+      <mi>
+       A
+      </mi>
+      <mi>
+       M
+      </mi>
+      <mi>
+       E
+      </mi>
+      <mo>
+       −
+      </mo>
+      <mo>
+       −
+      </mo>
+      <mi>
+       t
+      </mi>
+      <mi>
+       l
+      </mi>
+      <mi>
+       s
+      </mi>
+      <mo>
+       −
+      </mo>
+      <mo>
+       −
+      </mo>
+      <mi>
+       c
+      </mi>
+      <mi>
+       a
+      </mi>
+      <mi>
+       f
+      </mi>
+      <mi>
+       i
+      </mi>
+      <mi>
+       l
+      </mi>
+      <mi>
+       e
+      </mi>
+     </math></span></span><script type="math/tex" id="MathJax-Element-119">CHANNEL_NAME --tls --cafile </script>ORDERER_CA</p> 
+  <p>注意，我们正传递一个 <code>0</code> 用来表示我们想获取该通道的账本的第一个区块（也称之为原始区块）。如果我们只是传递命令 <br> <code>peer channel fetch config</code> ，那么我们将接受到区块5 – Org3定义的更新后配置。然而我们不能从下游区块开始我们账本，我们必须从区块0开始。</p> 
+  <p>执行命令 <code>peer channel join</code> 并传递原始区块 – <code>mychannel.block</code>:</p> 
+  <p>.. code:: bash</p> 
+  <p>peer channel join -b mychannel.block</p> 
+  <p>如果你想为Org3加入第二个节点，export出 <code>TLS</code> 和 <code>ADDRESS</code> 变量，再执行命令： <code>peer channel join command</code>:</p> 
+  <p>.. code:: bash</p> 
+  <p>export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org3.example.com/peers/peer1.org3.example.com/tls/ca.crt &amp;&amp; export CORE_PEER_ADDRESS=peer1.org3.example.com:7051</p> 
+  <p>peer channel join -b mychannel.block</p> 
+  <p>Upgrade and Invoke Chaincode <br> <del>~</del>~~~~~~~~~~~~~~~~~~~~~~~</p> 
+  <p>The final piece of the puzzle is to increment the chaincode version and update <br> the endorsement policy to include Org3. Since we know that an upgrade is coming, <br> we can forgo the futile exercise of installing version 1 of the chaincode. We <br> are solely concerned with the new version where Org3 will be part of the <br> endorsement policy, therefore we’ll jump directly to version 2 of the chaincode.</p> 
+  <p>From the Org3 CLI:</p> 
+  <p>.. code:: bash</p> 
+  <p>peer chaincode install -n mycc -v 2.0 -p github.com/chaincode/chaincode_example02/go/</p> 
+  <p>Modify the environment variables accordingly and reissue the command if you want to <br> install the chaincode on the second peer of Org3. Note that a second installation is <br> not mandated, as you only need to install chaincode on peers that are going to serve as <br> endorsers or otherwise interface with the ledger (i.e. query only). Peers will <br> still run the validation logic and serve as committers without a running chaincode <br> container.</p> 
+  <p>Now jump back to the <strong>original</strong> CLI container and install the new version on the <br> Org1 and Org2 peers. We submitted the channel update call with the Org2 admin <br> identity, so the container is still acting on behalf of <code>peer0.org2</code>:</p> 
+  <p>.. code:: bash</p> 
+  <p>peer chaincode install -n mycc -v 2.0 -p github.com/chaincode/chaincode_example02/go/</p> 
+  <p>Flip to the <code>peer0.org1</code> identity:</p> 
+  <p>.. code:: bash</p> 
+  <p>export CORE_PEER_LOCALMSPID=”Org1MSP”</p> 
+  <p>export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt</p> 
+  <p>export CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp</p> 
+  <p>export CORE_PEER_ADDRESS=peer0.org1.example.com:7051</p> 
+  <p>And install again:</p> 
+  <p>.. code:: bash</p> 
+  <p>peer chaincode install -n mycc -v 2.0 -p github.com/chaincode/chaincode_example02/go/</p> 
+  <p>Now we’re ready to upgrade the chaincode. There have been no modifications to <br> the underlying source code, we are simply adding Org3 to the endorsement policy for <br> a chaincode – <code>mycc</code> – on <code>mychannel</code>.</p> 
+  <p>.. note:: Any identity satisfying the chaincode’s instantiation policy can issue <br> the upgrade call. By default, these identities are the channel Admins.</p> 
+  <p>Send the call:</p> 
+  <p>.. code:: bash</p> 
+  <p>peer chaincode upgrade -o orderer.example.com:7050 –tls <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-120-Frame" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><mi>C</mi><mi>O</mi><mi>R</mi><msub><mi>E</mi><mi>P</mi></msub><mi>E</mi><mi>E</mi><msub><mi>R</mi><mi>T</mi></msub><mi>L</mi><msub><mi>S</mi><mi>E</mi></msub><mi>N</mi><mi>A</mi><mi>B</mi><mi>L</mi><mi>E</mi><mi>D</mi><mo>&amp;#x2212;</mo><mo>&amp;#x2212;</mo><mi>c</mi><mi>a</mi><mi>f</mi><mi>i</mi><mi>l</mi><mi>e</mi></math>" role="presentation" style="position: relative;">
+    <nobr aria-hidden="true">
+     <span class="math" id="MathJax-Span-2611" style="width: 18.232em; display: inline-block;"><span style="display: inline-block; position: relative; width: 15.159em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.669em, 1015.11em, 2.867em, -999.997em); top: -2.497em; left: 0em;"><span class="mrow" id="MathJax-Span-2612"><span class="mi" id="MathJax-Span-2613" style="font-family: STIXGeneral-Italic;">C<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="mi" id="MathJax-Span-2614" style="font-family: STIXGeneral-Italic;">O</span><span class="mi" id="MathJax-Span-2615" style="font-family: STIXGeneral-Italic;">R</span><span class="msubsup" id="MathJax-Span-2616"><span style="display: inline-block; position: relative; width: 1.096em; height: 0px;"><span style="position: absolute; clip: rect(3.18em, 1000.63em, 4.169em, -999.997em); top: -4.008em; left: 0em;"><span class="mi" id="MathJax-Span-2617" style="font-family: STIXGeneral-Italic;">E<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span style="display: inline-block; width: 0px; height: 4.013em;"></span></span><span style="position: absolute; top: -3.852em; left: 0.628em;"><span class="mi" id="MathJax-Span-2618" style="font-size: 70.7%; font-family: STIXGeneral-Italic;">P</span><span style="display: inline-block; width: 0px; height: 4.013em;"></span></span></span></span><span class="mi" id="MathJax-Span-2619" style="font-family: STIXGeneral-Italic;">E<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="mi" id="MathJax-Span-2620" style="font-family: STIXGeneral-Italic;">E<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="msubsup" id="MathJax-Span-2621"><span style="display: inline-block; position: relative; width: 1.148em; height: 0px;"><span style="position: absolute; clip: rect(3.18em, 1000.58em, 4.169em, -999.997em); top: -4.008em; left: 0em;"><span class="mi" id="MathJax-Span-2622" style="font-family: STIXGeneral-Italic;">R</span><span style="display: inline-block; width: 0px; height: 4.013em;"></span></span><span style="position: absolute; top: -3.852em; left: 0.628em;"><span class="mi" id="MathJax-Span-2623" style="font-size: 70.7%; font-family: STIXGeneral-Italic;">T<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.055em;"></span></span><span style="display: inline-block; width: 0px; height: 4.013em;"></span></span></span></span><span class="mi" id="MathJax-Span-2624" style="font-family: STIXGeneral-Italic;">L<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="msubsup" id="MathJax-Span-2625"><span style="display: inline-block; position: relative; width: 1.044em; height: 0px;"><span style="position: absolute; clip: rect(3.18em, 1000.52em, 4.169em, -999.997em); top: -4.008em; left: 0em;"><span class="mi" id="MathJax-Span-2626" style="font-family: STIXGeneral-Italic;">S<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span style="display: inline-block; width: 0px; height: 4.013em;"></span></span><span style="position: absolute; top: -3.852em; left: 0.523em;"><span class="mi" id="MathJax-Span-2627" style="font-size: 70.7%; font-family: STIXGeneral-Italic;">E<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span style="display: inline-block; width: 0px; height: 4.013em;"></span></span></span></span><span class="mi" id="MathJax-Span-2628" style="font-family: STIXGeneral-Italic;">N<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.055em;"></span></span><span class="mi" id="MathJax-Span-2629" style="font-family: STIXGeneral-Italic;">A</span><span class="mi" id="MathJax-Span-2630" style="font-family: STIXGeneral-Italic;">B</span><span class="mi" id="MathJax-Span-2631" style="font-family: STIXGeneral-Italic;">L<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="mi" id="MathJax-Span-2632" style="font-family: STIXGeneral-Italic;">E<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="mi" id="MathJax-Span-2633" style="font-family: STIXGeneral-Italic;">D</span><span class="mo" id="MathJax-Span-2634" style="font-family: STIXGeneral-Regular; padding-left: 0.263em;">−</span><span class="mo" id="MathJax-Span-2635" style="font-family: STIXGeneral-Regular; padding-left: 0.263em;">−</span><span class="mi" id="MathJax-Span-2636" style="font-family: STIXGeneral-Italic;">c</span><span class="mi" id="MathJax-Span-2637" style="font-family: STIXGeneral-Italic;">a</span><span class="mi" id="MathJax-Span-2638" style="font-family: STIXGeneral-Italic;">f<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.159em;"></span></span><span class="mi" id="MathJax-Span-2639" style="font-family: STIXGeneral-Italic;">i</span><span class="mi" id="MathJax-Span-2640" style="font-family: STIXGeneral-Italic;">l<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="mi" id="MathJax-Span-2641" style="font-family: STIXGeneral-Italic;">e</span></span><span style="display: inline-block; width: 0px; height: 2.503em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.309em; border-left: 0px solid; width: 0px; height: 1.191em;"></span></span>
+    </nobr><span class="MJX_Assistive_MathML" role="presentation">
+     <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mi>
+       C
+      </mi>
+      <mi>
+       O
+      </mi>
+      <mi>
+       R
+      </mi>
+      <msub>
+       <mi>
+        E
+       </mi>
+       <mi>
+        P
+       </mi>
+      </msub>
+      <mi>
+       E
+      </mi>
+      <mi>
+       E
+      </mi>
+      <msub>
+       <mi>
+        R
+       </mi>
+       <mi>
+        T
+       </mi>
+      </msub>
+      <mi>
+       L
+      </mi>
+      <msub>
+       <mi>
+        S
+       </mi>
+       <mi>
+        E
+       </mi>
+      </msub>
+      <mi>
+       N
+      </mi>
+      <mi>
+       A
+      </mi>
+      <mi>
+       B
+      </mi>
+      <mi>
+       L
+      </mi>
+      <mi>
+       E
+      </mi>
+      <mi>
+       D
+      </mi>
+      <mo>
+       −
+      </mo>
+      <mo>
+       −
+      </mo>
+      <mi>
+       c
+      </mi>
+      <mi>
+       a
+      </mi>
+      <mi>
+       f
+      </mi>
+      <mi>
+       i
+      </mi>
+      <mi>
+       l
+      </mi>
+      <mi>
+       e
+      </mi>
+     </math></span></span><script type="math/tex" id="MathJax-Element-120">CORE_PEER_TLS_ENABLED --cafile </script>ORDERER_CA -C $CHANNEL_NAME -n mycc -v 2.0 -c ‘{“Args”:[“init”,”a”,”90”,”b”,”210”]}’ -P “OR (‘Org1MSP.peer’,’Org2MSP.peer’,’Org3MSP.peer’)”</p> 
+  <p>You can see in the above command that we are specifying our new version by means <br> of the <code>v</code> flag. You can also see that the endorsement policy has been modified to <br> <code>-P "OR ('Org1MSP.peer','Org2MSP.peer','Org3MSP.peer')"</code>, reflecting the <br> addition of Org3 to the policy. The final area of interest is our constructor <br> request (specified with the <code>c</code> flag).</p> 
+  <p>As with an instantiate call, a chaincode upgrade requires usage of the <code>init</code> <br> method. <strong>If</strong> your chaincode requires arguments be passed to the <code>init</code> method, <br> then you will need to do so here.</p> 
+  <p>The upgrade call adds a new block – block 6 – to the channel’s ledger and allows <br> for the Org3 peers to execute transactions during the endorsement phase. Hop <br> back to the Org3 CLI container and issue a query for the value of <code>a</code>. This will <br> take a bit of time because a chaincode image needs to be built for the targeted peer, <br> and the container needs to start:</p> 
+  <p>.. code:: bash</p> 
+  <pre><code>peer chaincode query -C $CHANNEL_NAME -n mycc -c '{"Args":["query","a"]}'
+</code></pre> 
+  <p>We should see a response of <code>Query Result: 90</code>.</p> 
+  <p>Now issue an invocation to move <code>10</code> from <code>a</code> to <code>b</code>:</p> 
+  <p>.. code:: bash</p> 
+  <pre><code>peer chaincode invoke -o orderer.example.com:7050  --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n mycc -c '{"Args":["invoke","a","b","10"]}'
+</code></pre> 
+  <p>Query one final time:</p> 
+  <p>.. code:: bash</p> 
+  <pre><code>peer chaincode query -C $CHANNEL_NAME -n mycc -c '{"Args":["query","a"]}'
+</code></pre> 
+  <p>We should see a response of <code>Query Result: 80</code>, accurately reflecting the <br> update of this chaincode’s world state.</p> 
+  <p>Conclusion <br> <del>~</del>~~~~~</p> 
+  <p>The channel configuration update process is indeed quite involved, but there is a <br> logical method to the various steps. The endgame is to form a delta transaction object <br> represented in protobuf binary format and then acquire the requisite number of admin <br> signatures such that the channel configuration update transaction fulfills the channel’s <br> modification policy.</p> 
+  <p>The <code>configtxlator</code> and <code>jq</code> tools, along with the ever-growing <code>peer channel</code> <br> commands, provide us with the functionality to accomplish this task.</p> 
+  <p>.. Licensed under Creative Commons Attribution 4.0 International License <br> <a href="https://creativecommons.org/licenses/by/4.0/" rel="nofollow">https://creativecommons.org/licenses/by/4.0/</a></p> 
+ </div> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/markdown_views-ea0013b516.css"> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/u014141858/article/details/81813445,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/u014141858/article/details/81813445,&quot;}">阅读更多</a> 
+</div>

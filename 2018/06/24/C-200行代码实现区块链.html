@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>C# 200行代码实现区块链 | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="C# 200行代码实现区块链" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="原始文章是通过 Go 语言来实现自己的区块链的，这里我们参照该文章来使用 C# + Asp.Net Core 实现自己的区块链。 1、项目配置 首先新建一个 Asp.Net Core 项目，然后选择 Empty Project(空项目) 类型，建立完成后无需进行任何配置。 2、数据模型 这里我们来创建一个具体的区块数据模型，使用的是 Struct 结构体。 public struct Block { &nbsp; &nbsp;/// &nbsp; &nbsp; /// 区块位置 &nbsp; &nbsp; /// &nbsp; &nbsp; public int Index { get; set; } &nbsp; &nbsp;/// &nbsp; &nbsp; /// 区块生成时间戳 &nbsp; &nbsp; /// &nbsp; &nbsp; public string TimeStamp { get; set; } &nbsp; &nbsp;/// &nbsp; &nbsp; /// 心率数值 &nbsp; &nbsp; /// &nbsp; &nbsp; public int BPM { get; set; } &nbsp; &nbsp;/// &nbsp; &nbsp; /// 区块 SHA-256 散列值 &nbsp; &nbsp; /// &nbsp; &nbsp; public string Hash { get; set; } &nbsp; &nbsp;/// &nbsp; &nbsp; /// 前一个区块 SHA-256 散列值 &nbsp; &nbsp; /// &nbsp; &nbsp; public string PrevHash { get; set; } } 这里各个字段的含义已经在注释上方标明了，这里不在过多赘述。 之后我们新建一个 BlockGenerator 静态类用于管理区块链，并且使用一个 List 保存区块链数据。 public static class BlockGenerator { &nbsp; &nbsp; &nbsp; &nbsp;public static List_blockChain = new List(); } 我们使用散列算法（SHA256）来确定和维护链中块和块正确的顺序，确保每一个块的 PrevHash 值等于前一个块中的 Hash 值，这样就以正确的块顺序构建出链: 3、散列与生成区块 使用散列是因为可以使用极少的控件生成每一个区块的唯一标识，而且可以维持整个区块链的完整性，通过每个区块存储的前一个链的散列值，我们就可以确保区块链当中每一个区块的正确性，任何针对区块的无效更改都会导致散列值的改变，也就破坏了区块链。那么我们就在 BlockGenerator 当中添加一个函数用于计算 Block 的 Hash 值: /// /// 计算区块 HASH 值 /// ///区块实例 ///计算完成的区块散列值 public static string CalculateHash(Block block) { &nbsp; &nbsp; string calculationStr = $&quot;{block.Index}{block.TimeStamp}{block.BPM}{block.PrevHash}&quot;; &nbsp; &nbsp; SHA256 sha256Generator = SHA256.Create(); &nbsp; &nbsp; byte[] sha256HashBytes = sha256Generator.ComputeHash(Encoding.UTF8.GetBytes(calculationStr)); &nbsp; &nbsp; StringBuilder sha256StrBuilder = new StringBuilder(); &nbsp; &nbsp; foreach (byte @byte in sha256HashBytes) &nbsp; &nbsp; { &nbsp; &nbsp; &nbsp; &nbsp; sha256StrBuilder.Append(@byte.ToString(&quot;x2&quot;)); &nbsp; &nbsp; } &nbsp; &nbsp; return sha256StrBuilder.ToString(); } 这里的 CalculateHash 函数接收一个 Block 实例，通过该实例当中的 Index、TimeStamp、BPM、PrevHash 的值来计算出当前块的 SHA256 Hash 值，之后我们就可以来编写一个生成块的函数: /// /// 生成新的区块 /// ///旧的区块数据 ///心率 ///新的区块 public static Block GenerateBlock(Block oldBlock, int BPM) { &nbsp; &nbsp; Block newBlock = new Block() &nbsp; &nbsp; { &nbsp; &nbsp; &nbsp; &nbsp; Index = oldBlock.Index + 1, &nbsp; &nbsp; &nbsp; &nbsp; TimeStamp = CalculateCurrentTimeUTC(), &nbsp; &nbsp; &nbsp; &nbsp; BPM = BPM, &nbsp; &nbsp; &nbsp; &nbsp; PrevHash = oldBlock.Hash &nbsp; &nbsp; }; &nbsp; &nbsp; newBlock.Hash = CalculateHash(newBlock); &nbsp; &nbsp; return newBlock; } 这个函数需要接收前一个块对象的值，用于新区块的 Index 递增以及 新的 SHA256 Hash 计算。 这里掺入了一个 CalculateCurrentTimeUTC 函数，该函数主要是用于将 DateTime.Now 时间转换为 UTC 时间，如下： /// /// 计算当前时间的 UTC 表示格式 /// ///UTC 时间字符串 public static string CalculateCurrentTimeUTC() { &nbsp; &nbsp; DateTime startTime = new DateTime(1970, 1, 1, 0, 0, 0, 0); &nbsp; &nbsp; DateTime nowTime = DateTime.Now; &nbsp; &nbsp; long unixTime = (long)Math.Round((nowTime - startTime).TotalMilliseconds, MidpointRounding.AwayFromZero); &nbsp; &nbsp; return unixTime.ToString(); } 4、校验区块 每一个区块都是不可信的，所以我们需要在生成新的区块的时候对其进行校验，校验规则如下： 校验新区块与旧区块的 Index 是否正确递增 校验新区块的 Hash 值是否正确 校验新区块的 PrevHash 值是否与旧区块的 Hash 值匹配 有了上述几种条件，我们可以编写一个校验函数如下： /// /// 检验区块是否有效 /// ///新生成的区块数据 ///旧的区块数据 ///有效返回 TRUE，无效返回 FALSE public static bool IsBlockValid(Block newBlock, Block oldBlock) { &nbsp; &nbsp; if (oldBlock.Index + 1 != newBlock.Index) return false; &nbsp; &nbsp; if (oldBlock.Hash != newBlock.PrevHash) return false; &nbsp; &nbsp; if (CalculateHash(newBlock) != newBlock.Hash) return false; &nbsp; &nbsp; return true; } 除开区块校验的问题之外，如果有两个节点被分别添加到各自的区块链上，我们应该始终以最长的那一条为主线，因为最长的那一条意味着他的区块数据始终是最新的。 So，我们还需要一个更新最新区块的函数: /// /// 如果新的区块链比当前区块链更新，则切换当前区块链为最新区块链 /// ///新的区块链 public static void SwitchChain(ListnewBlockChain) { &nbsp; &nbsp; if (newBlockChain.Count &gt; _blockChain.Count) &nbsp; &nbsp; { &nbsp; &nbsp; &nbsp; &nbsp; _blockChain = newBlockChain; &nbsp; &nbsp; } } 5、集成到 Web 当中 现在整个区块链的基本操作已经完成，现在我们需要让他运转起来，我们来到 StartUp 当中，添加两个新的路由： app.Map(&quot;/BlockChain&quot;, _ =&gt; { &nbsp; &nbsp; _.Run(async context =&gt; &nbsp; &nbsp; { &nbsp; &nbsp; &nbsp; &nbsp; if (context.Request.Method == &quot;POST&quot;) &nbsp; &nbsp; &nbsp; &nbsp; { &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // 增加区块链 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if (BlockGenerator._blockChain.Count == 0) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; { &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Block firstBlock = new Block() &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; { &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Index = 0, &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; TimeStamp = BlockGenerator.CalculateCurrentTimeUTC(), &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; BPM = 0, &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Hash = string.Empty, &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; PrevHash = string.Empty &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; BlockGenerator._blockChain.Add(firstBlock); &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; await context.Response.WriteAsync(JsonConvert.SerializeObject(firstBlock)); &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; } &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; else &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; { &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; int.TryParse(context.Request.Form[&quot;BPM&quot;][0], out int bpm); &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Block oldBlock = BlockGenerator._blockChain.Last(); &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Block newBlock = BlockGenerator.GenerateBlock(oldBlock, bpm); &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if (BlockGenerator.IsBlockValid(newBlock, oldBlock)) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; { &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ListnewBlockChain = new List(); &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; foreach (var block in BlockGenerator._blockChain) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; { &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; newBlockChain.Add(block); &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; } &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; newBlockChain.Add(newBlock); &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; BlockGenerator.SwitchChain(newBlockChain); &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; } &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; await context.Response.WriteAsync(JsonConvert.SerializeObject(newBlock)); &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; } &nbsp; &nbsp; &nbsp; &nbsp; } &nbsp; &nbsp; }); }); app.Map(&quot;/BlockChains&quot;, _ =&gt; { &nbsp; &nbsp; _.Run(async context =&gt; &nbsp; &nbsp; { &nbsp; &nbsp; &nbsp; &nbsp; await context.Response.WriteAsync(JsonConvert.SerializeObject(BlockGenerator._blockChain)); &nbsp; &nbsp; }); }); 6、最终效果 我们先通过 PostMan 来构建一个创世块： 然后我们尝试多添加几个之后，访问 BlockChain 来查看已经存在的区块链结构： 7、结语 通过以上代码我们完成了一个简陋的区块链，虽然十分简陋，但是已经具备了块生成，散列计算，块校验这些基本能力，你可以参考 GitHub 上面各种成熟的区块链实现来完成工作量证明、权益证明这样的共识算法，或者是智能合约、Dapp、侧链等等。 ∞∞∞∞∞ IT派 - {技术青年圈} 持续关注互联网、区块链、人工智能领域 公众号回复“区块链”， 邀你加入IT派{ 区块链技术群 }&nbsp; 阅读更多" />
+<meta property="og:description" content="原始文章是通过 Go 语言来实现自己的区块链的，这里我们参照该文章来使用 C# + Asp.Net Core 实现自己的区块链。 1、项目配置 首先新建一个 Asp.Net Core 项目，然后选择 Empty Project(空项目) 类型，建立完成后无需进行任何配置。 2、数据模型 这里我们来创建一个具体的区块数据模型，使用的是 Struct 结构体。 public struct Block { &nbsp; &nbsp;/// &nbsp; &nbsp; /// 区块位置 &nbsp; &nbsp; /// &nbsp; &nbsp; public int Index { get; set; } &nbsp; &nbsp;/// &nbsp; &nbsp; /// 区块生成时间戳 &nbsp; &nbsp; /// &nbsp; &nbsp; public string TimeStamp { get; set; } &nbsp; &nbsp;/// &nbsp; &nbsp; /// 心率数值 &nbsp; &nbsp; /// &nbsp; &nbsp; public int BPM { get; set; } &nbsp; &nbsp;/// &nbsp; &nbsp; /// 区块 SHA-256 散列值 &nbsp; &nbsp; /// &nbsp; &nbsp; public string Hash { get; set; } &nbsp; &nbsp;/// &nbsp; &nbsp; /// 前一个区块 SHA-256 散列值 &nbsp; &nbsp; /// &nbsp; &nbsp; public string PrevHash { get; set; } } 这里各个字段的含义已经在注释上方标明了，这里不在过多赘述。 之后我们新建一个 BlockGenerator 静态类用于管理区块链，并且使用一个 List 保存区块链数据。 public static class BlockGenerator { &nbsp; &nbsp; &nbsp; &nbsp;public static List_blockChain = new List(); } 我们使用散列算法（SHA256）来确定和维护链中块和块正确的顺序，确保每一个块的 PrevHash 值等于前一个块中的 Hash 值，这样就以正确的块顺序构建出链: 3、散列与生成区块 使用散列是因为可以使用极少的控件生成每一个区块的唯一标识，而且可以维持整个区块链的完整性，通过每个区块存储的前一个链的散列值，我们就可以确保区块链当中每一个区块的正确性，任何针对区块的无效更改都会导致散列值的改变，也就破坏了区块链。那么我们就在 BlockGenerator 当中添加一个函数用于计算 Block 的 Hash 值: /// /// 计算区块 HASH 值 /// ///区块实例 ///计算完成的区块散列值 public static string CalculateHash(Block block) { &nbsp; &nbsp; string calculationStr = $&quot;{block.Index}{block.TimeStamp}{block.BPM}{block.PrevHash}&quot;; &nbsp; &nbsp; SHA256 sha256Generator = SHA256.Create(); &nbsp; &nbsp; byte[] sha256HashBytes = sha256Generator.ComputeHash(Encoding.UTF8.GetBytes(calculationStr)); &nbsp; &nbsp; StringBuilder sha256StrBuilder = new StringBuilder(); &nbsp; &nbsp; foreach (byte @byte in sha256HashBytes) &nbsp; &nbsp; { &nbsp; &nbsp; &nbsp; &nbsp; sha256StrBuilder.Append(@byte.ToString(&quot;x2&quot;)); &nbsp; &nbsp; } &nbsp; &nbsp; return sha256StrBuilder.ToString(); } 这里的 CalculateHash 函数接收一个 Block 实例，通过该实例当中的 Index、TimeStamp、BPM、PrevHash 的值来计算出当前块的 SHA256 Hash 值，之后我们就可以来编写一个生成块的函数: /// /// 生成新的区块 /// ///旧的区块数据 ///心率 ///新的区块 public static Block GenerateBlock(Block oldBlock, int BPM) { &nbsp; &nbsp; Block newBlock = new Block() &nbsp; &nbsp; { &nbsp; &nbsp; &nbsp; &nbsp; Index = oldBlock.Index + 1, &nbsp; &nbsp; &nbsp; &nbsp; TimeStamp = CalculateCurrentTimeUTC(), &nbsp; &nbsp; &nbsp; &nbsp; BPM = BPM, &nbsp; &nbsp; &nbsp; &nbsp; PrevHash = oldBlock.Hash &nbsp; &nbsp; }; &nbsp; &nbsp; newBlock.Hash = CalculateHash(newBlock); &nbsp; &nbsp; return newBlock; } 这个函数需要接收前一个块对象的值，用于新区块的 Index 递增以及 新的 SHA256 Hash 计算。 这里掺入了一个 CalculateCurrentTimeUTC 函数，该函数主要是用于将 DateTime.Now 时间转换为 UTC 时间，如下： /// /// 计算当前时间的 UTC 表示格式 /// ///UTC 时间字符串 public static string CalculateCurrentTimeUTC() { &nbsp; &nbsp; DateTime startTime = new DateTime(1970, 1, 1, 0, 0, 0, 0); &nbsp; &nbsp; DateTime nowTime = DateTime.Now; &nbsp; &nbsp; long unixTime = (long)Math.Round((nowTime - startTime).TotalMilliseconds, MidpointRounding.AwayFromZero); &nbsp; &nbsp; return unixTime.ToString(); } 4、校验区块 每一个区块都是不可信的，所以我们需要在生成新的区块的时候对其进行校验，校验规则如下： 校验新区块与旧区块的 Index 是否正确递增 校验新区块的 Hash 值是否正确 校验新区块的 PrevHash 值是否与旧区块的 Hash 值匹配 有了上述几种条件，我们可以编写一个校验函数如下： /// /// 检验区块是否有效 /// ///新生成的区块数据 ///旧的区块数据 ///有效返回 TRUE，无效返回 FALSE public static bool IsBlockValid(Block newBlock, Block oldBlock) { &nbsp; &nbsp; if (oldBlock.Index + 1 != newBlock.Index) return false; &nbsp; &nbsp; if (oldBlock.Hash != newBlock.PrevHash) return false; &nbsp; &nbsp; if (CalculateHash(newBlock) != newBlock.Hash) return false; &nbsp; &nbsp; return true; } 除开区块校验的问题之外，如果有两个节点被分别添加到各自的区块链上，我们应该始终以最长的那一条为主线，因为最长的那一条意味着他的区块数据始终是最新的。 So，我们还需要一个更新最新区块的函数: /// /// 如果新的区块链比当前区块链更新，则切换当前区块链为最新区块链 /// ///新的区块链 public static void SwitchChain(ListnewBlockChain) { &nbsp; &nbsp; if (newBlockChain.Count &gt; _blockChain.Count) &nbsp; &nbsp; { &nbsp; &nbsp; &nbsp; &nbsp; _blockChain = newBlockChain; &nbsp; &nbsp; } } 5、集成到 Web 当中 现在整个区块链的基本操作已经完成，现在我们需要让他运转起来，我们来到 StartUp 当中，添加两个新的路由： app.Map(&quot;/BlockChain&quot;, _ =&gt; { &nbsp; &nbsp; _.Run(async context =&gt; &nbsp; &nbsp; { &nbsp; &nbsp; &nbsp; &nbsp; if (context.Request.Method == &quot;POST&quot;) &nbsp; &nbsp; &nbsp; &nbsp; { &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // 增加区块链 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if (BlockGenerator._blockChain.Count == 0) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; { &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Block firstBlock = new Block() &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; { &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Index = 0, &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; TimeStamp = BlockGenerator.CalculateCurrentTimeUTC(), &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; BPM = 0, &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Hash = string.Empty, &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; PrevHash = string.Empty &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; BlockGenerator._blockChain.Add(firstBlock); &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; await context.Response.WriteAsync(JsonConvert.SerializeObject(firstBlock)); &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; } &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; else &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; { &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; int.TryParse(context.Request.Form[&quot;BPM&quot;][0], out int bpm); &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Block oldBlock = BlockGenerator._blockChain.Last(); &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Block newBlock = BlockGenerator.GenerateBlock(oldBlock, bpm); &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if (BlockGenerator.IsBlockValid(newBlock, oldBlock)) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; { &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ListnewBlockChain = new List(); &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; foreach (var block in BlockGenerator._blockChain) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; { &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; newBlockChain.Add(block); &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; } &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; newBlockChain.Add(newBlock); &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; BlockGenerator.SwitchChain(newBlockChain); &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; } &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; await context.Response.WriteAsync(JsonConvert.SerializeObject(newBlock)); &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; } &nbsp; &nbsp; &nbsp; &nbsp; } &nbsp; &nbsp; }); }); app.Map(&quot;/BlockChains&quot;, _ =&gt; { &nbsp; &nbsp; _.Run(async context =&gt; &nbsp; &nbsp; { &nbsp; &nbsp; &nbsp; &nbsp; await context.Response.WriteAsync(JsonConvert.SerializeObject(BlockGenerator._blockChain)); &nbsp; &nbsp; }); }); 6、最终效果 我们先通过 PostMan 来构建一个创世块： 然后我们尝试多添加几个之后，访问 BlockChain 来查看已经存在的区块链结构： 7、结语 通过以上代码我们完成了一个简陋的区块链，虽然十分简陋，但是已经具备了块生成，散列计算，块校验这些基本能力，你可以参考 GitHub 上面各种成熟的区块链实现来完成工作量证明、权益证明这样的共识算法，或者是智能合约、Dapp、侧链等等。 ∞∞∞∞∞ IT派 - {技术青年圈} 持续关注互联网、区块链、人工智能领域 公众号回复“区块链”， 邀你加入IT派{ 区块链技术群 }&nbsp; 阅读更多" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/06/24/C-200%E8%A1%8C%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0%E5%8C%BA%E5%9D%97%E9%93%BE.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/06/24/C-200%E8%A1%8C%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0%E5%8C%BA%E5%9D%97%E9%93%BE.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-06-24T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"原始文章是通过 Go 语言来实现自己的区块链的，这里我们参照该文章来使用 C# + Asp.Net Core 实现自己的区块链。 1、项目配置 首先新建一个 Asp.Net Core 项目，然后选择 Empty Project(空项目) 类型，建立完成后无需进行任何配置。 2、数据模型 这里我们来创建一个具体的区块数据模型，使用的是 Struct 结构体。 public struct Block { &nbsp; &nbsp;/// &nbsp; &nbsp; /// 区块位置 &nbsp; &nbsp; /// &nbsp; &nbsp; public int Index { get; set; } &nbsp; &nbsp;/// &nbsp; &nbsp; /// 区块生成时间戳 &nbsp; &nbsp; /// &nbsp; &nbsp; public string TimeStamp { get; set; } &nbsp; &nbsp;/// &nbsp; &nbsp; /// 心率数值 &nbsp; &nbsp; /// &nbsp; &nbsp; public int BPM { get; set; } &nbsp; &nbsp;/// &nbsp; &nbsp; /// 区块 SHA-256 散列值 &nbsp; &nbsp; /// &nbsp; &nbsp; public string Hash { get; set; } &nbsp; &nbsp;/// &nbsp; &nbsp; /// 前一个区块 SHA-256 散列值 &nbsp; &nbsp; /// &nbsp; &nbsp; public string PrevHash { get; set; } } 这里各个字段的含义已经在注释上方标明了，这里不在过多赘述。 之后我们新建一个 BlockGenerator 静态类用于管理区块链，并且使用一个 List 保存区块链数据。 public static class BlockGenerator { &nbsp; &nbsp; &nbsp; &nbsp;public static List_blockChain = new List(); } 我们使用散列算法（SHA256）来确定和维护链中块和块正确的顺序，确保每一个块的 PrevHash 值等于前一个块中的 Hash 值，这样就以正确的块顺序构建出链: 3、散列与生成区块 使用散列是因为可以使用极少的控件生成每一个区块的唯一标识，而且可以维持整个区块链的完整性，通过每个区块存储的前一个链的散列值，我们就可以确保区块链当中每一个区块的正确性，任何针对区块的无效更改都会导致散列值的改变，也就破坏了区块链。那么我们就在 BlockGenerator 当中添加一个函数用于计算 Block 的 Hash 值: /// /// 计算区块 HASH 值 /// ///区块实例 ///计算完成的区块散列值 public static string CalculateHash(Block block) { &nbsp; &nbsp; string calculationStr = $&quot;{block.Index}{block.TimeStamp}{block.BPM}{block.PrevHash}&quot;; &nbsp; &nbsp; SHA256 sha256Generator = SHA256.Create(); &nbsp; &nbsp; byte[] sha256HashBytes = sha256Generator.ComputeHash(Encoding.UTF8.GetBytes(calculationStr)); &nbsp; &nbsp; StringBuilder sha256StrBuilder = new StringBuilder(); &nbsp; &nbsp; foreach (byte @byte in sha256HashBytes) &nbsp; &nbsp; { &nbsp; &nbsp; &nbsp; &nbsp; sha256StrBuilder.Append(@byte.ToString(&quot;x2&quot;)); &nbsp; &nbsp; } &nbsp; &nbsp; return sha256StrBuilder.ToString(); } 这里的 CalculateHash 函数接收一个 Block 实例，通过该实例当中的 Index、TimeStamp、BPM、PrevHash 的值来计算出当前块的 SHA256 Hash 值，之后我们就可以来编写一个生成块的函数: /// /// 生成新的区块 /// ///旧的区块数据 ///心率 ///新的区块 public static Block GenerateBlock(Block oldBlock, int BPM) { &nbsp; &nbsp; Block newBlock = new Block() &nbsp; &nbsp; { &nbsp; &nbsp; &nbsp; &nbsp; Index = oldBlock.Index + 1, &nbsp; &nbsp; &nbsp; &nbsp; TimeStamp = CalculateCurrentTimeUTC(), &nbsp; &nbsp; &nbsp; &nbsp; BPM = BPM, &nbsp; &nbsp; &nbsp; &nbsp; PrevHash = oldBlock.Hash &nbsp; &nbsp; }; &nbsp; &nbsp; newBlock.Hash = CalculateHash(newBlock); &nbsp; &nbsp; return newBlock; } 这个函数需要接收前一个块对象的值，用于新区块的 Index 递增以及 新的 SHA256 Hash 计算。 这里掺入了一个 CalculateCurrentTimeUTC 函数，该函数主要是用于将 DateTime.Now 时间转换为 UTC 时间，如下： /// /// 计算当前时间的 UTC 表示格式 /// ///UTC 时间字符串 public static string CalculateCurrentTimeUTC() { &nbsp; &nbsp; DateTime startTime = new DateTime(1970, 1, 1, 0, 0, 0, 0); &nbsp; &nbsp; DateTime nowTime = DateTime.Now; &nbsp; &nbsp; long unixTime = (long)Math.Round((nowTime - startTime).TotalMilliseconds, MidpointRounding.AwayFromZero); &nbsp; &nbsp; return unixTime.ToString(); } 4、校验区块 每一个区块都是不可信的，所以我们需要在生成新的区块的时候对其进行校验，校验规则如下： 校验新区块与旧区块的 Index 是否正确递增 校验新区块的 Hash 值是否正确 校验新区块的 PrevHash 值是否与旧区块的 Hash 值匹配 有了上述几种条件，我们可以编写一个校验函数如下： /// /// 检验区块是否有效 /// ///新生成的区块数据 ///旧的区块数据 ///有效返回 TRUE，无效返回 FALSE public static bool IsBlockValid(Block newBlock, Block oldBlock) { &nbsp; &nbsp; if (oldBlock.Index + 1 != newBlock.Index) return false; &nbsp; &nbsp; if (oldBlock.Hash != newBlock.PrevHash) return false; &nbsp; &nbsp; if (CalculateHash(newBlock) != newBlock.Hash) return false; &nbsp; &nbsp; return true; } 除开区块校验的问题之外，如果有两个节点被分别添加到各自的区块链上，我们应该始终以最长的那一条为主线，因为最长的那一条意味着他的区块数据始终是最新的。 So，我们还需要一个更新最新区块的函数: /// /// 如果新的区块链比当前区块链更新，则切换当前区块链为最新区块链 /// ///新的区块链 public static void SwitchChain(ListnewBlockChain) { &nbsp; &nbsp; if (newBlockChain.Count &gt; _blockChain.Count) &nbsp; &nbsp; { &nbsp; &nbsp; &nbsp; &nbsp; _blockChain = newBlockChain; &nbsp; &nbsp; } } 5、集成到 Web 当中 现在整个区块链的基本操作已经完成，现在我们需要让他运转起来，我们来到 StartUp 当中，添加两个新的路由： app.Map(&quot;/BlockChain&quot;, _ =&gt; { &nbsp; &nbsp; _.Run(async context =&gt; &nbsp; &nbsp; { &nbsp; &nbsp; &nbsp; &nbsp; if (context.Request.Method == &quot;POST&quot;) &nbsp; &nbsp; &nbsp; &nbsp; { &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // 增加区块链 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if (BlockGenerator._blockChain.Count == 0) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; { &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Block firstBlock = new Block() &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; { &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Index = 0, &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; TimeStamp = BlockGenerator.CalculateCurrentTimeUTC(), &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; BPM = 0, &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Hash = string.Empty, &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; PrevHash = string.Empty &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; BlockGenerator._blockChain.Add(firstBlock); &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; await context.Response.WriteAsync(JsonConvert.SerializeObject(firstBlock)); &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; } &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; else &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; { &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; int.TryParse(context.Request.Form[&quot;BPM&quot;][0], out int bpm); &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Block oldBlock = BlockGenerator._blockChain.Last(); &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Block newBlock = BlockGenerator.GenerateBlock(oldBlock, bpm); &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if (BlockGenerator.IsBlockValid(newBlock, oldBlock)) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; { &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ListnewBlockChain = new List(); &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; foreach (var block in BlockGenerator._blockChain) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; { &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; newBlockChain.Add(block); &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; } &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; newBlockChain.Add(newBlock); &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; BlockGenerator.SwitchChain(newBlockChain); &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; } &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; await context.Response.WriteAsync(JsonConvert.SerializeObject(newBlock)); &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; } &nbsp; &nbsp; &nbsp; &nbsp; } &nbsp; &nbsp; }); }); app.Map(&quot;/BlockChains&quot;, _ =&gt; { &nbsp; &nbsp; _.Run(async context =&gt; &nbsp; &nbsp; { &nbsp; &nbsp; &nbsp; &nbsp; await context.Response.WriteAsync(JsonConvert.SerializeObject(BlockGenerator._blockChain)); &nbsp; &nbsp; }); }); 6、最终效果 我们先通过 PostMan 来构建一个创世块： 然后我们尝试多添加几个之后，访问 BlockChain 来查看已经存在的区块链结构： 7、结语 通过以上代码我们完成了一个简陋的区块链，虽然十分简陋，但是已经具备了块生成，散列计算，块校验这些基本能力，你可以参考 GitHub 上面各种成熟的区块链实现来完成工作量证明、权益证明这样的共识算法，或者是智能合约、Dapp、侧链等等。 ∞∞∞∞∞ IT派 - {技术青年圈} 持续关注互联网、区块链、人工智能领域 公众号回复“区块链”， 邀你加入IT派{ 区块链技术群 }&nbsp; 阅读更多","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/06/24/C-200%E8%A1%8C%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0%E5%8C%BA%E5%9D%97%E9%93%BE.html","headline":"C# 200行代码实现区块链","dateModified":"2018-06-24T00:00:00+08:00","datePublished":"2018-06-24T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/06/24/C-200%E8%A1%8C%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0%E5%8C%BA%E5%9D%97%E9%93%BE.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>C# 200行代码实现区块链</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <div class="rich_media_content"> 
+   <p><br></p>
+   <p>原始文章是通过 Go 语言来实现自己的区块链的，这里我们参照该文章来使用 C# + Asp.Net Core 实现自己的区块链。</p>
+   <p><br></p>
+   <h2><span style="color:rgb(171,25,66);"><strong>1、项目配置</strong></span></h2>
+   <p><br></p>
+   <p>首先新建一个 Asp.Net Core 项目，然后选择 Empty Project(空项目) 类型，建立完成后无需进行任何配置。</p>
+   <h2><br></h2>
+   <h2><span style="color:rgb(171,25,66);"><strong>2、数据模型</strong></span></h2>
+   <p><br></p>
+   <p>这里我们来创建一个具体的区块数据模型，使用的是 Struct 结构体。</p>
+   <p><br></p>
+   <blockquote>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">public struct Block</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">{ &nbsp; &nbsp;/// </span></p>
+    <p><br></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; /// 区块位置</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; /// </span></p>
+    <p><br></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; public int Index { get; set; } &nbsp; &nbsp;/// </span></p>
+    <p><br></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; /// 区块生成时间戳</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; /// </span></p>
+    <p><br></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; public string TimeStamp { get; set; } &nbsp; &nbsp;/// </span></p>
+    <p><br></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; /// 心率数值</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; /// </span></p>
+    <p><br></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; public int BPM { get; set; } &nbsp; &nbsp;/// </span></p>
+    <p><br></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; /// 区块 SHA-256 散列值</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; /// </span></p>
+    <p><br></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; public string Hash { get; set; } &nbsp; &nbsp;/// </span></p>
+    <p><br></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; /// 前一个区块 SHA-256 散列值</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; /// </span></p>
+    <p><br></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; public string PrevHash { get; set; }</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">}</span></p>
+   </blockquote>
+   <p><br></p>
+   <p>这里各个字段的含义已经在注释上方标明了，这里不在过多赘述。</p>
+   <p><br>之后我们新建一个 BlockGenerator 静态类用于管理区块链，并且使用一个 List 保存区块链数据。</p>
+   <p><br></p>
+   <blockquote>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">public static class BlockGenerator</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">{ &nbsp; &nbsp;</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp;public static List_blockChain = new List();</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">}</span></p>
+   </blockquote>
+   <p><br></p>
+   <p>我们使用散列算法（SHA256）来确定和维护链中块和块正确的顺序，确保每一个块的 PrevHash 值等于前一个块中的 Hash 值，这样就以正确的块顺序构建出链:</p>
+   <p><br><img style="border-width:0px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/7fxWIIIo4QtHBhrfybwclYgz9yia5HzXSshhu0ic6KLxljmQwG0pm6icdDtWvl3yfGlYGlMAIrt3F45VvubbdeyBA/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <h2><span style="color:rgb(171,25,66);"><strong><br></strong></span></h2>
+   <h2><span style="color:rgb(171,25,66);"><strong>3、散列与生成区块</strong></span></h2>
+   <p><span style="color:rgb(171,25,66);"><strong><br></strong></span></p>
+   <p>使用散列是因为可以使用极少的控件生成每一个区块的唯一标识，而且可以维持整个区块链的完整性，通过每个区块存储的前一个链的散列值，我们就可以确保区块链当中每一个区块的正确性，任何针对区块的无效更改都会导致散列值的改变，也就破坏了区块链。<br>那么我们就在 BlockGenerator 当中添加一个函数用于计算 Block 的 Hash 值:<br><br></p>
+   <blockquote>
+    <p><span style="color:rgb(136,136,136);font-size:12px;">/// </span></p>
+    <br>
+    <p><br></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">/// 计算区块 HASH 值</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">/// </span></p>
+    <p><br></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">///区块实例</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">///计算完成的区块散列值</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">public static string CalculateHash(Block block)</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">{</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; string calculationStr = $"{block.Index}{block.TimeStamp}{block.BPM}{block.PrevHash}";</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; SHA256 sha256Generator = SHA256.Create();</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; byte[] sha256HashBytes = sha256Generator.ComputeHash(Encoding.UTF8.GetBytes(calculationStr));</span></p>
+    <p><br></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; StringBuilder sha256StrBuilder = new StringBuilder();</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; foreach (byte @byte in sha256HashBytes)</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; {</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; sha256StrBuilder.Append(@byte.ToString("x2"));</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; }</span></p>
+    <p><br></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; return sha256StrBuilder.ToString();</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">}</span></p>
+   </blockquote>
+   <p><br></p>
+   <p>这里的 CalculateHash 函数接收一个 Block 实例，通过该实例当中的 Index、TimeStamp、BPM、PrevHash 的值来计算出当前块的 SHA256 Hash 值，之后我们就可以来编写一个生成块的函数:</p>
+   <p><br></p>
+   <blockquote>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">/// </span></p>
+    <p><br></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">/// 生成新的区块</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">/// </span></p>
+    <p><br></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">///旧的区块数据</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">///心率</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">///新的区块</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">public static Block GenerateBlock(Block oldBlock, int BPM)</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">{</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; Block newBlock = new Block()</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; {</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; Index = oldBlock.Index + 1,</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; TimeStamp = CalculateCurrentTimeUTC(),</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; BPM = BPM,</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; PrevHash = oldBlock.Hash</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; };</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; newBlock.Hash = CalculateHash(newBlock);</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; return newBlock;</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">}</span></p>
+   </blockquote>
+   <p><br></p>
+   <p>这个函数需要接收前一个块对象的值，用于新区块的 Index 递增以及 新的 SHA256 Hash 计算。</p>
+   <p><br>这里掺入了一个 CalculateCurrentTimeUTC 函数，该函数主要是用于将 DateTime.Now 时间转换为 UTC 时间，如下：</p>
+   <p><br></p>
+   <blockquote>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">/// </span></p>
+    <p><br></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">/// 计算当前时间的 UTC 表示格式</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">/// </span></p>
+    <p><br></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">///UTC 时间字符串</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">public static string CalculateCurrentTimeUTC()</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">{</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; DateTime startTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; DateTime nowTime = DateTime.Now;</span></p>
+    <p><br></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; long unixTime = (long)Math.Round((nowTime - startTime).TotalMilliseconds, MidpointRounding.AwayFromZero);</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; return unixTime.ToString();</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">}</span></p>
+   </blockquote>
+   <p><br></p>
+   <h2><span style="color:rgb(171,25,66);"><strong>4、校验区块</strong></span></h2>
+   <p><br></p>
+   <p>每一个区块都是不可信的，所以我们需要在生成新的区块的时候对其进行校验，校验规则如下：</p>
+   <p><br></p>
+   <ul class="list-paddingleft-2" style="list-style-type:disc;">
+    <li><p>校验新区块与旧区块的 Index 是否正确递增</p><p><br></p></li>
+    <li><p>校验新区块的 Hash 值是否正确</p><p><br></p></li>
+    <li><p>校验新区块的 PrevHash 值是否与旧区块的 Hash 值匹配</p></li>
+   </ul>
+   <p><br></p>
+   <p>有了上述几种条件，我们可以编写一个校验函数如下：</p>
+   <p><br></p>
+   <blockquote>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">/// </span></p>
+    <p><br></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">/// 检验区块是否有效</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">/// </span></p>
+    <p><br></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">///新生成的区块数据</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">///旧的区块数据</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">///有效返回 TRUE，无效返回 FALSE</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">public static bool IsBlockValid(Block newBlock, Block oldBlock)</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">{</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; if (oldBlock.Index + 1 != newBlock.Index) return false;</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; if (oldBlock.Hash != newBlock.PrevHash) return false;</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; if (CalculateHash(newBlock) != newBlock.Hash) return false;</span></p>
+    <p><br></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; return true;</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">}</span></p>
+   </blockquote>
+   <p><br></p>
+   <p>除开区块校验的问题之外，如果有两个节点被分别添加到各自的区块链上，我们应该始终以最长的那一条为主线，因为最长的那一条意味着他的区块数据始终是最新的。</p>
+   <p><br><img style="border-width:0px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/7fxWIIIo4QtHBhrfybwclYgz9yia5HzXSQvp1CllQawLoeibzrqGVPYt0rs5DmVEl5dzbw2xZp9KqswgEeGFicicWw/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p><br>So，我们还需要一个更新最新区块的函数:</p>
+   <p><br></p>
+   <blockquote>
+    <p><span style="color:rgb(136,136,136);font-size:12px;">/// </span></p>
+    <br>
+    <p><br></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">/// 如果新的区块链比当前区块链更新，则切换当前区块链为最新区块链</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">/// </span></p>
+    <p><br></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">///新的区块链</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">public static void SwitchChain(ListnewBlockChain)</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">{</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; if (newBlockChain.Count &gt; _blockChain.Count)</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; {</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; _blockChain = newBlockChain;</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; }</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">}</span></p>
+   </blockquote>
+   <p><br></p>
+   <h2><span style="color:rgb(171,25,66);"><strong>5、集成到 Web 当中</strong></span></h2>
+   <p><br></p>
+   <p>现在整个区块链的基本操作已经完成，现在我们需要让他运转起来，我们来到 StartUp 当中，添加两个新的路由：</p>
+   <p><br></p>
+   <blockquote>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">app.Map("/BlockChain", _ =&gt;</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">{</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; _.Run(async context =&gt;</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; {</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; if (context.Request.Method == "POST")</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; {</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // 增加区块链</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if (BlockGenerator._blockChain.Count == 0)</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Block firstBlock = new Block()</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Index = 0,</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; TimeStamp = BlockGenerator.CalculateCurrentTimeUTC(),</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; BPM = 0,</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Hash = string.Empty,</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; PrevHash = string.Empty</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; };</span></p>
+    <p><br></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; BlockGenerator._blockChain.Add(firstBlock);</span></p>
+    <p><br></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; await context.Response.WriteAsync(JsonConvert.SerializeObject(firstBlock));</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; else</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; int.TryParse(context.Request.Form["BPM"][0], out int bpm);</span></p>
+    <p><br></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Block oldBlock = BlockGenerator._blockChain.Last();</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Block newBlock = BlockGenerator.GenerateBlock(oldBlock, bpm);</span></p>
+    <p><br></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if (BlockGenerator.IsBlockValid(newBlock, oldBlock))</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ListnewBlockChain = new List();</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; foreach (var block in BlockGenerator._blockChain)</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; newBlockChain.Add(block);</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }</span></p>
+    <p><br></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; newBlockChain.Add(newBlock);</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; BlockGenerator.SwitchChain(newBlockChain);</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }</span></p>
+    <p><br></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; await context.Response.WriteAsync(JsonConvert.SerializeObject(newBlock));</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; }</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; });</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">});</span></p>
+    <p><br></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">app.Map("/BlockChains", _ =&gt;</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">{</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; _.Run(async context =&gt;</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; {</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; &nbsp; &nbsp; await context.Response.WriteAsync(JsonConvert.SerializeObject(BlockGenerator._blockChain));</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">&nbsp; &nbsp; });</span></p>
+    <p><span style="font-size:12px;color:rgb(136,136,136);">});</span></p>
+   </blockquote>
+   <p><br></p>
+   <h2><span style="color:rgb(171,25,66);"><strong>6、最终效果</strong></span></h2>
+   <p><br></p>
+   <p>我们先通过 PostMan 来构建一个创世块：</p>
+   <p><br><img style="border-width:0px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/7fxWIIIo4QtHBhrfybwclYgz9yia5HzXSJHHPpp0fWMhWVlC7QRicc7a8E8fbNz4ZJRJLjZDeuoNxI587EzEP5Xg/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p><br>然后我们尝试多添加几个之后，访问 BlockChain 来查看已经存在的区块链结构：</p>
+   <p><br><img style="border-width:0px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/7fxWIIIo4QtHBhrfybwclYgz9yia5HzXSalEye2wbwnBTLE2Dk0o8P016kyibhuJXP3e2rJmeT60HRse1Mq2Fcjg/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <h2><span style="color:rgb(171,25,66);"><strong><br></strong></span></h2>
+   <h2><span style="color:rgb(171,25,66);"><strong>7、结语</strong></span></h2>
+   <p><span style="color:rgb(171,25,66);"><strong><br></strong></span></p>
+   <p>通过以上代码我们完成了一个简陋的区块链，虽然十分简陋，但是已经具备了块生成，散列计算，块校验这些基本能力，你可以参考 GitHub 上面各种成熟的区块链实现来完成工作量证明、权益证明这样的共识算法，或者是智能合约、Dapp、侧链等等。</p>
+   <p style="min-height:1em;font-family:Arial, sans-serif;font-size:17px;letter-spacing:1.5px;line-height:1.75em;text-align:center;"><span style="text-align:center;letter-spacing:.5px;font-size:15px;color:rgb(51,102,255);">∞</span><span style="text-align:center;letter-spacing:.5px;font-size:15px;color:rgb(153,153,153);">∞∞∞</span><span style="text-align:center;letter-spacing:.5px;font-size:15px;color:rgb(255,153,0);">∞</span></p>
+   <p style="text-align:center;"><img title="undefined" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_jpg/iae21LgCEd89muk21Gzate8ibt3tReZKiaxWQZPELq9umf8ZuPRYZWhTV6Ew7NfzZfKtBjDn4dtAMeSnubZHap1ng/640?wx_fmt=jpeg&amp;wx_lazy=1" alt="640?wx_fmt=jpeg&amp;wx_lazy=1"></p>
+   <span style="font-size:15px;">IT派 - {技术青年圈}</span>
+   <span style="color:rgb(165,165,165);font-size:10px;">持续关注互联网、区块链、人工智能领域</span>
+   <img title="undefined" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_jpg/tvEoHIulOU55HnaIoZk2Nyt4KYr8Z7ZONRy01HKViczb96qxuDDlrNVASGSSicx23xX5LYRYZW1msClicibRMtdCwA/640?wx_fmt=jpeg" alt="640?wx_fmt=jpeg">
+   <p style="margin-left:8px;text-align:center;line-height:1.75em;"><span style="font-size:18px;letter-spacing:.5px;color:rgb(51,51,51);"><br></span></p>
+   <p style="margin-left:8px;text-align:center;line-height:1.75em;"><span style="font-size:18px;letter-spacing:.5px;color:rgb(51,51,51);">公众号回复</span><span style="font-size:18px;letter-spacing:.5px;color:rgb(54,65,173);">“区块链”</span><span style="font-size:18px;letter-spacing:.5px;color:rgb(51,51,51);">，</span></p>
+   <p style="margin-left:8px;text-align:center;line-height:1.75em;"><span style="font-size:18px;"><span style="letter-spacing:.5px;color:rgb(51,51,51);">邀你加入IT派</span></span><span style="font-size:18px;color:rgb(255,153,0);letter-spacing:.5px;">{ 区块链技术群 }&nbsp;</span></p>
+   <br>
+  </div> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/j2IaYU7Y/article/details/80788842,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/j2IaYU7Y/article/details/80788842,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

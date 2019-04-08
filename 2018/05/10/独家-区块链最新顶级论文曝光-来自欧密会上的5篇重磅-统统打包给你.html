@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>独家 区块链最新顶级论文曝光！来自欧密会上的5篇重磅，统统打包给你 | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="独家 区块链最新顶级论文曝光！来自欧密会上的5篇重磅，统统打包给你" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="从区块链的诞生，就跟密码学分不开。 甚至如果没有密码学的理论根基，比特币根本都不会存在。比特币的实现也基于很多早期密码学领域的研究成果。 例如早期传奇密码学家David Chaum的数字现金技术（DigiCash）；密码学家戴伟（W. Dai）在1998年提出的B-money Scheme（B-money强调点对点的交易和不可更改的交易记录）；以及由Ralph Merkle在1979年提出的大名鼎鼎的「哈希树（Hash Tree）理论。 密码学家眼中的区块链 随着区块链技术的发展，这项与密码学深度结合的技术也越来越受到密码学界的重视，在上周刚刚结束的EUROCRYPT 2018大会中，有5篇关于区块链的顶级论文被发表。内容涵盖快速交易协议、比特币共识算法、POS算法，以及POW哈希算法等多个领域。 今天，连长就为大家介绍一下这些密码学领域的最新研究，并将所有论文的原文下载资源奉献给大家（提取请后台回复关键词：论文）。为了说明这些文章的价值，我们先来介绍一下EUROCRYPT这个大会。 密码学中最著名的学术会议当属「国际密码学协会」（IACR，International Association of Cryptological Research）所主办的三个大会了：Crypto、Eurocrypt、Asiacrypt，即美密会、欧密会、 亚密会，其中欧密会和美密会的水平最高（亚密会的资历最浅，虽然近几年上升很快，但要完全赶上还需要一定的时间）。密码学中最重要的文章一般都会在这三个会议中发布。 上周（4.30~5.3日），2018年的欧密会（EUROCRYPT 2018）刚刚在以色列首都特拉维夫落幕。今年的EUROCRYPT大会增设了「区块链」分论坛，分论坛上有4篇论文发布。能在EUROCRYPT上发表论文绝非易事，通常每五篇提交上去的论文中，只有一篇能被选中。 在发表之前，每一篇论文都会进行为期几个月的Peer Review（互相审阅），在完全匿名的不断探讨这些论文的价值，最后胜出的论文才能被发表。 下面我们就来看看今年发布的这5篇（4篇分论坛+1篇最佳论文）论文都讲了点啥，感兴趣的话，不妨亲自找来研究。 EUROCRYPT 2018区块链论文合集 论文1 论文标题：Thunderella：区块链理想条件下的瞬间响应（Thunderella: Blockchains with Optimistic Instant Confirmation） 作者：Rafael Pass，康奈尔大学计算机科学系副教授 内容简介：这篇论文中，作者介绍了一个全新的算法叫做「Thunderella」。与一般状态机的共识原理不同（状态机相当于一个共识机制的抽象，对分布式网络中大量节点的请求进行确认），Thunderella使得状态机可以在实现快速异步处理的同时，在异常时还可以启动回滚机制。如此一来，状态机的相应速度与同步协议无异，在不出现「拜占庭将军问题」（及大多数人都是诚实的）的情况下，可以做到对交易的瞬间响应。 这篇论文中，作者对POW协议下，无需许可和需要许可的设定，提供了一些示例，相应速度可以达到正常上网的体验。不过正如上面所说，这一算法的前提条件是网络中的大部分节点或算力是诚实的，而这里所说的「大部分」指的是不能低于3/4。 原文链接： https://eprint.iacr.org/2017/913.pdf 论文2 论文标题：比特币为什么靠得住？关于比特币的理性协议的设计（But Why Does it Work？A Rational Protocol Design Treatment of Bitcoin?） 作者：Vassilis Zikas，英国爱丁堡大学区块链技术实验室副主任、副教授。 内容简介：这篇论文是关于比特币的，作者试图通过实验来验证RPD（Rational Protocol Design）框架作为一个「理性的密码学框架」在比特币分析中的可用性。众所周知，比特币交易的前提是默认大部分算力（矿工）是诚实的，然而在现实世界中，如何向公众证明大多数人是诚实的却是个难题。 在这篇文章中，作者通过对RPD框架部署了一套新的机制，结果显示无论是对矿工添加新的区块进行奖励，还是让他们对挖矿付出代价，诚实的节点总是占大多数。这一结果跟币圈一直以来「矿工总是追求利益最大化」的论调相去甚远。 这篇论文的价值在于，由于比特币交易流程的特殊性，以往密码学家没有一个关于合约是如何工作的常用的模型，需要各自开发安全等级上非常过硬的共识算法。这篇文章却改变了这一现状。 原文链接： https://eprint.iacr.org/2018/138.pdf 论文3 论文标题：Ouroboros Praos：一条自适应安全和半同步POS的区块链（Ouroboros Praos: An adaptively-secure, semi-synchronous proof-of-stake blockchain） 作者：Peter Gaži，IOHK研究员 内容简介：这篇文章中，作者提出了一个新的POS协议——Ouroboros Praos，这个协议可以看作是，针对IOHK之前发布的公链Cardano的升级算法。 这一算法第一次实现了半同步条件下对完全自适应腐败（fully-adaptive corruption）的安全保护。尤其是比特币持有者以诚实者占大多数时，黑客可以随时随地对这些人进行「腐化」，这一协议保证了更安全的数字签名，以及对随机函数进行验证的新类别——在而已密钥的生成下，依然保持不可预测。 不过，这个协议仅在随机预言机模型的标准加密假设中有效。 原文链接： https://eprint.iacr.org/2017/573.pdf 论文4 论文标题：可持续空间模型（Sustained Space Complexity） 作者：Jo¨el Alwen，奥地利科学与技术学院研究员 内容简介：MHF（Memory-hard functions）是一种函数，它的评测成本受存储成本所控制。在硬件设备（如FPGAs、ASICs）上对MHF进行评测，成本不比在x86设备上便宜。 在这篇文章中，作者引入了一个叫做「持续内存机制」（Sustainedmemory Complexity）。这一机制在平行随机预言机中构建。通过n和O两个函数进行运算，其中n代表步骤，O代表存储，函数式为：O(n/ log(n))。在每个步骤中，一条询问被放入随机预言机，其他算法也可以将其他随机询问放入随机预言机。其存储为：Ω(n/ log(n)) ，步骤为：Ω(n)。 原文链接： https://eprint.iacr.org/2018/147.pdf EUROCRYPT 2018 最佳论文 在区块链论坛入选的4篇论文之外，还有一篇关于区块链的论文入选了「最佳论文」，就是下面这篇。 论文标题：简单的连续工作证明（Simple Proofs of Sequential Work） 作者：Krzysztof Pietrzak，密码学家、奥地利科学与技术学院研究员。Bram Cohen，BitTorrent创始人、Chia CEO 内容简介：试图通过「空间证明」（Proof of Space）来保证比特币及其他加密货币的安全。「空间证明」是Bram Cohen之前提出的一种取代PoW的工作证明方式。 原文链接： https://eprint.iacr.org/2018/183.pdf 福利在此 看了这些论文，相信未来区块链的发展会有越来越多的可能性，也许其中的一个最新研究就能帮助你解决困扰多时的技术难题。 想要继续学习和研究的朋友，连长已把这5篇论文打包好，在后台回复「论文」即可将这5篇论文全部下载！ 趋势变化莫测，唯有技术永恒。 本文为原创文章，转载请加小编微信：qk15732632926 区块链大本营 回归技术本质 热门文章 你买的EOS币会升值吗？全看这三个点给不给力了！ 十分钟教你开发EOS智能合约 加密世界崛起 吕文哲：为什么我说EOS完爆以太坊，理由全在这里了 了解更多区块链技术及应用内容 敬请关注： 阅读更多" />
+<meta property="og:description" content="从区块链的诞生，就跟密码学分不开。 甚至如果没有密码学的理论根基，比特币根本都不会存在。比特币的实现也基于很多早期密码学领域的研究成果。 例如早期传奇密码学家David Chaum的数字现金技术（DigiCash）；密码学家戴伟（W. Dai）在1998年提出的B-money Scheme（B-money强调点对点的交易和不可更改的交易记录）；以及由Ralph Merkle在1979年提出的大名鼎鼎的「哈希树（Hash Tree）理论。 密码学家眼中的区块链 随着区块链技术的发展，这项与密码学深度结合的技术也越来越受到密码学界的重视，在上周刚刚结束的EUROCRYPT 2018大会中，有5篇关于区块链的顶级论文被发表。内容涵盖快速交易协议、比特币共识算法、POS算法，以及POW哈希算法等多个领域。 今天，连长就为大家介绍一下这些密码学领域的最新研究，并将所有论文的原文下载资源奉献给大家（提取请后台回复关键词：论文）。为了说明这些文章的价值，我们先来介绍一下EUROCRYPT这个大会。 密码学中最著名的学术会议当属「国际密码学协会」（IACR，International Association of Cryptological Research）所主办的三个大会了：Crypto、Eurocrypt、Asiacrypt，即美密会、欧密会、 亚密会，其中欧密会和美密会的水平最高（亚密会的资历最浅，虽然近几年上升很快，但要完全赶上还需要一定的时间）。密码学中最重要的文章一般都会在这三个会议中发布。 上周（4.30~5.3日），2018年的欧密会（EUROCRYPT 2018）刚刚在以色列首都特拉维夫落幕。今年的EUROCRYPT大会增设了「区块链」分论坛，分论坛上有4篇论文发布。能在EUROCRYPT上发表论文绝非易事，通常每五篇提交上去的论文中，只有一篇能被选中。 在发表之前，每一篇论文都会进行为期几个月的Peer Review（互相审阅），在完全匿名的不断探讨这些论文的价值，最后胜出的论文才能被发表。 下面我们就来看看今年发布的这5篇（4篇分论坛+1篇最佳论文）论文都讲了点啥，感兴趣的话，不妨亲自找来研究。 EUROCRYPT 2018区块链论文合集 论文1 论文标题：Thunderella：区块链理想条件下的瞬间响应（Thunderella: Blockchains with Optimistic Instant Confirmation） 作者：Rafael Pass，康奈尔大学计算机科学系副教授 内容简介：这篇论文中，作者介绍了一个全新的算法叫做「Thunderella」。与一般状态机的共识原理不同（状态机相当于一个共识机制的抽象，对分布式网络中大量节点的请求进行确认），Thunderella使得状态机可以在实现快速异步处理的同时，在异常时还可以启动回滚机制。如此一来，状态机的相应速度与同步协议无异，在不出现「拜占庭将军问题」（及大多数人都是诚实的）的情况下，可以做到对交易的瞬间响应。 这篇论文中，作者对POW协议下，无需许可和需要许可的设定，提供了一些示例，相应速度可以达到正常上网的体验。不过正如上面所说，这一算法的前提条件是网络中的大部分节点或算力是诚实的，而这里所说的「大部分」指的是不能低于3/4。 原文链接： https://eprint.iacr.org/2017/913.pdf 论文2 论文标题：比特币为什么靠得住？关于比特币的理性协议的设计（But Why Does it Work？A Rational Protocol Design Treatment of Bitcoin?） 作者：Vassilis Zikas，英国爱丁堡大学区块链技术实验室副主任、副教授。 内容简介：这篇论文是关于比特币的，作者试图通过实验来验证RPD（Rational Protocol Design）框架作为一个「理性的密码学框架」在比特币分析中的可用性。众所周知，比特币交易的前提是默认大部分算力（矿工）是诚实的，然而在现实世界中，如何向公众证明大多数人是诚实的却是个难题。 在这篇文章中，作者通过对RPD框架部署了一套新的机制，结果显示无论是对矿工添加新的区块进行奖励，还是让他们对挖矿付出代价，诚实的节点总是占大多数。这一结果跟币圈一直以来「矿工总是追求利益最大化」的论调相去甚远。 这篇论文的价值在于，由于比特币交易流程的特殊性，以往密码学家没有一个关于合约是如何工作的常用的模型，需要各自开发安全等级上非常过硬的共识算法。这篇文章却改变了这一现状。 原文链接： https://eprint.iacr.org/2018/138.pdf 论文3 论文标题：Ouroboros Praos：一条自适应安全和半同步POS的区块链（Ouroboros Praos: An adaptively-secure, semi-synchronous proof-of-stake blockchain） 作者：Peter Gaži，IOHK研究员 内容简介：这篇文章中，作者提出了一个新的POS协议——Ouroboros Praos，这个协议可以看作是，针对IOHK之前发布的公链Cardano的升级算法。 这一算法第一次实现了半同步条件下对完全自适应腐败（fully-adaptive corruption）的安全保护。尤其是比特币持有者以诚实者占大多数时，黑客可以随时随地对这些人进行「腐化」，这一协议保证了更安全的数字签名，以及对随机函数进行验证的新类别——在而已密钥的生成下，依然保持不可预测。 不过，这个协议仅在随机预言机模型的标准加密假设中有效。 原文链接： https://eprint.iacr.org/2017/573.pdf 论文4 论文标题：可持续空间模型（Sustained Space Complexity） 作者：Jo¨el Alwen，奥地利科学与技术学院研究员 内容简介：MHF（Memory-hard functions）是一种函数，它的评测成本受存储成本所控制。在硬件设备（如FPGAs、ASICs）上对MHF进行评测，成本不比在x86设备上便宜。 在这篇文章中，作者引入了一个叫做「持续内存机制」（Sustainedmemory Complexity）。这一机制在平行随机预言机中构建。通过n和O两个函数进行运算，其中n代表步骤，O代表存储，函数式为：O(n/ log(n))。在每个步骤中，一条询问被放入随机预言机，其他算法也可以将其他随机询问放入随机预言机。其存储为：Ω(n/ log(n)) ，步骤为：Ω(n)。 原文链接： https://eprint.iacr.org/2018/147.pdf EUROCRYPT 2018 最佳论文 在区块链论坛入选的4篇论文之外，还有一篇关于区块链的论文入选了「最佳论文」，就是下面这篇。 论文标题：简单的连续工作证明（Simple Proofs of Sequential Work） 作者：Krzysztof Pietrzak，密码学家、奥地利科学与技术学院研究员。Bram Cohen，BitTorrent创始人、Chia CEO 内容简介：试图通过「空间证明」（Proof of Space）来保证比特币及其他加密货币的安全。「空间证明」是Bram Cohen之前提出的一种取代PoW的工作证明方式。 原文链接： https://eprint.iacr.org/2018/183.pdf 福利在此 看了这些论文，相信未来区块链的发展会有越来越多的可能性，也许其中的一个最新研究就能帮助你解决困扰多时的技术难题。 想要继续学习和研究的朋友，连长已把这5篇论文打包好，在后台回复「论文」即可将这5篇论文全部下载！ 趋势变化莫测，唯有技术永恒。 本文为原创文章，转载请加小编微信：qk15732632926 区块链大本营 回归技术本质 热门文章 你买的EOS币会升值吗？全看这三个点给不给力了！ 十分钟教你开发EOS智能合约 加密世界崛起 吕文哲：为什么我说EOS完爆以太坊，理由全在这里了 了解更多区块链技术及应用内容 敬请关注： 阅读更多" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/05/10/%E7%8B%AC%E5%AE%B6-%E5%8C%BA%E5%9D%97%E9%93%BE%E6%9C%80%E6%96%B0%E9%A1%B6%E7%BA%A7%E8%AE%BA%E6%96%87%E6%9B%9D%E5%85%89-%E6%9D%A5%E8%87%AA%E6%AC%A7%E5%AF%86%E4%BC%9A%E4%B8%8A%E7%9A%845%E7%AF%87%E9%87%8D%E7%A3%85-%E7%BB%9F%E7%BB%9F%E6%89%93%E5%8C%85%E7%BB%99%E4%BD%A0.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/05/10/%E7%8B%AC%E5%AE%B6-%E5%8C%BA%E5%9D%97%E9%93%BE%E6%9C%80%E6%96%B0%E9%A1%B6%E7%BA%A7%E8%AE%BA%E6%96%87%E6%9B%9D%E5%85%89-%E6%9D%A5%E8%87%AA%E6%AC%A7%E5%AF%86%E4%BC%9A%E4%B8%8A%E7%9A%845%E7%AF%87%E9%87%8D%E7%A3%85-%E7%BB%9F%E7%BB%9F%E6%89%93%E5%8C%85%E7%BB%99%E4%BD%A0.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-05-10T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"从区块链的诞生，就跟密码学分不开。 甚至如果没有密码学的理论根基，比特币根本都不会存在。比特币的实现也基于很多早期密码学领域的研究成果。 例如早期传奇密码学家David Chaum的数字现金技术（DigiCash）；密码学家戴伟（W. Dai）在1998年提出的B-money Scheme（B-money强调点对点的交易和不可更改的交易记录）；以及由Ralph Merkle在1979年提出的大名鼎鼎的「哈希树（Hash Tree）理论。 密码学家眼中的区块链 随着区块链技术的发展，这项与密码学深度结合的技术也越来越受到密码学界的重视，在上周刚刚结束的EUROCRYPT 2018大会中，有5篇关于区块链的顶级论文被发表。内容涵盖快速交易协议、比特币共识算法、POS算法，以及POW哈希算法等多个领域。 今天，连长就为大家介绍一下这些密码学领域的最新研究，并将所有论文的原文下载资源奉献给大家（提取请后台回复关键词：论文）。为了说明这些文章的价值，我们先来介绍一下EUROCRYPT这个大会。 密码学中最著名的学术会议当属「国际密码学协会」（IACR，International Association of Cryptological Research）所主办的三个大会了：Crypto、Eurocrypt、Asiacrypt，即美密会、欧密会、 亚密会，其中欧密会和美密会的水平最高（亚密会的资历最浅，虽然近几年上升很快，但要完全赶上还需要一定的时间）。密码学中最重要的文章一般都会在这三个会议中发布。 上周（4.30~5.3日），2018年的欧密会（EUROCRYPT 2018）刚刚在以色列首都特拉维夫落幕。今年的EUROCRYPT大会增设了「区块链」分论坛，分论坛上有4篇论文发布。能在EUROCRYPT上发表论文绝非易事，通常每五篇提交上去的论文中，只有一篇能被选中。 在发表之前，每一篇论文都会进行为期几个月的Peer Review（互相审阅），在完全匿名的不断探讨这些论文的价值，最后胜出的论文才能被发表。 下面我们就来看看今年发布的这5篇（4篇分论坛+1篇最佳论文）论文都讲了点啥，感兴趣的话，不妨亲自找来研究。 EUROCRYPT 2018区块链论文合集 论文1 论文标题：Thunderella：区块链理想条件下的瞬间响应（Thunderella: Blockchains with Optimistic Instant Confirmation） 作者：Rafael Pass，康奈尔大学计算机科学系副教授 内容简介：这篇论文中，作者介绍了一个全新的算法叫做「Thunderella」。与一般状态机的共识原理不同（状态机相当于一个共识机制的抽象，对分布式网络中大量节点的请求进行确认），Thunderella使得状态机可以在实现快速异步处理的同时，在异常时还可以启动回滚机制。如此一来，状态机的相应速度与同步协议无异，在不出现「拜占庭将军问题」（及大多数人都是诚实的）的情况下，可以做到对交易的瞬间响应。 这篇论文中，作者对POW协议下，无需许可和需要许可的设定，提供了一些示例，相应速度可以达到正常上网的体验。不过正如上面所说，这一算法的前提条件是网络中的大部分节点或算力是诚实的，而这里所说的「大部分」指的是不能低于3/4。 原文链接： https://eprint.iacr.org/2017/913.pdf 论文2 论文标题：比特币为什么靠得住？关于比特币的理性协议的设计（But Why Does it Work？A Rational Protocol Design Treatment of Bitcoin?） 作者：Vassilis Zikas，英国爱丁堡大学区块链技术实验室副主任、副教授。 内容简介：这篇论文是关于比特币的，作者试图通过实验来验证RPD（Rational Protocol Design）框架作为一个「理性的密码学框架」在比特币分析中的可用性。众所周知，比特币交易的前提是默认大部分算力（矿工）是诚实的，然而在现实世界中，如何向公众证明大多数人是诚实的却是个难题。 在这篇文章中，作者通过对RPD框架部署了一套新的机制，结果显示无论是对矿工添加新的区块进行奖励，还是让他们对挖矿付出代价，诚实的节点总是占大多数。这一结果跟币圈一直以来「矿工总是追求利益最大化」的论调相去甚远。 这篇论文的价值在于，由于比特币交易流程的特殊性，以往密码学家没有一个关于合约是如何工作的常用的模型，需要各自开发安全等级上非常过硬的共识算法。这篇文章却改变了这一现状。 原文链接： https://eprint.iacr.org/2018/138.pdf 论文3 论文标题：Ouroboros Praos：一条自适应安全和半同步POS的区块链（Ouroboros Praos: An adaptively-secure, semi-synchronous proof-of-stake blockchain） 作者：Peter Gaži，IOHK研究员 内容简介：这篇文章中，作者提出了一个新的POS协议——Ouroboros Praos，这个协议可以看作是，针对IOHK之前发布的公链Cardano的升级算法。 这一算法第一次实现了半同步条件下对完全自适应腐败（fully-adaptive corruption）的安全保护。尤其是比特币持有者以诚实者占大多数时，黑客可以随时随地对这些人进行「腐化」，这一协议保证了更安全的数字签名，以及对随机函数进行验证的新类别——在而已密钥的生成下，依然保持不可预测。 不过，这个协议仅在随机预言机模型的标准加密假设中有效。 原文链接： https://eprint.iacr.org/2017/573.pdf 论文4 论文标题：可持续空间模型（Sustained Space Complexity） 作者：Jo¨el Alwen，奥地利科学与技术学院研究员 内容简介：MHF（Memory-hard functions）是一种函数，它的评测成本受存储成本所控制。在硬件设备（如FPGAs、ASICs）上对MHF进行评测，成本不比在x86设备上便宜。 在这篇文章中，作者引入了一个叫做「持续内存机制」（Sustainedmemory Complexity）。这一机制在平行随机预言机中构建。通过n和O两个函数进行运算，其中n代表步骤，O代表存储，函数式为：O(n/ log(n))。在每个步骤中，一条询问被放入随机预言机，其他算法也可以将其他随机询问放入随机预言机。其存储为：Ω(n/ log(n)) ，步骤为：Ω(n)。 原文链接： https://eprint.iacr.org/2018/147.pdf EUROCRYPT 2018 最佳论文 在区块链论坛入选的4篇论文之外，还有一篇关于区块链的论文入选了「最佳论文」，就是下面这篇。 论文标题：简单的连续工作证明（Simple Proofs of Sequential Work） 作者：Krzysztof Pietrzak，密码学家、奥地利科学与技术学院研究员。Bram Cohen，BitTorrent创始人、Chia CEO 内容简介：试图通过「空间证明」（Proof of Space）来保证比特币及其他加密货币的安全。「空间证明」是Bram Cohen之前提出的一种取代PoW的工作证明方式。 原文链接： https://eprint.iacr.org/2018/183.pdf 福利在此 看了这些论文，相信未来区块链的发展会有越来越多的可能性，也许其中的一个最新研究就能帮助你解决困扰多时的技术难题。 想要继续学习和研究的朋友，连长已把这5篇论文打包好，在后台回复「论文」即可将这5篇论文全部下载！ 趋势变化莫测，唯有技术永恒。 本文为原创文章，转载请加小编微信：qk15732632926 区块链大本营 回归技术本质 热门文章 你买的EOS币会升值吗？全看这三个点给不给力了！ 十分钟教你开发EOS智能合约 加密世界崛起 吕文哲：为什么我说EOS完爆以太坊，理由全在这里了 了解更多区块链技术及应用内容 敬请关注： 阅读更多","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/05/10/%E7%8B%AC%E5%AE%B6-%E5%8C%BA%E5%9D%97%E9%93%BE%E6%9C%80%E6%96%B0%E9%A1%B6%E7%BA%A7%E8%AE%BA%E6%96%87%E6%9B%9D%E5%85%89-%E6%9D%A5%E8%87%AA%E6%AC%A7%E5%AF%86%E4%BC%9A%E4%B8%8A%E7%9A%845%E7%AF%87%E9%87%8D%E7%A3%85-%E7%BB%9F%E7%BB%9F%E6%89%93%E5%8C%85%E7%BB%99%E4%BD%A0.html","headline":"独家 区块链最新顶级论文曝光！来自欧密会上的5篇重磅，统统打包给你","dateModified":"2018-05-10T00:00:00+08:00","datePublished":"2018-05-10T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/05/10/%E7%8B%AC%E5%AE%B6-%E5%8C%BA%E5%9D%97%E9%93%BE%E6%9C%80%E6%96%B0%E9%A1%B6%E7%BA%A7%E8%AE%BA%E6%96%87%E6%9B%9D%E5%85%89-%E6%9D%A5%E8%87%AA%E6%AC%A7%E5%AF%86%E4%BC%9A%E4%B8%8A%E7%9A%845%E7%AF%87%E9%87%8D%E7%A3%85-%E7%BB%9F%E7%BB%9F%E6%89%93%E5%8C%85%E7%BB%99%E4%BD%A0.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>独家 | 区块链最新顶级论文曝光！来自欧密会上的5篇重磅，统统打包给你</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <div class="rich_media_content"> 
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;">从区块链的诞生，就跟密码学分不开。</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;">甚至如果没有密码学的理论根基，比特币根本都不会存在。比特币的实现也基于很多早期密码学领域的研究成果。</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;">例如早期传奇密码学家David Chaum的数字现金技术（DigiCash）；密码学家戴伟（W. Dai）在1998年提出的B-money Scheme（B-money强调点对点的交易和不可更改的交易记录）；以及由Ralph Merkle在1979年提出的大名鼎鼎的「哈希树（Hash Tree）理论。</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"></span></p>
+   <p style="text-align:center;"><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_jpg/trm5VMeFp9lzniaYbpMPBQ6c5fJmvgBobJNoXOWwQN053EHANnCGjtzazSAEj5rw4mql7icjJf2qPFvZbXpQ4O6w/640?wx_fmt=jpeg&amp;wxfrom=5&amp;wx_lazy=1" alt="640?wx_fmt=jpeg&amp;wxfrom=5&amp;wx_lazy=1"></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"></span><br></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><br></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:center;"><strong><span style="letter-spacing:.5px;font-size:18px;color:rgb(0,122,170);">密码学家眼中的区块链</span></strong></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;">随着区块链技术的发展，这项与密码学深度结合的技术也越来越受到密码学界的重视，<strong>在上周刚刚结束的EUROCRYPT 2018大会中，有5篇关于区块链的顶级论文被发表</strong>。内容涵盖快速交易协议、比特币共识算法、POS算法，以及POW哈希算法等多个领域。</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;">今天，连长就为大家介绍一下这些密码学领域的最新研究，</span><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">并将所有论文的原文下载资源奉献给大家<em>（提取请后台回复关键词：论文）</em></span><span style="font-size:15px;letter-spacing:.5px;">。为了说明这些文章的价值，我们先来介绍一下EUROCRYPT这个大会。</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;">密码学中最著名的学术会议当属「国际密码学协会」（IACR，International Association of Cryptological Research）所主办的三个大会了：</span><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">Crypto、Eurocrypt、Asiacrypt，即美密会、欧密会、 亚密会</span><span style="font-size:15px;letter-spacing:.5px;">，其中欧密会和美密会的水平最高（亚密会的资历最浅，虽然近几年上升很快，但要完全赶上还需要一定的时间）。<strong>密码学中最重要的文章一般都会在这三个会议中发布</strong>。</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;">上周（4.30~5.3日），2018年的欧密会（EUROCRYPT 2018）刚刚在以色列首都特拉维夫落幕。<strong>今年的EUROCRYPT大会增设了「区块链」分论坛，分论坛上有4篇论文发布</strong>。能在EUROCRYPT上发表论文绝非易事，通常每五篇提交上去的论文中，只有一篇能被选中。</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"></span></p>
+   <p style="text-align:center;"><img class="img_loading" style="width:652px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/trm5VMeFp9lzniaYbpMPBQ6c5fJmvgBob2LTpgBt7MeMTRvSOvIW7mUFZ0fc81bDQPfGAw7trsmtFfn0R1QoEnw/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><br></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;">在发表之前，每一篇论文都会进行为期几个月的Peer Review（互相审阅），在完全匿名的不断探讨这些论文的价值，最后胜出的论文才能被发表。</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;">下面我们就来看看今年发布的这5篇（4篇分论坛+1篇最佳论文）论文都讲了点啥，感兴趣的话，不妨亲自找来研究。</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:center;"><span style="font-size:18px;"><strong><span style="letter-spacing:.5px;color:rgb(0,122,170);">EUROCRYPT 2018区块链论文合集</span></strong></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:16px;"><strong><span style="letter-spacing:.5px;color:rgb(0,122,170);">论文1</span></strong></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="color:rgb(0,122,170);"><span style="font-size:15px;letter-spacing:.5px;">论文标题：</span></span><span style="font-size:15px;letter-spacing:.5px;">Thunderella：区块链理想条件下的瞬间响应（Thunderella: Blockchains with Optimistic Instant Confirmation）</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">作者：</span><span style="font-size:15px;letter-spacing:.5px;">Rafael Pass，康奈尔大学计算机科学系副教授</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"></span></p>
+   <p style="text-align:center;"><img class="img_loading" style="width:225px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_jpg/trm5VMeFp9lzniaYbpMPBQ6c5fJmvgBobED2DlM9HNiaJJ8icbKyKVPv3rExVb8icUHW3awUSjXWMs21rBRt3p9Gmw/640?wx_fmt=jpeg" alt="640?wx_fmt=jpeg"></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><br></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">内容简介：</span><span style="font-size:15px;letter-spacing:.5px;">这篇论文中，作者介绍了一个全新的算法叫做「Thunderella」。与一般状态机的共识原理不同（状态机相当于一个共识机制的抽象，对分布式网络中大量节点的请求进行确认），Thunderella使得状态机可以在实现快速异步处理的同时，在异常时还可以启动回滚机制。如此一来，状态机的相应速度与同步协议无异，在不出现「拜占庭将军问题」（及大多数人都是诚实的）的情况下，可以做到对交易的瞬间响应。</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;">这篇论文中，作者对POW协议下，无需许可和需要许可的设定，提供了一些示例，相应速度可以达到正常上网的体验。不过正如上面所说，这一算法的前提条件是网络中的大部分节点或算力是诚实的，而这里所说的「大部分」指的是不能低于3/4。</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">原文链接：</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="color:rgb(136,136,136);text-decoration:underline;"><em><span style="color:rgb(136,136,136);text-decoration:underline;font-size:15px;letter-spacing:.5px;">https://eprint.iacr.org/2017/913.pdf</span></em></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><strong><span style="letter-spacing:.5px;color:rgb(0,122,170);font-size:16px;">论文2</span></strong></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">论文标题：</span><span style="font-size:15px;letter-spacing:.5px;">比特币为什么靠得住？关于比特币的理性协议的设计（But Why Does it Work？A Rational Protocol Design Treatment of Bitcoin?）</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">作者：</span><span style="font-size:15px;letter-spacing:.5px;">Vassilis Zikas，英国爱丁堡大学区块链技术实验室副主任、副教授。</span><br></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"></span></p>
+   <p style="text-align:center;"><img class="img_loading" style="width:600px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_jpg/trm5VMeFp9lzniaYbpMPBQ6c5fJmvgBobeCtFrT4PPbu2nUhtrVqHHYpdvt2w5avPLwjqqTopZndicdmevubphFg/640?wx_fmt=jpeg" alt="640?wx_fmt=jpeg"></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">内容简介：</span><span style="font-size:15px;letter-spacing:.5px;">这篇论文是关于比特币的，作者试图通过实验来验证RPD（Rational Protocol Design）框架作为一个「理性的密码学框架」在比特币分析中的可用性。众所周知，比特币交易的前提是默认大部分算力（矿工）是诚实的，然而在现实世界中，如何向公众证明大多数人是诚实的却是个难题。</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;">在这篇文章中，作者通过对RPD框架部署了一套新的机制，结果显示无论是对矿工添加新的区块进行奖励，还是让他们对挖矿付出代价，诚实的节点总是占大多数。这一结果跟币圈一直以来「矿工总是追求利益最大化」的论调相去甚远。</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;">这篇论文的价值在于，由于比特币交易流程的特殊性，以往密码学家没有一个关于合约是如何工作的常用的模型，需要各自开发安全等级上非常过硬的共识算法。这篇文章却改变了这一现状。</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">原文链接</span><span style="font-size:15px;letter-spacing:.5px;">：</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="color:rgb(136,136,136);"><em><span style="font-size:15px;letter-spacing:.5px;text-decoration:underline;">https://eprint.iacr.org/2018/138.pdf</span></em></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><strong><span style="letter-spacing:.5px;font-size:16px;color:rgb(0,122,170);">论文3</span></strong></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">论文标题：</span><span style="font-size:15px;letter-spacing:.5px;">Ouroboros Praos：一条自适应安全和半同步POS的区块链（Ouroboros Praos: An adaptively-secure, semi-synchronous proof-of-stake blockchain）</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">作者：</span><span style="font-size:15px;letter-spacing:.5px;">Peter Gaži，IOHK研究员</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"></span></p>
+   <p style="text-align:center;"><img class="img_loading" style="width:600px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_jpg/trm5VMeFp9lzniaYbpMPBQ6c5fJmvgBob9icmWo7qJiawEgdqYS1gNBic9gKBswuqsgmU3WDOtVWugKaC43R5KJacA/640?wx_fmt=jpeg" alt="640?wx_fmt=jpeg"></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">内容简介：</span><span style="font-size:15px;letter-spacing:.5px;">这篇文章中，作者提出了一个新的POS协议——Ouroboros Praos，这个协议可以看作是，针对IOHK之前发布的公链Cardano的升级算法。</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;">这一算法第一次实现了半同步条件下对完全自适应腐败（fully-adaptive corruption）的安全保护。尤其是比特币持有者以诚实者占大多数时，黑客可以随时随地对这些人进行「腐化」，这一协议保证了更安全的数字签名，以及对随机函数进行验证的新类别——在而已密钥的生成下，依然保持不可预测。</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;">不过，这个协议仅在随机预言机模型的标准加密假设中有效。</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);"><span style="color:rgb(0,122,170);font-size:15px;letter-spacing:.5px;text-align:justify;">原</span>文链接：</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="text-decoration:underline;"><em><span style="text-decoration:underline;font-size:15px;letter-spacing:.5px;color:rgb(136,136,136);">https://eprint.iacr.org/2017/573.pdf</span></em></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><strong><span style="letter-spacing:.5px;font-size:16px;color:rgb(0,122,170);">论文4</span></strong></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">论文标题：</span><span style="font-size:15px;letter-spacing:.5px;">可持续空间模型（Sustained Space Complexity）</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">作者：</span><span style="font-size:15px;letter-spacing:.5px;">Jo¨el Alwen，奥地利科学与技术学院研究员</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"></span></p>
+   <p style="text-align:center;"><img class="img_loading" style="width:203px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_jpg/trm5VMeFp9lzniaYbpMPBQ6c5fJmvgBobY9QgLNBel4rob29XD5Z6M38hvXvymDia8mubibsmgCVBmlJ81KgDWYfQ/640?wx_fmt=jpeg" alt="640?wx_fmt=jpeg"></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">内容简介：</span><span style="font-size:15px;letter-spacing:.5px;">MHF（Memory-hard functions）是一种函数，它的评测成本受存储成本所控制。在硬件设备（如FPGAs、ASICs）上对MHF进行评测，成本不比在x86设备上便宜。</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;">在这篇文章中，作者引入了一个叫做「持续内存机制」（Sustainedmemory Complexity）。这一机制在平行随机预言机中构建。通过n和O两个函数进行运算，其中n代表步骤，O代表存储，函数式为：O(n/ log(n))。在每个步骤中，一条询问被放入随机预言机，其他算法也可以将其他随机询问放入随机预言机。其存储为：Ω(n/ log(n)) ，步骤为：Ω(n)。</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);"><span style="color:rgb(0,122,170);font-size:15px;letter-spacing:.5px;text-align:justify;">原文</span>链接：</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="text-decoration:underline;color:rgb(136,136,136);"><em><span style="text-decoration:underline;font-size:15px;letter-spacing:.5px;">https://eprint.iacr.org/2018/147.pdf</span></em></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="color:rgb(0,122,170);"><strong><span style="letter-spacing:.5px;font-size:16px;">EUROCRYPT 2018 最佳论文</span></strong></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;">在区块链论坛入选的4篇论文之外，还有一篇关于区块链的论文入选了「最佳论文」，就是下面这篇。</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">论文标题：</span><span style="font-size:15px;letter-spacing:.5px;">简单的连续工作证明（Simple Proofs of Sequential Work）</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">作者：</span><span style="font-size:15px;letter-spacing:.5px;">Krzysztof Pietrzak，密码学家、奥地利科学与技术学院研究员。Bram Cohen，BitTorrent创始人、Chia CEO</span></p>
+   <p style="text-align:center;"><br></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"></span></p>
+   <p style="text-align:center;"><img class="img_loading" style="width:652px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_jpg/trm5VMeFp9lzniaYbpMPBQ6c5fJmvgBobJkmf4VoDZafo4wMkozwbfpRF2XicYND8UHpDhm4NIoIc04AD5TSHnfg/640?wx_fmt=jpeg" alt="640?wx_fmt=jpeg"></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">内容简介：</span><span style="font-size:15px;letter-spacing:.5px;">试图通过「空间证明」（Proof of Space）来保证比特币及其他加密货币的安全。「空间证明」是Bram Cohen之前提出的一种取代PoW的工作证明方式。</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">原文链接：</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="color:rgb(136,136,136);text-decoration:underline;"><em><span style="color:rgb(136,136,136);text-decoration:underline;font-size:15px;letter-spacing:.5px;">https://eprint.iacr.org/2018/183.pdf</span></em></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><br></p>
+   <p><br></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:center;"><span style="font-size:18px;"><strong><span style="letter-spacing:.5px;color:rgb(0,122,170);">福利在此</span></strong></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><br></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;">看了这些论文，相信未来区块链的发展会有越来越多的可能性，也许其中的一个最新研究就能帮助你解决困扰多时的技术难题。</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;">想要继续学习和研究的朋友，</span><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">连长已把这5篇论文打包好，在后台回复「论文」即可将这5篇论文全部下载！</span></strong></p>
+   <p><br></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;">趋势变化莫测，唯有技术永恒。</span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"></span></p>
+   <p style="margin-left:8px;color:rgb(51,51,51);"><span style="color:rgb(136,136,136);letter-spacing:.5px;font-size:15px;">本文为原创文章，转载请加小编微信：qk15732632926</span></p>
+   <p style="color:rgb(51,51,51);"><br></p>
+   <p style="color:rgb(51,51,51);"><br></p>
+   <h2></h2>
+   <p style="text-align:center;"><img class="img_loading" style="width:75px;" title="ai100-bk.png" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_jpg/trm5VMeFp9lbe3nPsXRbrBU5ug6KM0dTK22RwSPOIIEhT0fwiaINz73PousjxialnnjQ3RlnDVT01Ew7bSJlIRjQ/640?wx_fmt=jpeg" alt="640?wx_fmt=jpeg"></p>区块链大本营
+   <span style="color:rgb(165,165,165);">回归技术本质</span>
+   <img class="img_loading" style="width:55px;" title="qrcode_for_gh_2241bd03b995_344.jpg" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_jpg/trm5VMeFp9lbe3nPsXRbrBU5ug6KM0dTm8EKTytGfmlS9fS8ibsFCcCpWzY5Uxp4cq7ZwqFStt37ic52XdUBTgQg/640?wx_fmt=jpeg" alt="640?wx_fmt=jpeg">
+   <p style="margin-left:8px;"><br></p>
+   <p><br></p>
+   <p style="line-height:22px;font-size:18px;">热门文章</p>
+   <p><br></p>
+   <p><br></p>
+   <ul class="list-paddingleft-2" style="margin-left:8px;">
+    <li><p><a href="https://mp.weixin.qq.com/s?__biz=MzU2MTE1NDk2Mg==&amp;mid=2247486156&amp;idx=1&amp;sn=8806ca1332b5f814ff8ea35743607d59&amp;chksm=fc7c5431cb0bdd279282257abfeb07468b6dfa6155ee5afafb7a58a6bdb38a4e14dce4451053&amp;mpshare=1&amp;scene=21&amp;srcid=0508dS82MNl3XgNTq00jPGyx&amp;key=e25af9ba9abbff7995ebfa7519927d0756ff42ea8f355f73c0ee27f1dedf91848e4e4b721b0ee1cd2933790bb2bfb6ce56743dca2a2e4ba1b451645f1b8afd919438fc522523a3b34bce67d27a8fdcfb&amp;ascene=0&amp;uin=MjQ0ODA5ODUwMQ==&amp;devicetype=iMac%20MacBookAir7,2%20OSX%20OSX%2010.12.4%20build(16E195)&amp;version=11020201&amp;lang=zh_CN&amp;pass_ticket=g5ukztnpXzV84HjaFjrPspySpGm8SpuDrwzWG/1FR1t7wmTQ6462XtW4u1mOtivK#wechat_redirect" rel="nofollow" style="text-decoration:underline;color:rgb(0,122,170);font-size:15px;"><span style="color:rgb(0,122,170);font-size:15px;">你买的EOS币会升值吗？全看这三个点给不给力了！</span></a></p></li>
+    <li><p><a href="http://mp.weixin.qq.com/s?__biz=MzU2MTE1NDk2Mg==&amp;mid=2247486140&amp;idx=1&amp;sn=14d4841cab3afd74d2b24c658604451a&amp;chksm=fc7c5441cb0bdd57ae013fcd68ea367a00a80c5a3f7eddfbadc1bd34bd6d7d1883a7b5c6e0b1&amp;scene=21#wechat_redirect" rel="nofollow" style="text-decoration:underline;font-size:15px;color:rgb(0,122,170);"><span style="color:rgb(0,122,170);">十分钟教你开发EOS智能合约</span></a><br></p></li>
+    <li><p style="text-align:justify;line-height:1.75em;"><a href="http://mp.weixin.qq.com/s?__biz=MzU2MTE1NDk2Mg==&amp;mid=2247486132&amp;idx=1&amp;sn=b5484d66c05cf402776f9c7ab29bef58&amp;chksm=fc7c5449cb0bdd5f4f7fb3b3c3ab45245333047306157ba52ea4044c6d7c9dadde878cc53b21&amp;scene=21#wechat_redirect" rel="nofollow" style="color:rgb(0,122,170);text-decoration:underline;font-size:15px;letter-spacing:.5px;">加密世界崛起</a><br></p></li>
+    <li><p style="text-align:justify;line-height:1.75em;"><a href="http://mp.weixin.qq.com/s?__biz=MzU2MTE1NDk2Mg==&amp;mid=2247486118&amp;idx=1&amp;sn=f74e06800ff38ca67c04ad36ad6980d2&amp;chksm=fc7c545bcb0bdd4d035b259a5ea14a0efc80ce6b2b958636f0e0285d02cb1c3dac83d274138c&amp;scene=21#wechat_redirect" rel="nofollow" style="color:rgb(0,122,170);text-decoration:underline;font-size:15px;letter-spacing:.5px;">吕文哲：为什么我说EOS完爆以太坊，理由全在这里了</a></p></li>
+   </ul>
+   <p><br></p>
+   <p style="margin-left:8px;"><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);"></span></strong></p>
+   <p><img class="__bg_gif" style="margin-left:auto;line-height:28px;width:22px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_gif/trm5VMeFp9kuuGYcoeg06IYM4TSEE1eCF4aiadptTMnNFDia5JfEBLuUslraYtDcYbKr2b4takjM2MfqeZYcVqkQ/640?wx_fmt=gif" alt="640?wx_fmt=gif"></p>
+   <p><br></p>
+   <p style="margin-left:8px;"><span style="color:rgb(0,0,0);font-size:15px;letter-spacing:.5px;"><strong><span style="font-size:14px;color:rgb(0,122,170);">了解更多区块链技术及应用内容</span></strong></span></p>
+   <p style="margin-left:8px;"><span style="color:rgb(0,0,0);font-size:15px;letter-spacing:.5px;"><strong><span style="font-size:14px;color:rgb(0,122,170);">敬请关注：</span></strong></span></p>
+   <p style="margin-left:8px;"><span style="color:rgb(0,0,0);font-size:15px;letter-spacing:.5px;"><strong><span style="font-size:14px;color:rgb(0,122,170);"><br></span></strong></span></p>
+   <p style="margin-left:8px;"><img class="img_loading" style="width:553px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/trm5VMeFp9kMArZVQnH795V0mV4yvUe1XtHHYaiaODQx4GJyntPliboaekBhP7QtR0HABz9opVdhALLJRg0gJUPA/640?wx_fmt=png" alt="640?wx_fmt=png"></p> 
+  </div> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/Blockchain_lemon/article/details/80267324,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/Blockchain_lemon/article/details/80267324,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

@@ -1,0 +1,261 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div class="article-copyright">
+   版权声明：本文为博主原创文章，未经博主允许不得转载。 https://blog.csdn.net/teaspring/article/details/77834360 
+ </div> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <p>数字签名算法在Ethereum中的应用不少，目前已知至少有两处：一是在生成每个交易(Transaction， tx)对象时，对整个tx对象进行数字签名；二是在共识算法的Clique算法实现中，在针对新区块进行授权/封印的Seal()函数里，对新创建区块做了数字签名。这两处应用的签名算法都是<strong>椭圆曲线数字签名加密算法</strong>(Elliptic Curve Digital Signature Algorithm,<strong>ECDSA</strong>)。Ethereum 在采用ECDSA进行数字签名的基础上，基于自身的业务需求，又将数字签名过程所用的公钥作为地址类型(common.Address)对象，在许多应用场景下作为地址（即账户的唯一标识符）使用。</p> 
+  <p>有关ECDSA的几个理论概念的关系是这样的：椭圆曲线数字加密算法ECDSA是数字签名算法(<strong>DSA</strong>)的变例之一，ECDSA的基础是<strong>椭圆曲线密码学</strong>(Elliptic-curve cryptography，<strong>ECC</strong>)，而ECC的理论前提是椭圆曲线上点的倍积(Elliptic curve point multiplication)。本文将从这些概念的原理讲起，试图讲解一下Ethereum所采用ECDSA的来龙去脉。</p> 
+  <h1>1.椭圆曲线点的倍积</h1> 
+  <h2>概念知识<br></h2> 
+  <p><strong>椭圆曲线的点倍积</strong>(point multiplication)，指的是椭圆曲线上一个点沿着这条曲线不断的与自身相加，最终落在曲线另一个点上的(计算)过程。也许有些地方会把这里的multiplication翻译成“乘积”或“乘法”，那样的话就要特别注意，这种所谓的“点乘积”，是特指<strong>一个标量与一个点的乘积</strong>，它属于一种标量乘法(scalar multiplication)。所以，个人觉得将这里的point multiplication翻译成“点倍积”会更准确些，本文会沿用这种翻译。</p> 
+  <p>假设起点是椭圆曲线点<em>P</em>，终点是曲线上点<em>R</em>，于是我们有如下点倍积公式，注意此时标量一定要写在点的左边。</p> 
+  <p align="center"><em><strong>R = nP</strong></em><br></p> 
+  <p>上式中的结果R点暂时还计算不出来，我们需要多一些准备。理论上，这里的椭圆曲线所选择的几何方程是固定的，它可以表示为：</p> 
+  <p align="center"><strong><em>y^2 = x^3 + ax + b</em></strong></p> 
+  <p align="left">上式中a和b都是普通标量参数，以上方程所绘出的几何曲线如下图所示，其中红色曲线表示(a, b) = (-7, 6)时的椭圆曲线，蓝色曲线表示 (a, b) = (-6, 6)时的椭圆曲线。显然，a和b的取值对曲线形状还是有影响的。<br></p> 
+  <p align="left"><br></p> 
+  <p><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171012141558868?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br></p> 
+  <p>现在有了椭圆曲线的具体形状和方程，假设曲线上有一个点<em>P</em>，我们想计算它的倍积<em>nP</em>，该怎么做呢？</p> 
+  <p>这里需要再引入一个概念：<strong>椭圆曲线点的相加</strong>(point addition)。以上图为例，红色椭圆曲线上有两个点<em>P</em>和<em>Q</em>，设定这两个点相加得到一个同样处于曲线上的<em>R</em>点，这个<em>R</em>点来自<em>P, Q</em>两点直连延长线与椭圆曲线的交点(T点)的共轭点，也就是<em>T</em>点沿X轴的对称点<em>R</em>。由于上述椭圆曲线本身必定沿X轴对称，所以这个<em>R</em>点也必定处于曲线上。</p> 
+  <p>我们从代数的角度重新看下这个问题：</p> 
+  <p align="center"><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171012200017416?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""></p> 
+  <p align="left">这里我们用XY坐标来表示<em>P，Q，R</em>每个点，结合设定的椭圆曲线公式 <em>y^2 = x^3 + ax + b</em>，可以得到如下解答：</p> 
+  <p align="center"><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171012201330876?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br></p> 
+  <p align="left">通过引入一个参数lambda，我们可以得到<em>P，Q</em>两点相加得到<em>R</em>点的坐标。</p> 
+  <p align="left">很好，我们再往前跨出一步，如果P点和Q点重合，那么它们相加R点是怎样的呢？这种情况被称之为<strong>椭圆曲线点的翻倍或叠加</strong>(point double)，根据上式，R点的x,y相对坐标不变，我们只需要用一个特殊的lambda值就行了，不过要留意此时的lambda取值跟曲线方程参数a有关：</p> 
+  <p align="center"><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171012202446571?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""></p> 
+  <p align="left">好的，在拥有了以上这些基础知识之后，我们终于可以计算出椭圆曲线点的倍积，因为对于 <em>R = nP</em>，<strong>无论n取何值，我们都可以通过上述“点相加”和“点翻倍”的方法计算出R点坐标</strong>。</p> 
+  <h2 align="left">计算方法</h2> 
+  <p>我们来看下具体的如何计算椭圆曲线点倍积 <em>Q = dP</em>，即已知椭圆曲线点<em>P</em>和标量<em>d</em>，计算出曲线点Q。</p> 
+  <p>开始写代码前需要将标量<em>d</em>以二进制的方式表示出来，以便于应用“点相加”和“点翻倍”方法。<br></p> 
+  <p><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171013144235605?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""></p> 
+  <p>上式就是d的二进制表示，代码中将各个系数表示成一个长度为(m+1)的数组d[]即可，d[i]对应于第i个bit位的取值0或1。下列伪代码均来自<a href="https://en.wikipedia.org/wiki/Elliptic_curve_point_multiplication" rel="nofollow">wiki-PointMultiplication</a>。</p> 
+  <p>最直观的就是迭代型的，比如自底向上的迭代：<br></p> 
+  <p></p> 
+  <pre><code class="language-plain">// iterative: index increasing
+N = P; Q = 0;
+for i in [0, m] do:
+    if d[i] == 1  then Q = point_add(Q, N)
+    N = point_double(N)
+return Q</code></pre>还有从顶向下的迭代： 
+  <p></p> 
+  <p></p> 
+  <pre><code class="language-plain">// iterative: index decreasing
+Q = 0;
+for i in [m, 0] do:
+&nbsp; &nbsp; Q = point_double(Q)
+&nbsp; &nbsp; if d[i] == 1 then Q = point_add(Q,P)
+return Q
+</code></pre>可以看出，自顶向下的迭代算法相比前者，计算量其实完全一样，不过可以少用一个局部变量N。 
+  <p></p> 
+  <p>除了迭代型，当然还有递归型的</p> 
+  <p></p> 
+  <pre><code class="language-plain">// recursive
+func f(p, n) is 
+    if n == 0  then 
+        return 0
+    else if n == 1 then
+        return p
+    else if n mod(2) == 1 then
+        return point_add(p, f(p, n-1)) 
+    else 
+        return f(point_double(p), n/2)</code></pre>除此之外，还可以针对窗口宽度作优化。注意到之前将d以二进制的形式表示，其中的窗口宽度可以表示为1，即2的幂次每次+1。如果现在选取更合适的窗口宽度w，则可以将d表示为成
+  <br>
+  <img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171013154358087?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="">
+  <br>
+  <p></p> 
+  <p>这样得到的m更小，也就是系数数组d[]的长度更小，这就意味着仅需更少的迭代(递归)次数。相关伪代码可见wiki。<br></p> 
+  <h1>2. 椭圆曲线密码学</h1> 
+  <p>椭圆曲线密码学(Elliptic-curve cryptography，ECC)同当前流行的其他几种密码学类型，也是通过一个公钥 + 一个私钥组成的一对钥匙来进行加密相关操作。它基于有限域上特定椭圆曲线进行操作，最重要的操作是椭圆曲线的点倍积，不夸张的说，椭圆曲线点倍积正是椭圆曲线密码学的基石。<br></p> 
+  <p>为什么这么说呢？因为对于点倍积的计算式<em>Q = nP</em> 而言， 在已知起点<em>P</em>和终点<em>Q</em>的情况下，<strong>想要计算出<em>n</em>，理论上在目前计算条件下近乎是不可能的</strong>！这个数学证明过程比较复杂，这里只想举一个极端的例子。回看上一章节中那幅图，如果这里选用了图中红色椭圆曲线作点倍积运算，注意到它的左边部分是一个封闭的不规则圆弧，如果倍积运算的终点Q恰好落在这个圆弧上面，那么参数n是死活都算不出来的，因为如果增大n，让Q在圆弧上多循环几圈后依旧保持在Q点...</p> 
+  <h2>加密用椭圆曲线的参数组<br></h2> 
+  <p>ECC的使用场景包括数字签名，安全的伪随机数生成等。在应用中，所采用的椭圆曲线必须用一组完整的参数来加以定义，这组参数被称为域参数。一般的，ECC定义的这组参数可表为</p> 
+  <p align="center"><em><strong>(p, a, b, G, n, h)</strong></em></p> 
+  <p>其中 <em>p</em> 是一个极大的质数，用来表示曲线所有点的范围； <em>a, b</em> 分别是椭圆曲线方程 <em>y^2 = x^3 + ax + b</em> 中的系数；<em>G</em> 是该椭圆曲线上点倍积的基点，对于所有通过点倍积运算得到的曲线上点的集合来说，G可算是它们的生成器(generator)；<em>n</em> 是基点G的可倍积阶数，定义为能够使得点倍积<em>nG</em> 不存在的最小的整数<em>n</em>；<em>h</em> 是一个整数常量，它跟椭圆曲线运算中得到点的集合以及<em> n</em> 有关，<em>h</em> 一般取值为1。<br></p> 
+  <p>在下一章节中，我们可以看到这些椭圆曲线参数在椭圆曲线数字签名中的应用。<br></p> 
+  <h1>3. 椭圆曲线数字签名算法理论</h1> 
+  <p>椭圆曲线数字签名算法(ECDSA)是数字签名算法(DSA)的变例之一，它基于椭圆曲线密码学。相比于基于RSA密码学的DSA，ECDSA在计算数字签名时所需的公钥长度可以大大缩短。比如，对于一项安全级别为80 bits的数字签名来说，ECDSA需要的公钥长度仅仅为安全级别的2倍，即160 bits，而同样安全级别要求下的RSA所需公钥长度至少为1024 bits；同时算法所生成的签名长度，不论是ECDSA还是RSA都大约是320 bits，这样一来，ECDSA相对于RSA在应用上的优势就很明显了。</p> 
+  <p>注：<strong>安全级别(security level)</strong>的概念是：N bits的安全级别，意味着攻击者大约要经过2^N的运算才能获得本次加密用的私钥。安全级别所代表的bits越长，意味着安全性能越好，越难以被攻破，当然同时在加密时的代价，包括公钥长度和生成签名长度，自然也会相应增加。</p> 
+  <p>ECDSA基于<a href="https://en.wikipedia.org/wiki/Digital_Signature_Algorithm" rel="nofollow">DSA</a>，DSA定义了数字签名生成过程和验证过程的基本步骤，通过比较可以看出，ECDSA遵循了DSA的这些定义，并在一些特定步骤中，转而采用了椭圆曲线的相关操作。这里由于篇幅所限，就不详细介绍DSA的内容了，有兴趣的朋友可以去wiki上一看。<br></p> 
+  <h2>数字签名的生成<br></h2> 
+  <p>下面来看一下ECDSA的签名生成过程，以下内容主要来自<a href="https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm" rel="nofollow">wiki_ECDSA</a><br></p> 
+  <p>假设Alice要给Bob发一个经过数字签名的消息，他们首先需要定义一组共同接受的椭圆曲线加密用参数，简单的，这组参数可表示为</p> 
+  <p align="center"><em><strong>(CURVE, G, n)</strong></em></p> 
+  <p align="left">其中，CURVE表示椭圆曲线点域和几何方程；G是所有点倍积运算的基点；n是该椭圆曲线的可倍积阶数(multiplicative order)，作为一个很大的质数，n的几何意义在于，nG = 0，即点倍积nG的结果不存在，而对于小于n的任何一个正整数 m = [1，n-1]，点倍积mG都可以得到一个合理的处于该椭圆曲线上的点。</p> 
+  <p align="left">其次，Alice要创建一对钥，即一个私钥和一个公钥。私钥来自于[1, n-1]范围内一个随机数：</p> 
+  <p align="center"><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171015080446663?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br></p> 
+  <p align="left">公钥如下，它来自私钥和基点的椭圆曲线点倍积：</p> 
+  <p align="center"><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171015080505895?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""></p> 
+  <p align="left">好，准备工作就绪，假设Alice想要对消息m作数字签名，有以下步骤：</p> 
+  <ol>
+   <li>计算 <em>e = HASH(m)，</em>HASH是一个哈希加密函数，比如SHA-2，或SHA-3。</li>
+   <li>计算 z，来自e的二进制形式下最左边（即最高位）L_n个bits，而L_n是上述椭圆曲线参数中的可倍积阶数n的二进制长度。注意z 可能大于n，但长度绝对不会比 n 更长。<br></li>
+   <li>从 [1, n-1] 内，随机选择一个符合加密学随机安全性的整数k。</li>
+   <li>计算一个椭圆曲线上点： 
+    <div align="center">
+     <img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171015234038636?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="">
+    </div> </li>
+   <li>以下式计算 r 值， 如果r == 0, 则返回步骤3重新计算。 
+    <div align="center">
+     <img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171016084927366?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="">
+     <br>
+    </div> </li>
+   <li>以下式计算 s 值，如果 s == 0，则返回步骤3重新计算。<br>
+    <div align="center">
+     <img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171016000920610?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="">
+    </div> </li>
+   <li>生成的数字签名就是<em> (r, s)</em><br></li>
+  </ol>
+  <p>特别需要注意的是步骤3中 k 的选择，它不仅要满足加密学的随机安全性要求，要像私钥一样保护起来，更重要的是，<strong>在每次生成一个新的数字签名时，这个 k 必须每次都要更新</strong>。否则，通过上述数字签名过程中的算式相互换算，很容易从中破译出私钥！具体换算过程可见wiki_ECDSA。<br></p> 
+  <h2 align="left">数字签名的验证</h2> 
+  <p>对于消息的接收方Bob来说，他除了收到数字签名文件外，还会有一份公钥。所以Bob的验证分两部分，首先验证公钥，然后验证签名文件(r, s)。</p> 
+  <p><strong>公钥的验证</strong><br></p> 
+  <ol>
+   <li>公钥<img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171016085519898?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="">的坐标应是有效的，不会等于一个极限值空点<img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171016091016054?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br></li>
+   <li>通过公钥<img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171016085519898?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="">的坐标验证它必须是处于该椭圆曲线上的点。</li>
+   <li>应有下式成立，即曲线的可倍积阶数 n 与公钥的点倍积不存在<br>
+    <div align="center">
+     <img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171016091218400?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="">
+    </div> </li>
+  </ol>
+  <p><strong>签名文件的验证</strong><br></p> 
+  <ol>
+   <li>验证 <em>r</em> 和 <em>s</em> 均是处于[1, n-1]范围内的整型数；否则验证失败</li>
+   <li>计算 <em>e = HASH(n)</em>，HAHS()即签名生成过程步骤1中使用的哈希函数。</li>
+   <li>计算 <em>z</em>，来自 e的最左边L_n个bits。</li>
+   <li>计算参数 <em>w</em>： 
+    <div align="center">
+     <img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171016100300600?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="">
+     <br>
+    </div> </li>
+   <li>计算两个参数 <em>u1</em> 和 <em>u2</em>：<br>
+    <div align="center">
+     <img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171016100542649?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="">
+     <br>
+    </div> </li>
+   <li>计算(x1, y1)，如果(x1, y1)不是一个椭圆曲线上的点，则验证失败：<br>
+    <div align="center">
+     <img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171016100850892?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="">
+    </div> </li>
+   <li>如果以下恒等式不成立，则验证失败： 
+    <div align="center">
+     <img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171016101613059?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="">
+     <br>
+    </div> </li>
+  </ol>
+  <p align="left">以上就是椭圆曲线数字签名算法(ECDSA)的生成和验证的完整过程，在<a href="https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm" rel="nofollow">wiki_ECDSA</a>还可以看到关于上述验证方法正确性的证明过程。无论用何种编程语言实现，<strong>其中数字签名的生成和验证必然要遵循以上的理论和步骤</strong>。<br></p> 
+  <h1>4. go-ethereum中的椭圆曲线数字签名算法</h1> 
+  <p>go语言安装包中自带的crypto/ecdsa包中包含了关于椭圆曲线的结构体声明和操作函数，以及ECDSA的签名生成和验证到的完整实现代码。不过，<strong>以太坊(go-ethereum)并没有采用这个crypto/ecdsa包来实现它自己的数字签名算法</strong>。尽管如此，这部分代码仍然很有阅读的必要，原因有二：1.它里面定义的一些行为接口和结构体类型，依然在被go-ethereum中的代码所使用，以方便调用；2. 它关于ECDSA的实现代码写的简洁清晰，非常适合ECDSA的初学者加以研习。<br></p> 
+  <h2>go语言包中的ecdsa代码包</h2> 
+  <p>go语言包自带的crypto/ecdsa相关的结构体如以下UML图所示：</p> 
+  <p><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171016161810432?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br></p> 
+  <p>对照着上一章节中ECDSA的算法理论，以上的结构体和接口的声明就非常易于理解了。</p> 
+  <ul>
+   <li><strong>ecdsa.PublicKey</strong>结构体通过持有一个elliptic,Curve接口的实现体，可以提供椭圆曲线的所有属性，和相关操作；PublicKey的成员（X，Y），对应于算法理论中公钥<img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171016163936427?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""> 的坐标。</li>
+   <li><strong>elliptic.Curve</strong>接口声明了椭圆曲线的相关操作方法，其中Add()方法就是椭圆曲线点倍积中的“点相加”操作，Double()就是点倍积中的“点翻倍”操作，ScalarMult()根本就是一个点倍积运算（参数k是标量），IsOnCurve()检查参数所代表的点是否在该椭圆曲线上；</li>
+   <li><strong>elliptic.CurveParams</strong>结构体实现了&lt;Curve&gt;接口的所有方法，另外用成员属性定义了一个具体的椭圆曲线，比如(Gx, Gy) 表示该椭圆曲线的基点，即算法理论中的G点； N 是与基点对应的可倍积阶数n；B是椭圆曲线几何方程中的参数b，注意此处ecdsa代码包中隐含的椭圆曲线方程为<strong><em>y^2 = x^3 - 3x + b</em></strong>，故只需一项参数b即可。</li>
+   <li><strong>ecdsa.PrivateKey</strong>是暴露给外部使用的主要结构体类型，它其实是算法理论中的私钥和公钥的集合。它的成员D，才真正对应于算法理论中的(标量)私钥<img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171016165334059?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="">。</li>
+   <li><strong>ecdsa.ecdsaSignature</strong>对应于生成的数字签名(r, s)。<br></li>
+  </ul>
+  <p>由此可见，go语言自带的crypto/ecdsa代码包从结构体的成员到方法的声明，都力图使得其所代表的ECDSA算法理论清晰易懂。关于实现函数，重点推荐ecdsa/ecdsa.go中的两个函数Sign()和Verify()</p> 
+  <p></p> 
+  <pre><code class="language-plain">// go-1.x/src/crypto/ecdsa/ecdsa.go
+func Sign(rand io.Reader, priv *PrivateKey, hash []byte) (r, s *big.Int, err error)
+func Verify(pub *PublicKey, hash []byte, r, s *big.Int) bool
+</code></pre>以上两个函数的实现过程，均严格遵循了上一章节介绍的算法理论中的签名生成和验证的过程逐步执行，对于加密算法实现方面的coding会有些不错的启示，有心的朋友可以找来源代码一看究竟。
+  <br>
+  <p></p> 
+  <h2>go-ethereum中对ECDSA的调用</h2> 
+  <p>go-ethereum中实际采用的ECDSA函数实现，来自于第三方库<strong>libsecp256k1</strong>，它是一个C++库，在比特币代码(<a href="https://github.com/bitcoin-core/secp256k1" rel="nofollow">github_bitcoin</a>)中就有应用，被视为一个经过优化的，针对椭圆曲线secp256k1的一个实现库。secp256k1对应于一组特定的椭圆曲线数字签名参数，包括曲线方程以及签名运算所需的一系列参数等，secp256k1被率先应用在比特币中，关于它的参数细节可见<a href="https://en.bitcoin.it/wiki/Secp256k1" rel="nofollow">secp256k1</a>,其中所指定的曲线方程为<strong><em>y^2 = x^3 + 7</em></strong>，它的形状如下图所示：</p> 
+  <p align="center"><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171016173731120?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br></p> 
+  <p>在go-ethereum源代码中，路径在/crypto/下的代码包负责所有与加密相关的操作，libsecp256k1库的源代码也在其中/secp256k1/的子路径下存放，待编译后以C++库文件的方式被调用。</p> 
+  <h3>处理数字签名<br></h3> 
+  <p>以go-ethereum中交易对象的代码为例，与ECDSA签名相关的操作，都被放在一个名叫Signer的接口以及它的实现体里了。</p> 
+  <p><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171016223300776?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br></p> 
+  <p>接口&lt;Signer&gt;声明的方法中，Sender()用来从tx对象携带的数字签名里解析出公钥并转换成Address类型变量；SignatureValues()从tx对象里取出数字签名的三个部分R，S，V；Hash()返回当前tx对象需要做数字签名的内容，即tx对象中的部分成员变量作RLP编码后取Hash值；Equal()用来比较Signer实现体对象。由此可见，&lt;Signer&gt;接口及其实现体主要提供对已生成数字签名进行操作的方法，</p> 
+  <p>Signer的三个实现类中，HomesteadSigner通过持有FrontierSigner对象，可以节省代码。关于EIP155: EIP(Ethereum Improvement Proposals,<a href="https://github.com/ethereum/EIPs" rel="nofollow">EIP</a>)是Ethereum的需求汇总。<a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md" rel="nofollow">EIP155</a>是其中一个比较重要的需求，加入了一种抵御重现攻击(Replay Attack)的简单方法，要求在对tx作签名(或恢复签名时)，在Hash(*Transaction)函数里的RLP编码环节多选择几个成员变量，所以EIP155Signer中的Hash()是重新定义的。</p> 
+  <p><strong>从数字签名中恢复出公钥(地址)</strong><br></p> 
+  <p>从数字签名中恢复(解析)出地址变量的函数叫recoverPlain()：</p> 
+  <p></p> 
+  <pre><code class="language-plain">// core/types/transaction_signing.go
+func recoverPlain(sighash common.Hash, R, S, Vb *big.Int, homestead bool) (common.Address, error) {
+    V := byte(Vb.Uint64() - 27)
+&nbsp; &nbsp; if !crypto.ValidateSignatureValues(V, R, S, homestead) {
+&nbsp; &nbsp; &nbsp; &nbsp; return common.Address{}, ErrInvalidSig
+&nbsp; &nbsp; }
+// encode signature in uncompressed format
+&nbsp; &nbsp; r, s := R.Bytes(), S.Bytes()
+&nbsp; &nbsp; sig := make([]byte, 65)
+&nbsp; &nbsp; copy(sig[32-len(r):32], r)
+&nbsp; &nbsp; copy(sig[64-len(s):64], s)
+&nbsp; &nbsp; sig[64] = V
+// recover the public key from the signature
+&nbsp; &nbsp; pub, err := crypto.Ecrecover(sighash[:], sig)
+&nbsp; &nbsp; if err != nil || len(pub) == 0 || pub[0] != 4 {
+&nbsp; &nbsp; &nbsp; &nbsp; return common.Address{}, err
+&nbsp; &nbsp; }
+// convert pubKey to Address
+&nbsp; &nbsp; var addr common.Address
+&nbsp; &nbsp; copy(addr[:], crypto.Keccak256(pub[1:])[12:])
+&nbsp; &nbsp; return addr, nil
+}</code></pre>上述recoverPlain()的函数体中， 
+  <p></p> 
+  <p>首先调用crypto.ValidateSignatureValues()来验证数字签名是否正确有效，crypto包的这个方法正是通过调用libsecp256k1库的API，遵循ECDSA算法理论中有关数字签名验证部分来完成的；</p> 
+  <p>其次，将R，S，V拼接出所需的数字签名字符串；</p> 
+  <p>接着，调用crypto.Ecrecover()，凭借被数字签名的内容sighash和签名字符串sig，从中恢复出数字签名所用的公钥，当然，crypto包的方法依然调用libsecp256k1库的API来完成；</p> 
+  <p>最后，在返回的公钥里，去掉标志头所在的第一个byte(值为4)，生成它的SHA-3（256 bits）哈希值，再截取其中的后20bytes，此即最终返回的Address类型变量。<br></p> 
+  <p><strong>生成数字签名</strong><br></p> 
+  <p>针对某个tx对象生成数字签名的函数叫SignTx()</p> 
+  <p></p> 
+  <pre><code class="language-plain">// core/types/transaction_signing.go
+func SignTx(tx *Transaction, s Signer, prv *ecdsa.PrivateKey) (*Transaction, error) {
+&nbsp; &nbsp; h := s.Hash(tx)
+&nbsp; &nbsp; sig, err := crypto.Sign(h[:], prv)
+&nbsp; &nbsp; if err != nil {
+&nbsp; &nbsp; &nbsp; &nbsp; return nil, err
+&nbsp; &nbsp; }
+&nbsp; &nbsp; return tx.WithSignature(s, sig)
+}</code></pre>从SignTx()函数体可以看出，在Signer.Hash()方法提供要签名的内容(即Transaction对象的部分成员RLP编码后哈希)后，生成签名的主要工作交给crypto.Sign()函数来完成。该Sign()的函数体如下：
+  <br>
+  <p></p> 
+  <p></p> 
+  <pre><code class="language-plain">// /crypto/signature_cgo.go
+func Sign(hash []byte, prv *ecdsa.PrivateKey) (sig []byte, err error) {
+&nbsp; &nbsp; if len(hash) != 32 {
+&nbsp; &nbsp; &nbsp; &nbsp; return nil, fmt.Errorf(...) &nbsp;// hash must be 32 bytes
+&nbsp; &nbsp; }
+&nbsp; &nbsp; seckey := math.PaddedBigBytes(prv.D, n:prv.Params().BitSize/8)
+&nbsp; &nbsp; defer zeroBytes(seckey)
+&nbsp; &nbsp; return secp256k1.Sign(hash, seckey)
+}</code></pre> 
+  <p>可见crypto.Sign()函数正是通过调用libsecp256k1库的API来完成椭圆曲线数字签名的生成。</p> 
+  <h3>公钥和地址</h3> 
+  <p>以太坊中用到的Address类型地址变量，比如每个账户的地址，都来自于椭圆曲线数字签名用的公钥。在数字签名中，公钥可以在多次签名中重复使用，这反映到以太坊的账户上，就是一个账户下的多次交易，即多个不同的Transaction对象，它们所作的数字签名均使用同一个公钥。</p> 
+  <p>具体到变量类型上，Address类型是一个长度为20 bytes的字符串，而椭圆曲线数字签名中的公钥，原生含义应该是曲线上的一个点的坐标(X, Y)，那么它们之间必然存在格式上的<strong>相互转换</strong>。在代码中，这涉及到三种不同格式(类型)：地址变量是Address类型，长度为20bytes的字符串；publicKey变量是一个字符串，长度未知；椭圆曲线上的公钥，是一个点的坐标，在ecdsa.PublicKey{}中以成员X，Y表示。</p> 
+  <p>publicKey变量转换成Address类型，在之前提到的core.types.recoverPlain()函数体里介绍过（函数末尾）。<br></p> 
+  <p>publicKey字符串类型和ecdsa.PublicKey{}类型的格式转换函数，由crypto代码包定义。</p> 
+  <p></p> 
+  <pre><code class="language-plain">// crypto/crypto.go
+func ToECDSAPub(pub []byte) *ecdsa.PublicKey {
+    x, y := elliptic.Unmarshall(S256(), pub)
+    return &amp;ecdsa.PublicKey{Curve:S256(), X:x, Y:y}
+}
+func FromECDSAPub(pub *ecdsa.PublicKey) []byte {
+&nbsp; &nbsp; return elliptic.Marshall(S256(), pub.X, pub.Y)
+}
+</code></pre>crypto.ToECDSAPub()函数将一个publicKey的字符串转换成ecdsa.PublicKey{}类型中的点坐标X,Y的形式，FromECDSAPub()函数作相反的操作。所调用的elliptic.Unmarshall()函数的逻辑也很简单，就是将[]byte字符串去掉标志头后，均分成两段，分别赋值给X和Y，然后再由[]byte转换成big.Int，就成了。 
+  <p></p> 
+  <p>ps, 上述代码中的S256()，是本地代码写的一个转换函数，返回一个elliptic.Curve接口的实现类，它基于secp256k1的椭圆曲线参数，自己实现了&lt;Curve&gt;接口声明的所有曲线操作函数，以方便用go语言包中的结构体/接口类型，去使用secp256k1椭圆曲线。<br></p> 
+  <h1>小结：</h1> 
+  <ul>
+   <li>以太坊中的数字签名全部采用<strong>椭圆曲线数字加密算法</strong>(ECDSA)， 它的理论基础是<strong>椭圆曲线密码学</strong>(ECC)，而ECC存在的理论基础是<strong>点倍积</strong>(point multiplication)算式<em> Q = dP </em>中的私钥 d (几乎)不可能被破译。ECC相对于基于大质数分解的RSA，在提供相同安全级别的情况下，仅需<strong>长度更短的公钥</strong>。</li>
+   <li>以太坊中调用的椭圆曲线数字签名算法实现，来自己<strong>libsecp256k1</strong>库，这是一个针对特定椭圆曲线secp256k1的、经过优化的C++库，并早已被比特币系统采用。</li>
+   <li>以太坊中的使用的Address类型，比如<strong>每个账户的地址，</strong>均来自于<strong>椭圆曲线数字签名的公钥</strong>。<br></li>
+  </ul> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/teaspring/article/details/77834360,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/teaspring/article/details/77834360,&quot;}">阅读更多</a> 
+ <a class="btn" href="https://passport.csdn.net/account/login?utm_source=csdn_blog_pc_more_login" target="_self" id="btn-lobinreadmore" data-track-view="{&quot;mod&quot;:&quot;popu_557&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/teaspring/article/details/77834360,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_557&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/teaspring/article/details/77834360,&quot;}">登录后自动展开</a> 
+</div>

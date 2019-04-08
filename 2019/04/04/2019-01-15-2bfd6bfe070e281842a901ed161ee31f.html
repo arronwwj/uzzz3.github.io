@@ -1,0 +1,143 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-f57960eb32.css"> 
+ <div class="htmledit_views" id="content_views"> 
+  <h3>Caltech 256是什么？</h3> 
+  <blockquote> 
+   <p>Caltech 256数据集是加利福尼亚理工学院收集整理的数据集，该数据集选自Google Image 数据集，并手工去除了不符合其类别的图片。在该数据集中，图片被分为256类，每个类别的图片超过80张。</p> 
+  </blockquote> 
+  <p>&nbsp;</p> 
+  <h3>为什么要用Densenet121模型？</h3> 
+  <blockquote> 
+   <p>本项目使用在PyTorch框架下搭建的神经网络来完成图片分类的任务。由于网络输出的类别数量很大，简单的网络模型无法达到很好的分类效果，因此，本项目使用了预训练的Densenet121模型，并仅训练全连接层的参数。</p> 
+  </blockquote> 
+  <p>&nbsp;</p> 
+  <h3><u><span style="color:#3399ea;"><strong>项目流程</strong></span></u></h3> 
+  <h3><u><span style="color:#3399ea;">1.数据处理</span></u></h3> 
+  <h3><u><span style="color:#3399ea;">2.Densenet模型解读</span></u></h3> 
+  <h3><u><span style="color:#3399ea;">3.加载预训练网络模型</span></u></h3> 
+  <h3><u><span style="color:#3399ea;">4.训练神经网络</span></u></h3> 
+  <h2>&nbsp;</h2> 
+  <blockquote> 
+   <h2>1、数据处理</h2> 
+  </blockquote> 
+  <p>首先从指定路径读取图像，将图像大小更改为224*224，并将图片范围从0-255改为0-1：</p> 
+  <pre class="has">
+<code>from&nbsp;PIL&nbsp;import&nbsp;Image
+image=&nbsp;Image.open(path)
+image=image.resize((224,224))
+x_data=&nbsp;x_data.astype(numpy.float32)
+x_data=&nbsp;numpy.multiply(x_data,1.0/255.0) &nbsp;
+## scale to [0,1] from [0,255]</code></pre> 
+  <p>由于此数据集中有少量图片的色彩是单通道的，而神经网络的输入需要为三个通道，因此，将该通道的数据复制到三个通道上：</p> 
+  <pre class="has">
+<code>if&nbsp;len(x_data.shape)!=3:
+temp=numpy.zeros
+((x_data.shape[0],x_data.shape[1],3))
+temp[:,:,0] =&nbsp;x_data
+temp[:,:,1] =&nbsp;x_data
+temp[:,:,2] =&nbsp;x_data
+x_data=&nbsp;temp
+x_data=numpy.transpose(x_data,(2,0,1))&nbsp;
+## reshape&nbsp;</code></pre> 
+  <p>在上述步骤之后，对图片进行白化，即让像素点的平均值为0，方差为1。这样做是为了减小图片的范围，使得图片的特征更易于学习。白化的过程如下所示：</p> 
+  <pre class="has">
+<code>if&nbsp;x_train&nbsp;is&nbsp;not&nbsp;None:
+&nbsp; x_train[:,0,:,:] = (x_train[:,0,:,:]-0.485)/0.229
+&nbsp; x_train[:,1,:,:] = (x_train[:,1,:,:]-0.456)/0.224
+&nbsp; x_train[:,2,:,:] = (x_train[:,2,:,:]-0.406)/0.225
+
+if&nbsp;x_test&nbsp;is&nbsp;not&nbsp;None:
+&nbsp;x_test[:,0,:,:] = (x_test[:,0,:,:]&nbsp;-0.485)&nbsp;/0.229
+&nbsp;x_test[:,1,:,:] = (x_test[:,1,:,:]&nbsp;-0.456)&nbsp;/0.224
+&nbsp;x_test[:,2,:,:] = (x_test[:,2,:,:]&nbsp;-0.406)&nbsp;/0.225
+</code></pre> 
+  <blockquote> 
+   <h2>2、DenseNet模型解读</h2> 
+  </blockquote> 
+  <p>DenseNet的网络结构如下图所示。在传统的CNN中，每个卷积层只与其相邻的卷积层相连接，这就造成了位于网络浅层的参数在反向传播中获取的梯度非常小，也就是梯度消失问题。</p> 
+  <p>&nbsp;</p> 
+  <p><img alt="2018-12-27_144254.png" class="has" src="https://bdn.135editor.com/files/users/586/5869334/201901/wP4Hq7L8_GTyD.png"></p> 
+  <p>&nbsp;</p> 
+  <p>DenseNet设计了名为Dense Block的特殊的网络结构，在一个Dense Block中，每个层的输入为前面所有层的输出，这也正是Dense的含义。通过这种方法，在反向传播中，网络浅层的参数可以从后面所有层中获得梯度，在很大程度上减弱了梯度消失的问题。值得注意的是，每个层只与同位于一个Dense Block中的多个层有连接，而与Dense Block外的层是没有连接的。</p> 
+  <p>&nbsp;</p> 
+  <blockquote> 
+   <h2>3、加载预训练网络模型</h2> 
+  </blockquote> 
+  <p>torchvision是服务于PyTorch框架的，用于进行图片处理和生成一些主流模型的库。使用该库可以方便的加载PyTorch的预训练模型。首先使用pip安装torchvision库：</p> 
+  <pre class="has">
+<code>pip install torchvision</code></pre> 
+  <p>创建densenet121模型实例，并加载预训练参数：</p> 
+  <pre class="has">
+<code>cnn = torchvision.models.densenet121
+(pretrained = True)&nbsp;#pretrained =True即为加载预训练参数，默认不加载。</code></pre> 
+  <p>冻结所有模型参数，使其值在反向传播中不改变：</p> 
+  <pre class="has">
+<code>for&nbsp;param&nbsp;in&nbsp;cnn.parameters():
+&nbsp; &nbsp; param.requires_grad=&nbsp;False</code></pre> 
+  <p>改变模型全连接层输出的个数为256：</p> 
+  <pre class="has">
+<code>num_features=&nbsp;cnn.classifier.in_features
+cnn.classifier=nn.Linear(num_features,&nbsp;256)</code></pre> 
+  <p>此处不需要担心新建的全连接层参数会被冻结，因为新建的层参数是默认获取梯度的。</p> 
+  <p>&nbsp;</p> 
+  <blockquote> 
+   <h2>4、训练神经网络</h2> 
+  </blockquote> 
+  <p>损失函数选择CrossEntropy，优化器选择Adam：</p> 
+  <pre class="has">
+<code>optimizer=&nbsp;Adam(cnn.parameters(),lr=0.001,&nbsp;betas=(0.9,&nbsp;0.999))#选用AdamOptimizer
+loss_fn=&nbsp;nn.CrossEntropyLoss()#定义损失函数</code></pre> 
+  <p>下面是完整的训练过程：</p> 
+  <pre class="has">
+<code># 训练并评估模型
+data=&nbsp;Dataset()
+model=&nbsp;Model(data)
+
+best_accuracy=&nbsp;0
+for&nbsp;i&nbsp;in&nbsp;range(args.EPOCHS):
+&nbsp; &nbsp;cnn.train()
+&nbsp; &nbsp;x_train,&nbsp;y_train,&nbsp;x_test,&nbsp;y_test=&nbsp;data.next_batch(args.BATCH) &nbsp;# 读取数据
+
+&nbsp; &nbsp;x_train=&nbsp;torch.from_numpy(x_train)
+&nbsp; &nbsp;y_train=&nbsp;torch.from_numpy(y_train)
+&nbsp; &nbsp;x_train=&nbsp;x_train.float()
+
+&nbsp; &nbsp;x_test=&nbsp;torch.from_numpy(x_test)
+&nbsp; &nbsp;y_test=&nbsp;torch.from_numpy(y_test)
+&nbsp; &nbsp;x_test=&nbsp;x_test.float()
+&nbsp; &nbsp;
+&nbsp; &nbsp;if&nbsp;cuda_avail:
+&nbsp; &nbsp; &nbsp; &nbsp;x_train=&nbsp;Variable(x_train.cuda())
+&nbsp; &nbsp; &nbsp; &nbsp;y_train=&nbsp;Variable(y_train.cuda())
+&nbsp; &nbsp; &nbsp; &nbsp;x_test=&nbsp;Variable(x_test.cuda())
+&nbsp; &nbsp; &nbsp; &nbsp;y_test=&nbsp;Variable(y_test.cuda())
+&nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp;outputs=&nbsp;cnn(x_train)
+&nbsp; &nbsp;_,&nbsp;prediction=&nbsp;torch.max(outputs.data,&nbsp;1)
+&nbsp; &nbsp;
+&nbsp; &nbsp;optimizer.zero_grad()
+
+# calculate the loss according to labels
+&nbsp; &nbsp;loss=&nbsp;loss_fn(outputs,&nbsp;y_train)
+# backward transmit loss
+&nbsp; &nbsp;loss.backward()
+
+# adjust parameters using Adam
+&nbsp; &nbsp;optimizer.step()
+
+# 若测试准确率高于当前最高准确率，则保存模型
+&nbsp; &nbsp;train_accuracy=&nbsp;eval(model,&nbsp;x_test,&nbsp;y_test)
+&nbsp; &nbsp;if &nbsp;train_accuracy&gt;best_accuracy:
+&nbsp; &nbsp; &nbsp; &nbsp;best_accuracy=&nbsp;train_accuracy
+&nbsp; &nbsp; &nbsp; &nbsp;model.save_model(cnn,&nbsp;MODEL_PATH,&nbsp;overwrite=True)
+&nbsp;&nbsp;&nbsp;&nbsp;​&nbsp;&nbsp;&nbsp;print("step %d, best accuracy %g"%(i,&nbsp;best_accuracy))
+
+&nbsp; &nbsp;print(str(i)&nbsp;+"/"+str(args.EPOCHS))
+</code></pre> 
+  <h2>总结：</h2> 
+  <blockquote> 
+   <p>本文主要讲解了DenseNet的网络结构，以及在PyTorch框架下如何加载预训练模型并进行fine-tuning。为了在数据集上获得更高的准确率，读者可尝试取消冻结参数的设置，使得卷积层也参与训练。</p> 
+  </blockquote> 
+  <h1><strong>获取项目</strong><strong>请访问：https://www.flyai.com/d/Caltech256</strong></h1> 
+ </div> 
+</div>

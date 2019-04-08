@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>【2】web3.js与合约交互 | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="【2】web3.js与合约交互" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="web3.js是以太坊提供的一个Javascript库，它封装了以太坊的JSON RPC API，提供了一系列与区块链交互的Javascript对象和函数，包括查看网络状态，查看本地账户、查看交易和区块、发送交易、编译/部署智能合约、调用智能合约等，其中最重要的就是与智能合约交互的API。 下面就介绍如何使用web3.js提供的接口调用智能合约。 系统和软件 &nbsp; Ubuntu 16.04 64位 nodejs 6.10.0 npm 3.10.10 1 2 3 4 示例合约 本文以下面的MetaCoin合约为例，说明在应用中使用web3.js操作智能合约的方法。 &nbsp; // 本文中用到的MetaCoin合约 pragma solidity ^0.4.2; &nbsp; contract MetaCoin { mapping (address =&gt; uint) balances; &nbsp; event Transfer(address indexed _from, address indexed _to, uint256 _value); &nbsp; function MetaCoin() { balances[tx.origin] = 10000; } &nbsp; function sendCoin(address receiver, uint amount) returns(bool sufficient) { if (balances[msg.sender] &lt; amount) return false; balances[msg.sender] -= amount; balances[receiver] += amount; Transfer(msg.sender, receiver, amount); return true; } &nbsp; function getBalance(address addr) returns(uint) { return balances[addr]; } } 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 这个合约有三个函数： MetaCoin：构造函数，在合约被部署到区块链时执行&nbsp; getBalance：返回某账户的余额，它只读数据，不会修改数据&nbsp; sendCoin：向另一个账户发送指定数量的MetaCoin，它会改变状态变量balances&nbsp; 启动一个以太坊节点，将上面的合约部署到区块链中，并记录下合约的地址，可以通过truffle部署，具体参考这篇文章。 接下来就可以按照下面的步骤在项目中通过web3.js来使用这个合约。 添加web3到项目中 首先新建一个Nodejs项目并初始化： &nbsp; $ mkdir web3test &amp;&amp; cd web3test $ npm init 1 2 3 会提示输入项目信息，全部默认即可。&nbsp; 接下来下载web3.js到项目中： $ npm install web3 --save 1 2 以上命令会将web3.js下载到web3test/node_modules目录下，其中–save参数会web3.js添加到package.json配置文件中。 创建web3对象 要使用web3.js与区块链交互，需要先创建web3对象，然后连接到以太坊节点。 在web3test目录下新建index.js文件，在其中输入以下代码： &nbsp; var Web3 = require(&quot;web3&quot;); // 创建web3对象 var web3 = new Web3(); // 连接到以太坊节点 web3.setProvider(new Web3.providers.HttpProvider(&quot;http://localhost:8545&quot;)); 1 2 3 4 5 6 获取已部署的合约实例 要使用智能合约，必须先从区块链中获取到合约实例，获取合约实例需要合约的ABI和合约的地址： &nbsp; // 合约ABI var abi = [{&quot;constant&quot;:false,&quot;inputs&quot;:[{&quot;name&quot;:&quot;receiver&quot;,&quot;type&quot;:&quot;address&quot;},{&quot;name&quot;:&quot;amount&quot;,&quot;type&quot;:&quot;uint256&quot;}],&quot;name&quot;:&quot;sendCoin&quot;,&quot;outputs&quot;:[{&quot;name&quot;:&quot;sufficient&quot;,&quot;type&quot;:&quot;bool&quot;}],&quot;payable&quot;:false,&quot;type&quot;:&quot;function&quot;},{&quot;constant&quot;:false,&quot;inputs&quot;:[{&quot;name&quot;:&quot;addr&quot;,&quot;type&quot;:&quot;address&quot;}],&quot;name&quot;:&quot;getBalance&quot;,&quot;outputs&quot;:[{&quot;name&quot;:&quot;&quot;,&quot;type&quot;:&quot;uint256&quot;}],&quot;payable&quot;:false,&quot;type&quot;:&quot;function&quot;},{&quot;inputs&quot;:[],&quot;payable&quot;:false,&quot;type&quot;:&quot;constructor&quot;},{&quot;anonymous&quot;:false,&quot;inputs&quot;:[{&quot;indexed&quot;:true,&quot;name&quot;:&quot;_from&quot;,&quot;type&quot;:&quot;address&quot;},{&quot;indexed&quot;:true,&quot;name&quot;:&quot;_to&quot;,&quot;type&quot;:&quot;address&quot;},{&quot;indexed&quot;:false,&quot;name&quot;:&quot;_value&quot;,&quot;type&quot;:&quot;uint256&quot;}],&quot;name&quot;:&quot;Transfer&quot;,&quot;type&quot;:&quot;event&quot;}]; // 合约地址 var address = &quot;0xb2cdd356e58280906ce53e1665697b50f88aac56&quot;; // 通过ABI和地址获取已部署的合约对象 var metacoin = web3.eth.contract(abi).at(address); 1 2 3 4 5 6 metacoin就是获取到的合约对象实例，此时metacoin对象中就包含了与合约函数同名的Javascript函数，之后就可以通过metacoin对象来调用合约中的函数了。 调用合约函数 MetaCoin合约中有两个函数：getBalance和sendCoin，可以通过metacoin对象直接调用这两个函数。 首先来看getBalance，由于getBalance函数只是从区块链中读数据，而不修改数据，因此我们通过在getBalance后面加上.call()的方式调用： &nbsp; var account_one = web3.eth.accounts[0]; var account_one_balance = metacoin.getBalance.call(account_one); console.log(&quot;account one balance: &quot;, account_one_balance.toNumber()); 1 2 3 4 这里： 在getBalance后加上.call()来显式指明用call的方式调用&nbsp; 通过call的方式调用可以得到getBalance函数的返回值&nbsp; 通过call的方式调用的函数只在节点本地虚拟机中执行，不会产生交易，不会花费费用，不会修改数据&nbsp; 下面来看sendCoin函数，由于sendCoin要修改合约内部的数据，所以要使sendCoin生效，必须要向区块链发送交易，可以在sendCoin后面加上.sendTransaction()来指明这是一笔交易： &nbsp; var account_one = web3.eth.accounts[0]; var account_two = web3.eth.accounts[1]; // 提交交易到区块链，会立即返回交易hash，但是交易要等到被矿工收录到区块中后才生效 var txhash = metacoin.sendCoin.sendTransaction(account_two, 100, {from:account_one}); console.log(txhash); 1 2 3 4 5 6 这里： 在sendCoin函数后加上.sendTransaction()指明要向区块链发送交易&nbsp; 合约代码中sendCoin函数只有两个参数，而在web3中通过.sendTransaction()调用合约函数的时候需要增加最后一个参数，它是一个javascript对象，里面可以指定from/value/gas等属性，上面的例子用from来指定交易的发送者&nbsp; 上面的调用语句执行后，会向区块链提交一笔交易，这笔交易的发送者是account_one，接收者是metacoin的地址，交易的作用是以account_two和100作为参数执行合约的sendCoin函数&nbsp; 函数会立即返回交易的hash，表明交易已经提交到区块链，但是并不知道交易何时处理完成，交易要等到被旷工收录到区块中后才会生效&nbsp; 监听合约事件 当通过.sendTransaction()调用合约的时候，交易会被提交到区块链进行处理，这个处理需要一定的时间，如果需要等交易完成之后再执行其他操作，就必须要知道交易何时完成，那么如何知道交易何时完成呢？可以通过监听合约事件来实现。 在合约中可以定义事件，事件可以带有参数，在合约函数内部完成某些操作时，可以触发事件，向外界传达一些信息。例如，在MetaCoin合约中定义了一个事件叫做Transfer，表示一个转账的事件，它带有三个参数：交易的发送者、接受者、转账数量。在sendCoin函数中，转账成功后就会触发Transfer事件，将对应的参数传给该事件，这样外部监听到事件后，可以取出事件的参数来获得交易发送者、接收者、数量。同时事件中还带有其他信息，比如交易hash等。 在web3中使用事件，要首先获取事件对象，然后监听事件，如果事件发生，就会在回调函数中获取到事件信息： &nbsp; // 获取事件对象 var myEvent = metacoin.Transfer(); // 监听事件，监听到事件后会执行回调函数 myEvent.watch(function(err, result) { if (!err) { console.log(result); } else { console.log(err); } myEvent.stopWatching(); }); &nbsp; // 输出： { address: &#39;0xb2cdd356e58280906ce53e1665697b50f88aac56&#39;, blockNumber: 651, transactionIndex: 0, transactionHash: &#39;0xcc71bc2824cc84d1ee831c46189e3a80cf0af05697ba0370693aa97390c8067b&#39;, blockHash: &#39;0x1d53f04206f3926d0f311b1230a9dd0b0c5aadac35b169a6a609e384ab130c6f&#39;, logIndex: 0, removed: false, event: &#39;Transfer&#39;, args: { _from: &#39;0x68b73956d704007514e9257813bdc58cdf3c969a&#39;, _to: &#39;0x9c3c1a2f5ef913fac44f0348a78f68d835f3f26e&#39;, _value: { [String: &#39;100&#39;] s: 1, e: 2, c: [Object] } } } 从输出可以看出，获取到的事件信息包括事件的参数、事件名、区块号、交易hash等。 通过检测事件中的transactionHash与调用合约函数返回的交易hash是否一致，可以判定某一笔交易是否已完成： &nbsp; var account_one = web3.eth.accounts[0]; var account_two = web3.eth.accounts[1]; &nbsp; var account_one_balance = metacoin.getBalance.call(account_one); console.log(&quot;account one balance:&quot;, account_one_balance.toNumber()); &nbsp; var txhash = metacoin.sendCoin.sendTransaction(account_two, 100, { from: account_one }); &nbsp; var myEvent = metacoin.Transfer(); myEvent.watch(function (err, result) { if (!err) { if (result.transactionHash == txhash) { var account_one_balance = metacoin.getBalance.call(account_one); console.log(&quot;account one balance after sendCoin:&quot;, account_one_balance.toNumber()); } } else { console.log(err); } myEvent.stopWatching(); }); &nbsp; // 输出： account one balance: 7000 account one balance after sendCoin: 6900 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 watch中的回调函数如果被执行，说明事件已被触发，也就是说某笔交易已经处理完，检查交易hash是否一致，可以判定产生这个事件的交易是否是自己发送的交易，如果是，就可以进行其他操作，比如查询最新的余额。 阅读更多" />
+<meta property="og:description" content="web3.js是以太坊提供的一个Javascript库，它封装了以太坊的JSON RPC API，提供了一系列与区块链交互的Javascript对象和函数，包括查看网络状态，查看本地账户、查看交易和区块、发送交易、编译/部署智能合约、调用智能合约等，其中最重要的就是与智能合约交互的API。 下面就介绍如何使用web3.js提供的接口调用智能合约。 系统和软件 &nbsp; Ubuntu 16.04 64位 nodejs 6.10.0 npm 3.10.10 1 2 3 4 示例合约 本文以下面的MetaCoin合约为例，说明在应用中使用web3.js操作智能合约的方法。 &nbsp; // 本文中用到的MetaCoin合约 pragma solidity ^0.4.2; &nbsp; contract MetaCoin { mapping (address =&gt; uint) balances; &nbsp; event Transfer(address indexed _from, address indexed _to, uint256 _value); &nbsp; function MetaCoin() { balances[tx.origin] = 10000; } &nbsp; function sendCoin(address receiver, uint amount) returns(bool sufficient) { if (balances[msg.sender] &lt; amount) return false; balances[msg.sender] -= amount; balances[receiver] += amount; Transfer(msg.sender, receiver, amount); return true; } &nbsp; function getBalance(address addr) returns(uint) { return balances[addr]; } } 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 这个合约有三个函数： MetaCoin：构造函数，在合约被部署到区块链时执行&nbsp; getBalance：返回某账户的余额，它只读数据，不会修改数据&nbsp; sendCoin：向另一个账户发送指定数量的MetaCoin，它会改变状态变量balances&nbsp; 启动一个以太坊节点，将上面的合约部署到区块链中，并记录下合约的地址，可以通过truffle部署，具体参考这篇文章。 接下来就可以按照下面的步骤在项目中通过web3.js来使用这个合约。 添加web3到项目中 首先新建一个Nodejs项目并初始化： &nbsp; $ mkdir web3test &amp;&amp; cd web3test $ npm init 1 2 3 会提示输入项目信息，全部默认即可。&nbsp; 接下来下载web3.js到项目中： $ npm install web3 --save 1 2 以上命令会将web3.js下载到web3test/node_modules目录下，其中–save参数会web3.js添加到package.json配置文件中。 创建web3对象 要使用web3.js与区块链交互，需要先创建web3对象，然后连接到以太坊节点。 在web3test目录下新建index.js文件，在其中输入以下代码： &nbsp; var Web3 = require(&quot;web3&quot;); // 创建web3对象 var web3 = new Web3(); // 连接到以太坊节点 web3.setProvider(new Web3.providers.HttpProvider(&quot;http://localhost:8545&quot;)); 1 2 3 4 5 6 获取已部署的合约实例 要使用智能合约，必须先从区块链中获取到合约实例，获取合约实例需要合约的ABI和合约的地址： &nbsp; // 合约ABI var abi = [{&quot;constant&quot;:false,&quot;inputs&quot;:[{&quot;name&quot;:&quot;receiver&quot;,&quot;type&quot;:&quot;address&quot;},{&quot;name&quot;:&quot;amount&quot;,&quot;type&quot;:&quot;uint256&quot;}],&quot;name&quot;:&quot;sendCoin&quot;,&quot;outputs&quot;:[{&quot;name&quot;:&quot;sufficient&quot;,&quot;type&quot;:&quot;bool&quot;}],&quot;payable&quot;:false,&quot;type&quot;:&quot;function&quot;},{&quot;constant&quot;:false,&quot;inputs&quot;:[{&quot;name&quot;:&quot;addr&quot;,&quot;type&quot;:&quot;address&quot;}],&quot;name&quot;:&quot;getBalance&quot;,&quot;outputs&quot;:[{&quot;name&quot;:&quot;&quot;,&quot;type&quot;:&quot;uint256&quot;}],&quot;payable&quot;:false,&quot;type&quot;:&quot;function&quot;},{&quot;inputs&quot;:[],&quot;payable&quot;:false,&quot;type&quot;:&quot;constructor&quot;},{&quot;anonymous&quot;:false,&quot;inputs&quot;:[{&quot;indexed&quot;:true,&quot;name&quot;:&quot;_from&quot;,&quot;type&quot;:&quot;address&quot;},{&quot;indexed&quot;:true,&quot;name&quot;:&quot;_to&quot;,&quot;type&quot;:&quot;address&quot;},{&quot;indexed&quot;:false,&quot;name&quot;:&quot;_value&quot;,&quot;type&quot;:&quot;uint256&quot;}],&quot;name&quot;:&quot;Transfer&quot;,&quot;type&quot;:&quot;event&quot;}]; // 合约地址 var address = &quot;0xb2cdd356e58280906ce53e1665697b50f88aac56&quot;; // 通过ABI和地址获取已部署的合约对象 var metacoin = web3.eth.contract(abi).at(address); 1 2 3 4 5 6 metacoin就是获取到的合约对象实例，此时metacoin对象中就包含了与合约函数同名的Javascript函数，之后就可以通过metacoin对象来调用合约中的函数了。 调用合约函数 MetaCoin合约中有两个函数：getBalance和sendCoin，可以通过metacoin对象直接调用这两个函数。 首先来看getBalance，由于getBalance函数只是从区块链中读数据，而不修改数据，因此我们通过在getBalance后面加上.call()的方式调用： &nbsp; var account_one = web3.eth.accounts[0]; var account_one_balance = metacoin.getBalance.call(account_one); console.log(&quot;account one balance: &quot;, account_one_balance.toNumber()); 1 2 3 4 这里： 在getBalance后加上.call()来显式指明用call的方式调用&nbsp; 通过call的方式调用可以得到getBalance函数的返回值&nbsp; 通过call的方式调用的函数只在节点本地虚拟机中执行，不会产生交易，不会花费费用，不会修改数据&nbsp; 下面来看sendCoin函数，由于sendCoin要修改合约内部的数据，所以要使sendCoin生效，必须要向区块链发送交易，可以在sendCoin后面加上.sendTransaction()来指明这是一笔交易： &nbsp; var account_one = web3.eth.accounts[0]; var account_two = web3.eth.accounts[1]; // 提交交易到区块链，会立即返回交易hash，但是交易要等到被矿工收录到区块中后才生效 var txhash = metacoin.sendCoin.sendTransaction(account_two, 100, {from:account_one}); console.log(txhash); 1 2 3 4 5 6 这里： 在sendCoin函数后加上.sendTransaction()指明要向区块链发送交易&nbsp; 合约代码中sendCoin函数只有两个参数，而在web3中通过.sendTransaction()调用合约函数的时候需要增加最后一个参数，它是一个javascript对象，里面可以指定from/value/gas等属性，上面的例子用from来指定交易的发送者&nbsp; 上面的调用语句执行后，会向区块链提交一笔交易，这笔交易的发送者是account_one，接收者是metacoin的地址，交易的作用是以account_two和100作为参数执行合约的sendCoin函数&nbsp; 函数会立即返回交易的hash，表明交易已经提交到区块链，但是并不知道交易何时处理完成，交易要等到被旷工收录到区块中后才会生效&nbsp; 监听合约事件 当通过.sendTransaction()调用合约的时候，交易会被提交到区块链进行处理，这个处理需要一定的时间，如果需要等交易完成之后再执行其他操作，就必须要知道交易何时完成，那么如何知道交易何时完成呢？可以通过监听合约事件来实现。 在合约中可以定义事件，事件可以带有参数，在合约函数内部完成某些操作时，可以触发事件，向外界传达一些信息。例如，在MetaCoin合约中定义了一个事件叫做Transfer，表示一个转账的事件，它带有三个参数：交易的发送者、接受者、转账数量。在sendCoin函数中，转账成功后就会触发Transfer事件，将对应的参数传给该事件，这样外部监听到事件后，可以取出事件的参数来获得交易发送者、接收者、数量。同时事件中还带有其他信息，比如交易hash等。 在web3中使用事件，要首先获取事件对象，然后监听事件，如果事件发生，就会在回调函数中获取到事件信息： &nbsp; // 获取事件对象 var myEvent = metacoin.Transfer(); // 监听事件，监听到事件后会执行回调函数 myEvent.watch(function(err, result) { if (!err) { console.log(result); } else { console.log(err); } myEvent.stopWatching(); }); &nbsp; // 输出： { address: &#39;0xb2cdd356e58280906ce53e1665697b50f88aac56&#39;, blockNumber: 651, transactionIndex: 0, transactionHash: &#39;0xcc71bc2824cc84d1ee831c46189e3a80cf0af05697ba0370693aa97390c8067b&#39;, blockHash: &#39;0x1d53f04206f3926d0f311b1230a9dd0b0c5aadac35b169a6a609e384ab130c6f&#39;, logIndex: 0, removed: false, event: &#39;Transfer&#39;, args: { _from: &#39;0x68b73956d704007514e9257813bdc58cdf3c969a&#39;, _to: &#39;0x9c3c1a2f5ef913fac44f0348a78f68d835f3f26e&#39;, _value: { [String: &#39;100&#39;] s: 1, e: 2, c: [Object] } } } 从输出可以看出，获取到的事件信息包括事件的参数、事件名、区块号、交易hash等。 通过检测事件中的transactionHash与调用合约函数返回的交易hash是否一致，可以判定某一笔交易是否已完成： &nbsp; var account_one = web3.eth.accounts[0]; var account_two = web3.eth.accounts[1]; &nbsp; var account_one_balance = metacoin.getBalance.call(account_one); console.log(&quot;account one balance:&quot;, account_one_balance.toNumber()); &nbsp; var txhash = metacoin.sendCoin.sendTransaction(account_two, 100, { from: account_one }); &nbsp; var myEvent = metacoin.Transfer(); myEvent.watch(function (err, result) { if (!err) { if (result.transactionHash == txhash) { var account_one_balance = metacoin.getBalance.call(account_one); console.log(&quot;account one balance after sendCoin:&quot;, account_one_balance.toNumber()); } } else { console.log(err); } myEvent.stopWatching(); }); &nbsp; // 输出： account one balance: 7000 account one balance after sendCoin: 6900 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 watch中的回调函数如果被执行，说明事件已被触发，也就是说某笔交易已经处理完，检查交易hash是否一致，可以判定产生这个事件的交易是否是自己发送的交易，如果是，就可以进行其他操作，比如查询最新的余额。 阅读更多" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/08/02/2-web3.js%E4%B8%8E%E5%90%88%E7%BA%A6%E4%BA%A4%E4%BA%92.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/08/02/2-web3.js%E4%B8%8E%E5%90%88%E7%BA%A6%E4%BA%A4%E4%BA%92.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-08-02T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"web3.js是以太坊提供的一个Javascript库，它封装了以太坊的JSON RPC API，提供了一系列与区块链交互的Javascript对象和函数，包括查看网络状态，查看本地账户、查看交易和区块、发送交易、编译/部署智能合约、调用智能合约等，其中最重要的就是与智能合约交互的API。 下面就介绍如何使用web3.js提供的接口调用智能合约。 系统和软件 &nbsp; Ubuntu 16.04 64位 nodejs 6.10.0 npm 3.10.10 1 2 3 4 示例合约 本文以下面的MetaCoin合约为例，说明在应用中使用web3.js操作智能合约的方法。 &nbsp; // 本文中用到的MetaCoin合约 pragma solidity ^0.4.2; &nbsp; contract MetaCoin { mapping (address =&gt; uint) balances; &nbsp; event Transfer(address indexed _from, address indexed _to, uint256 _value); &nbsp; function MetaCoin() { balances[tx.origin] = 10000; } &nbsp; function sendCoin(address receiver, uint amount) returns(bool sufficient) { if (balances[msg.sender] &lt; amount) return false; balances[msg.sender] -= amount; balances[receiver] += amount; Transfer(msg.sender, receiver, amount); return true; } &nbsp; function getBalance(address addr) returns(uint) { return balances[addr]; } } 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 这个合约有三个函数： MetaCoin：构造函数，在合约被部署到区块链时执行&nbsp; getBalance：返回某账户的余额，它只读数据，不会修改数据&nbsp; sendCoin：向另一个账户发送指定数量的MetaCoin，它会改变状态变量balances&nbsp; 启动一个以太坊节点，将上面的合约部署到区块链中，并记录下合约的地址，可以通过truffle部署，具体参考这篇文章。 接下来就可以按照下面的步骤在项目中通过web3.js来使用这个合约。 添加web3到项目中 首先新建一个Nodejs项目并初始化： &nbsp; $ mkdir web3test &amp;&amp; cd web3test $ npm init 1 2 3 会提示输入项目信息，全部默认即可。&nbsp; 接下来下载web3.js到项目中： $ npm install web3 --save 1 2 以上命令会将web3.js下载到web3test/node_modules目录下，其中–save参数会web3.js添加到package.json配置文件中。 创建web3对象 要使用web3.js与区块链交互，需要先创建web3对象，然后连接到以太坊节点。 在web3test目录下新建index.js文件，在其中输入以下代码： &nbsp; var Web3 = require(&quot;web3&quot;); // 创建web3对象 var web3 = new Web3(); // 连接到以太坊节点 web3.setProvider(new Web3.providers.HttpProvider(&quot;http://localhost:8545&quot;)); 1 2 3 4 5 6 获取已部署的合约实例 要使用智能合约，必须先从区块链中获取到合约实例，获取合约实例需要合约的ABI和合约的地址： &nbsp; // 合约ABI var abi = [{&quot;constant&quot;:false,&quot;inputs&quot;:[{&quot;name&quot;:&quot;receiver&quot;,&quot;type&quot;:&quot;address&quot;},{&quot;name&quot;:&quot;amount&quot;,&quot;type&quot;:&quot;uint256&quot;}],&quot;name&quot;:&quot;sendCoin&quot;,&quot;outputs&quot;:[{&quot;name&quot;:&quot;sufficient&quot;,&quot;type&quot;:&quot;bool&quot;}],&quot;payable&quot;:false,&quot;type&quot;:&quot;function&quot;},{&quot;constant&quot;:false,&quot;inputs&quot;:[{&quot;name&quot;:&quot;addr&quot;,&quot;type&quot;:&quot;address&quot;}],&quot;name&quot;:&quot;getBalance&quot;,&quot;outputs&quot;:[{&quot;name&quot;:&quot;&quot;,&quot;type&quot;:&quot;uint256&quot;}],&quot;payable&quot;:false,&quot;type&quot;:&quot;function&quot;},{&quot;inputs&quot;:[],&quot;payable&quot;:false,&quot;type&quot;:&quot;constructor&quot;},{&quot;anonymous&quot;:false,&quot;inputs&quot;:[{&quot;indexed&quot;:true,&quot;name&quot;:&quot;_from&quot;,&quot;type&quot;:&quot;address&quot;},{&quot;indexed&quot;:true,&quot;name&quot;:&quot;_to&quot;,&quot;type&quot;:&quot;address&quot;},{&quot;indexed&quot;:false,&quot;name&quot;:&quot;_value&quot;,&quot;type&quot;:&quot;uint256&quot;}],&quot;name&quot;:&quot;Transfer&quot;,&quot;type&quot;:&quot;event&quot;}]; // 合约地址 var address = &quot;0xb2cdd356e58280906ce53e1665697b50f88aac56&quot;; // 通过ABI和地址获取已部署的合约对象 var metacoin = web3.eth.contract(abi).at(address); 1 2 3 4 5 6 metacoin就是获取到的合约对象实例，此时metacoin对象中就包含了与合约函数同名的Javascript函数，之后就可以通过metacoin对象来调用合约中的函数了。 调用合约函数 MetaCoin合约中有两个函数：getBalance和sendCoin，可以通过metacoin对象直接调用这两个函数。 首先来看getBalance，由于getBalance函数只是从区块链中读数据，而不修改数据，因此我们通过在getBalance后面加上.call()的方式调用： &nbsp; var account_one = web3.eth.accounts[0]; var account_one_balance = metacoin.getBalance.call(account_one); console.log(&quot;account one balance: &quot;, account_one_balance.toNumber()); 1 2 3 4 这里： 在getBalance后加上.call()来显式指明用call的方式调用&nbsp; 通过call的方式调用可以得到getBalance函数的返回值&nbsp; 通过call的方式调用的函数只在节点本地虚拟机中执行，不会产生交易，不会花费费用，不会修改数据&nbsp; 下面来看sendCoin函数，由于sendCoin要修改合约内部的数据，所以要使sendCoin生效，必须要向区块链发送交易，可以在sendCoin后面加上.sendTransaction()来指明这是一笔交易： &nbsp; var account_one = web3.eth.accounts[0]; var account_two = web3.eth.accounts[1]; // 提交交易到区块链，会立即返回交易hash，但是交易要等到被矿工收录到区块中后才生效 var txhash = metacoin.sendCoin.sendTransaction(account_two, 100, {from:account_one}); console.log(txhash); 1 2 3 4 5 6 这里： 在sendCoin函数后加上.sendTransaction()指明要向区块链发送交易&nbsp; 合约代码中sendCoin函数只有两个参数，而在web3中通过.sendTransaction()调用合约函数的时候需要增加最后一个参数，它是一个javascript对象，里面可以指定from/value/gas等属性，上面的例子用from来指定交易的发送者&nbsp; 上面的调用语句执行后，会向区块链提交一笔交易，这笔交易的发送者是account_one，接收者是metacoin的地址，交易的作用是以account_two和100作为参数执行合约的sendCoin函数&nbsp; 函数会立即返回交易的hash，表明交易已经提交到区块链，但是并不知道交易何时处理完成，交易要等到被旷工收录到区块中后才会生效&nbsp; 监听合约事件 当通过.sendTransaction()调用合约的时候，交易会被提交到区块链进行处理，这个处理需要一定的时间，如果需要等交易完成之后再执行其他操作，就必须要知道交易何时完成，那么如何知道交易何时完成呢？可以通过监听合约事件来实现。 在合约中可以定义事件，事件可以带有参数，在合约函数内部完成某些操作时，可以触发事件，向外界传达一些信息。例如，在MetaCoin合约中定义了一个事件叫做Transfer，表示一个转账的事件，它带有三个参数：交易的发送者、接受者、转账数量。在sendCoin函数中，转账成功后就会触发Transfer事件，将对应的参数传给该事件，这样外部监听到事件后，可以取出事件的参数来获得交易发送者、接收者、数量。同时事件中还带有其他信息，比如交易hash等。 在web3中使用事件，要首先获取事件对象，然后监听事件，如果事件发生，就会在回调函数中获取到事件信息： &nbsp; // 获取事件对象 var myEvent = metacoin.Transfer(); // 监听事件，监听到事件后会执行回调函数 myEvent.watch(function(err, result) { if (!err) { console.log(result); } else { console.log(err); } myEvent.stopWatching(); }); &nbsp; // 输出： { address: &#39;0xb2cdd356e58280906ce53e1665697b50f88aac56&#39;, blockNumber: 651, transactionIndex: 0, transactionHash: &#39;0xcc71bc2824cc84d1ee831c46189e3a80cf0af05697ba0370693aa97390c8067b&#39;, blockHash: &#39;0x1d53f04206f3926d0f311b1230a9dd0b0c5aadac35b169a6a609e384ab130c6f&#39;, logIndex: 0, removed: false, event: &#39;Transfer&#39;, args: { _from: &#39;0x68b73956d704007514e9257813bdc58cdf3c969a&#39;, _to: &#39;0x9c3c1a2f5ef913fac44f0348a78f68d835f3f26e&#39;, _value: { [String: &#39;100&#39;] s: 1, e: 2, c: [Object] } } } 从输出可以看出，获取到的事件信息包括事件的参数、事件名、区块号、交易hash等。 通过检测事件中的transactionHash与调用合约函数返回的交易hash是否一致，可以判定某一笔交易是否已完成： &nbsp; var account_one = web3.eth.accounts[0]; var account_two = web3.eth.accounts[1]; &nbsp; var account_one_balance = metacoin.getBalance.call(account_one); console.log(&quot;account one balance:&quot;, account_one_balance.toNumber()); &nbsp; var txhash = metacoin.sendCoin.sendTransaction(account_two, 100, { from: account_one }); &nbsp; var myEvent = metacoin.Transfer(); myEvent.watch(function (err, result) { if (!err) { if (result.transactionHash == txhash) { var account_one_balance = metacoin.getBalance.call(account_one); console.log(&quot;account one balance after sendCoin:&quot;, account_one_balance.toNumber()); } } else { console.log(err); } myEvent.stopWatching(); }); &nbsp; // 输出： account one balance: 7000 account one balance after sendCoin: 6900 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 watch中的回调函数如果被执行，说明事件已被触发，也就是说某笔交易已经处理完，检查交易hash是否一致，可以判定产生这个事件的交易是否是自己发送的交易，如果是，就可以进行其他操作，比如查询最新的余额。 阅读更多","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/08/02/2-web3.js%E4%B8%8E%E5%90%88%E7%BA%A6%E4%BA%A4%E4%BA%92.html","headline":"【2】web3.js与合约交互","dateModified":"2018-08-02T00:00:00+08:00","datePublished":"2018-08-02T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/08/02/2-web3.js%E4%B8%8E%E5%90%88%E7%BA%A6%E4%BA%A4%E4%BA%92.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>【2】web3.js与合约交互</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <p>web3.js是以太坊提供的一个Javascript库，它封装了以太坊的JSON RPC API，提供了一系列与区块链交互的Javascript对象和函数，包括查看网络状态，查看本地账户、查看交易和区块、发送交易、编译/部署智能合约、调用智能合约等，其中最重要的就是与智能合约交互的API。</p> 
+  <p>下面就介绍如何使用web3.js提供的接口调用智能合约。</p> 
+  <p>系统和软件</p> 
+  <pre>
+
+&nbsp;</pre> 
+  <ol>
+   <li> <p><code>Ubuntu 16.04 64位</code></p> </li> 
+   <li> <p><code>nodejs 6.10.0</code></p> </li> 
+   <li> <p><code>npm 3.10.10</code></p> </li> 
+  </ol>
+  <ul>
+   <li>1</li> 
+   <li>2</li> 
+   <li>3</li> 
+   <li>4</li> 
+  </ul>
+  <p>示例合约</p> 
+  <p>本文以下面的MetaCoin合约为例，说明在应用中使用web3.js操作智能合约的方法。</p> 
+  <pre>
+
+&nbsp;</pre> 
+  <ol>
+   <li> <p><code>// 本文中用到的MetaCoin合约</code></p> </li> 
+   <li> <p><code>pragma solidity ^0.4.2;</code></p> </li> 
+   <li>&nbsp;</li> 
+   <li> <p><code>contract MetaCoin {</code></p> </li> 
+   <li> <p><code>mapping (address =&gt; uint) balances;</code></p> </li> 
+   <li>&nbsp;</li> 
+   <li> <p><code>event Transfer(address indexed _from, address indexed _to, uint256 _value);</code></p> </li> 
+   <li>&nbsp;</li> 
+   <li> <p><code>function MetaCoin() {</code></p> </li> 
+   <li> <p><code>balances[tx.origin] = 10000;</code></p> </li> 
+   <li> <p><code>}</code></p> </li> 
+   <li>&nbsp;</li> 
+   <li> <p><code>function sendCoin(address receiver, uint amount) returns(bool sufficient) {</code></p> </li> 
+   <li> <p><code>if (balances[msg.sender] &lt; amount) return false;</code></p> </li> 
+   <li> <p><code>balances[msg.sender] -= amount;</code></p> </li> 
+   <li> <p><code>balances[receiver] += amount;</code></p> </li> 
+   <li> <p><code>Transfer(msg.sender, receiver, amount);</code></p> </li> 
+   <li> <p><code>return true;</code></p> </li> 
+   <li> <p><code>}</code></p> </li> 
+   <li>&nbsp;</li> 
+   <li> <p><code>function getBalance(address addr) returns(uint) {</code></p> </li> 
+   <li> <p><code>return balances[addr];</code></p> </li> 
+   <li> <p><code>}</code></p> </li> 
+   <li> <p><code>}</code></p> </li> 
+  </ol>
+  <ul>
+   <li>1</li> 
+   <li>2</li> 
+   <li>3</li> 
+   <li>4</li> 
+   <li>5</li> 
+   <li>6</li> 
+   <li>7</li> 
+   <li>8</li> 
+   <li>9</li> 
+   <li>10</li> 
+   <li>11</li> 
+   <li>12</li> 
+   <li>13</li> 
+   <li>14</li> 
+   <li>15</li> 
+   <li>16</li> 
+   <li>17</li> 
+   <li>18</li> 
+   <li>19</li> 
+   <li>20</li> 
+   <li>21</li> 
+   <li>22</li> 
+   <li>23</li> 
+   <li>24</li> 
+   <li>25</li> 
+  </ul>
+  <p>这个合约有三个函数：</p> 
+  <p>MetaCoin：构造函数，在合约被部署到区块链时执行&nbsp;<br> getBalance：返回某账户的余额，它只读数据，不会修改数据&nbsp;<br> sendCoin：向另一个账户发送指定数量的MetaCoin，它会改变状态变量balances&nbsp;<br> 启动一个以太坊节点，将上面的合约部署到区块链中，并记录下合约的地址，可以通过truffle部署，具体参考这篇文章。 接下来就可以按照下面的步骤在项目中通过web3.js来使用这个合约。</p> 
+  <p>添加web3到项目中</p> 
+  <p>首先新建一个Nodejs项目并初始化：</p> 
+  <pre>
+
+&nbsp;</pre> 
+  <ol>
+   <li> <p><code>$ mkdir web3test &amp;&amp; cd web3test</code></p> </li> 
+   <li> <p><code>$ npm init</code></p> </li> 
+  </ol>
+  <ul>
+   <li>1</li> 
+   <li>2</li> 
+   <li>3</li> 
+  </ul>
+  <p>会提示输入项目信息，全部默认即可。&nbsp;<br> 接下来下载web3.js到项目中：</p> 
+  <pre class="has">
+<code>$ npm install web3 --save
+</code></pre> 
+  <ul>
+   <li>1</li> 
+   <li>2</li> 
+  </ul>
+  <p>以上命令会将web3.js下载到web3test/node_modules目录下，其中–save参数会web3.js添加到package.json配置文件中。</p> 
+  <p>创建web3对象</p> 
+  <p>要使用web3.js与区块链交互，需要先创建web3对象，然后连接到以太坊节点。 在web3test目录下新建index.js文件，在其中输入以下代码：</p> 
+  <pre>
+
+&nbsp;</pre> 
+  <ol>
+   <li> <p><code>var Web3 = require("web3");</code></p> </li> 
+   <li> <p><code>// 创建web3对象</code></p> </li> 
+   <li> <p><code>var web3 = new Web3();</code></p> </li> 
+   <li> <p><code>// 连接到以太坊节点</code></p> </li> 
+   <li> <p><code>web3.setProvider(new Web3.providers.HttpProvider("http://localhost:8545"));</code></p> </li> 
+  </ol>
+  <ul>
+   <li>1</li> 
+   <li>2</li> 
+   <li>3</li> 
+   <li>4</li> 
+   <li>5</li> 
+   <li>6</li> 
+  </ul>
+  <p>获取已部署的合约实例</p> 
+  <p>要使用智能合约，必须先从区块链中获取到合约实例，获取合约实例需要合约的ABI和合约的地址：</p> 
+  <pre>
+
+&nbsp;</pre> 
+  <ol>
+   <li> <p><code>// 合约ABI</code></p> </li> 
+   <li> <p><code>var abi = [{"constant":false,"inputs":[{"name":"receiver","type":"address"},{"name":"amount","type":"uint256"}],"name":"sendCoin","outputs":[{"name":"sufficient","type":"bool"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"addr","type":"address"}],"name":"getBalance","outputs":[{"name":"","type":"uint256"}],"payable":false,"type":"function"},{"inputs":[],"payable":false,"type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"name":"_from","type":"address"},{"indexed":true,"name":"_to","type":"address"},{"indexed":false,"name":"_value","type":"uint256"}],"name":"Transfer","type":"event"}];</code></p> </li> 
+   <li> <p><code>// 合约地址</code></p> </li> 
+   <li> <p><code>var address = "0xb2cdd356e58280906ce53e1665697b50f88aac56";</code></p> </li> 
+   <li> <p><code>// 通过ABI和地址获取已部署的合约对象</code></p> </li> 
+   <li> <p><code>var metacoin = web3.eth.contract(abi).at(address);</code></p> </li> 
+  </ol>
+  <ul>
+   <li>1</li> 
+   <li>2</li> 
+   <li>3</li> 
+   <li>4</li> 
+   <li>5</li> 
+   <li>6</li> 
+  </ul>
+  <p>metacoin就是获取到的合约对象实例，此时metacoin对象中就包含了与合约函数同名的Javascript函数，之后就可以通过metacoin对象来调用合约中的函数了。</p> 
+  <p>调用合约函数</p> 
+  <p>MetaCoin合约中有两个函数：getBalance和sendCoin，可以通过metacoin对象直接调用这两个函数。</p> 
+  <p>首先来看getBalance，由于getBalance函数只是从区块链中读数据，而不修改数据，因此我们通过在getBalance后面加上.call()的方式调用：</p> 
+  <pre>
+
+&nbsp;</pre> 
+  <ol>
+   <li> <p><code>var account_one = web3.eth.accounts[0];</code></p> </li> 
+   <li> <p><code>var account_one_balance = metacoin.getBalance.call(account_one);</code></p> </li> 
+   <li> <p><code>console.log("account one balance: ", account_one_balance.toNumber());</code></p> </li> 
+  </ol>
+  <ul>
+   <li>1</li> 
+   <li>2</li> 
+   <li>3</li> 
+   <li>4</li> 
+  </ul>
+  <p>这里：</p> 
+  <p>在getBalance后加上.call()来显式指明用call的方式调用&nbsp;<br> 通过call的方式调用可以得到getBalance函数的返回值&nbsp;<br> 通过call的方式调用的函数只在节点本地虚拟机中执行，不会产生交易，不会花费费用，不会修改数据&nbsp;<br> 下面来看sendCoin函数，由于sendCoin要修改合约内部的数据，所以要使sendCoin生效，必须要向区块链发送交易，可以在sendCoin后面加上.sendTransaction()来指明这是一笔交易：</p> 
+  <pre>
+
+&nbsp;</pre> 
+  <ol>
+   <li> <p><code>var account_one = web3.eth.accounts[0];</code></p> </li> 
+   <li> <p><code>var account_two = web3.eth.accounts[1];</code></p> </li> 
+   <li> <p><code>// 提交交易到区块链，会立即返回交易hash，但是交易要等到被矿工收录到区块中后才生效</code></p> </li> 
+   <li> <p><code>var txhash = metacoin.sendCoin.sendTransaction(account_two, 100, {from:account_one});</code></p> </li> 
+   <li> <p><code>console.log(txhash);</code></p> </li> 
+  </ol>
+  <ul>
+   <li>1</li> 
+   <li>2</li> 
+   <li>3</li> 
+   <li>4</li> 
+   <li>5</li> 
+   <li>6</li> 
+  </ul>
+  <p>这里：</p> 
+  <p>在sendCoin函数后加上.sendTransaction()指明要向区块链发送交易&nbsp;<br> 合约代码中sendCoin函数只有两个参数，而在web3中通过.sendTransaction()调用合约函数的时候需要增加最后一个参数，它是一个javascript对象，里面可以指定from/value/gas等属性，上面的例子用from来指定交易的发送者&nbsp;<br> 上面的调用语句执行后，会向区块链提交一笔交易，这笔交易的发送者是account_one，接收者是metacoin的地址，交易的作用是以account_two和100作为参数执行合约的sendCoin函数&nbsp;<br> 函数会立即返回交易的hash，表明交易已经提交到区块链，但是并不知道交易何时处理完成，交易要等到被旷工收录到区块中后才会生效&nbsp;<br> 监听合约事件</p> 
+  <p>当通过.sendTransaction()调用合约的时候，交易会被提交到区块链进行处理，这个处理需要一定的时间，如果需要等交易完成之后再执行其他操作，就必须要知道交易何时完成，那么如何知道交易何时完成呢？可以通过监听合约事件来实现。</p> 
+  <p>在合约中可以定义事件，事件可以带有参数，在合约函数内部完成某些操作时，可以触发事件，向外界传达一些信息。例如，在MetaCoin合约中定义了一个事件叫做Transfer，表示一个转账的事件，它带有三个参数：交易的发送者、接受者、转账数量。在sendCoin函数中，转账成功后就会触发Transfer事件，将对应的参数传给该事件，这样外部监听到事件后，可以取出事件的参数来获得交易发送者、接收者、数量。同时事件中还带有其他信息，比如交易hash等。</p> 
+  <p>在web3中使用事件，要首先获取事件对象，然后监听事件，如果事件发生，就会在回调函数中获取到事件信息：</p> 
+  <pre>
+
+&nbsp;</pre> 
+  <ol>
+   <li> <p><code>// 获取事件对象</code></p> </li> 
+   <li> <p><code>var myEvent = metacoin.Transfer();</code></p> </li> 
+   <li> <p><code>// 监听事件，监听到事件后会执行回调函数</code></p> </li> 
+   <li> <p><code>myEvent.watch(function(err, result) {</code></p> </li> 
+   <li> <p><code>if (!err) {</code></p> </li> 
+   <li> <p><code>console.log(result);</code></p> </li> 
+   <li> <p><code>} else {</code></p> </li> 
+   <li> <p><code>console.log(err);</code></p> </li> 
+   <li> <p><code>}</code></p> </li> 
+   <li> <p><code>myEvent.stopWatching();</code></p> </li> 
+   <li> <p><code>});</code></p> </li> 
+   <li>&nbsp;</li> 
+   <li> <p><code>// 输出：</code></p> </li> 
+   <li> <p><code>{ address: '0xb2cdd356e58280906ce53e1665697b50f88aac56',</code></p> </li> 
+   <li> <p><code>blockNumber: 651,</code></p> </li> 
+   <li> <p><code>transactionIndex: 0,</code></p> </li> 
+   <li> <p><code>transactionHash: '0xcc71bc2824cc84d1ee831c46189e3a80cf0af05697ba0370693aa97390c8067b',</code></p> </li> 
+   <li> <p><code>blockHash: '0x1d53f04206f3926d0f311b1230a9dd0b0c5aadac35b169a6a609e384ab130c6f',</code></p> </li> 
+   <li> <p><code>logIndex: 0,</code></p> </li> 
+   <li> <p><code>removed: false,</code></p> </li> 
+   <li> <p><code>event: 'Transfer',</code></p> </li> 
+   <li> <p><code>args: </code></p> </li> 
+   <li> <p><code>{ _from: '0x68b73956d704007514e9257813bdc58cdf3c969a',</code></p> </li> 
+   <li> <p><code>_to: '0x9c3c1a2f5ef913fac44f0348a78f68d835f3f26e',</code></p> </li> 
+   <li> <p><code>_value: { [String: '100'] s: 1, e: 2, c: [Object] } } }</code></p> </li> 
+  </ol>
+  <p>从输出可以看出，获取到的事件信息包括事件的参数、事件名、区块号、交易hash等。</p> 
+  <p>通过检测事件中的transactionHash与调用合约函数返回的交易hash是否一致，可以判定某一笔交易是否已完成：</p> 
+  <pre>
+
+&nbsp;</pre> 
+  <ol>
+   <li> <p><code>var account_one = web3.eth.accounts[0];</code></p> </li> 
+   <li> <p><code>var account_two = web3.eth.accounts[1];</code></p> </li> 
+   <li>&nbsp;</li> 
+   <li> <p><code>var account_one_balance = metacoin.getBalance.call(account_one);</code></p> </li> 
+   <li> <p><code>console.log("account one balance:", account_one_balance.toNumber());</code></p> </li> 
+   <li>&nbsp;</li> 
+   <li> <p><code>var txhash = metacoin.sendCoin.sendTransaction(account_two, 100, { from: account_one });</code></p> </li> 
+   <li>&nbsp;</li> 
+   <li> <p><code>var myEvent = metacoin.Transfer();</code></p> </li> 
+   <li> <p><code>myEvent.watch(function (err, result) {</code></p> </li> 
+   <li> <p><code>if (!err) {</code></p> </li> 
+   <li> <p><code>if (result.transactionHash == txhash) {</code></p> </li> 
+   <li> <p><code>var account_one_balance = metacoin.getBalance.call(account_one);</code></p> </li> 
+   <li> <p><code>console.log("account one balance after sendCoin:", account_one_balance.toNumber());</code></p> </li> 
+   <li> <p><code>}</code></p> </li> 
+   <li> <p><code>} else {</code></p> </li> 
+   <li> <p><code>console.log(err);</code></p> </li> 
+   <li> <p><code>}</code></p> </li> 
+   <li> <p><code>myEvent.stopWatching();</code></p> </li> 
+   <li> <p><code>});</code></p> </li> 
+   <li>&nbsp;</li> 
+   <li> <p><code>// 输出：</code></p> </li> 
+   <li> <p><code>account one balance: 7000</code></p> </li> 
+   <li> <p><code>account one balance after sendCoin: 6900</code></p> </li> 
+  </ol>
+  <ul>
+   <li>1</li> 
+   <li>2</li> 
+   <li>3</li> 
+   <li>4</li> 
+   <li>5</li> 
+   <li>6</li> 
+   <li>7</li> 
+   <li>8</li> 
+   <li>9</li> 
+   <li>10</li> 
+   <li>11</li> 
+   <li>12</li> 
+   <li>13</li> 
+   <li>14</li> 
+   <li>15</li> 
+   <li>16</li> 
+   <li>17</li> 
+   <li>18</li> 
+   <li>19</li> 
+   <li>20</li> 
+   <li>21</li> 
+   <li>22</li> 
+   <li>23</li> 
+   <li>24</li> 
+   <li>25</li> 
+  </ul>
+  <p>watch中的回调函数如果被执行，说明事件已被触发，也就是说某笔交易已经处理完，检查交易hash是否一致，可以判定产生这个事件的交易是否是自己发送的交易，如果是，就可以进行其他操作，比如查询最新的余额。</p> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/dwjpeng2/article/details/81352046,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/dwjpeng2/article/details/81352046,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

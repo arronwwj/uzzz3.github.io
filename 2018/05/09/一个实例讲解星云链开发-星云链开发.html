@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>一个实例讲解星云链开发 星云链开发 | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="一个实例讲解星云链开发 星云链开发" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="交流QQ群：613121183 ------------ 星云奖励 最近一直关注星云链上的开发DApp的进度。5月5日晚上已开放注册，建议开发者都来试试，可能是开发者今年最大的机会。 星云开发者开放注册啦，提交一个DApp即可获得100个NAS(大约7000元）。推荐可获得40个NAS，更有周、月度大额奖金等你拿！ 邀请码：58jke（注册时填写邀请码的，提交有效应用额外送10NAS） 注册链接：https://incentive.nebulas.io/cn/signup.html?invite=58jke 一个DAapp案例讲解 既然奖励这么诱人，那么作为开发者怎样参与进来，怎么来开发一个属于自己的DAapp应用呢，其实把大象放进冰箱大概分3步而已，很简单，下面就用一个实例讲解来帮你了解整个的开发流程。 首先我们明确几个概念，有助于我们开始星云链上dapp的开发。以下我们都在测试链上来完成。我们的目标是完成一个“星云区块链弹幕墙”的应用，数据存储和读取都是基于星云区块链。 我们先有一个大概流程的了解，创建钱包是第一步，这样我们就可以有转账交易的前提。然后我们可以去官方提供的地址领取测试币；之后开发合约逻辑，并部署到测试链上；编写UI界面，联调与合约的调用。 创建钱包 可以通过这个链接来创建测试用的钱包：https://wallet.nasscan.io/ 注意保存好你的钱包文件。 领取测试币 通过此地址领取测试币，每天一个邮箱可领取10枚：https://testnet.nebulas.io/claim/ 部署合约 编写你的合约逻辑，在弹幕的应用中主要用到2个方法。一个方法是查询链上的弹幕数据，一个是存储用户发送的数据。 可在此地址上部署你的测试合约：https://wallet.nasscan.io/contract.html Deploy来部署合约，Call部分可以测试合约的方法 界面交互 界面的逻辑比较简单，首先是用canvas来显示链上的用户留言。一个输入框来输入用户的留言；下一步按钮来加载钱包文件，并把数据提交到链上。 显示留言 可以拆分为两步 1、先获取初始化默认地址的信息 2、根据第一步的返回信息调用合约的”list”方法，将返回的结果值更新的界面 存储留言 主要分成三步 1、解锁钱包 2、根据钱包获取账号信息 3、调用合约的“save”方法，存储数据到链 发布应用 阅读更多" />
+<meta property="og:description" content="交流QQ群：613121183 ------------ 星云奖励 最近一直关注星云链上的开发DApp的进度。5月5日晚上已开放注册，建议开发者都来试试，可能是开发者今年最大的机会。 星云开发者开放注册啦，提交一个DApp即可获得100个NAS(大约7000元）。推荐可获得40个NAS，更有周、月度大额奖金等你拿！ 邀请码：58jke（注册时填写邀请码的，提交有效应用额外送10NAS） 注册链接：https://incentive.nebulas.io/cn/signup.html?invite=58jke 一个DAapp案例讲解 既然奖励这么诱人，那么作为开发者怎样参与进来，怎么来开发一个属于自己的DAapp应用呢，其实把大象放进冰箱大概分3步而已，很简单，下面就用一个实例讲解来帮你了解整个的开发流程。 首先我们明确几个概念，有助于我们开始星云链上dapp的开发。以下我们都在测试链上来完成。我们的目标是完成一个“星云区块链弹幕墙”的应用，数据存储和读取都是基于星云区块链。 我们先有一个大概流程的了解，创建钱包是第一步，这样我们就可以有转账交易的前提。然后我们可以去官方提供的地址领取测试币；之后开发合约逻辑，并部署到测试链上；编写UI界面，联调与合约的调用。 创建钱包 可以通过这个链接来创建测试用的钱包：https://wallet.nasscan.io/ 注意保存好你的钱包文件。 领取测试币 通过此地址领取测试币，每天一个邮箱可领取10枚：https://testnet.nebulas.io/claim/ 部署合约 编写你的合约逻辑，在弹幕的应用中主要用到2个方法。一个方法是查询链上的弹幕数据，一个是存储用户发送的数据。 可在此地址上部署你的测试合约：https://wallet.nasscan.io/contract.html Deploy来部署合约，Call部分可以测试合约的方法 界面交互 界面的逻辑比较简单，首先是用canvas来显示链上的用户留言。一个输入框来输入用户的留言；下一步按钮来加载钱包文件，并把数据提交到链上。 显示留言 可以拆分为两步 1、先获取初始化默认地址的信息 2、根据第一步的返回信息调用合约的”list”方法，将返回的结果值更新的界面 存储留言 主要分成三步 1、解锁钱包 2、根据钱包获取账号信息 3、调用合约的“save”方法，存储数据到链 发布应用 阅读更多" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/05/09/%E4%B8%80%E4%B8%AA%E5%AE%9E%E4%BE%8B%E8%AE%B2%E8%A7%A3%E6%98%9F%E4%BA%91%E9%93%BE%E5%BC%80%E5%8F%91-%E6%98%9F%E4%BA%91%E9%93%BE%E5%BC%80%E5%8F%91.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/05/09/%E4%B8%80%E4%B8%AA%E5%AE%9E%E4%BE%8B%E8%AE%B2%E8%A7%A3%E6%98%9F%E4%BA%91%E9%93%BE%E5%BC%80%E5%8F%91-%E6%98%9F%E4%BA%91%E9%93%BE%E5%BC%80%E5%8F%91.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-05-09T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"交流QQ群：613121183 ------------ 星云奖励 最近一直关注星云链上的开发DApp的进度。5月5日晚上已开放注册，建议开发者都来试试，可能是开发者今年最大的机会。 星云开发者开放注册啦，提交一个DApp即可获得100个NAS(大约7000元）。推荐可获得40个NAS，更有周、月度大额奖金等你拿！ 邀请码：58jke（注册时填写邀请码的，提交有效应用额外送10NAS） 注册链接：https://incentive.nebulas.io/cn/signup.html?invite=58jke 一个DAapp案例讲解 既然奖励这么诱人，那么作为开发者怎样参与进来，怎么来开发一个属于自己的DAapp应用呢，其实把大象放进冰箱大概分3步而已，很简单，下面就用一个实例讲解来帮你了解整个的开发流程。 首先我们明确几个概念，有助于我们开始星云链上dapp的开发。以下我们都在测试链上来完成。我们的目标是完成一个“星云区块链弹幕墙”的应用，数据存储和读取都是基于星云区块链。 我们先有一个大概流程的了解，创建钱包是第一步，这样我们就可以有转账交易的前提。然后我们可以去官方提供的地址领取测试币；之后开发合约逻辑，并部署到测试链上；编写UI界面，联调与合约的调用。 创建钱包 可以通过这个链接来创建测试用的钱包：https://wallet.nasscan.io/ 注意保存好你的钱包文件。 领取测试币 通过此地址领取测试币，每天一个邮箱可领取10枚：https://testnet.nebulas.io/claim/ 部署合约 编写你的合约逻辑，在弹幕的应用中主要用到2个方法。一个方法是查询链上的弹幕数据，一个是存储用户发送的数据。 可在此地址上部署你的测试合约：https://wallet.nasscan.io/contract.html Deploy来部署合约，Call部分可以测试合约的方法 界面交互 界面的逻辑比较简单，首先是用canvas来显示链上的用户留言。一个输入框来输入用户的留言；下一步按钮来加载钱包文件，并把数据提交到链上。 显示留言 可以拆分为两步 1、先获取初始化默认地址的信息 2、根据第一步的返回信息调用合约的”list”方法，将返回的结果值更新的界面 存储留言 主要分成三步 1、解锁钱包 2、根据钱包获取账号信息 3、调用合约的“save”方法，存储数据到链 发布应用 阅读更多","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/05/09/%E4%B8%80%E4%B8%AA%E5%AE%9E%E4%BE%8B%E8%AE%B2%E8%A7%A3%E6%98%9F%E4%BA%91%E9%93%BE%E5%BC%80%E5%8F%91-%E6%98%9F%E4%BA%91%E9%93%BE%E5%BC%80%E5%8F%91.html","headline":"一个实例讲解星云链开发 星云链开发","dateModified":"2018-05-09T00:00:00+08:00","datePublished":"2018-05-09T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/05/09/%E4%B8%80%E4%B8%AA%E5%AE%9E%E4%BE%8B%E8%AE%B2%E8%A7%A3%E6%98%9F%E4%BA%91%E9%93%BE%E5%BC%80%E5%8F%91-%E6%98%9F%E4%BA%91%E9%93%BE%E5%BC%80%E5%8F%91.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>一个实例讲解星云链开发 星云链开发</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);">交流QQ群：613121183</p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);">------------</p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);">星云奖励</p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);">最近一直关注星云链上的开发DApp的进度。5月5日晚上已开放注册，建议开发者都来试试，<span style="font-weight:700;border:0px;">可能是开发者今年最大的机会</span>。</p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);">星云开发者开放注册啦，提交一个DApp即可获得100个NAS(大约7000元）。推荐可获得40个NAS，更有周、月度大额奖金等你拿！</p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);">邀请码：<a href="https://incentive.nebulas.io/cn/signup.html?invite=58jke" rel="nofollow" style="font-family:'Helvetica Neue';font-size:12px;">58jke</a>（注册时填写邀请码的，提交有效应用额外送10NAS）</p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);">注册链接：<a href="https://incentive.nebulas.io/cn/signup.html?invite=58jke" rel="nofollow" style="font-family:'Helvetica Neue';font-size:12px;text-align:justify;">https://incentive.nebulas.io/cn/signup.html<span class="s1">?</span>invite=58jke</a></p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);">一个DAapp案例讲解</p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);">既然奖励这么诱人，那么作为开发者怎样参与进来，怎么来开发一个属于自己的DAapp应用呢，其实把大象放进冰箱大概分3步而已，很简单，<span style="font-weight:700;border:0px;">下面就用一个实例讲解来帮你了解整个的开发流程。</span></p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);">首先我们明确几个概念，有助于我们开始星云链上dapp的开发。以下我们都在测试链上来完成。我们的目标是完成一个“星云区块链弹幕墙”的应用，数据存储和读取都是基于星云区块链。</p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);">我们先有一个大概流程的了解，创建钱包是第一步，这样我们就可以有转账交易的前提。然后我们可以去官方提供的地址领取测试币；之后开发合约逻辑，并部署到测试链上；编写UI界面，联调与合约的调用。</p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);">创建钱包</p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);">可以通过这个链接来创建测试用的钱包：https://wallet.nasscan.io/</p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);">注意保存好你的钱包文件。</p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);"><img src="http://5b0988e595225.cdn.sohucs.com/images/20180507/14a77c78abba49dd853db0816e5bba52.jpeg" style="border:0px;margin-left:auto;" alt=""></p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);">领取测试币</p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);">通过此地址领取测试币，每天一个邮箱可领取10枚：https://testnet.nebulas.io/claim/</p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);"><img src="http://5b0988e595225.cdn.sohucs.com/images/20180507/9117870bb56d499293a4b53d96bda823.jpeg" style="border:0px;margin-left:auto;" alt=""></p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);">部署合约</p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);">编写你的合约逻辑，在弹幕的应用中主要用到2个方法。一个方法是查询链上的弹幕数据，一个是存储用户发送的数据。</p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);"><img src="http://5b0988e595225.cdn.sohucs.com/images/20180507/c42596c0b4004bb48a1edaa9822d6b0c.jpeg" style="border:0px;margin-left:auto;" alt=""></p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);"><img src="http://5b0988e595225.cdn.sohucs.com/images/20180507/daa846f06cf24db88efca963036d9053.jpeg" style="border:0px;margin-left:auto;" alt=""></p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);">可在此地址上部署你的测试合约：https://wallet.nasscan.io/contract.html</p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);">Deploy来部署合约，Call部分可以测试合约的方法</p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);"><img src="http://5b0988e595225.cdn.sohucs.com/images/20180507/3a6eefdb88594e25a96b486f95ed113d.jpeg" style="border:0px;margin-left:auto;" alt=""></p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);">界面交互</p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);">界面的逻辑比较简单，首先是用canvas来显示链上的用户留言。一个输入框来输入用户的留言；下一步按钮来加载钱包文件，并把数据提交到链上。</p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);"><span style="font-weight:700;border:0px;">显示留言</span></p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);">可以拆分为两步</p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);">1、先获取初始化默认地址的信息</p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);"><img src="http://5b0988e595225.cdn.sohucs.com/images/20180507/faa4d208e4d04dd1be2052239fa181f1.jpeg" style="border:0px;margin-left:auto;" alt=""></p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);">2、根据第一步的返回信息调用合约的”list”方法，将返回的结果值更新的界面</p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);"><img src="http://5b0988e595225.cdn.sohucs.com/images/20180507/82fc93af21854adab18f227f55fd7ac7.jpeg" style="border:0px;margin-left:auto;" alt=""></p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);"><span style="font-weight:700;border:0px;">存储留言</span></p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);">主要分成三步</p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);">1、解锁钱包</p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);"><img src="http://5b0988e595225.cdn.sohucs.com/images/20180507/0c40b4fba08848ba815d7acc56d877ca.jpeg" style="border:0px;margin-left:auto;" alt=""></p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);">2、根据钱包获取账号信息</p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);"><img src="http://5b0988e595225.cdn.sohucs.com/images/20180507/82ee685c35f740a3a1f6d0d9d4eddb92.jpeg" style="border:0px;margin-left:auto;" alt=""></p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);">3、调用合约的“save”方法，存储数据到链</p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);"><img src="http://5b0988e595225.cdn.sohucs.com/images/20180507/90ed43a3cfda4140b454700a1eabad17.jpeg" style="border:0px;margin-left:auto;" alt=""></p>
+  <p style="border:0px;color:rgb(25,25,25);font-family:'PingFang SC', Arial, '微软雅黑', '宋体', simsun, sans-serif;text-align:left;background-color:rgb(255,255,255);">发布应用</p>
+  <div>
+   <br>
+  </div> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/taoanbang/article/details/80257763,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/taoanbang/article/details/80257763,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

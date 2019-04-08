@@ -1,0 +1,453 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div class="article-copyright">
+   版权声明：本文为博主原创文章，未经博主允许不得转载。 https://blog.csdn.net/wtdask/article/details/82493876 
+ </div> 
+ <div class="markdown_views"> 
+  <p><strong>You may as well be bold to love someone, to climb a mountain,to chase your dream.</strong> <br> 你不妨大胆一些，爱一个人，攀一座山，追一个梦。</p> 
+  <hr> 
+  <h2 id="安装所需工具">安装所需工具</h2> 
+  <p>首先开发机上必须装好Node.js，再使用以下命令安装所需的工具</p> 
+  <pre class="prettyprint"><code class=" hljs lasso">$ npm install <span class="hljs-attribute">-g</span> ethereumjs<span class="hljs-attribute">-testrpc</span> truffle</code></pre> 
+  <pre class="prettyprint"><code class=" hljs lasso">macdeiMac:~ mac$ npm install <span class="hljs-attribute">-g</span> ethereumjs<span class="hljs-attribute">-testrpc</span> truffle
+npm WARN deprecated ethereumjs<span class="hljs-attribute">-testrpc</span>@<span class="hljs-number">6.0</span><span class="hljs-number">.3</span>: ethereumjs<span class="hljs-attribute">-testrpc</span> has been renamed <span class="hljs-keyword">to</span> ganache<span class="hljs-attribute">-cli</span>, please use this package from now <span class="hljs-keyword">on</span><span class="hljs-built_in">.</span>
+/usr/<span class="hljs-built_in">local</span>/bin/testrpc <span class="hljs-subst">-&gt; </span>/usr/<span class="hljs-built_in">local</span>/lib/node_modules/ethereumjs<span class="hljs-attribute">-testrpc</span>/build/cli<span class="hljs-built_in">.</span>node<span class="hljs-built_in">.</span>js
+/usr/<span class="hljs-built_in">local</span>/bin/truffle <span class="hljs-subst">-&gt; </span>/usr/<span class="hljs-built_in">local</span>/lib/node_modules/truffle/build/cli<span class="hljs-built_in">.</span>bundled<span class="hljs-built_in">.</span>js
+<span class="hljs-subst">+</span> ethereumjs<span class="hljs-attribute">-testrpc</span>@<span class="hljs-number">6.0</span><span class="hljs-number">.3</span>
+<span class="hljs-subst">+</span> truffle@<span class="hljs-number">4.1</span><span class="hljs-number">.14</span>
+updated <span class="hljs-number">3</span> packages <span class="hljs-keyword">in</span> <span class="hljs-number">134.279</span>s
+macdeiMac:~ mac$ npm ganache<span class="hljs-attribute">-cli</span> install
+
+Usage: npm <span class="hljs-subst">&lt;</span>command<span class="hljs-subst">&gt;</span>
+
+<span class="hljs-keyword">where</span> <span class="hljs-subst">&lt;</span>command<span class="hljs-subst">&gt;</span> is one of:
+    access, adduser, bin, bugs, c, <span class="hljs-keyword">cache</span>, completion, config,
+    ddp, dedupe, deprecate, dist<span class="hljs-attribute">-tag</span>, docs, doctor, edit,
+    explore, get, help, help<span class="hljs-attribute">-search</span>, i, init, install,
+    install<span class="hljs-attribute">-test</span>, it, <span class="hljs-keyword">link</span>, <span class="hljs-built_in">list</span>, ln, login, logout, ls,
+    outdated, owner, pack, ping, prefix, profile, prune,
+    publish, rb, rebuild, repo, restart, root, run, run<span class="hljs-attribute">-script</span>,
+    s, se, search, <span class="hljs-built_in">set</span>, shrinkwrap, star, stars, start, stop, t,
+    team, test, token, tst, un, uninstall, unpublish, unstar,
+    up, update, v, version, view, whoami
+
+npm <span class="hljs-subst">&lt;</span>command<span class="hljs-subst">&gt;</span> <span class="hljs-attribute">-h</span>     quick help <span class="hljs-keyword">on</span> <span class="hljs-subst">&lt;</span>command<span class="hljs-subst">&gt;</span>
+npm <span class="hljs-attribute">-l</span>           display <span class="hljs-literal">full</span> usage info
+npm help <span class="hljs-subst">&lt;</span>term<span class="hljs-subst">&gt;</span>  search for help <span class="hljs-keyword">on</span> <span class="hljs-subst">&lt;</span>term<span class="hljs-subst">&gt;</span>
+npm help npm     involved overview
+
+Specify configs <span class="hljs-keyword">in</span> the ini<span class="hljs-attribute">-formatted</span> file:
+    /Users/mac<span class="hljs-subst">/</span><span class="hljs-built_in">.</span>npmrc
+<span class="hljs-literal">or</span> <span class="hljs-keyword">on</span> the command line via: npm <span class="hljs-subst">&lt;</span>command<span class="hljs-subst">&gt;</span> <span class="hljs-subst">--</span>key value
+Config info can be viewed via: npm help config
+
+npm@<span class="hljs-number">5.6</span><span class="hljs-number">.0</span> /usr/<span class="hljs-built_in">local</span>/lib/node_modules/npm
+
+
+   ╭─────────────────────────────────────╮
+   │                                     │
+   │   Update available <span class="hljs-number">5.6</span><span class="hljs-number">.0</span> → <span class="hljs-number">6.4</span><span class="hljs-number">.1</span>    │
+   │     Run npm i <span class="hljs-attribute">-g</span> npm <span class="hljs-keyword">to</span> update      │
+   │                                     │
+   ╰─────────────────────────────────────╯</code></pre> 
+  <h2 id="创建项目">创建项目</h2> 
+  <pre class="prettyprint"><code class=" hljs bash">macdeiMac:~ mac$ <span class="hljs-built_in">cd</span> /Users/mac/Desktop/GitHub/Solidity/learn/Voting 
+macdeiMac:Voting mac$ ls
+macdeiMac:Voting mac$ <span class="hljs-built_in">pwd</span>
+/Users/mac/Desktop/GitHub/Solidity/learn/Voting
+macdeiMac:Voting mac$ truffle unbox react-box
+Downloading...
+Unpacking...
+Setting up...
+Unbox successful. Sweet!
+
+Commands:
+
+  Compile:              truffle compile
+  Migrate:              truffle migrate
+  Test contracts:       truffle test
+  Test dapp:            <span class="hljs-built_in">cd</span> client &amp;&amp; npm test
+  Run dev server:       <span class="hljs-built_in">cd</span> client &amp;&amp; npm run start
+  Build <span class="hljs-keyword">for</span> production: <span class="hljs-built_in">cd</span> client &amp;&amp; npm run build
+macdeiMac:Voting mac$ 
+</code></pre> 
+  <h2 id="编写投票dapp智能合约">编写投票Dapp智能合约</h2> 
+  <p>在<code>contracts</code>文件夹下创建<code>Voting.sol</code>文件，将下面的代码拷贝到文件中。</p> 
+  <pre class="prettyprint"><code class=" hljs cs">pragma solidity ^<span class="hljs-number">0.4</span><span class="hljs-number">.24</span>;
+
+contract Voting {
+
+
+<span class="hljs-comment">// ["wt","mayun","liuyifei","zhaoliying","mahuateng"]</span>
+<span class="hljs-comment">// [1,2,3,4,5]</span>
+
+
+  <span class="hljs-comment">// 存储候选人ID的数组</span>
+<span class="hljs-comment">// bytes32[] candidateNames =new bytes32[](5);</span>
+<span class="hljs-comment">// bytes32[] candidateNames = ["wt","mayun","liuyifei","zhaoliying","mahuateng"];</span>
+  <span class="hljs-keyword">uint</span>[] candidateIds;
+  mapping (<span class="hljs-keyword">uint</span> =&gt; <span class="hljs-keyword">uint</span>) <span class="hljs-keyword">public</span> votesReceived;
+  <span class="hljs-comment">// 构造函数 初始化候选人名单</span>
+  constructor(<span class="hljs-keyword">uint</span>[] _candidateIds) <span class="hljs-keyword">public</span> {
+
+      candidateIds = _candidateIds;
+  }
+
+  <span class="hljs-comment">// 查询某个候选人的总票数</span>
+  function totalVotesFor(<span class="hljs-keyword">uint</span> candidate) <span class="hljs-keyword">public</span> constant <span class="hljs-title">returns</span> (<span class="hljs-keyword">uint</span>) {
+    require(validCandidate(candidate) == <span class="hljs-keyword">true</span>);
+    <span class="hljs-comment">// 或者</span>
+    <span class="hljs-comment">// assert(validCandidate(candidate) == true);</span>
+    <span class="hljs-keyword">return</span> votesReceived[candidate];
+  }
+
+  <span class="hljs-comment">// 为某个候选人投票</span>
+  function voteForCandidate(<span class="hljs-keyword">uint</span> candidate)<span class="hljs-keyword">public</span> {
+    assert(validCandidate(candidate) == <span class="hljs-keyword">true</span>);
+    votesReceived[candidate] += <span class="hljs-number">1</span>;
+  }
+
+  <span class="hljs-comment">// 检索投票的ID是不是候选人的ID</span>
+  function validCandidate(<span class="hljs-keyword">uint</span> candidate) <span class="hljs-keyword">public</span> constant <span class="hljs-title">returns</span> (<span class="hljs-keyword">bool</span>) {
+    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">uint</span> i = <span class="hljs-number">0</span>; i &lt; candidateIds.length; i++) {
+      <span class="hljs-keyword">if</span> (candidateIds[i] == candidate) {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">true</span>;
+      }
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">false</span>;
+  }
+}
+
+</code></pre> 
+  <p>修改<code>migrations/2_deploy_contracts.js</code></p> 
+  <pre class="prettyprint"><code class=" hljs lua">var Voting = artifacts.<span class="hljs-built_in">require</span>(<span class="hljs-string">"./Voting.sol"</span>);
+
+<span class="hljs-built_in">module</span>.exports = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(deployer)</span></span> {
+  deployer.deploy(Voting);
+};
+</code></pre> 
+  <h2 id="通过remix-metamask部署合约到kovan-test-net">通过remix + metamask部署合约到Kovan Test Net</h2> 
+  <ul> 
+   <li>Google浏览器<code>MetaMask</code>插件安装前面的文章中有</li> 
+  </ul> 
+  <p><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180906113710997?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3d0ZGFzaw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述" title=""></p> 
+  <ul> 
+   <li>打开<a href="https://remix.ethereum.org" rel="nofollow">https://remix.ethereum.org</a>将合约代码拷贝到里面</li> 
+  </ul> 
+  <p><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180906113757772?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3d0ZGFzaw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述" title=""></p> 
+  <ul> 
+   <li>确保<code>MetaMask</code>账号处于等于状态，并且有一定的以太币支付给矿工。</li> 
+   <li>确保<code>Environment</code>是<code>Injected Web3</code>，如果切换不过来，关掉浏览器重新启动</li> 
+   <li>在<code>Deploy</code>函数中输入一个数组，数组里面的内容为候选人Id名单</li> 
+   <li>点击<code>Deploy</code>按钮，会弹出<code>MetaMask</code>界面让你确认，确认提交，过一会儿，合约就部署成功</li> 
+   <li>可以测试给某个候选人投票，查询某个候选人的票数</li> 
+  </ul> 
+  <h2 id="拷贝合约地址">拷贝合约地址</h2> 
+  <p><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180906114257261?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3d0ZGFzaw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述" title=""></p> 
+  <pre class="prettyprint"><code class=" hljs ">0xc36c23c1e6eb12f8df63c787ef06aecd1f38b778</code></pre> 
+  <h2 id="编译合约">编译合约</h2> 
+  <p>使用<code>truffle develop</code></p> 
+  <pre class="prettyprint"><code class=" hljs oxygene">macdeiMac:Voting mac$ truffle develop
+Truffle Develop started at http:<span class="hljs-comment">//127.0.0.1:9545/</span>
+
+Accounts:
+(<span class="hljs-number">0</span>) <span class="hljs-number">0</span>x627306090abab3a6e1400e9345bc60c78a8bef57
+(<span class="hljs-number">1</span>) <span class="hljs-number">0</span>xf17f52151ebef6c7334fad080c5704d77216b732
+(<span class="hljs-number">2</span>) <span class="hljs-number">0</span>xc5fdf4076b8f3a5357c5e395ab970b5b54098fef
+(<span class="hljs-number">3</span>) <span class="hljs-number">0</span>x821aea9a577a9b44299b9c15c88cf3087f3b5544
+(<span class="hljs-number">4</span>) <span class="hljs-number">0</span>x0d1d4e623d10f9fba5db95830f7d3839406c6af2
+(<span class="hljs-number">5</span>) <span class="hljs-number">0</span>x2932b7a2355d6fecc4b5c0b6bd44cc31df247a2e
+(<span class="hljs-number">6</span>) <span class="hljs-number">0</span>x2191ef87e392377ec08e7c08eb105ef5448eced5
+(<span class="hljs-number">7</span>) <span class="hljs-number">0</span>x0f4f2ac550a1b4e2280d04c21cea7ebd822934b5
+(<span class="hljs-number">8</span>) <span class="hljs-number">0</span>x6330a553fc93768f612722bb8c2ec78ac90b3bbc
+(<span class="hljs-number">9</span>) <span class="hljs-number">0</span>x5aeda56215b167893e80b4fe645ba6d5bab767de
+
+<span class="hljs-keyword">Private</span> Keys:
+(<span class="hljs-number">0</span>) c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3
+(<span class="hljs-number">1</span>) ae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f
+(<span class="hljs-number">2</span>) <span class="hljs-number">0</span>dbbe8e4ae425a6d2687f1a7e3ba17bc98c673636790f1b8ad91193c05875ef1
+(<span class="hljs-number">3</span>) c88b703fb08cbea894b6aeff5a544fb92e78a18e19814cd85da83b71f772aa6c
+(<span class="hljs-number">4</span>) <span class="hljs-number">388</span>c684f0ba1ef5017716adb5d21a053ea8e90277d0868337519f97bede61418
+(<span class="hljs-number">5</span>) <span class="hljs-number">659</span>cbb0e2411a44db63778987b1e22153c086a95eb6b18bdf89de078917abc63
+(<span class="hljs-number">6</span>) <span class="hljs-number">82</span>d052c865f5763aad42add438569276c00d3d88a2d062d36b2bae914d58b8c8
+(<span class="hljs-number">7</span>) aa3680d5d48a8283413f7a108367c7299ca73f553735860a87b08f39395618b7
+(<span class="hljs-number">8</span>) <span class="hljs-number">0</span>f62d96d6675f32685bbdb8ac13cda7c23436f63efbb9d07700d8669ff12b7c4
+(<span class="hljs-number">9</span>) <span class="hljs-number">8</span>d5366123cb560bb606379f90a0bfd4769eecc0557f1b362dcae9012b548b1e5
+
+Mnemonic: candy maple cake sugar pudding cream honey rich smooth crumble sweet treat
+
+⚠️  Important ⚠️  : This mnemonic was created <span class="hljs-keyword">for</span> you <span class="hljs-keyword">by</span> Truffle. It <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> secure.
+<span class="hljs-keyword">Ensure</span> you <span class="hljs-keyword">do</span> <span class="hljs-keyword">not</span> use it <span class="hljs-keyword">on</span> production blockchains, <span class="hljs-keyword">or</span> <span class="hljs-keyword">else</span> you risk losing funds.
+</code></pre> 
+  <p>使用<code>truffle compile</code></p> 
+  <pre class="prettyprint"><code class=" hljs avrasm"><span class="hljs-label">macdeiMac:</span>Voting mac$ truffle compile
+Compiling ./contracts/Migrations<span class="hljs-preprocessor">.sol</span>...
+Compiling ./contracts/SimpleStorage<span class="hljs-preprocessor">.sol</span>...
+Compiling ./contracts/Voting<span class="hljs-preprocessor">.sol</span>...
+Writing artifacts to ./build/contracts</code></pre> 
+  <p>编译完合约以后在<code>build/contracts</code>文件夹下面会有一个<code>Voting.json</code>的<code>abi</code>文件。</p> 
+  <p>这个文件是编译后的<code>abi</code>文件，待会儿需要将这个文件的<code>json</code>导入到<code>App.json</code>中。</p> 
+  <h2 id="查看clientsrcutilsgetweb3js">查看client/src/utils/getWeb3.js</h2> 
+  <pre class="prettyprint"><code class=" hljs javascript">import Web3 from <span class="hljs-string">'web3'</span>
+
+<span class="hljs-keyword">let</span> getWeb3 = <span class="hljs-keyword">new</span> Promise(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(resolve, reject)</span> {</span>
+  <span class="hljs-comment">// Wait for loading completion to avoid race conditions with web3 injection timing.</span>
+  window.addEventListener(<span class="hljs-string">'load'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">var</span> results
+    <span class="hljs-keyword">var</span> web3 = window.web3
+
+    <span class="hljs-comment">// Checking if Web3 has been injected by the browser (Mist/MetaMask)</span>
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> web3 !== <span class="hljs-string">'undefined'</span>) {
+      <span class="hljs-comment">// Use Mist/MetaMask's provider.</span>
+      web3 = <span class="hljs-keyword">new</span> Web3(web3.currentProvider)
+
+      results = {
+        web3: web3
+      }
+
+      console.log(<span class="hljs-string">'Injected web3 detected.'</span>);
+
+      resolve(results)
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-comment">// Fallback to localhost if no web3 injection.</span>
+      <span class="hljs-keyword">var</span> provider = <span class="hljs-keyword">new</span> Web3.providers.HttpProvider(<span class="hljs-string">'http://localhost:8545'</span>)
+
+      web3 = <span class="hljs-keyword">new</span> Web3(provider)
+
+      results = {
+        web3: web3
+      }
+
+      console.log(<span class="hljs-string">'No web3 instance injected, using Local web3.'</span>);
+
+      resolve(results)
+    }
+  })
+})
+
+export <span class="hljs-keyword">default</span> getWeb3</code></pre> 
+  <p>这个文件主要是封装了一个<code>getWeb3</code>的<code>promiss</code>供我们直接使用，可以从<code>getWeb3</code>直接获取到<code>web3</code>对象供<code>App.js</code>文件中使用。 <br> （后期版本不同，可能导致使用方式不同）</p> 
+  <h2 id="修改appjs前端代码和合约进">修改app.js前端代码和合约进</h2> 
+  <pre class="prettyprint"><code class=" hljs coffeescript"><span class="hljs-reserved">import</span> React, { Component } from <span class="hljs-string">"react"</span>;
+<span class="hljs-reserved">import</span> VotingContract from <span class="hljs-string">"./contracts/Voting.json"</span>;
+<span class="hljs-reserved">import</span> getWeb3 from <span class="hljs-string">"./utils/getWeb3"</span>;
+<span class="hljs-regexp">//</span> <span class="hljs-reserved">import</span> truffleContract from <span class="hljs-string">"truffle-contract"</span>;
+
+<span class="hljs-reserved">import</span> <span class="hljs-string">"./App.css"</span>;
+
+<span class="hljs-regexp">//</span>合约地址<span class="hljs-number">0x81ae2ffc4119090f2d320f19ae9a3726c8a80cae</span>
+<span class="hljs-reserved">const</span> contractAddress = <span class="hljs-string">"0x81ae2ffc4119090f2d320f19ae9a3726c8a80cae"</span>;
+<span class="hljs-regexp">//</span>合约实例
+<span class="hljs-reserved">var</span> votingContractInstance;
+<span class="hljs-reserved">var</span> account;
+
+<span class="hljs-reserved">var</span> <span class="hljs-function"><span class="hljs-title">_modifyVotingCount</span> = <span class="hljs-params">(candidates,i,votingCount)</span> =&gt;</span> {
+
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"---------"</span>);
+    <span class="hljs-built_in">console</span>.log(candidates);
+    <span class="hljs-built_in">console</span>.log(i);
+    <span class="hljs-built_in">console</span>.log(votingCount);
+
+    <span class="hljs-reserved">let</span> obj = candidates[i];
+    obj.votingCount = votingCount;
+    <span class="hljs-keyword">return</span> candidates;
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">App</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Component</span> {</span>
+  state = { <span class="hljs-attribute">storageValue</span>: <span class="hljs-number">0</span>, <span class="hljs-attribute">web3</span>: <span class="hljs-literal">null</span>, <span class="hljs-attribute">accounts</span>: <span class="hljs-literal">null</span>, <span class="hljs-attribute">contract</span>: <span class="hljs-literal">null</span> };
+
+  constructor(props) {
+      <span class="hljs-keyword">super</span>(props)
+       <span class="hljs-regexp">//</span> [<span class="hljs-string">"1"</span>,<span class="hljs-string">"2"</span>,<span class="hljs-string">"3"</span>,<span class="hljs-string">"4"</span>,<span class="hljs-string">"5"</span>]
+      <span class="hljs-keyword">this</span>.state = {
+        <span class="hljs-attribute">candidates</span>: [
+                      {
+                        <span class="hljs-string">"name"</span>: <span class="hljs-string">"Rama"</span>,
+                        <span class="hljs-string">"id"</span>: <span class="hljs-number">1</span>,
+                        <span class="hljs-string">"votingCount"</span>: <span class="hljs-number">0</span>
+                      },
+                      {
+                        <span class="hljs-string">"name"</span>: <span class="hljs-string">"Nick"</span>,
+                        <span class="hljs-string">"id"</span>: <span class="hljs-number">2</span>,
+                        <span class="hljs-string">"votingCount"</span>: <span class="hljs-number">0</span>
+                      },
+                      {
+                        <span class="hljs-string">"name"</span>: <span class="hljs-string">"Jose"</span>,
+                        <span class="hljs-string">"id"</span>: <span class="hljs-number">3</span>,
+                        <span class="hljs-string">"votingCount"</span>: <span class="hljs-number">0</span>
+                      },
+                      {
+                        <span class="hljs-string">"name"</span>: <span class="hljs-string">"haha"</span>,
+                        <span class="hljs-string">"id"</span>: <span class="hljs-number">4</span>,
+                        <span class="hljs-string">"votingCount"</span>: <span class="hljs-number">0</span>
+                      },
+                      {
+                        <span class="hljs-string">"name"</span>: <span class="hljs-string">"hehe"</span>,
+                        <span class="hljs-string">"id"</span>: <span class="hljs-number">5</span>,
+                        <span class="hljs-string">"votingCount"</span>: <span class="hljs-number">0</span>
+                      }
+                    ],
+        <span class="hljs-attribute">candidatesVoteCount</span>: [<span class="hljs-string">"0"</span>,<span class="hljs-string">"0"</span>,<span class="hljs-string">"0"</span>,<span class="hljs-string">"0"</span>,<span class="hljs-string">"0"</span>],
+        <span class="hljs-attribute">web3</span>: <span class="hljs-literal">null</span>
+      }
+    }
+
+    componentWillMount() {
+        <span class="hljs-regexp">//</span> Get network provider <span class="hljs-keyword">and</span> web3 instance.
+        <span class="hljs-regexp">//</span> See utils/getWeb3 <span class="hljs-keyword">for</span> more info.
+
+        getWeb3
+        .<span class="hljs-keyword">then</span>(results<span class="hljs-function"> =&gt;</span> {
+          <span class="hljs-keyword">this</span>.setState({
+            <span class="hljs-attribute">web3</span>: results.web3
+          })
+
+          <span class="hljs-regexp">//</span> Instantiate contract once web3 provided.
+          <span class="hljs-regexp">//</span>初始化合约
+          <span class="hljs-keyword">this</span>.instantiateContract()
+        })
+        .<span class="hljs-keyword">catch</span><span class="hljs-function"><span class="hljs-params">(() =&gt; { <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Error finding web3.'</span>) })</span> } <span class="hljs-title">instantiateContract</span><span class="hljs-params">()</span> { <span class="hljs-title">const</span> <span class="hljs-title">contract</span> = <span class="hljs-title">require</span><span class="hljs-params">(<span class="hljs-string">'truffle-contract'</span>)</span> <span class="hljs-title">const</span> <span class="hljs-title">votingContract</span> = <span class="hljs-title">contract</span><span class="hljs-params">(VotingContract)</span> <span class="hljs-title">votingContract</span>.<span class="hljs-title">setProvider</span><span class="hljs-params">(<span class="hljs-keyword">this</span>.state.web3.currentProvider)</span> // <span class="hljs-title">Get</span> <span class="hljs-title">accounts</span>. <span class="hljs-title">this</span>.<span class="hljs-title">state</span>.<span class="hljs-title">web3</span>.<span class="hljs-title">eth</span>.<span class="hljs-title">getAccounts</span><span class="hljs-params">((error, accounts) =&gt; { <span class="hljs-built_in">console</span>.log(accounts); votingContract.at(contractAddress).<span class="hljs-keyword">then</span>((instance) =&gt; { account = accounts[<span class="hljs-number">0</span>]; votingContractInstance = instance; <span class="hljs-regexp">//</span>部署完的合约实例 <span class="hljs-built_in">console</span>.log(votingContractInstance);<span class="hljs-regexp">//</span>合约实例对象 <span class="hljs-keyword">for</span> (<span class="hljs-reserved">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.state.candidates.length; i++) { <span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">this</span>.state.candidates[i]);<span class="hljs-regexp">//</span>合约实例对象 votingContractInstance.totalVotesFor(<span class="hljs-keyword">this</span>.state.candidates[i].id,{from:accounts[<span class="hljs-number">0</span>]}) .<span class="hljs-keyword">then</span>((result) =&gt;{ <span class="hljs-built_in">console</span>.log(result); }) } <span class="hljs-keyword">return</span>; }) })</span> } // <span class="hljs-title">componentDidMount</span> = <span class="hljs-title">async</span> <span class="hljs-params">()</span> =&gt;</span> {
+    <span class="hljs-regexp">//</span>     <span class="hljs-keyword">try</span> {
+    <span class="hljs-regexp">//</span>       <span class="hljs-regexp">//</span> Get network provider <span class="hljs-keyword">and</span> web3 instance.
+    <span class="hljs-regexp">//</span>       <span class="hljs-regexp">//</span>获取网络提供商和web3实例。
+    <span class="hljs-regexp">//</span>       <span class="hljs-reserved">const</span> web3 = await getWeb3();
+    <span class="hljs-regexp">//</span>       <span class="hljs-keyword">this</span>.setState({
+    <span class="hljs-regexp">//</span>           <span class="hljs-attribute">web3</span>: web3
+    <span class="hljs-regexp">//</span>       })
+    <span class="hljs-regexp">//</span>       <span class="hljs-regexp">//</span> Use web3 to get the user<span class="hljs-string">'s accounts. // //使用web3获取用户的帐户。 // const accounts = await web3.eth.getAccounts(); // // // Get the contract instance. // //获取合同实例。 // const Contract = truffleContract(VotingContract); // Contract.setProvider(web3.currentProvider); // const instance = await Contract.deployed(); // // // Set web3, accounts, and contract to the state, and then proceed with an // // example of interacting with the contract'</span>s methods.
+    <span class="hljs-regexp">//</span>       <span class="hljs-regexp">//</span> 将web3，帐户和合同设置为州，然后继续
+    <span class="hljs-regexp">//</span>       <span class="hljs-regexp">//</span>与合同方法交互的例子。
+    <span class="hljs-regexp">//</span>       <span class="hljs-keyword">this</span>.setState({
+    <span class="hljs-regexp">//</span>         web3,
+    <span class="hljs-regexp">//</span>         accounts,
+    <span class="hljs-regexp">//</span>         <span class="hljs-attribute">contract</span>: instance
+    <span class="hljs-regexp">//</span>       }, <span class="hljs-keyword">this</span>.runExample);
+    <span class="hljs-regexp">//</span>       <span class="hljs-keyword">this</span>.runExample();
+    <span class="hljs-regexp">//</span>       <span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">this</span>.state);
+    <span class="hljs-regexp">//</span>     } <span class="hljs-keyword">catch</span> (error) {
+    <span class="hljs-regexp">//</span>       <span class="hljs-regexp">//</span> Catch any errors <span class="hljs-keyword">for</span> any <span class="hljs-keyword">of</span> the above operations.
+    <span class="hljs-regexp">//</span>       alert(
+    <span class="hljs-regexp">//</span>         `<span class="javascript">Failed to load web3, accounts, or contract. Check console <span class="hljs-keyword">for</span> details.</span>`
+    <span class="hljs-regexp">//</span>       );
+    <span class="hljs-regexp">//</span>       <span class="hljs-built_in">console</span>.log(error);
+    <span class="hljs-regexp">//</span>     }
+    <span class="hljs-regexp">//</span>   };
+    <span class="hljs-regexp">//</span> runExample = async <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+    <span class="hljs-regexp">//</span>   <span class="hljs-reserved">const</span> { accounts, contract } = <span class="hljs-keyword">this</span>.state;
+    <span class="hljs-regexp">//</span>
+    <span class="hljs-regexp">//</span>   <span class="hljs-regexp">//</span>存储给定值，默认为<span class="hljs-number">5</span>。
+    <span class="hljs-regexp">//</span>   await contract.set(<span class="hljs-number">5</span>, { <span class="hljs-attribute">from</span>: accounts[<span class="hljs-number">0</span>] });
+    <span class="hljs-regexp">//</span>
+    <span class="hljs-regexp">//</span>   <span class="hljs-regexp">//</span> Get the value from the contract to prove it worked.
+    <span class="hljs-regexp">//</span>   <span class="hljs-regexp">//</span>从合同中获取价值以证明其有效。
+    <span class="hljs-regexp">//</span>   <span class="hljs-reserved">const</span> response = await contract.get();
+    <span class="hljs-regexp">//</span>
+    <span class="hljs-regexp">//</span>   <span class="hljs-regexp">//</span> Update state <span class="hljs-reserved">with</span> the result.
+    <span class="hljs-regexp">//</span>   <span class="hljs-regexp">//</span>使用结果更新状态。
+    <span class="hljs-regexp">//</span>   <span class="hljs-keyword">this</span>.setState({ <span class="hljs-attribute">storageValue</span>: response.toNumber() });
+    <span class="hljs-regexp">//</span> };
+
+  render() {
+    <span class="hljs-keyword">return</span> (
+      &lt;div className=<span class="hljs-string">"App"</span>&gt;
+         &lt;ul&gt;
+         {
+           <span class="hljs-keyword">this</span>.state.candidates.map<span class="hljs-function"><span class="hljs-params">((person) =&gt;{ <span class="hljs-keyword">return</span> ( &lt;li key={person.id}&gt;候选人：{person.name} 获得{person.votingCount}票&lt;/li&gt; ) })</span> } &lt;/<span class="hljs-title">ul</span>&gt; &lt;/<span class="hljs-title">div</span>&gt; ); } } <span class="hljs-title">export</span> <span class="hljs-title">default</span> <span class="hljs-title">App</span>; </span></code></pre> 
+  <p>使用命令<code>cd client &amp;&amp; npm run start</code></p> 
+  <pre class="prettyprint"><code class=" hljs markdown">macdeiMac:client mac$ npm run start
+
+<span class="hljs-blockquote">&gt; client@0.1.0 start /Users/mac/Desktop/GitHub/Solidity/learn/Voting/client</span>
+<span class="hljs-blockquote">&gt; react-scripts start</span>
+<span class="hljs-blockquote">&gt; </span></code></pre> 
+  <p><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/2018090710003991?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3d0ZGFzaw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述" title=""></p> 
+  <p>通过Remix对Id为2的人进行投票</p> 
+  <p><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180907104714216?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3d0ZGFzaw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述" title=""></p> 
+  <p>submit <br> <img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180907104738920?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3d0ZGFzaw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述" title=""></p> 
+  <p>消息提醒 <br> <img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180907104805869?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3d0ZGFzaw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述" title=""></p> 
+  <p>查询Id为2的票数</p> 
+  <p><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180907105456365?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3d0ZGFzaw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述" title=""></p> 
+  <p>网页查看</p> 
+  <p><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180907105535194?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3d0ZGFzaw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述" title=""></p> 
+  <p>全部代码</p> 
+  <pre class="prettyprint"><code class=" hljs coffeescript"><span class="hljs-reserved">import</span> React, { Component } from <span class="hljs-string">"react"</span>;
+<span class="hljs-reserved">import</span> VotingContract from <span class="hljs-string">"./contracts/Voting.json"</span>;
+<span class="hljs-reserved">import</span> getWeb3 from <span class="hljs-string">"./utils/getWeb3"</span>;
+<span class="hljs-regexp">//</span> <span class="hljs-reserved">import</span> truffleContract from <span class="hljs-string">"truffle-contract"</span>;
+
+<span class="hljs-reserved">import</span> <span class="hljs-string">"./App.css"</span>;
+
+<span class="hljs-regexp">//</span>合约地址<span class="hljs-number">0x81ae2ffc4119090f2d320f19ae9a3726c8a80cae</span>
+<span class="hljs-reserved">const</span> contractAddress = <span class="hljs-string">"0x81ae2ffc4119090f2d320f19ae9a3726c8a80cae"</span>;
+<span class="hljs-regexp">//</span>合约实例
+<span class="hljs-reserved">var</span> votingContractInstance;
+<span class="hljs-reserved">var</span> account;
+
+<span class="hljs-reserved">var</span> <span class="hljs-function"><span class="hljs-title">_modifyVotingCount</span> = <span class="hljs-params">(candidates, i, votingCount)</span> =&gt;</span> {
+
+    <span class="hljs-reserved">let</span> obj = candidates[i];
+    obj.votingCount = votingCount;
+    <span class="hljs-keyword">return</span> candidates;
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">App</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Component</span> {</span>
+  state = { <span class="hljs-attribute">storageValue</span>: <span class="hljs-number">0</span>, <span class="hljs-attribute">web3</span>: <span class="hljs-literal">null</span>, <span class="hljs-attribute">accounts</span>: <span class="hljs-literal">null</span>, <span class="hljs-attribute">contract</span>: <span class="hljs-literal">null</span> };
+
+  constructor(props) {
+      <span class="hljs-keyword">super</span>(props)
+
+      <span class="hljs-keyword">this</span>.state = {
+        <span class="hljs-attribute">candidates</span>: [
+                      {
+                        <span class="hljs-string">"name"</span>: <span class="hljs-string">"Rama"</span>,
+                        <span class="hljs-string">"id"</span>: <span class="hljs-number">1</span>,
+                        <span class="hljs-string">"votingCount"</span>: <span class="hljs-number">0</span>
+                      },
+                      {
+                        <span class="hljs-string">"name"</span>: <span class="hljs-string">"Nick"</span>,
+                        <span class="hljs-string">"id"</span>: <span class="hljs-number">2</span>,
+                        <span class="hljs-string">"votingCount"</span>: <span class="hljs-number">0</span>
+                      },
+                      {
+                        <span class="hljs-string">"name"</span>: <span class="hljs-string">"Jose"</span>,
+                        <span class="hljs-string">"id"</span>: <span class="hljs-number">3</span>,
+                        <span class="hljs-string">"votingCount"</span>: <span class="hljs-number">0</span>
+                      },
+                      {
+                        <span class="hljs-string">"name"</span>: <span class="hljs-string">"haha"</span>,
+                        <span class="hljs-string">"id"</span>: <span class="hljs-number">4</span>,
+                        <span class="hljs-string">"votingCount"</span>: <span class="hljs-number">0</span>
+                      },
+                      {
+                        <span class="hljs-string">"name"</span>: <span class="hljs-string">"hehe"</span>,
+                        <span class="hljs-string">"id"</span>: <span class="hljs-number">5</span>,
+                        <span class="hljs-string">"votingCount"</span>: <span class="hljs-number">0</span>
+                      }
+                    ],
+        <span class="hljs-attribute">candidatesVoteCount</span>: [<span class="hljs-string">"0"</span>,<span class="hljs-string">"0"</span>,<span class="hljs-string">"0"</span>,<span class="hljs-string">"0"</span>,<span class="hljs-string">"0"</span>],
+        <span class="hljs-attribute">web3</span>: <span class="hljs-literal">null</span>
+      }
+    }
+
+    componentWillMount() {
+        <span class="hljs-regexp">//</span> Get network provider <span class="hljs-keyword">and</span> web3 instance.
+        <span class="hljs-regexp">//</span> See utils/getWeb3 <span class="hljs-keyword">for</span> more info.
+
+        getWeb3
+        .<span class="hljs-keyword">then</span>(results<span class="hljs-function"> =&gt;</span> {
+          <span class="hljs-keyword">this</span>.setState({
+            <span class="hljs-attribute">web3</span>: results.web3
+          })
+
+          <span class="hljs-regexp">//</span> Instantiate contract once web3 provided.
+          <span class="hljs-regexp">//</span>初始化合约
+          <span class="hljs-keyword">this</span>.instantiateContract()
+        })
+        .<span class="hljs-keyword">catch</span><span class="hljs-function"><span class="hljs-params">(() =&gt; { <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Error finding web3.'</span>) })</span> } <span class="hljs-title">instantiateContract</span><span class="hljs-params">()</span> { <span class="hljs-title">const</span> <span class="hljs-title">contract</span> = <span class="hljs-title">require</span><span class="hljs-params">(<span class="hljs-string">'truffle-contract'</span>)</span> <span class="hljs-title">const</span> <span class="hljs-title">votingContract</span> = <span class="hljs-title">contract</span><span class="hljs-params">(VotingContract)</span> <span class="hljs-title">votingContract</span>.<span class="hljs-title">setProvider</span><span class="hljs-params">(<span class="hljs-keyword">this</span>.state.web3.currentProvider)</span> // <span class="hljs-title">Get</span> <span class="hljs-title">accounts</span>. <span class="hljs-title">this</span>.<span class="hljs-title">state</span>.<span class="hljs-title">web3</span>.<span class="hljs-title">eth</span>.<span class="hljs-title">getAccounts</span><span class="hljs-params">((error, accounts) =&gt; { <span class="hljs-built_in">console</span>.log(accounts); votingContract.at(contractAddress).<span class="hljs-keyword">then</span>((instance) =&gt; { account = accounts[<span class="hljs-number">0</span>]; votingContractInstance = instance; <span class="hljs-regexp">//</span>部署完的合约实例 <span class="hljs-built_in">console</span>.log(votingContractInstance);<span class="hljs-regexp">//</span>合约实例对象 <span class="hljs-keyword">for</span> (<span class="hljs-reserved">let</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.state.candidates.length; i++) { <span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">this</span>.state.candidates[i]);<span class="hljs-regexp">//</span>合约实例对象 votingContractInstance.totalVotesFor(<span class="hljs-keyword">this</span>.state.candidates[i].id,{from:accounts[<span class="hljs-number">0</span>]}) .<span class="hljs-keyword">then</span>((result) =&gt;{ <span class="hljs-built_in">console</span>.log(i); <span class="hljs-keyword">this</span>.setState({ candidates:_modifyVotingCount(<span class="hljs-keyword">this</span>.state.candidates,i,result.words[<span class="hljs-number">0</span>]) }) }) } <span class="hljs-keyword">return</span>; }) })</span> } <span class="hljs-title">render</span><span class="hljs-params">()</span> { <span class="hljs-title">return</span> <span class="hljs-params">( &lt;div className=<span class="hljs-string">"App"</span>&gt; &lt;ul&gt; { <span class="hljs-keyword">this</span>.state.candidates.map((person) =&gt;{ <span class="hljs-keyword">return</span> ( &lt;li key={person.id}&gt;候选人：{person.name} 候选人Id:{person.id} 获得{person.votingCount}票&lt;/li&gt; ) }) } &lt;/ul&gt; &lt;input ref=<span class="hljs-string">"votingInput"</span> placeholder=<span class="hljs-string">"请输入候选人Id..."</span> style={{width:<span class="hljs-number">200</span>,height:<span class="hljs-number">40</span>,borderWidth:<span class="hljs-number">2</span>,marginLeft:<span class="hljs-number">30</span>}}&gt;&lt;/input&gt; &lt;button onClick={() =&gt;{ <span class="hljs-reserved">let</span> candidateId = <span class="hljs-keyword">this</span>.refs.votingInput.value; <span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">this</span>.state.web3.eth.accounts[<span class="hljs-number">0</span>]); votingContractInstance.voteForCandidate(candidateId,{from:account}) .<span class="hljs-keyword">then</span>((result =&gt; { <span class="hljs-built_in">console</span>.log(result); <span class="hljs-keyword">for</span> (<span class="hljs-reserved">let</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.state.candidates.length; i++) { <span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">this</span>.state.candidates[i]);<span class="hljs-regexp">//</span>合约实例对象 votingContractInstance.totalVotesFor(<span class="hljs-keyword">this</span>.state.candidates[i].id,{from:account}) .<span class="hljs-keyword">then</span>((result) =&gt;{ <span class="hljs-built_in">console</span>.log(i); <span class="hljs-keyword">this</span>.setState({ candidates:_modifyVotingCount(<span class="hljs-keyword">this</span>.state.candidates,i,result.words[<span class="hljs-number">0</span>]) }) }) } })) }}&gt;Voting&lt;/button&gt; &lt;/div&gt; )</span>; } } <span class="hljs-title">export</span> <span class="hljs-title">default</span> <span class="hljs-title">App</span>; </span></code></pre> 
+  <p><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180907135222383?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3d0ZGFzaw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述" title=""></p> 
+  <p><a href="https://github.com/Goddreamwt/Solidity/tree/master/learn/Voting" rel="nofollow">gitHub参考链接</a></p> 
+ </div> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/markdown_views-ea0013b516.css"> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/wtdask/article/details/82493876,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/wtdask/article/details/82493876,&quot;}">阅读更多</a> 
+ <a class="btn" href="https://passport.csdn.net/account/login?utm_source=csdn_blog_pc_more_login" target="_self" id="btn-lobinreadmore" data-track-view="{&quot;mod&quot;:&quot;popu_557&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/wtdask/article/details/82493876,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_557&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/wtdask/article/details/82493876,&quot;}">登录后自动展开</a> 
+</div>

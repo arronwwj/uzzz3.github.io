@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>【fabric 3】开发你的第一个chaincode | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="【fabric 3】开发你的第一个chaincode" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="参考：http://hyperledger-fabric.readthedocs.io/en/latest/chaincode4ade.html 1.编码 每一个chaincode都需要实现chaincode interface的Init和Invoke接口 每一个chaincode都应该有一个main函数 代码结构如下所示： package main" />
+<meta property="og:description" content="参考：http://hyperledger-fabric.readthedocs.io/en/latest/chaincode4ade.html 1.编码 每一个chaincode都需要实现chaincode interface的Init和Invoke接口 每一个chaincode都应该有一个main函数 代码结构如下所示： package main" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/07/26/fabric-3-%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AAchaincode.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/07/26/fabric-3-%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AAchaincode.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-07-26T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"参考：http://hyperledger-fabric.readthedocs.io/en/latest/chaincode4ade.html 1.编码 每一个chaincode都需要实现chaincode interface的Init和Invoke接口 每一个chaincode都应该有一个main函数 代码结构如下所示： package main","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/07/26/fabric-3-%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AAchaincode.html","headline":"【fabric 3】开发你的第一个chaincode","dateModified":"2018-07-26T00:00:00+08:00","datePublished":"2018-07-26T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/07/26/fabric-3-%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AAchaincode.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>【fabric 3】开发你的第一个chaincode</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div class="markdown_views"> 
+  <p>参考：<a href="http://hyperledger-fabric.readthedocs.io/en/latest/chaincode4ade.html" rel="nofollow">http://hyperledger-fabric.readthedocs.io/en/latest/chaincode4ade.html</a></p> 
+  <h2 id="1编码">1.编码</h2> 
+  <p>每一个chaincode都需要实现<code>chaincode interface</code>的<code>Init</code>和<code>Invoke</code>接口 <br> 每一个chaincode都应该有一个main函数 <br> 代码结构如下所示：</p> 
+  <pre class="prettyprint"><code class=" hljs go"><span class="hljs-keyword">package</span> main
+
+<span class="hljs-keyword">import</span> (
+    <span class="hljs-string">"fmt"</span>
+    <span class="hljs-string">"strconv"</span>
+    <span class="hljs-string">"github.com/hyperledger/fabric/core/chaincode/shim"</span>
+    peer <span class="hljs-string">"github.com/hyperledger/fabric/protos/peer"</span>
+)
+
+<span class="hljs-keyword">type</span> MyFirstCC <span class="hljs-keyword">struct</span> {
+}
+
+<span class="hljs-keyword">func</span> (t *MyFirstCC) Init(stub shim.ChaincodeStubInterface) peer.Response {
+}
+
+<span class="hljs-keyword">func</span> (t *MyFirstCC) Invoke(stub shim.ChaincodeStubInterface) peer.Response {
+}
+
+<span class="hljs-keyword">func</span> main() {
+}
+</code></pre> 
+  <p><code>main</code>函数，负责在<code>instantiate</code>时启动chaincode</p> 
+  <pre class="prettyprint"><code class=" hljs css"><span class="hljs-tag">func</span> <span class="hljs-tag">main</span>() <span class="hljs-rules">{ <span class="hljs-rule"><span class="hljs-attribute">err </span>:<span class="hljs-value">= shim.<span class="hljs-function">Start(<span class="hljs-function">new(MyFirstCC)</span>)</span> if err != nil { fmt.<span class="hljs-function">Printf(<span class="hljs-string">"error start MyFirstCC"</span>)</span> </span></span></span>}
+}</code></pre> 
+  <p><code>Init</code>函数，在chaincode<code>instantiation</code> 或<code>upgrade</code>时调用，初始化或者重置数据</p> 
+  <pre class="prettyprint"><code class=" hljs go"><span class="hljs-keyword">func</span> (t *MyFirstCC) Init(stub shim.ChaincodeStubInterface) peer.Response {
+    fmt.Println(<span class="hljs-string">"ex10 Init"</span>)
+    _, args := stub.GetFunctionAndParameters()
+
+    <span class="hljs-comment">//set 2 parmas for this chaincode init</span>
+    <span class="hljs-comment">//when instantiation chaincode,should give 2 params</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(args) !=<span class="hljs-number"> 2</span> {
+        <span class="hljs-keyword">return</span> shim.Error(<span class="hljs-string">"Incorrect len of arguments"</span>)
+    }
+
+    <span class="hljs-keyword">var</span> Aval <span class="hljs-typename">int</span>
+    <span class="hljs-keyword">var</span> A <span class="hljs-typename">string</span>
+    <span class="hljs-keyword">var</span> err error
+
+    A = args<span class="hljs-number">[0</span>]
+    Aval, err = strconv.Atoi(args<span class="hljs-number">[1</span>])
+    <span class="hljs-keyword">if</span> err != <span class="hljs-constant">nil</span> {
+        <span class="hljs-keyword">return</span> shim.Error(<span class="hljs-string">"Expecting integer value for asset holding"</span>)
+    }
+    fmt.Printf(<span class="hljs-string">"Aval = %d\n"</span>, Aval)
+    <span class="hljs-comment">//put the data to ledger</span>
+    err = stub.PutState(A, []<span class="hljs-typename">byte</span>(strconv.Itoa(Aval)))
+
+    <span class="hljs-keyword">if</span> err != <span class="hljs-constant">nil</span> {
+        <span class="hljs-keyword">return</span> shim.Error(<span class="hljs-string">"failed to Create asset"</span>)
+    }
+    <span class="hljs-keyword">return</span> shim.Success(<span class="hljs-constant">nil</span>)
+}</code></pre> 
+  <p><code>Invoke</code>函数，在交易时调用。我们可以自定义一些函数，当调用时传递函数名字和参数即可，例如，在本例中我们自定义<code>set</code>和<code>get</code>函数。<code>set</code>更新账本数据，<code>get</code>读取账本数据</p> 
+  <pre class="prettyprint"><code class=" hljs go"><span class="hljs-keyword">func</span> (t *MyFirstCC) Invoke(stub shim.ChaincodeStubInterface) peer.Response {
+    fmt.Println(<span class="hljs-string">"ex10 Invoke"</span>)
+
+    fn, args := stub.GetFunctionAndParameters()
+    <span class="hljs-keyword">var</span> result <span class="hljs-typename">string</span>
+    <span class="hljs-keyword">var</span> err error
+    <span class="hljs-keyword">if</span> fn == <span class="hljs-string">"set"</span> {
+        result, err = set(stub, args)
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> fn == <span class="hljs-string">"get"</span> {
+        result, err = get(stub, args)
+    } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> shim.Error(<span class="hljs-string">"func not found"</span>)
+    }
+
+    <span class="hljs-keyword">if</span> err != <span class="hljs-constant">nil</span> {
+        <span class="hljs-keyword">return</span> shim.Error(err.Error())
+    }
+
+    <span class="hljs-keyword">return</span> shim.Success([]<span class="hljs-typename">byte</span>(result))
+}
+
+<span class="hljs-keyword">func</span> set(stub shim.ChaincodeStubInterface, args []<span class="hljs-typename">string</span>) (<span class="hljs-typename">string</span>, error) {
+    fmt.Println(<span class="hljs-string">"ex10 set"</span>)
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(args) !=<span class="hljs-number"> 2</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-string">""</span>, fmt.Errorf(<span class="hljs-string">"Incorrect arguments"</span>)
+    }
+
+    <span class="hljs-keyword">var</span> Aval <span class="hljs-typename">int</span>
+    <span class="hljs-keyword">var</span> A <span class="hljs-typename">string</span>
+    <span class="hljs-keyword">var</span> err error
+
+    A = args<span class="hljs-number">[0</span>]
+    Aval, err = strconv.Atoi(args<span class="hljs-number">[1</span>])
+    <span class="hljs-keyword">if</span> err != <span class="hljs-constant">nil</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-string">""</span>, fmt.Errorf(<span class="hljs-string">"Expecting integer value for asset holding"</span>)
+    }
+    fmt.Printf(<span class="hljs-string">"Aval = %d\n"</span>, Aval)
+    <span class="hljs-comment">//update data in ledger</span>
+    err = stub.PutState(A, []<span class="hljs-typename">byte</span>(strconv.Itoa(Aval)))
+    <span class="hljs-keyword">if</span> err != <span class="hljs-constant">nil</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-string">""</span>, fmt.Errorf(<span class="hljs-string">"failed to PutState:%s"</span>, args<span class="hljs-number">[0</span>])
+    }
+    <span class="hljs-keyword">return</span> args<span class="hljs-number">[1</span>], <span class="hljs-constant">nil</span>
+}
+
+<span class="hljs-keyword">func</span> get(stub shim.ChaincodeStubInterface, args []<span class="hljs-typename">string</span>) (<span class="hljs-typename">string</span>, error) {
+    fmt.Println(<span class="hljs-string">"ex10 get"</span>)
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(args) !=<span class="hljs-number"> 1</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-string">""</span>, fmt.Errorf(<span class="hljs-string">"Incorrect arguments"</span>)
+    }
+
+    <span class="hljs-keyword">var</span> A <span class="hljs-typename">string</span>
+    A = args<span class="hljs-number">[0</span>]
+    <span class="hljs-comment">//read data from ledger</span>
+    value, err := stub.GetState(A)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-constant">nil</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-string">""</span>, fmt.Errorf(<span class="hljs-string">"failed to get asset: %s with error:%s"</span>, args<span class="hljs-number">[0</span>], err)
+    }
+    <span class="hljs-keyword">if</span> value == <span class="hljs-constant">nil</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-string">""</span>, fmt.Errorf(<span class="hljs-string">"asset not found"</span>)
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-typename">string</span>(value), <span class="hljs-constant">nil</span>
+}</code></pre> 
+  <h2 id="2测试">2.测试</h2> 
+  <ul> 
+   <li>将上述代码整合到一个.go文件中，在<code>github.com/hyperledger/fabric/examples/chaincode/go</code>下边新建一个文件夹，命名为<code>example10</code>，将go文件放置在本文件夹下，这样可以将我们自己写的chaincode映射到clidocker中</li> 
+   <li>准备环境，可参考<a href="https://blog.csdn.net/weixin_39354676/article/details/81118240" rel="nofollow">【fabric 2】v1.0环境搭建详细过程</a>第1-3步， <br> <strong>注意：</strong>这个步骤执行一次即可满足后续测试需要了</li> 
+   <li>启动docker容器，当你的chaincode有更新时需要执行下面的步骤，以同步到cli中 <br> <code>docker-compose -f docker-compose-cli.yaml up -d</code></li> 
+   <li>进入cli容器 <code>docker exec -it cli bash //创建channel需要先进入cli</code></li> 
+   <li>创建channel</li> 
+  </ul> 
+  <pre class="prettyprint"><code class=" hljs avrasm">ORDERER_CA=/opt/gopath/src/github<span class="hljs-preprocessor">.com</span>/hyperledger/fabric/peer/crypto/ordererOrganizations/example<span class="hljs-preprocessor">.com</span>/orderers/orderer<span class="hljs-preprocessor">.example</span><span class="hljs-preprocessor">.com</span>/msp/tlscacerts/tlsca<span class="hljs-preprocessor">.example</span><span class="hljs-preprocessor">.com</span>-cert<span class="hljs-preprocessor">.pem</span>
+peer channel create -o orderer<span class="hljs-preprocessor">.example</span><span class="hljs-preprocessor">.com</span>:<span class="hljs-number">7050</span> -c mychannel -f ./channel-artifacts/channel<span class="hljs-preprocessor">.tx</span> --tls true --cafile $ORDERER_CA</code></pre> 
+  <ul> 
+   <li>peer加入channel</li> 
+  </ul> 
+  <pre class="prettyprint"><code class=" hljs oxygene">peer channel <span class="hljs-keyword">join</span> -b mychannel.<span class="hljs-keyword">block</span></code></pre> 
+  <ul> 
+   <li>install chaincode</li> 
+  </ul> 
+  <pre class="prettyprint"><code class=" hljs lasso">peer chaincode install <span class="hljs-attribute">-n</span> mycc <span class="hljs-attribute">-v</span> <span class="hljs-number">0</span> <span class="hljs-attribute">-p</span> github<span class="hljs-built_in">.</span>com/hyperledger/fabric/examples/chaincode/go/chaincode_example10  <span class="hljs-comment">//文件夹的名字是我们放置go文件的位置</span></code></pre> 
+  <ul> 
+   <li>instantiate chaincode</li> 
+  </ul> 
+  <pre class="prettyprint"><code class=" hljs lasso">peer chaincode instantiate <span class="hljs-attribute">-o</span> orderer<span class="hljs-built_in">.</span>example<span class="hljs-built_in">.</span>com:<span class="hljs-number">7050</span> <span class="hljs-subst">--</span>tls <span class="hljs-literal">true</span> <span class="hljs-subst">--</span>cafile <span class="hljs-variable">$ORDERER_CA</span> <span class="hljs-attribute">-C</span> mychannel <span class="hljs-attribute">-n</span> mycc <span class="hljs-attribute">-v</span> <span class="hljs-number">0</span> <span class="hljs-attribute">-c</span> <span class="hljs-string">'{"Args":["init","a","20"]}'</span> <span class="hljs-comment">//这里给两个参数"a"和"100"</span></code></pre> 
+  <ul> 
+   <li>调用chaincode的<code>get</code>方法</li> 
+  </ul> 
+  <pre class="prettyprint"><code class=" hljs erlang">peer chaincode <span class="hljs-keyword">query</span> -<span class="hljs-variable">C</span> mychannel -n mycc -c '<span class="hljs-tuple">{<span class="hljs-string">"Args"</span>:[<span class="hljs-string">"get"</span>,<span class="hljs-string">"a"</span>]}</span>' //查询余额不往账本写数据，不需要背书，用<span class="hljs-keyword">query</span>即可</code></pre> 
+  <ul> 
+   <li>调用chaincode的<code>set</code>方法</li> 
+  </ul> 
+  <pre class="prettyprint"><code class=" hljs lasso">peer chaincode invoke <span class="hljs-attribute">-o</span> orderer<span class="hljs-built_in">.</span>example<span class="hljs-built_in">.</span>com:<span class="hljs-number">7050</span>  <span class="hljs-subst">--</span>tls <span class="hljs-literal">true</span> <span class="hljs-subst">--</span>cafile <span class="hljs-variable">$ORDERER_CA</span> <span class="hljs-attribute">-C</span> mychannel <span class="hljs-attribute">-n</span> mycc <span class="hljs-attribute">-c</span> <span class="hljs-string">'{"Args":["set","a","200"]}'</span>    <span class="hljs-comment">//需要往更新账本，用invoke</span></code></pre> 
+  <p>再次调用chaincode的<code>get</code>方法</p> 
+  <pre class="prettyprint"><code class=" hljs lasso">peer chaincode query <span class="hljs-attribute">-C</span> mychannel <span class="hljs-attribute">-n</span> mycc <span class="hljs-attribute">-c</span> <span class="hljs-string">'{"Args":["get","a"]}'</span> <span class="hljs-comment">//我们发现余额已更新为200</span></code></pre> 
+  <p><img src="https://img-blog.csdn.net/20180726174137795?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zOTM1NDY3Ng==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述" title=""></p> 
+  <h2 id="3-可能遇到的问题">3. 可能遇到的问题</h2> 
+  <p>有的时候更改了chaincode代码重启docker发现chaincode没有更新，原因可能是上次创建的chaincode docker image还在，可以通过如下方法解决</p> 
+  <pre class="prettyprint"><code class=" hljs bash">docker ps <span class="hljs-operator">-a</span></code></pre> 
+  <p><img src="https://img-blog.csdn.net/20180730181502593?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zOTM1NDY3Ng==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述" title=""></p> 
+  <pre class="prettyprint"><code class=" hljs ">docker rm 23bae5e36c07</code></pre> 
+  <p><img src="https://img-blog.csdn.net/2018073018162762?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zOTM1NDY3Ng==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述" title=""></p> 
+  <pre class="prettyprint"><code class=" hljs cs">docker rmi <span class="hljs-number">05</span>ebb1ebdf07     <span class="hljs-comment">//参数要改为你的chaincode 对应的image id</span></code></pre> 
+  <p>至此，问题解决，每次都会更新的</p> 
+ </div> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/markdown_views-ea0013b516.css"> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/weixin_39354676/article/details/81224507,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/weixin_39354676/article/details/81224507,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

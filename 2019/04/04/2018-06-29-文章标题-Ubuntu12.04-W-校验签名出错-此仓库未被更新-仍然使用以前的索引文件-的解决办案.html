@@ -1,0 +1,36 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <p><span style="color:#333333;"><strong>我这两天使用Ubuntu12.04更新软件时出现了以下的错误：</strong></span></p> 
+  <p>&nbsp;</p> 
+  <p>代码:</p> 
+  <p>W: 校验签名出错。此仓库未被更新，仍然使用以前的索引文件。GPG 错误：http://extras.ubuntu.com precise Release: 下列签名无效： BADSIG 16126D3A3E5C1192 Ubuntu Extras Archive Automatic Signing Key &lt;ftpmaster@ubuntu.com&gt;<br><br> W: GPG 错误：http://ppa.launchpad.net precise Release: 下列签名无效： BADSIG FA9C98D5DDA4DB69 Launchpad PPA for Aron Xu<br> W: GPG 错误：http://archive.canonical.com oneiric Release: 下列签名无效： BADSIG 40976EAF437D05B5 Ubuntu Archive Automatic Signing Key &lt;ftpmaster@ubuntu.com&gt;<br> W: GPG 错误：http://ppa.launchpad.net precise Release: 下列签名无效： BADSIG 64D3CC65ED107B5D Launchpad PPA for Nanoshot<br> W: GPG 错误：http://ppa.launchpad.net precise Release: 下列签名无效： BADSIG 3BDAAC08614C4B38 Launchpad otto06217<br> W: GPG 错误：http://ppa.launchpad.net precise Release: 下列签名无效： BADSIG 187206A44933B6AB Launchpad PPA for Pavel Golikov<br> W: GPG 错误：http://ppa.launchpad.net precise Release: 下列签名无效： BADSIG 94E58C34A8670E8C Launchpad PPA for Screenlets<br> W: GPG 错误：http://ppa.launchpad.net precise Release: 下列签名无效： BADSIG 5A9A06AEF9CB8DB0 Launchpad PPA for Ubuntu Wine Team<br> W: GPG 错误：http://ppa.launchpad.net precise Release: 下列签名无效： BADSIG C2518248EEA14886 Launchpad VLC<br> W: GPG 错误：http://archive.canonical.com precise Release: 下列签名无效： BADSIG 40976EAF437D05B5 Ubuntu Archive Automatic Signing Key &lt;ftpmaster@ubuntu.com&gt;<br> W: GPG 错误：http://archive.canonical.com precise Release: 下列签名无效： BADSIG 40976EAF437D05B5 Ubuntu Archive Automatic Signing Key &lt;ftpmaster@ubuntu.com&gt;<br> W: 无法下载 http://extras.ubuntu.com/ubuntu/dists/precise/Release&nbsp;&nbsp;<br><br> W: Some index files failed to download. They have been ignored, or old ones used instead.<br> W: Duplicate sources.list entry http://extras.ubuntu.com/ubuntu/ precise/main i386 Packages (/var/lib/apt/lists/extras.ubuntu.com_ubuntu_dists_precise_main_binary-i386_Packages)</p> 
+  <p>&nbsp;</p> 
+  <p><br><span style="color:#333333;"><strong>尝试的解决办法：</strong></span></p> 
+  <p>&nbsp;</p> 
+  <p>&nbsp;</p> 
+  <p>代码:</p> 
+  <p>sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com FA9C98D5DDA4DB69 64D3CC65ED107B5D 3BDAAC08614C4B38 40976EAF437D05B5 40976EAF437D05B5 40976EAF437D05B5 187206A44933B6AB 94E58C34A8670E8C 5A9A06AEF9CB8DB0 C2518248EEA14886 &amp;&amp; sudo apt-get update</p> 
+  <p>&nbsp;</p> 
+  <p><br><span style="color:#333333;"><strong>输出的结果：</strong></span></p> 
+  <p>&nbsp;</p> 
+  <p>&nbsp;</p> 
+  <p>代码:</p> 
+  <p>gpg: 下载密钥‘DDA4DB69’，从 hkp 服务器 keyserver.ubuntu.com<br> gpg: 下载密钥‘ED107B5D’，从 hkp 服务器 keyserver.ubuntu.com<br> gpg: 下载密钥‘614C4B38’，从 hkp 服务器 keyserver.ubuntu.com<br> gpg: 下载密钥‘437D05B5’，从 hkp 服务器 keyserver.ubuntu.com<br> gpg: 下载密钥‘437D05B5’，从 hkp 服务器 keyserver.ubuntu.com<br> gpg: 下载密钥‘437D05B5’，从 hkp 服务器 keyserver.ubuntu.com<br> gpg: 下载密钥‘4933B6AB’，从 hkp 服务器 keyserver.ubuntu.com<br> gpg: 下载密钥‘A8670E8C’，从 hkp 服务器 keyserver.ubuntu.com<br> gpg: 下载密钥‘F9CB8DB0’，从 hkp 服务器 keyserver.ubuntu.com<br> gpg: 下载密钥‘EEA14886’，从 hkp 服务器 keyserver.ubuntu.com<br> gpg: 密钥 DDA4DB69：“Launchpad PPA for Aron Xu”未改变<br> gpg: 密钥 ED107B5D：“Launchpad PPA for Nanoshot”未改变<br> gpg: 密钥 614C4B38：“Launchpad otto06217”未改变<br> gpg: 密钥 437D05B5：“Ubuntu Archive Automatic Signing Key &lt;ftpmaster@ubuntu.com&gt;”未改变<br> gpg: 密钥 437D05B5：“Ubuntu Archive Automatic Signing Key &lt;ftpmaster@ubuntu.com&gt;”未改变<br> gpg: 密钥 437D05B5：“Ubuntu Archive Automatic Signing Key &lt;ftpmaster@ubuntu.com&gt;”未改变<br> gpg: 密钥 4933B6AB：“Launchpad PPA for Pavel Golikov”未改变<br> gpg: 密钥 A8670E8C：“Launchpad PPA for Screenlets”未改变<br> gpg: 密钥 F9CB8DB0：“Launchpad PPA for Ubuntu Wine Team”未改变<br> gpg: 密钥 EEA14886：“Launchpad VLC”未改变<br> gpg: 合计被处理的数量：10<br> gpg:&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 未改变：10</p> 
+  <p>&nbsp;</p> 
+  <p><br><span style="color:#333333;">与此同时，有桌面右上角出现红色三角形框着一个叹号(单击后的提示如下)：</span></p> 
+  <p>&nbsp;</p> 
+  <p>&nbsp;</p> 
+  <p>代码:</p> 
+  <p>更新信息已过时。这可能由于网络问题或是软件仓库已不可用。请单击这个图标进行手动更新，然后选择“检查更新”来检查列表中是否有一些软件仓库无法获取。</p> 
+  <p>&nbsp;</p> 
+  <p><br><span style="color:#333333;"><strong>折腾了不少的时间，最终的问题解决方案：</strong></span></p> 
+  <p>&nbsp;</p> 
+  <p>&nbsp;</p> 
+  <p>代码:</p> 
+  <p>一、打开终端输入：<br> $ sudo -i<br> # apt-get clean<br> # cd /var/lib/apt<br> # mv lists lists.back<br> # mkdir -p lists/partial<br> # apt-get clean<br> # apt-get update<br> 二、如果以上步骤解决不了，尝试删除签名：<br> 1.打开新立得软件管理器 -- 设置 -- 软件库 -- 身份认证 -- 删除里边所有PPA软件签名<br> 2.打开终端，输入<br> $ sudo apt-get update<br> 3.将出现类似以下的错误：<br> W: GPG 错误：http://ppa.launchpad.net precise Release: 由于没有公钥，无法验证下列签名： NO_PUBKEY 32B18A1260D8DA0B<br> 4.其中32B18A1260D8DA0B就是缺失的签名(公钥)，然后我们使用命令对其进行更新：<br> sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com ××××××××(有多个签名需要更新使用空格分离即可)<br> 5.最后再使用sudo apt-get update 更新一下即可！</p> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/nzjdsds/article/details/80855224,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/nzjdsds/article/details/80855224,&quot;}">阅读更多</a> 
+</div>

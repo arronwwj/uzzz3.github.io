@@ -1,0 +1,37 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <h1>一笔钱花两次: 双重支付 | 小白学比特币之四</h1> 
+  <p><a href="https://www.jianshu.com/u/602414ddff23" rel="nofollow"><img alt="96" class="has" src="https://upload.jianshu.io/users/upload_avatars/147665/96835902-be2f-41b0-9c9e-030946b42eac.png?imageMogr2/auto-orient/strip%7CimageView2/1/w/96/h/96"></a>&nbsp;<a href="https://www.jianshu.com/u/602414ddff23" rel="nofollow">简疏志</a>&nbsp;<a>关注</a></p> 
+  <p>2018.03.14 01:06*&nbsp;字数 1360&nbsp;阅读 194评论 1喜欢 0</p> 
+  <p>什么是双重支付呢？</p> 
+  <blockquote> 
+   <p>Double spending is the result of successfully spending some money more than once. Bitcoin protects against double spending by verifying each transactionadded to the block chain to ensure that the inputs for the transaction had not previously already been spent.</p> 
+  </blockquote> 
+  <p>所谓双重支付就是使用一笔钱至少一次以上。 我们现在用的纸币，用20元卖了一杯奶茶，那么这笔钱就不会在你手上，你也不能再用这笔钱去买其他东西。20元的纸币，你买了20元的奶茶，就不能再用同样的钱去买咖啡了。双重支付问题也可以被理解为一个逻辑学问题，因为它满足逻辑学基本原理之<a href="https://link.jianshu.com/?t=%255Bhttps%3A%2F%2Fwww.jianshu.com%2Fp%2F8ddc688bc422" rel="nofollow">矛盾律</a>，也就是一个事物不能再同一个方面即是这样又不是这样。</p> 
+  <p>在网络世界里，逻辑学的矛盾律被破坏了。因为网络上的一切都很容易被复制，你可以很简单的复制一张图片、一段文字。既然比特币实际上是由各种代码组成的，那么比特币也很容易被复制。想像一下，如果我用了20元的比特币去买一杯奶茶，然后复制一份代码再去买咖啡，那么这笔钱就被使用了两次了。</p> 
+  <p>为了避免双重支付问题，比特币网络就设计了每笔交易都需要根据一定规则<a href="https://www.jianshu.com/p/40f60b4ec271" rel="nofollow">验证每笔交易</a>。然而，如果当某个矿工（团体）的算力在整个比特币网络占比51%，他（们）就相当于拥有了发起双重支付的能力。这个是怎么发生的呢？有两种情况。</p> 
+  <p>假设张三现在给了一定数量的比特币（假设为1个）给李四，想购买李四的按摩服务，这样就会形成一笔交易，我们就称为交易A，这笔交易先会暂时被放在未被确认的交易池里（待定区），等待其他节点来确认。与此同时，如果张三自己“复制一份”比特币， 把这个“复制”的比特币发送给王五，这样也会形成一笔交易，我们暂时称为交易A，同样也会先进入待定区域。注意，比特币系统里记录的是地址，张三和王五只是代号，一个人可以创建多个不同的比特币地址，自己发送给自己。</p> 
+  <p>&nbsp;</p> 
+  <p><img alt="" class="has" src="https://upload-images.jianshu.io/upload_images/147665-b290437390107b90.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/552"></p> 
+  <p>双重支付</p> 
+  <p>第一种情况是，抢先验证一笔交易。交易A和交易B除了发送地址不同外，其他信息基本一样——两个六耳猕猴，只有一个为真。交易A和交易B只有一者是有效合法的，也就是说如果A通过验证，那么B为假，反过来也一样，如果交易B先通过验证，那么交易A则为假。如果张三和王五是属于同一个矿工团伙， 且他们比其他矿工抢先一步先确认交易B，那么另外一笔交易A就会被视为无效，将被丢弃。</p> 
+  <p>第二情况就是，两笔交易几乎在同时同时被验证。在这样的情况下就会出现区块链分支（如下图所示），出现两个同时被验证的区块区块3-1和区块3-2，区块3-1包含了交易A，区块3-2包含了冒牌交易B，而且他们的上一个区块都是区块2，这样就暂时形成了区块链分叉——包含交易A的蓝色链和包含交易B的红色链。</p> 
+  <p><img alt="" class="has" src="https://upload-images.jianshu.io/upload_images/147665-141fe73ebcdc1918.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/700"></p> 
+  <p>区块链分叉</p> 
+  <p>如果王五矿工团伙拥有全比特币网51%以上的算力，那就意味着他的运算速度会比剩下的矿工都快，也就是说他的链的长度也会增长得比别人快。</p> 
+  <p>假设现在王五的区块链里已经有了5个区块，而其他的链只有4个区块，如果接下了有一个新的候选区块被验证了，那么它要加入到红色的链上还是蓝色的链上呢？<strong>矿工总是选择最长的那条链来进行扩展，包含下一个区块</strong>。所以，新的区块会被加入到红色的、由王五主导的链上，原先蓝色连上的区块及其所有交易将失效。王五（张三）通过这样的方式将比特币发送给自己口袋，还免费享受了李四的按摩服务。</p> 
+  <p>所以一定要等到至少6个确认数后才能把自己的东西给买家，在这种情况下，矿工想返回去修改之前已经被确认过的区块，其实是很难的。因为获得确认数越多，就需要越多的算力去修改，因此也越难被修改。</p> 
+  <h1>参考文献</h1> 
+  <p>[1] Mastering Bitcoin 第二版&nbsp;<a href="https://link.jianshu.com/?t=https%3A%2F%2Fgithub.com%2Fbitcoinbook%2Fbitcoinbook" rel="nofollow">https://github.com/bitcoinbook/bitcoinbook</a><br> [2]&nbsp;<a href="https://link.jianshu.com/?t=http%3A%2F%2Flearnmeabitcoin.com" rel="nofollow">http://learnmeabitcoin.com</a></p> 
+  <hr>
+  <h1>ChangeLog</h1> 
+  <ul>
+   <li>20180316 标题更改为“小白学比特币”， 增加参考文献</li> 
+   <li>20180314 Create</li> 
+  </ul> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/jfkidear/article/details/81583636,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/jfkidear/article/details/81583636,&quot;}">阅读更多</a> 
+</div>

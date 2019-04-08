@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>EOS学习（一）：账户与钱包 | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="EOS学习（一）：账户与钱包" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="EOSIO账户与钱包概述 下图给出了EOSIO中的账户(accounts)和钱包(wallets)的概念。 钱包用来存储一组公钥-私钥的对。这些密钥对将参与区块链的上的操作签名。keosd管理着钱包和其中的内容。我们通过cleos来使用这些钱包。 一个账户可视为在线的访问凭证。nodeos管理着在区块链上发布账户以及与账户相关联的行为。我们通过cleos与nodeos的交互，来实现账户的管理。 钱包与账户之间没有天然的内在联系。账户并不知道钱包的存在，反之钱包也不知道账户的存在。所以，nodeos与keosd之间也没有内在的关联。他们（nodeos与keosd）基础函数是有着本质的不同。（在部署配置过程中可能会模糊化他们之间的区别，所以在这里特别提醒下） 在对一个交易进行签名时，nodeos与keosd之间会发生交互。钱包通过将锁定的键值本地化存储的方式，实现以安全的方式活动签名。cleos作为一个中介，实现keosd（从本地获取）键值到nodeos使用这些键进行账户（以及其他）区块链签名相关的操作。 创建和管理钱包 打开终端并进入EOSIO的安装目录，我们使用cleos命令即可方便的与keosd和nodeos进行交互。 $ cd /path_to_eos/build/programs/cleos 我们要做的第一件事就是创建钱包。使用cleos的&quot;wallet create&quot;命令： $ cleos wallet create Creating wallet: default Save password to use in the future to unlock this wallet. Without password imported keys will not be retrievable. &quot;A MASTER PASSWORD&quot; 此时keosd中创建了称之为“default”（默认）的钱包，并提示要求输入密码（mater password）。该密码是用来解锁（解密）你的钱包文件，请务必妥善保管。 钱包文件被命名为&quot;deafult.wallet&quot;。默认情况下，keosd将此文件保存在&quot;~/eosio-wallet&quot;目录下。这个目录可以通过在keosd命令行中添加&quot;--data-dir&quot;参数来指定。 管理多个钱包和钱包名称 cleos可以用来管理多个钱包。每个不同的钱包都通过不同的钱包密码进行保护。下面的例子将展示如何通过&quot;-n&quot;（定义钱包明确）传参创建另一个钱包。 $ cleos wallet create -n periwinkle Creating wallet: periwinkle Save password to use in the future to unlock this wallet. Without password imported keys will not be retrievable. &quot;A MASTER PASSWORD&quot;现在可以确认下我们使用特定的名字生成的钱包。 $ cleos wallet list Wallets: [ &quot;default *&quot;, &quot;periwinkle *&quot; ] 注意，当我们钱包被解锁时，钱包名称后面都会标记有&quot;*&quot;符号。我们使用&quot;wallet create&quot;生成钱包时，处于方便会默认解锁我们的钱包。如果对第二个钱包进行加锁，可以执行&quot;wallet lock&quot;命令： $ cleos wallet lock -n periwinkle Locked: &#39;periwinkle&#39;再次执行&quot;wallet list&quot;命令，我们可以看到第二个钱包的&quot;*&quot;符号消失了，这说明该钱包已经加锁 $ cleos wallet list Wallets: [ &quot;default *&quot;, &quot;periwinkle&quot; ] 解锁一个命名钱包需调用&quot;wallet unlock -n&quot;，后面跟着钱包名称。在执行过程中需输入钱包的私钥。我们也可以通过在命令行中增加&quot;--password&quot;以及主密码的传参，来直接完成私钥验证过程，但这样会导致在console中将密钥完整的显示出来。 注：如果我们针对&quot;default&quot;钱包进行加解锁的操作，则默认的无需使用&quot;-n&quot;传参指定钱包名称。 当我们重启keosd，然后再次通过cleos查看钱包信息： $ cleos wallet list &quot;/usr/local/bin/keosd&quot; launched Wallets: [] 注：如果keosd未启动，在使用cleos第一次与keosd交互时（比如，查询钱包信息），就好自动启动keosd进程。 可以发现此时钱包信息为空。这是因为钱包在使用之前（包括展示钱包列表）必须首先先打开钱包。当keosd关闭时，钱包会被锁定；当keosd被重启后，钱包并未自动开启。执行“wallet open”来开启钱包。 $ cleos wallet open $ cleos wallet list Wallets: [ &quot;default&quot; ] 如果需要打开其他非默认钱包，则需要添加&quot;-n&quot;来指定钱包名称进行开启钱包的操作。 生成和导出EOSIO密码 有多种方式可以创建EOSIO的密码对，但这里仅仅侧重介绍&quot;create key&quot;命令。创建两组公钥/私钥对，留意一下密码对的通常的格式如下： $cleos create key Private key: 5K6tXmW7FQEBWqwG9fsAAjSMLgBMMDPjqE1ATFk2HGaHWjAjsgE Public key: EOS7jZNeuZmqt4fAt4NLoZtLXTXDYEB3eo1QZgg7K19DKbyJaSPMr $cleos create key Private key: 5KYNz1WRZRt9882n1ebA2q5NYQ3oYvzxxAT48i2tyReYHnR49yu Public key: EOS73bzXNHx481Kcg64g4YKS7FxSDYJVYZNiPVZutc3CbXQxW2czc 这些密码对是随意的密码对，并无任何的授权。 接下来的操作，需要确认默认（default）钱包必须是开启和解锁状态的。 cleos指令是可以串联使用，实现default钱包的开启与解锁。甚至只需执行&quot;cleos unlock&quot;即可一步到位实现keosd的开启、钱包开启以及解锁操作。比如执行： $cleos wallet open unlock Opened: default password: Unlocked: default 我们现在使用&quot;wallet import&quot;将私钥导入钱包中。 $ cleos wallet import 5K6tXmW7FQEBWqwG9fsAAjSMLgBMMDPjqE1ATFk2HGaHWjAjsgE imported private key for: EOS7jZNeuZmqt4fAt4NLoZtLXTXDYEB3eo1QZgg7K19DKbyJaSPMr $ cleos wallet import 5KYNz1WRZRt9882n1ebA2q5NYQ3oYvzxxAT48i2tyReYHnR49yu imported private key for: EOS73bzXNHx481Kcg64g4YKS7FxSDYJVYZNiPVZutc3CbXQxW2czc 导入成功的情况下，cleos会提示正确的公钥信息。 我们可以通过输入“wallet keys”指令，查阅上述信息。 $ cleos wallet keys [[ &quot;EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV&quot;, &quot;5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3&quot; ],[ &quot;EOS7jZNeuZmqt4fAt4NLoZtLXTXDYEB3eo1QZgg7K19DKbyJaSPMr&quot;, &quot;5K6tXmW7FQEBWqwG9fsAAjSMLgBMMDPjqE1ATFk2HGaHWjAjsgE&quot; ] ] 钱包文件本身是加密的，当钱包加锁时上述密码对信息会得到相应的保护。访问这些密码对信息，需要借助钱包的密码。 备份钱包 为防止钱包文件的损坏，一个良好的习惯是将钱包备份到一个U盘或其他媒介中去。钱包文件采用高度加密的机制，以确保其中的密码对难以访问。 你可以在&quot;data-dir&quot;目录中找到这些钱包文件。如果你在启动eos过程中未指定&quot;--data-dir&quot;参数，你的钱包文件默认保存在&quot;~/eosio-wallet&quot;目录下。 $ cd eosio-wallet/ $ ll 总用量 12 -rw-r--r--. 1 root root 1533 5月 28 12:02 config.ini -rw-------. 1 root root 439 5月 28 17:24 default.wallet -rw-------. 1 root root 311 5月 28 16:19 periwinkle.wallet 可以将上述*.wallet文件拷贝出来，保存在安全的媒介中。 创建一个账号 在区块链上执行操作，需要使用到账号。我们使用cleos向nodeos发起请求来创建账号并且将账号发布到区块链中。在执行创建账号操作之前，我们必须确保nodeos处于运行状态。在后面的例子中，我们需要在一台机器上同时运行keosd和nodeos两个进程，而上述两个进程默认配置的端口都是8888，因此需要进行简单修改确保keosd和nodeos运行在不同端口上。 通常有两种方式可以将keosd的端口改为8899： 1. 进入钱包文件所在的目录，并将config.ini文件中的端口改为8899，保存配置文件并重启keosd。 $ cd ~/eosio-wallet $ vim config.ini # 修改端口为8899，保存并退出vim $ pkill keosd $ keosd 2. 使用keosd命令行参数 $ pkill keosd $ keosd --http-server-address=localhost:8899 或者通过cleos携带&quot;--wallet-port=8899&quot;执行钱包操作 $ cleos --wallet-port=8899 wallet unlock 要启动nodeos，打开一个终端窗口，找到nodeos可执行文件所在的目录，执行： $ cd eos/build/programs/nodeos $ nodeos -e -p eosio --plugin eosio::chain_api_plugin --plugin eosio::history_api_plugin 现在我们可以使用&quot;cleos create account&quot;创建一个账号了。 $ cleos create account ${authorizing_account} ${new_account} ${owner_key} ${active_key} authorizing_account： 授权的账号名称，用来支付账号创建以及后续其他新账号的费用。 new_account：希望创建的新账号 owner_key：拥有拥有者权限的账号的公钥（详见账号与权限） active_key：希望分配给活跃权限公钥 在这里，“eosio”是一个可授权账号。当在区块链上进行操作时必须使用eosio账号进行签名。eosio账号同时还是特殊的账号用来启动EOSIO节点，它的密码对信息信息可以在nodeos的配置文件中找到（默认在 &quot;~/.local/shared/eosio/config/config.ini&quot;）. 我们需要为新账号定一个名称。账号名称必须遵循以下两个准则： 必须短于13个字符 仅能包含以下字符：.12345abcdefghijklmnopqrstuvwxyz 我们采用“myaccount”作为新账号名称。 我们使用上面导入到钱包中的公钥（以&quot;EOS&quot;开头的字符串），这些公钥在未授权之前是随意的账号。这些账号一旦授权，这些账号就会变得异常重要。拥有者的密钥（owner key）拥有账号最高权限，而活跃权限账号（active key）将拥有使用账号资金的权利。 使用&quot;cleos create account&quot;来创建我们的账号。 $ cleos --wallet-port=8899 create account eosio myaccount ${public_key_1} ${public_key_2} 如果创建成功了，我们将看到反馈以下信息。 executed transaction: 7f1c6b87cd6573365a7bb3c6aa12f8162c3373d57d148f63f2a2d3373ad2fd54 352 bytes 102400 cycles # eosio &lt;= eosio::newaccount {&quot;creator&quot;:&quot;eosio&quot;,&quot;name&quot;:&quot;myaccount&quot;,&quot;owner&quot;:{&quot;threshold&quot;:1,&quot;keys&quot;:[{&quot;key&quot;:&quot;EOS5kkAs8HZ88m2N7iZWy4J... 账号相关操作 使用cleos还可以针对账号进行以下操作。 cleos命令 描述 create account 在区块链上创建新账号 get account 从区块链上获取一个账号 get code 查找一个账号的代码和ABI get accounts 查询与一个公钥关联的账号信息 get servants 查找一个给定账号之下的服务账号 get transactions 查询与一个账号关联的所有的交易 set contract 使用一个账号创建或修改合约 set account 设置或修改区块链上账号的状态 transfer 将数字币从一个账号转账到另一个账号 摘自&nbsp; Tutorial-Comprehensive-Accounts-and-Wallets，翻译 by Kevin. 阅读更多" />
+<meta property="og:description" content="EOSIO账户与钱包概述 下图给出了EOSIO中的账户(accounts)和钱包(wallets)的概念。 钱包用来存储一组公钥-私钥的对。这些密钥对将参与区块链的上的操作签名。keosd管理着钱包和其中的内容。我们通过cleos来使用这些钱包。 一个账户可视为在线的访问凭证。nodeos管理着在区块链上发布账户以及与账户相关联的行为。我们通过cleos与nodeos的交互，来实现账户的管理。 钱包与账户之间没有天然的内在联系。账户并不知道钱包的存在，反之钱包也不知道账户的存在。所以，nodeos与keosd之间也没有内在的关联。他们（nodeos与keosd）基础函数是有着本质的不同。（在部署配置过程中可能会模糊化他们之间的区别，所以在这里特别提醒下） 在对一个交易进行签名时，nodeos与keosd之间会发生交互。钱包通过将锁定的键值本地化存储的方式，实现以安全的方式活动签名。cleos作为一个中介，实现keosd（从本地获取）键值到nodeos使用这些键进行账户（以及其他）区块链签名相关的操作。 创建和管理钱包 打开终端并进入EOSIO的安装目录，我们使用cleos命令即可方便的与keosd和nodeos进行交互。 $ cd /path_to_eos/build/programs/cleos 我们要做的第一件事就是创建钱包。使用cleos的&quot;wallet create&quot;命令： $ cleos wallet create Creating wallet: default Save password to use in the future to unlock this wallet. Without password imported keys will not be retrievable. &quot;A MASTER PASSWORD&quot; 此时keosd中创建了称之为“default”（默认）的钱包，并提示要求输入密码（mater password）。该密码是用来解锁（解密）你的钱包文件，请务必妥善保管。 钱包文件被命名为&quot;deafult.wallet&quot;。默认情况下，keosd将此文件保存在&quot;~/eosio-wallet&quot;目录下。这个目录可以通过在keosd命令行中添加&quot;--data-dir&quot;参数来指定。 管理多个钱包和钱包名称 cleos可以用来管理多个钱包。每个不同的钱包都通过不同的钱包密码进行保护。下面的例子将展示如何通过&quot;-n&quot;（定义钱包明确）传参创建另一个钱包。 $ cleos wallet create -n periwinkle Creating wallet: periwinkle Save password to use in the future to unlock this wallet. Without password imported keys will not be retrievable. &quot;A MASTER PASSWORD&quot;现在可以确认下我们使用特定的名字生成的钱包。 $ cleos wallet list Wallets: [ &quot;default *&quot;, &quot;periwinkle *&quot; ] 注意，当我们钱包被解锁时，钱包名称后面都会标记有&quot;*&quot;符号。我们使用&quot;wallet create&quot;生成钱包时，处于方便会默认解锁我们的钱包。如果对第二个钱包进行加锁，可以执行&quot;wallet lock&quot;命令： $ cleos wallet lock -n periwinkle Locked: &#39;periwinkle&#39;再次执行&quot;wallet list&quot;命令，我们可以看到第二个钱包的&quot;*&quot;符号消失了，这说明该钱包已经加锁 $ cleos wallet list Wallets: [ &quot;default *&quot;, &quot;periwinkle&quot; ] 解锁一个命名钱包需调用&quot;wallet unlock -n&quot;，后面跟着钱包名称。在执行过程中需输入钱包的私钥。我们也可以通过在命令行中增加&quot;--password&quot;以及主密码的传参，来直接完成私钥验证过程，但这样会导致在console中将密钥完整的显示出来。 注：如果我们针对&quot;default&quot;钱包进行加解锁的操作，则默认的无需使用&quot;-n&quot;传参指定钱包名称。 当我们重启keosd，然后再次通过cleos查看钱包信息： $ cleos wallet list &quot;/usr/local/bin/keosd&quot; launched Wallets: [] 注：如果keosd未启动，在使用cleos第一次与keosd交互时（比如，查询钱包信息），就好自动启动keosd进程。 可以发现此时钱包信息为空。这是因为钱包在使用之前（包括展示钱包列表）必须首先先打开钱包。当keosd关闭时，钱包会被锁定；当keosd被重启后，钱包并未自动开启。执行“wallet open”来开启钱包。 $ cleos wallet open $ cleos wallet list Wallets: [ &quot;default&quot; ] 如果需要打开其他非默认钱包，则需要添加&quot;-n&quot;来指定钱包名称进行开启钱包的操作。 生成和导出EOSIO密码 有多种方式可以创建EOSIO的密码对，但这里仅仅侧重介绍&quot;create key&quot;命令。创建两组公钥/私钥对，留意一下密码对的通常的格式如下： $cleos create key Private key: 5K6tXmW7FQEBWqwG9fsAAjSMLgBMMDPjqE1ATFk2HGaHWjAjsgE Public key: EOS7jZNeuZmqt4fAt4NLoZtLXTXDYEB3eo1QZgg7K19DKbyJaSPMr $cleos create key Private key: 5KYNz1WRZRt9882n1ebA2q5NYQ3oYvzxxAT48i2tyReYHnR49yu Public key: EOS73bzXNHx481Kcg64g4YKS7FxSDYJVYZNiPVZutc3CbXQxW2czc 这些密码对是随意的密码对，并无任何的授权。 接下来的操作，需要确认默认（default）钱包必须是开启和解锁状态的。 cleos指令是可以串联使用，实现default钱包的开启与解锁。甚至只需执行&quot;cleos unlock&quot;即可一步到位实现keosd的开启、钱包开启以及解锁操作。比如执行： $cleos wallet open unlock Opened: default password: Unlocked: default 我们现在使用&quot;wallet import&quot;将私钥导入钱包中。 $ cleos wallet import 5K6tXmW7FQEBWqwG9fsAAjSMLgBMMDPjqE1ATFk2HGaHWjAjsgE imported private key for: EOS7jZNeuZmqt4fAt4NLoZtLXTXDYEB3eo1QZgg7K19DKbyJaSPMr $ cleos wallet import 5KYNz1WRZRt9882n1ebA2q5NYQ3oYvzxxAT48i2tyReYHnR49yu imported private key for: EOS73bzXNHx481Kcg64g4YKS7FxSDYJVYZNiPVZutc3CbXQxW2czc 导入成功的情况下，cleos会提示正确的公钥信息。 我们可以通过输入“wallet keys”指令，查阅上述信息。 $ cleos wallet keys [[ &quot;EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV&quot;, &quot;5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3&quot; ],[ &quot;EOS7jZNeuZmqt4fAt4NLoZtLXTXDYEB3eo1QZgg7K19DKbyJaSPMr&quot;, &quot;5K6tXmW7FQEBWqwG9fsAAjSMLgBMMDPjqE1ATFk2HGaHWjAjsgE&quot; ] ] 钱包文件本身是加密的，当钱包加锁时上述密码对信息会得到相应的保护。访问这些密码对信息，需要借助钱包的密码。 备份钱包 为防止钱包文件的损坏，一个良好的习惯是将钱包备份到一个U盘或其他媒介中去。钱包文件采用高度加密的机制，以确保其中的密码对难以访问。 你可以在&quot;data-dir&quot;目录中找到这些钱包文件。如果你在启动eos过程中未指定&quot;--data-dir&quot;参数，你的钱包文件默认保存在&quot;~/eosio-wallet&quot;目录下。 $ cd eosio-wallet/ $ ll 总用量 12 -rw-r--r--. 1 root root 1533 5月 28 12:02 config.ini -rw-------. 1 root root 439 5月 28 17:24 default.wallet -rw-------. 1 root root 311 5月 28 16:19 periwinkle.wallet 可以将上述*.wallet文件拷贝出来，保存在安全的媒介中。 创建一个账号 在区块链上执行操作，需要使用到账号。我们使用cleos向nodeos发起请求来创建账号并且将账号发布到区块链中。在执行创建账号操作之前，我们必须确保nodeos处于运行状态。在后面的例子中，我们需要在一台机器上同时运行keosd和nodeos两个进程，而上述两个进程默认配置的端口都是8888，因此需要进行简单修改确保keosd和nodeos运行在不同端口上。 通常有两种方式可以将keosd的端口改为8899： 1. 进入钱包文件所在的目录，并将config.ini文件中的端口改为8899，保存配置文件并重启keosd。 $ cd ~/eosio-wallet $ vim config.ini # 修改端口为8899，保存并退出vim $ pkill keosd $ keosd 2. 使用keosd命令行参数 $ pkill keosd $ keosd --http-server-address=localhost:8899 或者通过cleos携带&quot;--wallet-port=8899&quot;执行钱包操作 $ cleos --wallet-port=8899 wallet unlock 要启动nodeos，打开一个终端窗口，找到nodeos可执行文件所在的目录，执行： $ cd eos/build/programs/nodeos $ nodeos -e -p eosio --plugin eosio::chain_api_plugin --plugin eosio::history_api_plugin 现在我们可以使用&quot;cleos create account&quot;创建一个账号了。 $ cleos create account ${authorizing_account} ${new_account} ${owner_key} ${active_key} authorizing_account： 授权的账号名称，用来支付账号创建以及后续其他新账号的费用。 new_account：希望创建的新账号 owner_key：拥有拥有者权限的账号的公钥（详见账号与权限） active_key：希望分配给活跃权限公钥 在这里，“eosio”是一个可授权账号。当在区块链上进行操作时必须使用eosio账号进行签名。eosio账号同时还是特殊的账号用来启动EOSIO节点，它的密码对信息信息可以在nodeos的配置文件中找到（默认在 &quot;~/.local/shared/eosio/config/config.ini&quot;）. 我们需要为新账号定一个名称。账号名称必须遵循以下两个准则： 必须短于13个字符 仅能包含以下字符：.12345abcdefghijklmnopqrstuvwxyz 我们采用“myaccount”作为新账号名称。 我们使用上面导入到钱包中的公钥（以&quot;EOS&quot;开头的字符串），这些公钥在未授权之前是随意的账号。这些账号一旦授权，这些账号就会变得异常重要。拥有者的密钥（owner key）拥有账号最高权限，而活跃权限账号（active key）将拥有使用账号资金的权利。 使用&quot;cleos create account&quot;来创建我们的账号。 $ cleos --wallet-port=8899 create account eosio myaccount ${public_key_1} ${public_key_2} 如果创建成功了，我们将看到反馈以下信息。 executed transaction: 7f1c6b87cd6573365a7bb3c6aa12f8162c3373d57d148f63f2a2d3373ad2fd54 352 bytes 102400 cycles # eosio &lt;= eosio::newaccount {&quot;creator&quot;:&quot;eosio&quot;,&quot;name&quot;:&quot;myaccount&quot;,&quot;owner&quot;:{&quot;threshold&quot;:1,&quot;keys&quot;:[{&quot;key&quot;:&quot;EOS5kkAs8HZ88m2N7iZWy4J... 账号相关操作 使用cleos还可以针对账号进行以下操作。 cleos命令 描述 create account 在区块链上创建新账号 get account 从区块链上获取一个账号 get code 查找一个账号的代码和ABI get accounts 查询与一个公钥关联的账号信息 get servants 查找一个给定账号之下的服务账号 get transactions 查询与一个账号关联的所有的交易 set contract 使用一个账号创建或修改合约 set account 设置或修改区块链上账号的状态 transfer 将数字币从一个账号转账到另一个账号 摘自&nbsp; Tutorial-Comprehensive-Accounts-and-Wallets，翻译 by Kevin. 阅读更多" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/05/28/EOS%E5%AD%A6%E4%B9%A0-%E4%B8%80-%E8%B4%A6%E6%88%B7%E4%B8%8E%E9%92%B1%E5%8C%85.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/05/28/EOS%E5%AD%A6%E4%B9%A0-%E4%B8%80-%E8%B4%A6%E6%88%B7%E4%B8%8E%E9%92%B1%E5%8C%85.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-05-28T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"EOSIO账户与钱包概述 下图给出了EOSIO中的账户(accounts)和钱包(wallets)的概念。 钱包用来存储一组公钥-私钥的对。这些密钥对将参与区块链的上的操作签名。keosd管理着钱包和其中的内容。我们通过cleos来使用这些钱包。 一个账户可视为在线的访问凭证。nodeos管理着在区块链上发布账户以及与账户相关联的行为。我们通过cleos与nodeos的交互，来实现账户的管理。 钱包与账户之间没有天然的内在联系。账户并不知道钱包的存在，反之钱包也不知道账户的存在。所以，nodeos与keosd之间也没有内在的关联。他们（nodeos与keosd）基础函数是有着本质的不同。（在部署配置过程中可能会模糊化他们之间的区别，所以在这里特别提醒下） 在对一个交易进行签名时，nodeos与keosd之间会发生交互。钱包通过将锁定的键值本地化存储的方式，实现以安全的方式活动签名。cleos作为一个中介，实现keosd（从本地获取）键值到nodeos使用这些键进行账户（以及其他）区块链签名相关的操作。 创建和管理钱包 打开终端并进入EOSIO的安装目录，我们使用cleos命令即可方便的与keosd和nodeos进行交互。 $ cd /path_to_eos/build/programs/cleos 我们要做的第一件事就是创建钱包。使用cleos的&quot;wallet create&quot;命令： $ cleos wallet create Creating wallet: default Save password to use in the future to unlock this wallet. Without password imported keys will not be retrievable. &quot;A MASTER PASSWORD&quot; 此时keosd中创建了称之为“default”（默认）的钱包，并提示要求输入密码（mater password）。该密码是用来解锁（解密）你的钱包文件，请务必妥善保管。 钱包文件被命名为&quot;deafult.wallet&quot;。默认情况下，keosd将此文件保存在&quot;~/eosio-wallet&quot;目录下。这个目录可以通过在keosd命令行中添加&quot;--data-dir&quot;参数来指定。 管理多个钱包和钱包名称 cleos可以用来管理多个钱包。每个不同的钱包都通过不同的钱包密码进行保护。下面的例子将展示如何通过&quot;-n&quot;（定义钱包明确）传参创建另一个钱包。 $ cleos wallet create -n periwinkle Creating wallet: periwinkle Save password to use in the future to unlock this wallet. Without password imported keys will not be retrievable. &quot;A MASTER PASSWORD&quot;现在可以确认下我们使用特定的名字生成的钱包。 $ cleos wallet list Wallets: [ &quot;default *&quot;, &quot;periwinkle *&quot; ] 注意，当我们钱包被解锁时，钱包名称后面都会标记有&quot;*&quot;符号。我们使用&quot;wallet create&quot;生成钱包时，处于方便会默认解锁我们的钱包。如果对第二个钱包进行加锁，可以执行&quot;wallet lock&quot;命令： $ cleos wallet lock -n periwinkle Locked: &#39;periwinkle&#39;再次执行&quot;wallet list&quot;命令，我们可以看到第二个钱包的&quot;*&quot;符号消失了，这说明该钱包已经加锁 $ cleos wallet list Wallets: [ &quot;default *&quot;, &quot;periwinkle&quot; ] 解锁一个命名钱包需调用&quot;wallet unlock -n&quot;，后面跟着钱包名称。在执行过程中需输入钱包的私钥。我们也可以通过在命令行中增加&quot;--password&quot;以及主密码的传参，来直接完成私钥验证过程，但这样会导致在console中将密钥完整的显示出来。 注：如果我们针对&quot;default&quot;钱包进行加解锁的操作，则默认的无需使用&quot;-n&quot;传参指定钱包名称。 当我们重启keosd，然后再次通过cleos查看钱包信息： $ cleos wallet list &quot;/usr/local/bin/keosd&quot; launched Wallets: [] 注：如果keosd未启动，在使用cleos第一次与keosd交互时（比如，查询钱包信息），就好自动启动keosd进程。 可以发现此时钱包信息为空。这是因为钱包在使用之前（包括展示钱包列表）必须首先先打开钱包。当keosd关闭时，钱包会被锁定；当keosd被重启后，钱包并未自动开启。执行“wallet open”来开启钱包。 $ cleos wallet open $ cleos wallet list Wallets: [ &quot;default&quot; ] 如果需要打开其他非默认钱包，则需要添加&quot;-n&quot;来指定钱包名称进行开启钱包的操作。 生成和导出EOSIO密码 有多种方式可以创建EOSIO的密码对，但这里仅仅侧重介绍&quot;create key&quot;命令。创建两组公钥/私钥对，留意一下密码对的通常的格式如下： $cleos create key Private key: 5K6tXmW7FQEBWqwG9fsAAjSMLgBMMDPjqE1ATFk2HGaHWjAjsgE Public key: EOS7jZNeuZmqt4fAt4NLoZtLXTXDYEB3eo1QZgg7K19DKbyJaSPMr $cleos create key Private key: 5KYNz1WRZRt9882n1ebA2q5NYQ3oYvzxxAT48i2tyReYHnR49yu Public key: EOS73bzXNHx481Kcg64g4YKS7FxSDYJVYZNiPVZutc3CbXQxW2czc 这些密码对是随意的密码对，并无任何的授权。 接下来的操作，需要确认默认（default）钱包必须是开启和解锁状态的。 cleos指令是可以串联使用，实现default钱包的开启与解锁。甚至只需执行&quot;cleos unlock&quot;即可一步到位实现keosd的开启、钱包开启以及解锁操作。比如执行： $cleos wallet open unlock Opened: default password: Unlocked: default 我们现在使用&quot;wallet import&quot;将私钥导入钱包中。 $ cleos wallet import 5K6tXmW7FQEBWqwG9fsAAjSMLgBMMDPjqE1ATFk2HGaHWjAjsgE imported private key for: EOS7jZNeuZmqt4fAt4NLoZtLXTXDYEB3eo1QZgg7K19DKbyJaSPMr $ cleos wallet import 5KYNz1WRZRt9882n1ebA2q5NYQ3oYvzxxAT48i2tyReYHnR49yu imported private key for: EOS73bzXNHx481Kcg64g4YKS7FxSDYJVYZNiPVZutc3CbXQxW2czc 导入成功的情况下，cleos会提示正确的公钥信息。 我们可以通过输入“wallet keys”指令，查阅上述信息。 $ cleos wallet keys [[ &quot;EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV&quot;, &quot;5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3&quot; ],[ &quot;EOS7jZNeuZmqt4fAt4NLoZtLXTXDYEB3eo1QZgg7K19DKbyJaSPMr&quot;, &quot;5K6tXmW7FQEBWqwG9fsAAjSMLgBMMDPjqE1ATFk2HGaHWjAjsgE&quot; ] ] 钱包文件本身是加密的，当钱包加锁时上述密码对信息会得到相应的保护。访问这些密码对信息，需要借助钱包的密码。 备份钱包 为防止钱包文件的损坏，一个良好的习惯是将钱包备份到一个U盘或其他媒介中去。钱包文件采用高度加密的机制，以确保其中的密码对难以访问。 你可以在&quot;data-dir&quot;目录中找到这些钱包文件。如果你在启动eos过程中未指定&quot;--data-dir&quot;参数，你的钱包文件默认保存在&quot;~/eosio-wallet&quot;目录下。 $ cd eosio-wallet/ $ ll 总用量 12 -rw-r--r--. 1 root root 1533 5月 28 12:02 config.ini -rw-------. 1 root root 439 5月 28 17:24 default.wallet -rw-------. 1 root root 311 5月 28 16:19 periwinkle.wallet 可以将上述*.wallet文件拷贝出来，保存在安全的媒介中。 创建一个账号 在区块链上执行操作，需要使用到账号。我们使用cleos向nodeos发起请求来创建账号并且将账号发布到区块链中。在执行创建账号操作之前，我们必须确保nodeos处于运行状态。在后面的例子中，我们需要在一台机器上同时运行keosd和nodeos两个进程，而上述两个进程默认配置的端口都是8888，因此需要进行简单修改确保keosd和nodeos运行在不同端口上。 通常有两种方式可以将keosd的端口改为8899： 1. 进入钱包文件所在的目录，并将config.ini文件中的端口改为8899，保存配置文件并重启keosd。 $ cd ~/eosio-wallet $ vim config.ini # 修改端口为8899，保存并退出vim $ pkill keosd $ keosd 2. 使用keosd命令行参数 $ pkill keosd $ keosd --http-server-address=localhost:8899 或者通过cleos携带&quot;--wallet-port=8899&quot;执行钱包操作 $ cleos --wallet-port=8899 wallet unlock 要启动nodeos，打开一个终端窗口，找到nodeos可执行文件所在的目录，执行： $ cd eos/build/programs/nodeos $ nodeos -e -p eosio --plugin eosio::chain_api_plugin --plugin eosio::history_api_plugin 现在我们可以使用&quot;cleos create account&quot;创建一个账号了。 $ cleos create account ${authorizing_account} ${new_account} ${owner_key} ${active_key} authorizing_account： 授权的账号名称，用来支付账号创建以及后续其他新账号的费用。 new_account：希望创建的新账号 owner_key：拥有拥有者权限的账号的公钥（详见账号与权限） active_key：希望分配给活跃权限公钥 在这里，“eosio”是一个可授权账号。当在区块链上进行操作时必须使用eosio账号进行签名。eosio账号同时还是特殊的账号用来启动EOSIO节点，它的密码对信息信息可以在nodeos的配置文件中找到（默认在 &quot;~/.local/shared/eosio/config/config.ini&quot;）. 我们需要为新账号定一个名称。账号名称必须遵循以下两个准则： 必须短于13个字符 仅能包含以下字符：.12345abcdefghijklmnopqrstuvwxyz 我们采用“myaccount”作为新账号名称。 我们使用上面导入到钱包中的公钥（以&quot;EOS&quot;开头的字符串），这些公钥在未授权之前是随意的账号。这些账号一旦授权，这些账号就会变得异常重要。拥有者的密钥（owner key）拥有账号最高权限，而活跃权限账号（active key）将拥有使用账号资金的权利。 使用&quot;cleos create account&quot;来创建我们的账号。 $ cleos --wallet-port=8899 create account eosio myaccount ${public_key_1} ${public_key_2} 如果创建成功了，我们将看到反馈以下信息。 executed transaction: 7f1c6b87cd6573365a7bb3c6aa12f8162c3373d57d148f63f2a2d3373ad2fd54 352 bytes 102400 cycles # eosio &lt;= eosio::newaccount {&quot;creator&quot;:&quot;eosio&quot;,&quot;name&quot;:&quot;myaccount&quot;,&quot;owner&quot;:{&quot;threshold&quot;:1,&quot;keys&quot;:[{&quot;key&quot;:&quot;EOS5kkAs8HZ88m2N7iZWy4J... 账号相关操作 使用cleos还可以针对账号进行以下操作。 cleos命令 描述 create account 在区块链上创建新账号 get account 从区块链上获取一个账号 get code 查找一个账号的代码和ABI get accounts 查询与一个公钥关联的账号信息 get servants 查找一个给定账号之下的服务账号 get transactions 查询与一个账号关联的所有的交易 set contract 使用一个账号创建或修改合约 set account 设置或修改区块链上账号的状态 transfer 将数字币从一个账号转账到另一个账号 摘自&nbsp; Tutorial-Comprehensive-Accounts-and-Wallets，翻译 by Kevin. 阅读更多","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/05/28/EOS%E5%AD%A6%E4%B9%A0-%E4%B8%80-%E8%B4%A6%E6%88%B7%E4%B8%8E%E9%92%B1%E5%8C%85.html","headline":"EOS学习（一）：账户与钱包","dateModified":"2018-05-28T00:00:00+08:00","datePublished":"2018-05-28T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/05/28/EOS%E5%AD%A6%E4%B9%A0-%E4%B8%80-%E8%B4%A6%E6%88%B7%E4%B8%8E%E9%92%B1%E5%8C%85.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>EOS学习（一）：账户与钱包</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <p><strong>EOSIO账户与钱包概述</strong><br></p>
+  <p>下图给出了EOSIO中的账户(accounts)和钱包(wallets)的概念。</p>
+  <p><img src="https://img-blog.csdn.net/20180528153829603?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hjNzAyMDM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt=""><br></p>
+  <p>钱包用来存储一组公钥-私钥的对。这些密钥对将参与区块链的上的操作签名。keosd管理着钱包和其中的内容。我们通过cleos来使用这些钱包。</p>
+  <p>一个账户可视为在线的访问凭证。nodeos管理着在区块链上发布账户以及与账户相关联的行为。我们通过cleos与nodeos的交互，来实现账户的管理。</p>
+  <p>钱包与账户之间没有天然的内在联系。账户并不知道钱包的存在，反之钱包也不知道账户的存在。所以，nodeos与keosd之间也没有内在的关联。他们（nodeos与keosd）基础函数是有着本质的不同。（在部署配置过程中可能会模糊化他们之间的区别，所以在这里特别提醒下）</p>
+  <p>在对一个交易进行签名时，nodeos与keosd之间会发生交互。钱包通过将锁定的键值本地化存储的方式，实现以安全的方式活动签名。cleos作为一个中介，实现keosd（从本地获取）键值到nodeos使用这些键进行账户（以及其他）区块链签名相关的操作。</p>
+  <p>创建和管理钱包</p>
+  <p>打开终端并进入EOSIO的安装目录，我们使用cleos命令即可方便的与keosd和nodeos进行交互。</p>
+  <pre><code class="language-python">$ cd /path_to_eos/build/programs/cleos</code></pre>
+  <p>我们要做的第一件事就是创建钱包。使用cleos的"wallet create"命令：</p>
+  <pre><code class="language-python">$ cleos wallet create
+Creating wallet: default
+Save password to use in the future to unlock this wallet.
+Without password imported keys will not be retrievable.
+"A MASTER PASSWORD"</code></pre>
+  <p>此时keosd中创建了称之为“default”（默认）的钱包，并提示要求输入密码（mater password）。该密码是用来解锁（解密）你的钱包文件，请务必妥善保管。</p>
+  <p>钱包文件被命名为"deafult.wallet"。默认情况下，keosd将此文件保存在"~/eosio-wallet"目录下。这个目录可以通过在keosd命令行中添加"--data-dir"参数来指定。</p>
+  <p><strong>管理多个钱包和钱包名称</strong></p>
+  <p>cleos可以用来管理多个钱包。每个不同的钱包都通过不同的钱包密码进行保护。下面的例子将展示如何通过"-n"（定义钱包明确）传参创建另一个钱包。</p>
+  <pre><code class="language-python">$ cleos wallet create -n periwinkle
+Creating wallet: periwinkle
+Save password to use in the future to unlock this wallet.
+Without password imported keys will not be retrievable.
+"A MASTER PASSWORD"</code></pre>现在可以确认下我们使用特定的名字生成的钱包。
+  <br>
+  <pre><code class="language-html">$ cleos wallet list
+Wallets:
+[
+  "default *",
+  "periwinkle *"
+]</code></pre>
+  <p>注意，当我们钱包被解锁时，钱包名称后面都会标记有"*"符号。我们使用"wallet create"生成钱包时，处于方便会默认解锁我们的钱包。如果对第二个钱包进行加锁，可以执行"wallet lock"命令：</p>
+  <pre><code class="language-html">$ cleos wallet lock -n periwinkle
+Locked: 'periwinkle'</code></pre>再次执行"wallet list"命令，我们可以看到第二个钱包的"*"符号消失了，这说明该钱包已经加锁
+  <br>
+  <pre><code class="language-html">$ cleos wallet list
+Wallets:
+[
+  "default *",
+  "periwinkle"
+]</code></pre>
+  <p>解锁一个命名钱包需调用"wallet unlock -n"，后面跟着钱包名称。在执行过程中需输入钱包的私钥。我们也可以通过在命令行中增加"--password"以及主密码的传参，来直接完成私钥验证过程，但这样会导致在console中将密钥完整的显示出来。</p>
+  <p>注：如果我们针对"default"钱包进行加解锁的操作，则默认的无需使用"-n"传参指定钱包名称。</p>
+  <p>当我们重启keosd，然后再次通过cleos查看钱包信息：</p>
+  <pre><code class="language-html">$ cleos wallet list
+"/usr/local/bin/keosd" launched
+Wallets:
+[]
+</code></pre>
+  <p>注：如果keosd未启动，在使用cleos第一次与keosd交互时（比如，查询钱包信息），就好自动启动keosd进程。</p>
+  <p>可以发现此时钱包信息为空。这是因为钱包在使用之前（包括展示钱包列表）必须首先先打开钱包。当keosd关闭时，钱包会被锁定；当keosd被重启后，钱包并未自动开启。执行“wallet open”来开启钱包。</p>
+  <pre><code class="language-html">$ cleos wallet open
+$ cleos wallet list
+Wallets:
+[
+  "default"
+]</code></pre>
+  <p>如果需要打开其他非默认钱包，则需要添加"-n"来指定钱包名称进行开启钱包的操作。</p>
+  <p><strong>生成和导出EOSIO密码</strong></p>
+  <p>有多种方式可以创建EOSIO的密码对，但这里仅仅侧重介绍"create key"命令。创建两组公钥/私钥对，留意一下密码对的通常的格式如下：</p>
+  <pre><code class="language-html">$cleos create key
+Private key: 5K6tXmW7FQEBWqwG9fsAAjSMLgBMMDPjqE1ATFk2HGaHWjAjsgE
+Public key: EOS7jZNeuZmqt4fAt4NLoZtLXTXDYEB3eo1QZgg7K19DKbyJaSPMr
+$cleos create key
+Private key: 5KYNz1WRZRt9882n1ebA2q5NYQ3oYvzxxAT48i2tyReYHnR49yu
+Public key: EOS73bzXNHx481Kcg64g4YKS7FxSDYJVYZNiPVZutc3CbXQxW2czc
+</code></pre>
+  <p>这些密码对是随意的密码对，并无任何的授权。</p>
+  <p>接下来的操作，需要确认默认（default）钱包必须是开启和解锁状态的。</p>
+  <p>cleos指令是可以串联使用，实现default钱包的开启与解锁。甚至只需执行"cleos unlock"即可一步到位实现keosd的开启、钱包开启以及解锁操作。比如执行：</p>
+  <pre><code class="language-html">$cleos wallet open unlock
+Opened: default
+password: Unlocked: default</code></pre>
+  <p>我们现在使用"wallet import"将私钥导入钱包中。</p>
+  <pre><code class="language-html">$ cleos wallet import 5K6tXmW7FQEBWqwG9fsAAjSMLgBMMDPjqE1ATFk2HGaHWjAjsgE
+imported private key for: EOS7jZNeuZmqt4fAt4NLoZtLXTXDYEB3eo1QZgg7K19DKbyJaSPMr
+$ cleos wallet import 5KYNz1WRZRt9882n1ebA2q5NYQ3oYvzxxAT48i2tyReYHnR49yu
+imported private key for: EOS73bzXNHx481Kcg64g4YKS7FxSDYJVYZNiPVZutc3CbXQxW2czc</code></pre>
+  <p>导入成功的情况下，cleos会提示正确的公钥信息。</p>
+  <p>我们可以通过输入“wallet keys”指令，查阅上述信息。</p>
+  <pre><code class="language-html">$ cleos wallet keys
+[[
+    "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV",
+    "5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3"
+  ],[
+    "EOS7jZNeuZmqt4fAt4NLoZtLXTXDYEB3eo1QZgg7K19DKbyJaSPMr",
+    "5K6tXmW7FQEBWqwG9fsAAjSMLgBMMDPjqE1ATFk2HGaHWjAjsgE"
+  ]
+]</code></pre>
+  <p>钱包文件本身是加密的，当钱包加锁时上述密码对信息会得到相应的保护。访问这些密码对信息，需要借助钱包的密码。</p>
+  <p><strong>备份钱包</strong></p>
+  <p>为防止钱包文件的损坏，一个良好的习惯是将钱包备份到一个U盘或其他媒介中去。钱包文件采用高度加密的机制，以确保其中的密码对难以访问。</p>
+  <p>你可以在"data-dir"目录中找到这些钱包文件。如果你在启动eos过程中未指定"--data-dir"参数，你的钱包文件默认保存在"~/eosio-wallet"目录下。</p>
+  <pre><code class="language-html">$ cd eosio-wallet/
+$ ll
+总用量 12
+-rw-r--r--. 1 root root 1533 5月  28 12:02 config.ini
+-rw-------. 1 root root  439 5月  28 17:24 default.wallet
+-rw-------. 1 root root  311 5月  28 16:19 periwinkle.wallet</code></pre>
+  <p>可以将上述*.wallet文件拷贝出来，保存在安全的媒介中。</p>
+  <p><strong>创建一个账号</strong></p>
+  <p>在区块链上执行操作，需要使用到账号。我们使用cleos向nodeos发起请求来创建账号并且将账号发布到区块链中。在执行创建账号操作之前，我们必须确保nodeos处于运行状态。在后面的例子中，我们需要在一台机器上同时运行keosd和nodeos两个进程，而上述两个进程默认配置的端口都是8888，因此需要进行简单修改确保keosd和nodeos运行在不同端口上。</p>
+  <p>通常有两种方式可以将keosd的端口改为8899：</p>
+  <p>1. 进入钱包文件所在的目录，并将config.ini文件中的端口改为8899，保存配置文件并重启keosd。</p>
+  <pre><code class="language-html">$ cd ~/eosio-wallet
+$ vim config.ini
+# 修改端口为8899，保存并退出vim
+$ pkill keosd
+$ keosd</code></pre>
+  <p>2. 使用keosd命令行参数</p>
+  <pre><code class="language-html">$ pkill keosd
+$ keosd --http-server-address=localhost:8899</code></pre>
+  <p>或者通过cleos携带"--wallet-port=8899"执行钱包操作</p>
+  <pre><code class="language-html">$ cleos --wallet-port=8899 wallet unlock</code></pre>
+  <p>要启动nodeos，打开一个终端窗口，找到nodeos可执行文件所在的目录，执行：</p>
+  <pre><code class="language-html">$ cd eos/build/programs/nodeos
+$ nodeos -e -p eosio --plugin eosio::chain_api_plugin --plugin eosio::history_api_plugin</code></pre>
+  <p>现在我们可以使用"cleos create account"创建一个账号了。</p>
+  <pre><code class="language-html">$ cleos create account ${authorizing_account} ${new_account} ${owner_key} ${active_key}</code></pre>
+  <p></p>
+  <ul>
+   <li>authorizing_account： 授权的账号名称，用来支付账号创建以及后续其他新账号的费用。</li>
+   <li>new_account：希望创建的新账号</li>
+   <li>owner_key：拥有拥有者权限的账号的公钥（详见<a href="https://github.com/EOSIO/eos/wiki/Accounts%20%26%20Permissions" rel="nofollow">账号与权限</a>）</li>
+   <li>active_key：希望分配给活跃权限公钥</li>
+  </ul>
+  <p>在这里，“eosio”是一个可授权账号。当在区块链上进行操作时必须使用eosio账号进行签名。eosio账号同时还是特殊的账号用来启动EOSIO节点，它的密码对信息信息可以在nodeos的配置文件中找到（默认在 "<span style="color:rgb(36,41,46);font-family:'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;font-size:13.6px;background-color:rgba(27,31,35,.05);">~/.local/shared/eosio/config/config.ini</span>"）.</p>
+  <p>我们需要为新账号定一个名称。账号名称必须遵循以下两个准则：</p>
+  <p></p>
+  <ul>
+   <li>必须短于13个字符</li>
+   <li>仅能包含以下字符：<span style="color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';text-align:left;background-color:rgb(255,255,255);">.12345abcdefghijklmnopqrstuvwxyz</span></li>
+  </ul>
+  <p>我们采用“myaccount”作为新账号名称。</p>
+  <p>我们使用上面导入到钱包中的公钥（以"EOS"开头的字符串），这些公钥在未授权之前是随意的账号。这些账号一旦授权，这些账号就会变得异常重要。拥有者的密钥（owner key）拥有账号最高权限，而活跃权限账号（active key）将拥有使用账号资金的权利。</p>
+  <p>使用"cleos create account"来创建我们的账号。</p>
+  <pre><code class="language-html">$ cleos --wallet-port=8899 create account eosio myaccount ${public_key_1} ${public_key_2}</code></pre>
+  <p>如果创建成功了，我们将看到反馈以下信息。</p>
+  <pre><code class="language-html">executed transaction: 7f1c6b87cd6573365a7bb3c6aa12f8162c3373d57d148f63f2a2d3373ad2fd54  352 bytes  102400 cycles
+#         eosio &lt;= eosio::newaccount            {"creator":"eosio","name":"myaccount","owner":{"threshold":1,"keys":[{"key":"EOS5kkAs8HZ88m2N7iZWy4J...</code></pre>
+  <p><strong>账号相关操作</strong></p>
+  <p>使用cleos还可以针对账号进行以下操作。</p>
+  <p></p>
+  <table border="1" cellspacing="1" cellpadding="1">
+   <tbody>
+    <tr>
+     <th scope="col">cleos命令</th>
+     <th scope="col">描述</th>
+    </tr>
+   </tbody>
+   <tbody>
+    <tr>
+     <td>create account</td>
+     <td>在区块链上创建新账号</td>
+    </tr>
+    <tr>
+     <td>get account</td>
+     <td>从区块链上获取一个账号</td>
+    </tr>
+    <tr>
+     <td>get code</td>
+     <td>查找一个账号的代码和ABI</td>
+    </tr>
+    <tr>
+     <td>get accounts</td>
+     <td>查询与一个公钥关联的账号信息</td>
+    </tr>
+    <tr>
+     <td>get servants</td>
+     <td>查找一个给定账号之下的服务账号</td>
+    </tr>
+    <tr>
+     <td>get transactions</td>
+     <td>查询与一个账号关联的所有的交易</td>
+    </tr>
+    <tr>
+     <td>set contract</td>
+     <td><span style="font-family:Arial, Verdana, sans-serif;font-size:14px;text-align:left;background-color:rgb(247,247,247);">使用一个账号创建或修改合约</span></td>
+    </tr>
+    <tr>
+     <td>set account</td>
+     <td>设置或修改区块链上账号的状态</td>
+    </tr>
+    <tr>
+     <td>transfer</td>
+     <td>将数字币从一个账号转账到另一个账号</td>
+    </tr>
+   </tbody>
+  </table>摘自&nbsp;
+  <a href="https://github.com/EOSIO/eos/wiki/Tutorial-Comprehensive-Accounts-and-Wallets" rel="nofollow">Tutorial-Comprehensive-Accounts-and-Wallets</a>，翻译 by Kevin.
+  <br>
+  <div>
+   <br>
+  </div> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/xc70203/article/details/80483101,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/xc70203/article/details/80483101,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

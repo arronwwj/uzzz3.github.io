@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>EOS学习（四）：EOSIO智能合约基础 | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="EOS学习（四）：EOSIO智能合约基础" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="概述 一个EOSIO智能合约由一组活动（action）和类型定义组成。活动定义和实现了合约的行为方式，类型定义了所需的内容和结构。EOSIO的活动操作模式是基于消息的通信架构。我们可以通过cleos客户端通过发消息给nodeos或者使用EOSIO“send”方法（也就是“eosio::action::send”）来发起一个活动。活动的代码将整体执行，并将结果传递给下一个活动。 活动与事务交易 活动代表着一个单独的操作，而事务交易是一系列的单独或组合的活动。账号通过活动与合约进行交互。活动可以被单独发送或者以组合的方式发送（如果它们被设计为整体执行的话）。带有一个活动的事务如下所示。 { &quot;expiration&quot;: &quot;2018-04-01T15:20:44&quot;, &quot;region&quot;: 0, &quot;ref_block_num&quot;: 42580, &quot;ref_block_prefix&quot;: 3987474256, &quot;net_usage_words&quot;: 21, &quot;kcpu_usage&quot;: 1000, &quot;delay_sec&quot;: 0, &quot;context_free_actions&quot;: [], &quot;actions&quot;: [{ &quot;account&quot;: &quot;eosio.token&quot;, &quot;name&quot;: &quot;issue&quot;, &quot;authorization&quot;: [{ &quot;actor&quot;: &quot;eosio&quot;, &quot;permission&quot;: &quot;active&quot; } ], &quot;data&quot;: &quot;00000000007015d640420f000000000004454f5300000000046d656d6f&quot; } ], &quot;signatures&quot;: [ &quot;&quot; ], &quot;context_free_data&quot;: [] } 带有多活动的事务，这些活动在全都执行成功的前提下事务才算执行成功。 { &quot;expiration&quot;: &quot;...&quot;, &quot;region&quot;: 0, &quot;ref_block_num&quot;: ..., &quot;ref_block_prefix&quot;: ..., &quot;net_usage_words&quot;: .., &quot;kcpu_usage&quot;: .., &quot;delay_sec&quot;: 0, &quot;context_free_actions&quot;: [], &quot;actions&quot;: [{ &quot;account&quot;: &quot;...&quot;, &quot;name&quot;: &quot;...&quot;, &quot;authorization&quot;: [{ &quot;actor&quot;: &quot;...&quot;, &quot;permission&quot;: &quot;...&quot; } ], &quot;data&quot;: &quot;...&quot; }, { &quot;account&quot;: &quot;...&quot;, &quot;name&quot;: &quot;...&quot;, &quot;authorization&quot;: [{ &quot;actor&quot;: &quot;...&quot;, &quot;permission&quot;: &quot;...&quot; } ], &quot;data&quot;: &quot;...&quot; } ], &quot;signatures&quot;: [ &quot;&quot; ], &quot;context_free_data&quot;: [] } 事务确认 事务完成时将产生事务回执。收到事务的散列值仅仅意味着节点成功的接收到了事务信息，并且其他的产生者将大概率的接受它（但并不意味着该事务已经被确认）。当事务被确认时，我们将会在回执中携带的区块编号所指示的区块信息中查到该交易的历史记录。 活动名称的约定 活动的类型为base32编码的64位的整型。这意味着活动名称被限定为字符&quot;a-z&quot;、&quot;1-5“、以及小数点“.”作为起始的12个字符。如果存在第13个字符，那么它将限制为前16个字符（“a-p”以及小数点&quot;.&quot;）中的一个。 活动处理句柄以及活动“申请”上下文 智能合约提供了活动处理句柄用来处理请求的活动。当一个活动在执行时，该活动通过合约中的“apply”方法被申请调用；当活动在执行时，EOSIO在合约实例中创建了申请方法的上下文信息。下图暂时了活动“申请”的上下文中的关键要素。 从EOSIO区块链的全局来看，EOSIO网络中的每个节点都有任何一份合约及活动的拷贝，并且可以执行它们。有一部分节点执行合约，而其他的节点则提供事务区块的验证工作。对于合约运行而言，明确合约的身份以及运行环境中的上下文是非常重要的。活动上下文提供了相关鉴别信息，这些信息包括如图所示的接收者（receiver）、编码（code）和活动（action）。接收者是当前处理活动的账号；编码是审核该活动的账号；活动则携带当前运行活动的ID。 在事务中相互交换的活动，当事务失败时，所有的活动都必须被回滚。活动上下文中一个关键要素是当前事务数据，该数据由事务头部（事务中所有原始活动的矢量结构体）、一个可删节的上下文空余数据的集合（blobs矢量结构体），该信息在合约的代码中定义，以及索引指向blobs矢量结构体。 在处理一个活动之前，EOSIO为活动清理好工作空间内存（供活动实例的内存变量使用）。即便在同一个事务中的不同活动之间，活动的运行内存仅能被自己访问。一个执行活动修改的变量，无法在另一个活动的上下文中访问。在活动中传递状态的唯一方法就是将其持久存储，然后通过EOSIO数据库中进行检索（详见持久性API中的有关持续性服务的说明）。 一个活动可能存在的附带效果包括： 改变了EOSIO持续性存储中的状态； 发出当前事务的凭据通知； 在代码内对一个新接收者发出活动请求； 产生新的（延时执行）的一系列事务； 取消现存（正在执行）延迟事务（比如，取消已经交付的延迟事务请求）。 通信模型与任务流 EOSIO智能合约可以相互沟通，列如让另一份合约执行某些与完成当前事务相关的操作，或者触发当前事务范围之外的未来事务。 EOSIO支持两种通信模型：内联通信（inline）与延迟通信（deferred）。在当前事务中执行一个操作，既是一个内联通信的例子；而在事务中触发一个未来执行的操作，则是一个延时通信的例子。 合约之间的通信应该是异步执行的。资源限制算法用来解决因异步的通信导致的垃圾数据（spam）。 内联通信 内联通信，往往是作为执行活动中的一部分被调用的。内联活动使用同一个事务中的相同的作用域和授权，并且确保与（调用者处于）同一个事务中执行。在一个调用的事务中，内联通信有效的视做内嵌事务。通过调用内联活动，不管执行成功或失败，都不会对外部其他事务产生通知信息（即，内联通信仅仅在本事务上下文的作用域起作用）。 延迟通信 延迟通信是通过向延时事务发送通知的形式来工作的。延时活动，根据发布者的设定，最好在之后的某个时间点被调度执行。但延迟活动并非能确保一定被执行。 从创建事务（即创建延时事务的事务）的角度来看，它只能确定创建请求被提交成功还是提交失败（如果失败，则立即反馈失败）。延期事务拥有执行延时合约的权利。事务也可以取消一个延时事务。 （崩溃了~~~续写了一部分后，不知道是因为csdn还是chrome崩溃了，导致博文丢失....这心情....暂时没勇气和动力了....T_T） （走过伤心地....继续下面的....） 调测智能合约 为方便进行合约的调测，我们需要搭建一个本地的nodeos节点。本地节点需是一个私网或一个测试网的一部分。 在第一次创建智能合约的时候，我们建议在私网的测试节点中进行测试，这样我们就可以对整个区块链拥有完全的控制。这样在测试过程中的手续费将不受限，而且我们可以随意重启节点来重置区块链状态。当完成测试准备发布时，我们可以通过将nodeos切换到主网上实现主网的调测。测试过程中，我们可以在本地的nodeos中查阅到运行日志。 方法（Method） 在调测智能合约中主要的方法是Caveman调测法，就是使用print语句来检查变量值以及合约的工作流。在智能合约中打印是通过执行Print API来完成。C++API是C API的一种包装，在大多数情况下我们直接使用C++的API。 Print API Print C API支持以下不同数据类型的打印： prints：使用null结尾的字符串 prints_l：给定长度的字符串数组 printi：64位无符号整型 printi128：128位无符号整型 printd：双精度浮点 printn：64位无符号整型编码下的base32字符串 printhex：指定数据和大小的十六进制 Print C++API通过重载print()函数封装了C API，这样封装了一些数据特殊类型细节，减少这些数据在print使用上的一些顾虑。C++ API支持： 字符串：使用null结尾的字符串 整型：32位、64位、128位带符号或无符号整型 使用64位无符号整型封装的base32格式的字符串 携带print方法的数据结构体 还有一个print_f函数可用来调测，使用带有%符号的格式字符串可以将参数填入合适的位置中。 auto count = 5; auto some_name = &quot;this is the name&quot;; print_f(&quot;Count = % and some_name = %\n&quot;, count, some_name); 示例 我们编写一个新的叫做“debug”的合约作为调测的示例。 $ eosiocpp -n debug $ cd debug debug.cpp 修改已创建的debug.cpp文件如下所示。 #include &lt;eosiolib/eosio.hpp&gt; class debug : public eosio::contract { public: using contract::contract;" />
+<meta property="og:description" content="概述 一个EOSIO智能合约由一组活动（action）和类型定义组成。活动定义和实现了合约的行为方式，类型定义了所需的内容和结构。EOSIO的活动操作模式是基于消息的通信架构。我们可以通过cleos客户端通过发消息给nodeos或者使用EOSIO“send”方法（也就是“eosio::action::send”）来发起一个活动。活动的代码将整体执行，并将结果传递给下一个活动。 活动与事务交易 活动代表着一个单独的操作，而事务交易是一系列的单独或组合的活动。账号通过活动与合约进行交互。活动可以被单独发送或者以组合的方式发送（如果它们被设计为整体执行的话）。带有一个活动的事务如下所示。 { &quot;expiration&quot;: &quot;2018-04-01T15:20:44&quot;, &quot;region&quot;: 0, &quot;ref_block_num&quot;: 42580, &quot;ref_block_prefix&quot;: 3987474256, &quot;net_usage_words&quot;: 21, &quot;kcpu_usage&quot;: 1000, &quot;delay_sec&quot;: 0, &quot;context_free_actions&quot;: [], &quot;actions&quot;: [{ &quot;account&quot;: &quot;eosio.token&quot;, &quot;name&quot;: &quot;issue&quot;, &quot;authorization&quot;: [{ &quot;actor&quot;: &quot;eosio&quot;, &quot;permission&quot;: &quot;active&quot; } ], &quot;data&quot;: &quot;00000000007015d640420f000000000004454f5300000000046d656d6f&quot; } ], &quot;signatures&quot;: [ &quot;&quot; ], &quot;context_free_data&quot;: [] } 带有多活动的事务，这些活动在全都执行成功的前提下事务才算执行成功。 { &quot;expiration&quot;: &quot;...&quot;, &quot;region&quot;: 0, &quot;ref_block_num&quot;: ..., &quot;ref_block_prefix&quot;: ..., &quot;net_usage_words&quot;: .., &quot;kcpu_usage&quot;: .., &quot;delay_sec&quot;: 0, &quot;context_free_actions&quot;: [], &quot;actions&quot;: [{ &quot;account&quot;: &quot;...&quot;, &quot;name&quot;: &quot;...&quot;, &quot;authorization&quot;: [{ &quot;actor&quot;: &quot;...&quot;, &quot;permission&quot;: &quot;...&quot; } ], &quot;data&quot;: &quot;...&quot; }, { &quot;account&quot;: &quot;...&quot;, &quot;name&quot;: &quot;...&quot;, &quot;authorization&quot;: [{ &quot;actor&quot;: &quot;...&quot;, &quot;permission&quot;: &quot;...&quot; } ], &quot;data&quot;: &quot;...&quot; } ], &quot;signatures&quot;: [ &quot;&quot; ], &quot;context_free_data&quot;: [] } 事务确认 事务完成时将产生事务回执。收到事务的散列值仅仅意味着节点成功的接收到了事务信息，并且其他的产生者将大概率的接受它（但并不意味着该事务已经被确认）。当事务被确认时，我们将会在回执中携带的区块编号所指示的区块信息中查到该交易的历史记录。 活动名称的约定 活动的类型为base32编码的64位的整型。这意味着活动名称被限定为字符&quot;a-z&quot;、&quot;1-5“、以及小数点“.”作为起始的12个字符。如果存在第13个字符，那么它将限制为前16个字符（“a-p”以及小数点&quot;.&quot;）中的一个。 活动处理句柄以及活动“申请”上下文 智能合约提供了活动处理句柄用来处理请求的活动。当一个活动在执行时，该活动通过合约中的“apply”方法被申请调用；当活动在执行时，EOSIO在合约实例中创建了申请方法的上下文信息。下图暂时了活动“申请”的上下文中的关键要素。 从EOSIO区块链的全局来看，EOSIO网络中的每个节点都有任何一份合约及活动的拷贝，并且可以执行它们。有一部分节点执行合约，而其他的节点则提供事务区块的验证工作。对于合约运行而言，明确合约的身份以及运行环境中的上下文是非常重要的。活动上下文提供了相关鉴别信息，这些信息包括如图所示的接收者（receiver）、编码（code）和活动（action）。接收者是当前处理活动的账号；编码是审核该活动的账号；活动则携带当前运行活动的ID。 在事务中相互交换的活动，当事务失败时，所有的活动都必须被回滚。活动上下文中一个关键要素是当前事务数据，该数据由事务头部（事务中所有原始活动的矢量结构体）、一个可删节的上下文空余数据的集合（blobs矢量结构体），该信息在合约的代码中定义，以及索引指向blobs矢量结构体。 在处理一个活动之前，EOSIO为活动清理好工作空间内存（供活动实例的内存变量使用）。即便在同一个事务中的不同活动之间，活动的运行内存仅能被自己访问。一个执行活动修改的变量，无法在另一个活动的上下文中访问。在活动中传递状态的唯一方法就是将其持久存储，然后通过EOSIO数据库中进行检索（详见持久性API中的有关持续性服务的说明）。 一个活动可能存在的附带效果包括： 改变了EOSIO持续性存储中的状态； 发出当前事务的凭据通知； 在代码内对一个新接收者发出活动请求； 产生新的（延时执行）的一系列事务； 取消现存（正在执行）延迟事务（比如，取消已经交付的延迟事务请求）。 通信模型与任务流 EOSIO智能合约可以相互沟通，列如让另一份合约执行某些与完成当前事务相关的操作，或者触发当前事务范围之外的未来事务。 EOSIO支持两种通信模型：内联通信（inline）与延迟通信（deferred）。在当前事务中执行一个操作，既是一个内联通信的例子；而在事务中触发一个未来执行的操作，则是一个延时通信的例子。 合约之间的通信应该是异步执行的。资源限制算法用来解决因异步的通信导致的垃圾数据（spam）。 内联通信 内联通信，往往是作为执行活动中的一部分被调用的。内联活动使用同一个事务中的相同的作用域和授权，并且确保与（调用者处于）同一个事务中执行。在一个调用的事务中，内联通信有效的视做内嵌事务。通过调用内联活动，不管执行成功或失败，都不会对外部其他事务产生通知信息（即，内联通信仅仅在本事务上下文的作用域起作用）。 延迟通信 延迟通信是通过向延时事务发送通知的形式来工作的。延时活动，根据发布者的设定，最好在之后的某个时间点被调度执行。但延迟活动并非能确保一定被执行。 从创建事务（即创建延时事务的事务）的角度来看，它只能确定创建请求被提交成功还是提交失败（如果失败，则立即反馈失败）。延期事务拥有执行延时合约的权利。事务也可以取消一个延时事务。 （崩溃了~~~续写了一部分后，不知道是因为csdn还是chrome崩溃了，导致博文丢失....这心情....暂时没勇气和动力了....T_T） （走过伤心地....继续下面的....） 调测智能合约 为方便进行合约的调测，我们需要搭建一个本地的nodeos节点。本地节点需是一个私网或一个测试网的一部分。 在第一次创建智能合约的时候，我们建议在私网的测试节点中进行测试，这样我们就可以对整个区块链拥有完全的控制。这样在测试过程中的手续费将不受限，而且我们可以随意重启节点来重置区块链状态。当完成测试准备发布时，我们可以通过将nodeos切换到主网上实现主网的调测。测试过程中，我们可以在本地的nodeos中查阅到运行日志。 方法（Method） 在调测智能合约中主要的方法是Caveman调测法，就是使用print语句来检查变量值以及合约的工作流。在智能合约中打印是通过执行Print API来完成。C++API是C API的一种包装，在大多数情况下我们直接使用C++的API。 Print API Print C API支持以下不同数据类型的打印： prints：使用null结尾的字符串 prints_l：给定长度的字符串数组 printi：64位无符号整型 printi128：128位无符号整型 printd：双精度浮点 printn：64位无符号整型编码下的base32字符串 printhex：指定数据和大小的十六进制 Print C++API通过重载print()函数封装了C API，这样封装了一些数据特殊类型细节，减少这些数据在print使用上的一些顾虑。C++ API支持： 字符串：使用null结尾的字符串 整型：32位、64位、128位带符号或无符号整型 使用64位无符号整型封装的base32格式的字符串 携带print方法的数据结构体 还有一个print_f函数可用来调测，使用带有%符号的格式字符串可以将参数填入合适的位置中。 auto count = 5; auto some_name = &quot;this is the name&quot;; print_f(&quot;Count = % and some_name = %\n&quot;, count, some_name); 示例 我们编写一个新的叫做“debug”的合约作为调测的示例。 $ eosiocpp -n debug $ cd debug debug.cpp 修改已创建的debug.cpp文件如下所示。 #include &lt;eosiolib/eosio.hpp&gt; class debug : public eosio::contract { public: using contract::contract;" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/05/31/EOS%E5%AD%A6%E4%B9%A0-%E5%9B%9B-EOSIO%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E5%9F%BA%E7%A1%80.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/05/31/EOS%E5%AD%A6%E4%B9%A0-%E5%9B%9B-EOSIO%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E5%9F%BA%E7%A1%80.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-05-31T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"概述 一个EOSIO智能合约由一组活动（action）和类型定义组成。活动定义和实现了合约的行为方式，类型定义了所需的内容和结构。EOSIO的活动操作模式是基于消息的通信架构。我们可以通过cleos客户端通过发消息给nodeos或者使用EOSIO“send”方法（也就是“eosio::action::send”）来发起一个活动。活动的代码将整体执行，并将结果传递给下一个活动。 活动与事务交易 活动代表着一个单独的操作，而事务交易是一系列的单独或组合的活动。账号通过活动与合约进行交互。活动可以被单独发送或者以组合的方式发送（如果它们被设计为整体执行的话）。带有一个活动的事务如下所示。 { &quot;expiration&quot;: &quot;2018-04-01T15:20:44&quot;, &quot;region&quot;: 0, &quot;ref_block_num&quot;: 42580, &quot;ref_block_prefix&quot;: 3987474256, &quot;net_usage_words&quot;: 21, &quot;kcpu_usage&quot;: 1000, &quot;delay_sec&quot;: 0, &quot;context_free_actions&quot;: [], &quot;actions&quot;: [{ &quot;account&quot;: &quot;eosio.token&quot;, &quot;name&quot;: &quot;issue&quot;, &quot;authorization&quot;: [{ &quot;actor&quot;: &quot;eosio&quot;, &quot;permission&quot;: &quot;active&quot; } ], &quot;data&quot;: &quot;00000000007015d640420f000000000004454f5300000000046d656d6f&quot; } ], &quot;signatures&quot;: [ &quot;&quot; ], &quot;context_free_data&quot;: [] } 带有多活动的事务，这些活动在全都执行成功的前提下事务才算执行成功。 { &quot;expiration&quot;: &quot;...&quot;, &quot;region&quot;: 0, &quot;ref_block_num&quot;: ..., &quot;ref_block_prefix&quot;: ..., &quot;net_usage_words&quot;: .., &quot;kcpu_usage&quot;: .., &quot;delay_sec&quot;: 0, &quot;context_free_actions&quot;: [], &quot;actions&quot;: [{ &quot;account&quot;: &quot;...&quot;, &quot;name&quot;: &quot;...&quot;, &quot;authorization&quot;: [{ &quot;actor&quot;: &quot;...&quot;, &quot;permission&quot;: &quot;...&quot; } ], &quot;data&quot;: &quot;...&quot; }, { &quot;account&quot;: &quot;...&quot;, &quot;name&quot;: &quot;...&quot;, &quot;authorization&quot;: [{ &quot;actor&quot;: &quot;...&quot;, &quot;permission&quot;: &quot;...&quot; } ], &quot;data&quot;: &quot;...&quot; } ], &quot;signatures&quot;: [ &quot;&quot; ], &quot;context_free_data&quot;: [] } 事务确认 事务完成时将产生事务回执。收到事务的散列值仅仅意味着节点成功的接收到了事务信息，并且其他的产生者将大概率的接受它（但并不意味着该事务已经被确认）。当事务被确认时，我们将会在回执中携带的区块编号所指示的区块信息中查到该交易的历史记录。 活动名称的约定 活动的类型为base32编码的64位的整型。这意味着活动名称被限定为字符&quot;a-z&quot;、&quot;1-5“、以及小数点“.”作为起始的12个字符。如果存在第13个字符，那么它将限制为前16个字符（“a-p”以及小数点&quot;.&quot;）中的一个。 活动处理句柄以及活动“申请”上下文 智能合约提供了活动处理句柄用来处理请求的活动。当一个活动在执行时，该活动通过合约中的“apply”方法被申请调用；当活动在执行时，EOSIO在合约实例中创建了申请方法的上下文信息。下图暂时了活动“申请”的上下文中的关键要素。 从EOSIO区块链的全局来看，EOSIO网络中的每个节点都有任何一份合约及活动的拷贝，并且可以执行它们。有一部分节点执行合约，而其他的节点则提供事务区块的验证工作。对于合约运行而言，明确合约的身份以及运行环境中的上下文是非常重要的。活动上下文提供了相关鉴别信息，这些信息包括如图所示的接收者（receiver）、编码（code）和活动（action）。接收者是当前处理活动的账号；编码是审核该活动的账号；活动则携带当前运行活动的ID。 在事务中相互交换的活动，当事务失败时，所有的活动都必须被回滚。活动上下文中一个关键要素是当前事务数据，该数据由事务头部（事务中所有原始活动的矢量结构体）、一个可删节的上下文空余数据的集合（blobs矢量结构体），该信息在合约的代码中定义，以及索引指向blobs矢量结构体。 在处理一个活动之前，EOSIO为活动清理好工作空间内存（供活动实例的内存变量使用）。即便在同一个事务中的不同活动之间，活动的运行内存仅能被自己访问。一个执行活动修改的变量，无法在另一个活动的上下文中访问。在活动中传递状态的唯一方法就是将其持久存储，然后通过EOSIO数据库中进行检索（详见持久性API中的有关持续性服务的说明）。 一个活动可能存在的附带效果包括： 改变了EOSIO持续性存储中的状态； 发出当前事务的凭据通知； 在代码内对一个新接收者发出活动请求； 产生新的（延时执行）的一系列事务； 取消现存（正在执行）延迟事务（比如，取消已经交付的延迟事务请求）。 通信模型与任务流 EOSIO智能合约可以相互沟通，列如让另一份合约执行某些与完成当前事务相关的操作，或者触发当前事务范围之外的未来事务。 EOSIO支持两种通信模型：内联通信（inline）与延迟通信（deferred）。在当前事务中执行一个操作，既是一个内联通信的例子；而在事务中触发一个未来执行的操作，则是一个延时通信的例子。 合约之间的通信应该是异步执行的。资源限制算法用来解决因异步的通信导致的垃圾数据（spam）。 内联通信 内联通信，往往是作为执行活动中的一部分被调用的。内联活动使用同一个事务中的相同的作用域和授权，并且确保与（调用者处于）同一个事务中执行。在一个调用的事务中，内联通信有效的视做内嵌事务。通过调用内联活动，不管执行成功或失败，都不会对外部其他事务产生通知信息（即，内联通信仅仅在本事务上下文的作用域起作用）。 延迟通信 延迟通信是通过向延时事务发送通知的形式来工作的。延时活动，根据发布者的设定，最好在之后的某个时间点被调度执行。但延迟活动并非能确保一定被执行。 从创建事务（即创建延时事务的事务）的角度来看，它只能确定创建请求被提交成功还是提交失败（如果失败，则立即反馈失败）。延期事务拥有执行延时合约的权利。事务也可以取消一个延时事务。 （崩溃了~~~续写了一部分后，不知道是因为csdn还是chrome崩溃了，导致博文丢失....这心情....暂时没勇气和动力了....T_T） （走过伤心地....继续下面的....） 调测智能合约 为方便进行合约的调测，我们需要搭建一个本地的nodeos节点。本地节点需是一个私网或一个测试网的一部分。 在第一次创建智能合约的时候，我们建议在私网的测试节点中进行测试，这样我们就可以对整个区块链拥有完全的控制。这样在测试过程中的手续费将不受限，而且我们可以随意重启节点来重置区块链状态。当完成测试准备发布时，我们可以通过将nodeos切换到主网上实现主网的调测。测试过程中，我们可以在本地的nodeos中查阅到运行日志。 方法（Method） 在调测智能合约中主要的方法是Caveman调测法，就是使用print语句来检查变量值以及合约的工作流。在智能合约中打印是通过执行Print API来完成。C++API是C API的一种包装，在大多数情况下我们直接使用C++的API。 Print API Print C API支持以下不同数据类型的打印： prints：使用null结尾的字符串 prints_l：给定长度的字符串数组 printi：64位无符号整型 printi128：128位无符号整型 printd：双精度浮点 printn：64位无符号整型编码下的base32字符串 printhex：指定数据和大小的十六进制 Print C++API通过重载print()函数封装了C API，这样封装了一些数据特殊类型细节，减少这些数据在print使用上的一些顾虑。C++ API支持： 字符串：使用null结尾的字符串 整型：32位、64位、128位带符号或无符号整型 使用64位无符号整型封装的base32格式的字符串 携带print方法的数据结构体 还有一个print_f函数可用来调测，使用带有%符号的格式字符串可以将参数填入合适的位置中。 auto count = 5; auto some_name = &quot;this is the name&quot;; print_f(&quot;Count = % and some_name = %\\n&quot;, count, some_name); 示例 我们编写一个新的叫做“debug”的合约作为调测的示例。 $ eosiocpp -n debug $ cd debug debug.cpp 修改已创建的debug.cpp文件如下所示。 #include &lt;eosiolib/eosio.hpp&gt; class debug : public eosio::contract { public: using contract::contract;","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/05/31/EOS%E5%AD%A6%E4%B9%A0-%E5%9B%9B-EOSIO%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E5%9F%BA%E7%A1%80.html","headline":"EOS学习（四）：EOSIO智能合约基础","dateModified":"2018-05-31T00:00:00+08:00","datePublished":"2018-05-31T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/05/31/EOS%E5%AD%A6%E4%B9%A0-%E5%9B%9B-EOSIO%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E5%9F%BA%E7%A1%80.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>EOS学习（四）：EOSIO智能合约基础</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <h1>概述</h1>
+  <p>一个EOSIO智能合约由一组活动（action）和类型定义组成。活动定义和实现了合约的行为方式，类型定义了所需的内容和结构。EOSIO的活动操作模式是基于消息的通信架构。我们可以通过cleos客户端通过发消息给nodeos或者使用EOSIO“send”方法（也就是“eosio::action::send”）来发起一个活动。活动的代码将整体执行，并将结果传递给下一个活动。</p>
+  <h2>活动与事务交易</h2>
+  <p>活动代表着一个单独的操作，而事务交易是一系列的单独或组合的活动。账号通过活动与合约进行交互。活动可以被单独发送或者以组合的方式发送（如果它们被设计为整体执行的话）。带有一个活动的事务如下所示。</p>
+  <pre><code class="language-html">{
+  "expiration": "2018-04-01T15:20:44",
+  "region": 0,
+  "ref_block_num": 42580,
+  "ref_block_prefix": 3987474256,
+  "net_usage_words": 21,
+  "kcpu_usage": 1000,
+  "delay_sec": 0,
+  "context_free_actions": [],
+  "actions": [{
+      "account": "eosio.token",
+      "name": "issue",
+      "authorization": [{
+          "actor": "eosio",
+          "permission": "active"
+        }
+      ],
+      "data": "00000000007015d640420f000000000004454f5300000000046d656d6f"
+    }
+  ],
+  "signatures": [
+    ""
+  ],
+  "context_free_data": []
+}</code></pre>
+  <p>带有多活动的事务，这些活动在全都执行成功的前提下事务才算执行成功。</p>
+  <pre><code class="language-html">{
+  "expiration": "...",
+  "region": 0,
+  "ref_block_num": ...,
+  "ref_block_prefix": ...,
+  "net_usage_words": ..,
+  "kcpu_usage": ..,
+  "delay_sec": 0,
+  "context_free_actions": [],
+  "actions": [{
+      "account": "...",
+      "name": "...",
+      "authorization": [{
+          "actor": "...",
+          "permission": "..."
+        }
+      ],
+      "data": "..."
+    }, {
+      "account": "...",
+      "name": "...",
+      "authorization": [{
+          "actor": "...",
+          "permission": "..."
+        }
+      ],
+      "data": "..."
+    }
+  ],
+  "signatures": [
+    ""
+  ],
+  "context_free_data": []
+}</code></pre>
+  <h2>事务确认</h2>
+  <p>事务完成时将产生事务回执。收到事务的散列值仅仅意味着节点成功的接收到了事务信息，并且其他的产生者将大概率的接受它（但并不意味着该事务已经被确认）。当事务被确认时，我们将会在回执中携带的区块编号所指示的区块信息中查到该交易的历史记录。</p>
+  <h2>活动名称的约定</h2>
+  <p>活动的类型为base32编码的64位的整型。这意味着活动名称被限定为字符"a-z"、"1-5“、以及小数点“.”作为起始的12个字符。如果存在第13个字符，那么它将限制为前16个字符（“a-p”以及小数点"."）中的一个。</p>
+  <h1>活动处理句柄以及活动“申请”上下文</h1>
+  <p>智能合约提供了活动处理句柄用来处理请求的活动。当一个活动在执行时，该活动通过合约中的“apply”方法被申请调用；当活动在执行时，EOSIO在合约实例中创建了申请方法的上下文信息。下图暂时了活动“申请”的上下文中的关键要素。</p>
+  <p><img src="https://img-blog.csdn.net/20180529161205451?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hjNzAyMDM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt=""><br></p>
+  <p>从EOSIO区块链的全局来看，EOSIO网络中的每个节点都有任何一份合约及活动的拷贝，并且可以执行它们。有一部分节点执行合约，而其他的节点则提供事务区块的验证工作。对于合约运行而言，明确合约的身份以及运行环境中的上下文是非常重要的。活动上下文提供了相关鉴别信息，这些信息包括如图所示的接收者（receiver）、编码（code）和活动（action）。接收者是当前处理活动的账号；编码是审核该活动的账号；活动则携带当前运行活动的ID。</p>
+  <p>在事务中相互交换的活动，当事务失败时，所有的活动都必须被回滚。活动上下文中一个关键要素是当前事务数据，该数据由事务头部（事务中所有原始活动的矢量结构体）、一个可删节的上下文空余数据的集合（blobs矢量结构体），该信息在合约的代码中定义，以及索引指向blobs矢量结构体。</p>
+  <p>在处理一个活动之前，EOSIO为活动清理好工作空间内存（供活动实例的内存变量使用）。即便在同一个事务中的不同活动之间，活动的运行内存仅能被自己访问。一个执行活动修改的变量，无法在另一个活动的上下文中访问。在活动中传递状态的唯一方法就是将其持久存储，然后通过EOSIO数据库中进行检索（详见<a href="https://github.com/EOSIO/eos/wiki/Persistence-API" rel="nofollow">持久性API</a>中的有关持续性服务的说明）。</p>
+  <p>一个活动可能存在的附带效果包括：</p>
+  <p></p>
+  <ul>
+   <li>改变了EOSIO持续性存储中的状态；</li>
+   <li>发出当前事务的凭据通知；</li>
+   <li>在代码内对一个新接收者发出活动请求；</li>
+   <li>产生新的（延时执行）的一系列事务；</li>
+   <li>取消现存（正在执行）延迟事务（比如，取消已经交付的延迟事务请求）。</li>
+  </ul>
+  <h1>通信模型与任务流</h1>
+  <p>EOSIO智能合约可以相互沟通，列如让另一份合约执行某些与完成当前事务相关的操作，或者触发当前事务范围之外的未来事务。</p>
+  <p>EOSIO支持两种通信模型：内联通信（inline）与延迟通信（deferred）。在当前事务中执行一个操作，既是一个内联通信的例子；而在事务中触发一个未来执行的操作，则是一个延时通信的例子。</p>
+  <p>合约之间的通信应该是异步执行的。资源限制算法用来解决因异步的通信导致的垃圾数据（spam）。</p>
+  <h2>内联通信</h2>
+  <p>内联通信，往往是作为执行活动中的一部分被调用的。内联活动使用同一个事务中的相同的作用域和授权，并且确保与（调用者处于）同一个事务中执行。在一个调用的事务中，内联通信有效的视做内嵌事务。通过调用内联活动，不管执行成功或失败，都不会对外部其他事务产生通知信息（即，内联通信仅仅在本事务上下文的作用域起作用）。</p>
+  <h2>延迟通信</h2>
+  <p>延迟通信是通过向延时事务发送通知的形式来工作的。延时活动，根据发布者的设定，最好在之后的某个时间点被调度执行。但延迟活动并非能确保一定被执行。</p>
+  <p>从创建事务（即创建延时事务的事务）的角度来看，它只能确定创建请求被提交成功还是提交失败（如果失败，则立即反馈失败）。延期事务拥有执行延时合约的权利。事务也可以取消一个延时事务。</p>
+  <p>（崩溃了~~~续写了一部分后，不知道是因为csdn还是chrome崩溃了，导致博文丢失....这心情....暂时没勇气和动力了....T_T）</p>
+  <p>（走过伤心地....继续下面的....）</p>
+  <h1>调测智能合约</h1>
+  <p>为方便进行合约的调测，我们需要搭建一个本地的nodeos节点。本地节点需是一个私网或一个测试网的一部分。</p>
+  <p>在第一次创建智能合约的时候，我们建议在私网的测试节点中进行测试，这样我们就可以对整个区块链拥有完全的控制。这样在测试过程中的手续费将不受限，而且我们可以随意重启节点来重置区块链状态。当完成测试准备发布时，我们可以通过将nodeos切换到主网上实现主网的调测。测试过程中，我们可以在本地的nodeos中查阅到运行日志。</p>
+  <h1>方法（Method）</h1>
+  <p>在调测智能合约中主要的方法是Caveman调测法，就是使用print语句来检查变量值以及合约的工作流。在智能合约中打印是通过执行Print API来完成。C++API是C API的一种包装，在大多数情况下我们直接使用C++的API。</p>
+  <h1>Print API</h1>
+  <p>Print C API支持以下不同数据类型的打印：</p>
+  <p></p>
+  <ul>
+   <li>prints：使用null结尾的字符串</li>
+   <li>prints_l：给定长度的字符串数组</li>
+   <li>printi：64位无符号整型</li>
+   <li>printi128：128位无符号整型</li>
+   <li>printd：双精度浮点</li>
+   <li>printn：64位无符号整型编码下的base32字符串</li>
+   <li>printhex：指定数据和大小的十六进制</li>
+  </ul>
+  <p>Print C++API通过重载print()函数封装了C API，这样封装了一些数据特殊类型细节，减少这些数据在print使用上的一些顾虑。C++ API支持：</p>
+  <p>字符串：使用null结尾的字符串</p>
+  <p>整型：32位、64位、128位带符号或无符号整型</p>
+  <p>使用64位无符号整型封装的base32格式的字符串</p>
+  <p>携带print方法的数据结构体</p>
+  <p>还有一个print_f函数可用来调测，使用带有%符号的格式字符串可以将参数填入合适的位置中。</p>
+  <pre><code class="language-html">auto count = 5;
+auto some_name = "this is the name";
+print_f("Count = % and some_name = %\n", count, some_name);</code></pre>
+  <h1>示例</h1>
+  <p>我们编写一个新的叫做“debug”的合约作为调测的示例。</p>
+  <pre><code class="language-html">$ eosiocpp -n debug
+$ cd debug</code></pre>
+  <h2>debug.cpp</h2>
+  <p>修改已创建的debug.cpp文件如下所示。</p>
+  <pre><code class="language-html">#include &lt;eosiolib/eosio.hpp&gt;
+  
+class debug : public eosio::contract {
+  public:
+      using contract::contract;
+
+      // @abi action
+      void debugfunc( account_name from, account_name to, uint64_t amount ) {
+         auto header = "======== debugfunc ========";
+         eosio::print( header, "\n" );
+         eosio::print( "from = ", from, "  to = ", to, "  amount = ", amount, "\n" );
+         eosio::print( "from = ", eosio::name{from}, "  to = ", eosio::name{to}, "  amount = ", amount, "\n" );
+      }
+};
+
+EOSIO_ABI( debug, (debugfunc) )</code></pre>
+  <h2>debug.wast</h2>
+  <p>使用以下命令生成debug.wast文件</p>
+  <pre><code class="language-html">$ eosiocpp -o debug.wast debug.cpp</code></pre>
+  <h2>debug.abi</h2>
+  <p>使用以下命令生成debug.abi文件</p>
+  <pre><code class="language-html">$ eosiocpp -g debug.abi debug.cpp</code></pre>
+  <h2>部署并执行活动</h2>
+  <p>现在我们可以部署并且向活动发起请求。这里假设我们已经创建了debug账号，并且已经将密钥纳入了钱包管理。</p>
+  <pre><code class="language-html">$ cleos set contract debug debug.wast debug.abi
+$ cleos push action debug debugfunc '["fred", "barney", 200 ]' -p debug</code></pre>
+  <p>我们可以在本地nodeos节点日志中查阅到上述活动被触发的日志。</p>
+  <pre><code class="language-html">======== debugfunc ========
+from = 6761187270264356864  to = 4156599770598604800  amount = 200
+from = fred  to = barney  amount = 200</code></pre>使用这种技术，我们可以按自己期望的方式来进行调测。有时候在日志中会看到两次或更多次的消息，这是因为在验证、块生成和块应用不同阶段都会执行到这些事务。
+  <br>
+  <p><br></p>
+  <p>摘自 <a href="https://github.com/EOSIO/eos/wiki/Smart-Contract#basics-of-eosio-smart-contracts" rel="nofollow">Smart Contract</a>，翻译 by Kevin.</p>
+  <p><br></p>
+  <p><br></p> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/xc70203/article/details/80497141,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/xc70203/article/details/80497141,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

@@ -1,0 +1,34 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div class="article-copyright">
+   版权声明：分享或转载请获得授权并标注来源。版权合作可以联系微信：13218779868。对区块链感兴趣可以加入我们的telegram群：https://t.me/eonblock，微信号搜索：eonDAOclub ，点击‘关注‘ https://blog.csdn.net/lsttoy/article/details/73459950 
+ </div> 
+ <div class="markdown_views"> 
+  <p>四，核心包之BSSCP（区块链加密服务提供者）包之UTIL工具包</p> 
+  <p>包内容简介：本包主要是和BCCSP（区块链加密服务提供者）相关的各核心文件的接口文件，主要是提供一些密码学相关的操作实现的借口，包含哈希、签名、验证及加解密等等。文件中是一些主要加密算法的结构接口描述，如AES、椭圆曲线签名算法、SHA哈希算法、RSA算法以及一些配置文件接口如密钥库配置、可选项配置等等。这些主要支持MSP的相关调用。</p> 
+  <h2 id="核心文件1-bccspgo">核心文件1 bccsp.go:</h2> 
+  <p>BCCSP 接口：主要是定义密码学相关操作，包括加解密、签名和验证、签名、Hash、Key 的生命周期管理等方法。 命名主要以ops为后缀进行。</p> 
+  <h2 id="核心文件2-aesoptsgo">核心文件2 aesopts.go:</h2> 
+  <p>AES 系列接口：AES 算法相关选项结构，主要包含三类key：128位key系列AES128KeyGenOpts操作、196位key系列AES192KeyGenOpts操作、256位key系列AES256KeyGenOpts操作。</p> 
+  <h2 id="核心文件3-ecdsaoptsgo">核心文件3 ecdsaopts.go :</h2> 
+  <p>ECDSA 系列接口：ECDSA 算法相关选项结构，主要包含两类key：256位key系列ECDSAP256KeyGenOpts操作、384位key系列ECDSAP384KeyGenOpts操作。</p> 
+  <h2 id="核心文件4-hashoptsgo">核心文件4 hashopts.go :</h2> 
+  <p>HASH 系列接口：HASH 算法相关选项结构，主要包含两类四种key：256位key系列SHA256Opts操作、256位key系列SHA3_256Opts操作、384位key系列SHA384Opts操作、384位key系列SHA3_384Opts操作。</p> 
+  <h2 id="核心文件5-rsaoptsgo">核心文件5 rsaopts.go :</h2> 
+  <p>HASH 系列接口：HASH 算法相关选项结构，主要包含四类key：1024位key系列RSA1024KeyGenOpts操作、2048位key系列RSA1024KeyGenOpts操作、3072位key系列RSA3072KeyGenOpts操作、4096位key系列RSA4096KeyGenOpts操作。</p> 
+  <h2 id="核心文件6-keystorego">核心文件6 keystore.go :</h2> 
+  <p>密钥库相关接口：主要是用来定义 KeyStore 接口，存储加密秘钥。其主要三个方法接口：一个是存key、一个是取key、还一个是用来约束密钥库是否是只读状态。</p> 
+  <h2 id="核心文件7-optsgo">核心文件7 opts.go :</h2> 
+  <p>设置接口：主要是对一些常量进行名称等相关设定，另外。</p> 
+  <p>内置方法：Algorithm() string <br> ⭕️大部分包含Algorithm() 算法方法的，基本都是规划到后面的版本才会用到（to be used)）。</p> 
+  <p>内置方法：Ephemeral() bool <br> ⭕️描述是否终止某个循环中的作业。当为false时候即终止，否则继续。 <br> ————————————————————————————</p> 
+  <h2 id="utils工具包小结">UTILS工具包小结</h2> 
+  <p>整个加密包主要内容围绕上述实现的接口来进行设定，包含了几个主流的可插拔加密技术。 <br> 可以知道，在后面维护加密相关内容的时候，应该同时维护这边的接口状态信息，以保证信息的完整性。</p> 
+  <h2 id="结束语">结束语</h2> 
+  <p>觉得好的朋友可以给我大赏一杯咖啡钱缓解通宵梳理环境的疲乏〜！ <br> 方式一：支付宝 <br> <img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180831102425105?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xzdHRveQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述" title=""> <br> 方式二：以太坊 <br> <img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/2018083110244130?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xzdHRveQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述" title=""></p> 
+ </div> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/markdown_views-ea0013b516.css"> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/lsttoy/article/details/73459950,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/lsttoy/article/details/73459950,&quot;}">阅读更多</a> 
+ <a class="btn" href="https://passport.csdn.net/account/login?utm_source=csdn_blog_pc_more_login" target="_self" id="btn-lobinreadmore" data-track-view="{&quot;mod&quot;:&quot;popu_557&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/lsttoy/article/details/73459950,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_557&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/lsttoy/article/details/73459950,&quot;}">登录后自动展开</a> 
+</div>

@@ -1,0 +1,1184 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>支付宝支付开发——当面付条码支付和扫码支付 | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="支付宝支付开发——当面付条码支付和扫码支付" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="关键字：支付宝 当面付 条码支付 扫码支付 二维码支付 订单查询 退款作者：方倍工作室原文:&nbsp;http://www.cnblogs.com/txw1958/p/alipay-f2fpay.html&nbsp; &nbsp; 本文介绍支付宝中当面付下属的条码支付、扫码支付、订单查询、退款申请的集成开发过程。 &nbsp; 本文分为以下五个部分： 条码支付和扫码支付介绍 申请应用 密钥生成及配置 API及SDK集成 条码支付、扫码支付、订单查询、退款申请 &nbsp; 注： 支付宝支付开发有一定的门槛，如果您愿意为知识付费来节省您宝贵的时间，请直接见底部说明。 &nbsp; 一、条码支付及二维码支付介绍 1. 条码支付 条码支付是支付宝给到线下传统行业的一种收款方式。商家使用扫码枪等条码识别设备扫描用户支付宝钱包上的条码/二维码，完成收款。用户仅需出示付款码，所有收款操作由商家端完成。其使用场景如下： 业务流程： 使用步骤： 用户登陆支付宝钱包，点击首页“付款”，进入付款码界面； 收银员在商家收银系统操作生成订单，用户确认支付金额； 用户出示钱包的“付款码”，收银员用扫码设备来扫描用户手机上的条码/二维码后，商家收银系统提交支付； 付款成功后商家收银系统会拿到支付成功或者失败的结果。 2. 扫码支付 扫码支付，指用户打开支付宝钱包中的“扫一扫”功能，扫描商家展示在某收银场景下的二维码并进行支付的模式。该模式适用于线下实体店支付、面对面支付等场景。 其使用场景如下： 业务流程： 使用步骤： 用户登陆支付宝钱包，点击首页“付款-扫码付”，进入扫一扫界面； 收银员在商家收银系统操作生成支付宝订单，用户确认支付金额，并生成二维码； 用户使用钱包的“扫码付”，扫收银员提供的二维码，确认支付； 用户付款后商家收银系统会拿到支付成功或者失败的结果。 &nbsp; 二、接口申请 企业在申请企业支付宝之后，进行功能申请并签约，然后在蚂蚁金服开放平台中申请应用如下（详细过程就略了） 然后在功能列表中，申请当面付这一功能，申请成功后如下。 这样，我们就有了当面付的权限了。 &nbsp; &nbsp; 三、密钥生成 在支付宝当面付的接口中，使用了非对称加密算法，商户自己的公钥和私钥需要自己使用OpenSSL手动生成。对这些概念比较陌生的话，请先自行先了解一下密码学的相关知识。OpenSSL也可以从方倍工作室博客中找到。 下载支付宝官方提供的密钥生成工具OpenSSL，然后执行以下命令就可以生成公钥和私钥。 其中 genrsa -out rsa_private_key.pem 1024 是用于生成RSA私钥，执行后在程序目录中生成一个文件rsa_private_key.pem，其内容如下 -----BEGIN RSA PRIVATE KEY----- MIICXAIBAAKBgQCyffRONGd8Q/1kRh1cpsSRi360DXLHI7zxdPJGYe5HKDWF7u9b 3zZU9erZpM90XE7gZRKsxIgOurH4uqhmVRbto3e+LiYOyNpd6As3Q427KCTIT7aj hHicZ6GWhegTUiVLqiuWLsauQcbI6DO4GEZrlvAdzus0WcJiJOxW02rxSQIDAQAB AoGAXBJYyVaC4zj3Jph8YOStlR5N13bwdATdW/glWWT+0rnNEi90TQHRNvY7lasd JgrPrTS182TVgjOPxmwSnebakhIuGIdPq99GLE4LGd5lKWTzkd84BMvhatfNsCCz cEVFqKg3tZd4t3fQ93FrILsnnZpLhiW53jIrStCkR3rx9OECQQDWMSHyc91hEVMQ qVNasbGEicKWxhoDqjdm2lHkBx4mrB9JEZFDs6MxWdajf2/Qw+tgtpN3YBcCDw/H nGHhQtStAkEA1VTyjOdAwWode8X4fu0IPq9+E19mcVOAJjLBH46mropwgOdj3raq T/ThaKeaydjabsTAiY2J18HiTiyH+1bGjQJBAKgRJXH5OFxSG7uXIbCofYJiFi34 g7EcfxxVcqxaaW4u4N2Uy0c0TXkL5T+lXzeQg8D/gfbJj0QuTVNzgdofdoECQBHY OznCFk6Xe8PguXqUhT4JG/iu4DjWjT+kuzbSjerHtcVylY4JpZFuoHRKoM4Fj6/4 UUqwRjmABFgZrX4+sfkCQCNI8RCZ6yprh5kEOePo3uazAlNENP8dKkhgqChawdK7 7NzlJ727Nt23STHFx6NkhzyruJGQ5Vx1Lkl0wKuKbXM= -----END RSA PRIVATE KEY----- 命令 rsa -in rsa_private_key.pem -pubout -out rsa_public_key.pem 是用于生成RSA公钥，执行后在程序目录中生成一个文件rsa_public_key.pem，其内容如下 -----BEGIN PUBLIC KEY----- MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCyffRONGd8Q/1kRh1cpsSRi362 DXLHI7zxdPJGYe5HKDWF7u9b3zZU9erZpM90XE7gZRKsxIgOurH4uqhmVRbto3e+ LiYOyNpd6As3Q427KCTIT7ajhHicZ6GWhegTUiVLqiuWLsauQcbI6DO4GEZrlvAd zus0WcJiJOxW02rxSQIDAQAB -----END PUBLIC KEY----- 生成的这个RSA公钥，需要填写到应用中去，填写地址如下所示。私钥不需要填到配置中，到时候配置到代码中。 &nbsp;特别注意，密钥要去掉注释部分，且转换成一行字符，否则回车换行也成为密钥的一部分，将导致无法正常加解密。 &nbsp;同时，可以点击 “查看支付宝公钥”，将支付宝的公钥复制保存下来，后面的程序中将需要用到。 &nbsp; 四、密钥生成API与密钥配置 公共参数 请求地址： 环境 HTTPS请求地址 正式环境 https://openapi.alipay.com/gateway.do 公共请求参数： 参数 类型 是否必填 最大长度 描述 app_id String 是 32 支付宝分配给开发者的应用ID method String 是 128 接口名称 format String 否 40 仅支持JSON charset String 是 10 请求使用的编码格式，如utf-8,gbk,gb2312等 sign_type String 是 10 商户生成签名字符串所使用的签名算法类型，目前支持RSA sign String 是 256 商户请求参数的签名串，详见签名 timestamp String 是 19 发送请求的时间，格式&quot;yyyy-MM-dd HH:mm:ss&quot; version String 是 3 调用的接口版本，固定为：1.0 notify_url String 否 256 支付宝服务器主动通知商户服务器里指定的页面http/https路径。 app_auth_token String 否 40 详见应用授权概述 biz_content String 是 - 请求参数的集合，最大长度不限，除公共参数外所有请求参数都必须放在这个参数中传递，具体参照各产品快速接入文档 请求参数 参数 类型 是否必填 最大长度 描述 out_trade_no String 必须 64 商户订单号,64个字符以内、可包含字母、数字、下划线；需保证在商户端不重复 scene String 必须 32 支付场景 条码支付，取值：bar_code 声波支付，取值：wave_code auth_code String 必须 32 支付授权码 seller_id String 可选 28 如果该值为空，则默认为商户签约账号对应的支付宝用户ID total_amount Price 可选 11 订单总金额，单位为元， discountable_amount Price 可选 11 参与优惠计算的金额，单位为元 undiscountable_amount Price 可选 11 不参与优惠计算的金额，单位为元 subject String 必须 256 订单标题 body String 可选 128 订单描述 goods_detail GoodsDetail [] 可选 - 订单包含的商品列表信息，Json格式，其它说明详见商品明细说明 operator_id String 可选 28 商户操作员编号 store_id String 可选 32 商户门店编号 terminal_id String 可选 32 商户机具终端编号 alipay_store_id String 可选 32 支付宝的店铺编号 extend_params ExtendParams 可选 - 业务扩展参数 timeout_express String 可选 6 该笔订单允许的最晚付款时间，逾期将关闭交易。 royalty_info RoyaltyInfo 可选 - 描述分账信息，Json格式，其它说明详见分账说明 sub_merchant SubMerchant 可选 - 二级商户信息,当前只对特殊银行机构特定场景下使用此字段 公共响应参数 参数 类型 是否必填 最大长度 描述 code String 是 - 网关返回码,详见文档 msg String 是 - 网关返回码描述,详见文档 sub_code String 否 - 业务返回码,详见文档 sub_msg String 否 - 业务返回码描述,详见文档 sign String 是 - 签名,详见文档 响应参数 参数 类型 是否必填 最大长度 描述 trade_no String 必填 64 支付宝交易号 out_trade_no String 必填 64 商户订单号 buyer_logon_id String 必填 100 买家支付宝账号 total_amount Price 必填 11 交易金额 receipt_amount String 必填 11 实收金额 buyer_pay_amount Price 选填 11 买家付款的金额 point_amount Price 选填 11 使用积分宝付款的金额 invoice_amount Price 选填 11 交易中可给用户开具发票的金额 gmt_payment Date 必填 32 交易支付时间 fund_bill_list TradeFundBill [] 必填 - 交易支付使用的资金渠道 card_balance Price 选填 11 支付宝卡余额 store_name String 选填 512 发生支付交易的商户门店名称 buyer_user_id String 必填 28 买家在支付宝的用户id discount_goods_detail String 必填 - 本次交易支付所使用的单品券优惠的商品优惠信息 &nbsp; 系统中配置如下 &lt;?php $config = array ( //支付宝公钥 &#39;alipay_public_key&#39; =&gt; &quot;MIGfMA0GCSqGSIb3DQasdfQUAA4GNADCBiQKBgQDDI6d306Q8fIfCOaTXyiUeJHkrIvYISRcc73s3vF1ZT7XN8RNPwJxo8pWaJMmvyTn9N4HQ632qJBVHf8sxHi/fEsraprwCtzvzQETrNRwVxLO5jVmRGi60j8Ue1efIlzPXV9je9mkjzOmdssymZkh2QhUrCmZYI/FCEa3/cNMW0QIDAQAB&quot;," />
+<meta property="og:description" content="关键字：支付宝 当面付 条码支付 扫码支付 二维码支付 订单查询 退款作者：方倍工作室原文:&nbsp;http://www.cnblogs.com/txw1958/p/alipay-f2fpay.html&nbsp; &nbsp; 本文介绍支付宝中当面付下属的条码支付、扫码支付、订单查询、退款申请的集成开发过程。 &nbsp; 本文分为以下五个部分： 条码支付和扫码支付介绍 申请应用 密钥生成及配置 API及SDK集成 条码支付、扫码支付、订单查询、退款申请 &nbsp; 注： 支付宝支付开发有一定的门槛，如果您愿意为知识付费来节省您宝贵的时间，请直接见底部说明。 &nbsp; 一、条码支付及二维码支付介绍 1. 条码支付 条码支付是支付宝给到线下传统行业的一种收款方式。商家使用扫码枪等条码识别设备扫描用户支付宝钱包上的条码/二维码，完成收款。用户仅需出示付款码，所有收款操作由商家端完成。其使用场景如下： 业务流程： 使用步骤： 用户登陆支付宝钱包，点击首页“付款”，进入付款码界面； 收银员在商家收银系统操作生成订单，用户确认支付金额； 用户出示钱包的“付款码”，收银员用扫码设备来扫描用户手机上的条码/二维码后，商家收银系统提交支付； 付款成功后商家收银系统会拿到支付成功或者失败的结果。 2. 扫码支付 扫码支付，指用户打开支付宝钱包中的“扫一扫”功能，扫描商家展示在某收银场景下的二维码并进行支付的模式。该模式适用于线下实体店支付、面对面支付等场景。 其使用场景如下： 业务流程： 使用步骤： 用户登陆支付宝钱包，点击首页“付款-扫码付”，进入扫一扫界面； 收银员在商家收银系统操作生成支付宝订单，用户确认支付金额，并生成二维码； 用户使用钱包的“扫码付”，扫收银员提供的二维码，确认支付； 用户付款后商家收银系统会拿到支付成功或者失败的结果。 &nbsp; 二、接口申请 企业在申请企业支付宝之后，进行功能申请并签约，然后在蚂蚁金服开放平台中申请应用如下（详细过程就略了） 然后在功能列表中，申请当面付这一功能，申请成功后如下。 这样，我们就有了当面付的权限了。 &nbsp; &nbsp; 三、密钥生成 在支付宝当面付的接口中，使用了非对称加密算法，商户自己的公钥和私钥需要自己使用OpenSSL手动生成。对这些概念比较陌生的话，请先自行先了解一下密码学的相关知识。OpenSSL也可以从方倍工作室博客中找到。 下载支付宝官方提供的密钥生成工具OpenSSL，然后执行以下命令就可以生成公钥和私钥。 其中 genrsa -out rsa_private_key.pem 1024 是用于生成RSA私钥，执行后在程序目录中生成一个文件rsa_private_key.pem，其内容如下 -----BEGIN RSA PRIVATE KEY----- MIICXAIBAAKBgQCyffRONGd8Q/1kRh1cpsSRi360DXLHI7zxdPJGYe5HKDWF7u9b 3zZU9erZpM90XE7gZRKsxIgOurH4uqhmVRbto3e+LiYOyNpd6As3Q427KCTIT7aj hHicZ6GWhegTUiVLqiuWLsauQcbI6DO4GEZrlvAdzus0WcJiJOxW02rxSQIDAQAB AoGAXBJYyVaC4zj3Jph8YOStlR5N13bwdATdW/glWWT+0rnNEi90TQHRNvY7lasd JgrPrTS182TVgjOPxmwSnebakhIuGIdPq99GLE4LGd5lKWTzkd84BMvhatfNsCCz cEVFqKg3tZd4t3fQ93FrILsnnZpLhiW53jIrStCkR3rx9OECQQDWMSHyc91hEVMQ qVNasbGEicKWxhoDqjdm2lHkBx4mrB9JEZFDs6MxWdajf2/Qw+tgtpN3YBcCDw/H nGHhQtStAkEA1VTyjOdAwWode8X4fu0IPq9+E19mcVOAJjLBH46mropwgOdj3raq T/ThaKeaydjabsTAiY2J18HiTiyH+1bGjQJBAKgRJXH5OFxSG7uXIbCofYJiFi34 g7EcfxxVcqxaaW4u4N2Uy0c0TXkL5T+lXzeQg8D/gfbJj0QuTVNzgdofdoECQBHY OznCFk6Xe8PguXqUhT4JG/iu4DjWjT+kuzbSjerHtcVylY4JpZFuoHRKoM4Fj6/4 UUqwRjmABFgZrX4+sfkCQCNI8RCZ6yprh5kEOePo3uazAlNENP8dKkhgqChawdK7 7NzlJ727Nt23STHFx6NkhzyruJGQ5Vx1Lkl0wKuKbXM= -----END RSA PRIVATE KEY----- 命令 rsa -in rsa_private_key.pem -pubout -out rsa_public_key.pem 是用于生成RSA公钥，执行后在程序目录中生成一个文件rsa_public_key.pem，其内容如下 -----BEGIN PUBLIC KEY----- MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCyffRONGd8Q/1kRh1cpsSRi362 DXLHI7zxdPJGYe5HKDWF7u9b3zZU9erZpM90XE7gZRKsxIgOurH4uqhmVRbto3e+ LiYOyNpd6As3Q427KCTIT7ajhHicZ6GWhegTUiVLqiuWLsauQcbI6DO4GEZrlvAd zus0WcJiJOxW02rxSQIDAQAB -----END PUBLIC KEY----- 生成的这个RSA公钥，需要填写到应用中去，填写地址如下所示。私钥不需要填到配置中，到时候配置到代码中。 &nbsp;特别注意，密钥要去掉注释部分，且转换成一行字符，否则回车换行也成为密钥的一部分，将导致无法正常加解密。 &nbsp;同时，可以点击 “查看支付宝公钥”，将支付宝的公钥复制保存下来，后面的程序中将需要用到。 &nbsp; 四、密钥生成API与密钥配置 公共参数 请求地址： 环境 HTTPS请求地址 正式环境 https://openapi.alipay.com/gateway.do 公共请求参数： 参数 类型 是否必填 最大长度 描述 app_id String 是 32 支付宝分配给开发者的应用ID method String 是 128 接口名称 format String 否 40 仅支持JSON charset String 是 10 请求使用的编码格式，如utf-8,gbk,gb2312等 sign_type String 是 10 商户生成签名字符串所使用的签名算法类型，目前支持RSA sign String 是 256 商户请求参数的签名串，详见签名 timestamp String 是 19 发送请求的时间，格式&quot;yyyy-MM-dd HH:mm:ss&quot; version String 是 3 调用的接口版本，固定为：1.0 notify_url String 否 256 支付宝服务器主动通知商户服务器里指定的页面http/https路径。 app_auth_token String 否 40 详见应用授权概述 biz_content String 是 - 请求参数的集合，最大长度不限，除公共参数外所有请求参数都必须放在这个参数中传递，具体参照各产品快速接入文档 请求参数 参数 类型 是否必填 最大长度 描述 out_trade_no String 必须 64 商户订单号,64个字符以内、可包含字母、数字、下划线；需保证在商户端不重复 scene String 必须 32 支付场景 条码支付，取值：bar_code 声波支付，取值：wave_code auth_code String 必须 32 支付授权码 seller_id String 可选 28 如果该值为空，则默认为商户签约账号对应的支付宝用户ID total_amount Price 可选 11 订单总金额，单位为元， discountable_amount Price 可选 11 参与优惠计算的金额，单位为元 undiscountable_amount Price 可选 11 不参与优惠计算的金额，单位为元 subject String 必须 256 订单标题 body String 可选 128 订单描述 goods_detail GoodsDetail [] 可选 - 订单包含的商品列表信息，Json格式，其它说明详见商品明细说明 operator_id String 可选 28 商户操作员编号 store_id String 可选 32 商户门店编号 terminal_id String 可选 32 商户机具终端编号 alipay_store_id String 可选 32 支付宝的店铺编号 extend_params ExtendParams 可选 - 业务扩展参数 timeout_express String 可选 6 该笔订单允许的最晚付款时间，逾期将关闭交易。 royalty_info RoyaltyInfo 可选 - 描述分账信息，Json格式，其它说明详见分账说明 sub_merchant SubMerchant 可选 - 二级商户信息,当前只对特殊银行机构特定场景下使用此字段 公共响应参数 参数 类型 是否必填 最大长度 描述 code String 是 - 网关返回码,详见文档 msg String 是 - 网关返回码描述,详见文档 sub_code String 否 - 业务返回码,详见文档 sub_msg String 否 - 业务返回码描述,详见文档 sign String 是 - 签名,详见文档 响应参数 参数 类型 是否必填 最大长度 描述 trade_no String 必填 64 支付宝交易号 out_trade_no String 必填 64 商户订单号 buyer_logon_id String 必填 100 买家支付宝账号 total_amount Price 必填 11 交易金额 receipt_amount String 必填 11 实收金额 buyer_pay_amount Price 选填 11 买家付款的金额 point_amount Price 选填 11 使用积分宝付款的金额 invoice_amount Price 选填 11 交易中可给用户开具发票的金额 gmt_payment Date 必填 32 交易支付时间 fund_bill_list TradeFundBill [] 必填 - 交易支付使用的资金渠道 card_balance Price 选填 11 支付宝卡余额 store_name String 选填 512 发生支付交易的商户门店名称 buyer_user_id String 必填 28 买家在支付宝的用户id discount_goods_detail String 必填 - 本次交易支付所使用的单品券优惠的商品优惠信息 &nbsp; 系统中配置如下 &lt;?php $config = array ( //支付宝公钥 &#39;alipay_public_key&#39; =&gt; &quot;MIGfMA0GCSqGSIb3DQasdfQUAA4GNADCBiQKBgQDDI6d306Q8fIfCOaTXyiUeJHkrIvYISRcc73s3vF1ZT7XN8RNPwJxo8pWaJMmvyTn9N4HQ632qJBVHf8sxHi/fEsraprwCtzvzQETrNRwVxLO5jVmRGi60j8Ue1efIlzPXV9je9mkjzOmdssymZkh2QhUrCmZYI/FCEa3/cNMW0QIDAQAB&quot;," />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/07/03/%E6%94%AF%E4%BB%98%E5%AE%9D%E6%94%AF%E4%BB%98%E5%BC%80%E5%8F%91-%E5%BD%93%E9%9D%A2%E4%BB%98%E6%9D%A1%E7%A0%81%E6%94%AF%E4%BB%98%E5%92%8C%E6%89%AB%E7%A0%81%E6%94%AF%E4%BB%98.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/07/03/%E6%94%AF%E4%BB%98%E5%AE%9D%E6%94%AF%E4%BB%98%E5%BC%80%E5%8F%91-%E5%BD%93%E9%9D%A2%E4%BB%98%E6%9D%A1%E7%A0%81%E6%94%AF%E4%BB%98%E5%92%8C%E6%89%AB%E7%A0%81%E6%94%AF%E4%BB%98.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-07-03T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"关键字：支付宝 当面付 条码支付 扫码支付 二维码支付 订单查询 退款作者：方倍工作室原文:&nbsp;http://www.cnblogs.com/txw1958/p/alipay-f2fpay.html&nbsp; &nbsp; 本文介绍支付宝中当面付下属的条码支付、扫码支付、订单查询、退款申请的集成开发过程。 &nbsp; 本文分为以下五个部分： 条码支付和扫码支付介绍 申请应用 密钥生成及配置 API及SDK集成 条码支付、扫码支付、订单查询、退款申请 &nbsp; 注： 支付宝支付开发有一定的门槛，如果您愿意为知识付费来节省您宝贵的时间，请直接见底部说明。 &nbsp; 一、条码支付及二维码支付介绍 1. 条码支付 条码支付是支付宝给到线下传统行业的一种收款方式。商家使用扫码枪等条码识别设备扫描用户支付宝钱包上的条码/二维码，完成收款。用户仅需出示付款码，所有收款操作由商家端完成。其使用场景如下： 业务流程： 使用步骤： 用户登陆支付宝钱包，点击首页“付款”，进入付款码界面； 收银员在商家收银系统操作生成订单，用户确认支付金额； 用户出示钱包的“付款码”，收银员用扫码设备来扫描用户手机上的条码/二维码后，商家收银系统提交支付； 付款成功后商家收银系统会拿到支付成功或者失败的结果。 2. 扫码支付 扫码支付，指用户打开支付宝钱包中的“扫一扫”功能，扫描商家展示在某收银场景下的二维码并进行支付的模式。该模式适用于线下实体店支付、面对面支付等场景。 其使用场景如下： 业务流程： 使用步骤： 用户登陆支付宝钱包，点击首页“付款-扫码付”，进入扫一扫界面； 收银员在商家收银系统操作生成支付宝订单，用户确认支付金额，并生成二维码； 用户使用钱包的“扫码付”，扫收银员提供的二维码，确认支付； 用户付款后商家收银系统会拿到支付成功或者失败的结果。 &nbsp; 二、接口申请 企业在申请企业支付宝之后，进行功能申请并签约，然后在蚂蚁金服开放平台中申请应用如下（详细过程就略了） 然后在功能列表中，申请当面付这一功能，申请成功后如下。 这样，我们就有了当面付的权限了。 &nbsp; &nbsp; 三、密钥生成 在支付宝当面付的接口中，使用了非对称加密算法，商户自己的公钥和私钥需要自己使用OpenSSL手动生成。对这些概念比较陌生的话，请先自行先了解一下密码学的相关知识。OpenSSL也可以从方倍工作室博客中找到。 下载支付宝官方提供的密钥生成工具OpenSSL，然后执行以下命令就可以生成公钥和私钥。 其中 genrsa -out rsa_private_key.pem 1024 是用于生成RSA私钥，执行后在程序目录中生成一个文件rsa_private_key.pem，其内容如下 -----BEGIN RSA PRIVATE KEY----- MIICXAIBAAKBgQCyffRONGd8Q/1kRh1cpsSRi360DXLHI7zxdPJGYe5HKDWF7u9b 3zZU9erZpM90XE7gZRKsxIgOurH4uqhmVRbto3e+LiYOyNpd6As3Q427KCTIT7aj hHicZ6GWhegTUiVLqiuWLsauQcbI6DO4GEZrlvAdzus0WcJiJOxW02rxSQIDAQAB AoGAXBJYyVaC4zj3Jph8YOStlR5N13bwdATdW/glWWT+0rnNEi90TQHRNvY7lasd JgrPrTS182TVgjOPxmwSnebakhIuGIdPq99GLE4LGd5lKWTzkd84BMvhatfNsCCz cEVFqKg3tZd4t3fQ93FrILsnnZpLhiW53jIrStCkR3rx9OECQQDWMSHyc91hEVMQ qVNasbGEicKWxhoDqjdm2lHkBx4mrB9JEZFDs6MxWdajf2/Qw+tgtpN3YBcCDw/H nGHhQtStAkEA1VTyjOdAwWode8X4fu0IPq9+E19mcVOAJjLBH46mropwgOdj3raq T/ThaKeaydjabsTAiY2J18HiTiyH+1bGjQJBAKgRJXH5OFxSG7uXIbCofYJiFi34 g7EcfxxVcqxaaW4u4N2Uy0c0TXkL5T+lXzeQg8D/gfbJj0QuTVNzgdofdoECQBHY OznCFk6Xe8PguXqUhT4JG/iu4DjWjT+kuzbSjerHtcVylY4JpZFuoHRKoM4Fj6/4 UUqwRjmABFgZrX4+sfkCQCNI8RCZ6yprh5kEOePo3uazAlNENP8dKkhgqChawdK7 7NzlJ727Nt23STHFx6NkhzyruJGQ5Vx1Lkl0wKuKbXM= -----END RSA PRIVATE KEY----- 命令 rsa -in rsa_private_key.pem -pubout -out rsa_public_key.pem 是用于生成RSA公钥，执行后在程序目录中生成一个文件rsa_public_key.pem，其内容如下 -----BEGIN PUBLIC KEY----- MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCyffRONGd8Q/1kRh1cpsSRi362 DXLHI7zxdPJGYe5HKDWF7u9b3zZU9erZpM90XE7gZRKsxIgOurH4uqhmVRbto3e+ LiYOyNpd6As3Q427KCTIT7ajhHicZ6GWhegTUiVLqiuWLsauQcbI6DO4GEZrlvAd zus0WcJiJOxW02rxSQIDAQAB -----END PUBLIC KEY----- 生成的这个RSA公钥，需要填写到应用中去，填写地址如下所示。私钥不需要填到配置中，到时候配置到代码中。 &nbsp;特别注意，密钥要去掉注释部分，且转换成一行字符，否则回车换行也成为密钥的一部分，将导致无法正常加解密。 &nbsp;同时，可以点击 “查看支付宝公钥”，将支付宝的公钥复制保存下来，后面的程序中将需要用到。 &nbsp; 四、密钥生成API与密钥配置 公共参数 请求地址： 环境 HTTPS请求地址 正式环境 https://openapi.alipay.com/gateway.do 公共请求参数： 参数 类型 是否必填 最大长度 描述 app_id String 是 32 支付宝分配给开发者的应用ID method String 是 128 接口名称 format String 否 40 仅支持JSON charset String 是 10 请求使用的编码格式，如utf-8,gbk,gb2312等 sign_type String 是 10 商户生成签名字符串所使用的签名算法类型，目前支持RSA sign String 是 256 商户请求参数的签名串，详见签名 timestamp String 是 19 发送请求的时间，格式&quot;yyyy-MM-dd HH:mm:ss&quot; version String 是 3 调用的接口版本，固定为：1.0 notify_url String 否 256 支付宝服务器主动通知商户服务器里指定的页面http/https路径。 app_auth_token String 否 40 详见应用授权概述 biz_content String 是 - 请求参数的集合，最大长度不限，除公共参数外所有请求参数都必须放在这个参数中传递，具体参照各产品快速接入文档 请求参数 参数 类型 是否必填 最大长度 描述 out_trade_no String 必须 64 商户订单号,64个字符以内、可包含字母、数字、下划线；需保证在商户端不重复 scene String 必须 32 支付场景 条码支付，取值：bar_code 声波支付，取值：wave_code auth_code String 必须 32 支付授权码 seller_id String 可选 28 如果该值为空，则默认为商户签约账号对应的支付宝用户ID total_amount Price 可选 11 订单总金额，单位为元， discountable_amount Price 可选 11 参与优惠计算的金额，单位为元 undiscountable_amount Price 可选 11 不参与优惠计算的金额，单位为元 subject String 必须 256 订单标题 body String 可选 128 订单描述 goods_detail GoodsDetail [] 可选 - 订单包含的商品列表信息，Json格式，其它说明详见商品明细说明 operator_id String 可选 28 商户操作员编号 store_id String 可选 32 商户门店编号 terminal_id String 可选 32 商户机具终端编号 alipay_store_id String 可选 32 支付宝的店铺编号 extend_params ExtendParams 可选 - 业务扩展参数 timeout_express String 可选 6 该笔订单允许的最晚付款时间，逾期将关闭交易。 royalty_info RoyaltyInfo 可选 - 描述分账信息，Json格式，其它说明详见分账说明 sub_merchant SubMerchant 可选 - 二级商户信息,当前只对特殊银行机构特定场景下使用此字段 公共响应参数 参数 类型 是否必填 最大长度 描述 code String 是 - 网关返回码,详见文档 msg String 是 - 网关返回码描述,详见文档 sub_code String 否 - 业务返回码,详见文档 sub_msg String 否 - 业务返回码描述,详见文档 sign String 是 - 签名,详见文档 响应参数 参数 类型 是否必填 最大长度 描述 trade_no String 必填 64 支付宝交易号 out_trade_no String 必填 64 商户订单号 buyer_logon_id String 必填 100 买家支付宝账号 total_amount Price 必填 11 交易金额 receipt_amount String 必填 11 实收金额 buyer_pay_amount Price 选填 11 买家付款的金额 point_amount Price 选填 11 使用积分宝付款的金额 invoice_amount Price 选填 11 交易中可给用户开具发票的金额 gmt_payment Date 必填 32 交易支付时间 fund_bill_list TradeFundBill [] 必填 - 交易支付使用的资金渠道 card_balance Price 选填 11 支付宝卡余额 store_name String 选填 512 发生支付交易的商户门店名称 buyer_user_id String 必填 28 买家在支付宝的用户id discount_goods_detail String 必填 - 本次交易支付所使用的单品券优惠的商品优惠信息 &nbsp; 系统中配置如下 &lt;?php $config = array ( //支付宝公钥 &#39;alipay_public_key&#39; =&gt; &quot;MIGfMA0GCSqGSIb3DQasdfQUAA4GNADCBiQKBgQDDI6d306Q8fIfCOaTXyiUeJHkrIvYISRcc73s3vF1ZT7XN8RNPwJxo8pWaJMmvyTn9N4HQ632qJBVHf8sxHi/fEsraprwCtzvzQETrNRwVxLO5jVmRGi60j8Ue1efIlzPXV9je9mkjzOmdssymZkh2QhUrCmZYI/FCEa3/cNMW0QIDAQAB&quot;,","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/07/03/%E6%94%AF%E4%BB%98%E5%AE%9D%E6%94%AF%E4%BB%98%E5%BC%80%E5%8F%91-%E5%BD%93%E9%9D%A2%E4%BB%98%E6%9D%A1%E7%A0%81%E6%94%AF%E4%BB%98%E5%92%8C%E6%89%AB%E7%A0%81%E6%94%AF%E4%BB%98.html","headline":"支付宝支付开发——当面付条码支付和扫码支付","dateModified":"2018-07-03T00:00:00+08:00","datePublished":"2018-07-03T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/07/03/%E6%94%AF%E4%BB%98%E5%AE%9D%E6%94%AF%E4%BB%98%E5%BC%80%E5%8F%91-%E5%BD%93%E9%9D%A2%E4%BB%98%E6%9D%A1%E7%A0%81%E6%94%AF%E4%BB%98%E5%92%8C%E6%89%AB%E7%A0%81%E6%94%AF%E4%BB%98.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>支付宝支付开发——当面付条码支付和扫码支付</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <div id="cnblogs_post_body" class="blogpost-body" style="color:rgb(51,51,51);font-family:verdana, Arial, Helvetica, sans-serif;font-size:14px;background-color:rgb(255,255,255);">
+   <p>关键字：支付宝 当面付 条码支付 扫码支付 二维码支付 订单查询 退款<br>作者：方倍工作室<br>原文:&nbsp;<a id="Editor_Edit_hlEntryLink" title="view: 支付宝支付开发——当面付" href="http://www.cnblogs.com/txw1958/p/alipay-f2fpay.html" rel="nofollow" style="color:rgb(0,0,0);border-bottom:1px dotted rgb(51,51,51);">http://www.cnblogs.com/txw1958/p/alipay-f2fpay.html</a>&nbsp;</p>
+   <p>&nbsp;</p>
+   <p>本文介绍支付宝中当面付下属的条码支付、扫码支付、订单查询、退款申请的集成开发过程。</p>
+   <p>&nbsp;</p>
+   <p>本文分为以下五个部分：</p>
+   <ol>
+    <li>条码支付和扫码支付介绍</li>
+    <li>申请应用</li>
+    <li>密钥生成及配置</li>
+    <li>API及SDK集成</li>
+    <li>条码支付、扫码支付、订单查询、退款申请</li>
+   </ol>
+   <p>&nbsp;</p>
+   <p><span style="line-height:1.8;color:rgb(255,0,0);">注： 支付宝支付开发有一定的门槛，如果您愿意为知识付费来节省您宝贵的时间，请直接见底部说明。</span><span><br></span></p>
+   <p>&nbsp;</p>
+   <h2 style="color:rgb(0,0,0);line-height:1.5;font-size:21px;">一、条码支付及二维码支付介绍</h2>
+   <h3 style="color:rgb(0,0,0);font-size:16px;line-height:1.5;">1. 条码支付</h3>
+   <p>条码支付是支付宝给到线下传统行业的一种收款方式。商家使用扫码枪等条码识别设备扫描用户支付宝钱包上的条码/二维码，完成收款。用户仅需出示付款码，所有收款操作由商家端完成。其使用场景如下：</p>
+   <p><img src="https://images2015.cnblogs.com/blog/340216/201608/340216-20160826150740585-1083991565.png" alt="" style="border:0px;"></p>
+   <p>业务流程：</p>
+   <p><img src="https://images2015.cnblogs.com/blog/340216/201608/340216-20160826155828991-721930105.png" alt="" style="border:0px;"></p>
+   <p>使用步骤：</p>
+   <ol>
+    <li>用户登陆支付宝钱包，点击首页“付款”，进入付款码界面；</li>
+    <li>收银员在商家收银系统操作生成订单，用户确认支付金额；</li>
+    <li>用户出示钱包的“付款码”，收银员用扫码设备来扫描用户手机上的条码/二维码后，商家收银系统提交支付；</li>
+    <li>付款成功后商家收银系统会拿到支付成功或者失败的结果。</li>
+   </ol>
+   <h3 style="color:rgb(0,0,0);font-size:16px;line-height:1.5;">2. 扫码支付</h3>
+   <p>扫码支付，指用户打开支付宝钱包中的“扫一扫”功能，扫描商家展示在某收银场景下的二维码并进行支付的模式。该模式适用于线下实体店支付、面对面支付等场景。</p>
+   <p>其使用场景如下：</p>
+   <p><img src="https://images2015.cnblogs.com/blog/340216/201608/340216-20160826155907554-687187447.png" alt="" style="border:0px;"></p>
+   <p>业务流程：</p>
+   <p><img src="https://images2015.cnblogs.com/blog/340216/201608/340216-20160826155915991-768037719.png" alt="" style="border:0px;"></p>
+   <p>使用步骤：</p>
+   <ol>
+    <li>用户登陆支付宝钱包，点击首页“付款-扫码付”，进入扫一扫界面；</li>
+    <li>收银员在商家收银系统操作生成支付宝订单，用户确认支付金额，并生成二维码；</li>
+    <li>用户使用钱包的“扫码付”，扫收银员提供的二维码，确认支付；</li>
+    <li>用户付款后商家收银系统会拿到支付成功或者失败的结果。</li>
+   </ol>
+   <p>&nbsp;</p>
+   <h2 style="color:rgb(0,0,0);line-height:1.5;font-size:21px;">二、接口申请</h2>
+   <p>企业在申请企业支付宝之后，进行功能申请并签约，然后在蚂蚁金服开放平台中申请应用如下（详细过程就略了）</p>
+   <p><img src="https://images2015.cnblogs.com/blog/340216/201608/340216-20160826151105397-683705404.png" alt="" style="border:0px;"></p>
+   <p>然后在功能列表中，申请当面付这一功能，申请成功后如下。</p>
+   <p><img src="https://images2015.cnblogs.com/blog/340216/201608/340216-20160826155106726-1895800753.png" alt="" style="border:0px;"></p>
+   <p>这样，我们就有了当面付的权限了。</p>
+   <p>&nbsp;</p>
+   <p>&nbsp;</p>
+   <h2 style="color:rgb(0,0,0);line-height:1.5;font-size:21px;">三、密钥生成</h2>
+   <p>在支付宝当面付的接口中，使用了非对称加密算法，商户自己的公钥和私钥需要自己使用OpenSSL手动生成。对这些概念比较陌生的话，请先自行先了解一下密码学的相关知识。OpenSSL也可以从方倍工作室博客中找到。</p>
+   <p>下载支付宝官方提供的密钥生成工具OpenSSL，然后执行以下命令就可以生成公钥和私钥。</p>
+   <p><img src="https://images2015.cnblogs.com/blog/340216/201608/340216-20160826152344038-1826089701.png" alt="" style="border:0px;"></p>
+   <p>其中</p>
+   <div class="cnblogs_code" style="background-color:rgb(245,245,245);border:1px solid rgb(204,204,204);color:rgb(0,0,0);font-family:'Courier New';font-size:12px;">
+    <pre style="font-family:'Courier New';">genrsa -out rsa_private_key.pem <span style="line-height:1.8;color:rgb(128,0,128);">1024</span></pre>
+   </div>
+   <p>是用于生成RSA私钥，执行后在程序目录中生成一个文件rsa_private_key.pem，其内容如下</p>
+   <div class="cnblogs_code" style="background-color:rgb(245,245,245);border:1px solid rgb(204,204,204);color:rgb(0,0,0);font-family:'Courier New';font-size:12px;">
+    <div class="cnblogs_code_toolbar">
+     <span class="cnblogs_code_copy" style="line-height:1.8;"><a title="复制代码" style="color:rgb(0,0,0);border:none;"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码" style="border:none;"></a></span>
+    </div>
+    <pre style="font-family:'Courier New';">-----BEGIN RSA PRIVATE KEY-----<span style="line-height:1.8;">
+MIICXAIBAAKBgQCyffRONGd8Q</span>/<span style="line-height:1.8;">1kRh1cpsSRi360DXLHI7zxdPJGYe5HKDWF7u9b
+3zZU9erZpM90XE7gZRKsxIgOurH4uqhmVRbto3e</span>+<span style="line-height:1.8;">LiYOyNpd6As3Q427KCTIT7aj
+hHicZ6GWhegTUiVLqiuWLsauQcbI6DO4GEZrlvAdzus0WcJiJOxW02rxSQIDAQAB
+AoGAXBJYyVaC4zj3Jph8YOStlR5N13bwdATdW</span>/glWWT+<span style="line-height:1.8;">0rnNEi90TQHRNvY7lasd
+JgrPrTS182TVgjOPxmwSnebakhIuGIdPq99GLE4LGd5lKWTzkd84BMvhatfNsCCz
+cEVFqKg3tZd4t3fQ93FrILsnnZpLhiW53jIrStCkR3rx9OECQQDWMSHyc91hEVMQ
+qVNasbGEicKWxhoDqjdm2lHkBx4mrB9JEZFDs6MxWdajf2</span>/Qw+tgtpN3YBcCDw/<span style="line-height:1.8;">H
+nGHhQtStAkEA1VTyjOdAwWode8X4fu0IPq9</span>+<span style="line-height:1.8;">E19mcVOAJjLBH46mropwgOdj3raq
+T</span>/ThaKeaydjabsTAiY2J18HiTiyH+<span style="line-height:1.8;">1bGjQJBAKgRJXH5OFxSG7uXIbCofYJiFi34
+g7EcfxxVcqxaaW4u4N2Uy0c0TXkL5T</span>+lXzeQg8D/<span style="line-height:1.8;">gfbJj0QuTVNzgdofdoECQBHY
+OznCFk6Xe8PguXqUhT4JG</span>/iu4DjWjT+kuzbSjerHtcVylY4JpZFuoHRKoM4Fj6/<span style="line-height:1.8;color:rgb(128,0,128);">4</span><span style="line-height:1.8;">
+UUqwRjmABFgZrX4</span>+<span style="line-height:1.8;">sfkCQCNI8RCZ6yprh5kEOePo3uazAlNENP8dKkhgqChawdK7
+7NzlJ727Nt23STHFx6NkhzyruJGQ5Vx1Lkl0wKuKbXM</span>=
+-----END RSA PRIVATE KEY-----</pre>
+    <div class="cnblogs_code_toolbar">
+     <span class="cnblogs_code_copy" style="line-height:1.8;"><a title="复制代码" style="color:rgb(0,0,0);border:none;"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码" style="border:none;"></a></span>
+    </div>
+   </div>
+   <p>命令</p>
+   <div class="cnblogs_code" style="background-color:rgb(245,245,245);border:1px solid rgb(204,204,204);color:rgb(0,0,0);font-family:'Courier New';font-size:12px;">
+    <pre style="font-family:'Courier New';">rsa -<span style="line-height:1.8;color:rgb(0,0,255);">in</span> rsa_private_key.pem -pubout -out rsa_public_key.pem</pre>
+   </div>
+   <p>是用于生成RSA公钥，执行后在程序目录中生成一个文件rsa_public_key.pem，其内容如下</p>
+   <div class="cnblogs_code" style="background-color:rgb(245,245,245);border:1px solid rgb(204,204,204);color:rgb(0,0,0);font-family:'Courier New';font-size:12px;">
+    <div class="cnblogs_code_toolbar">
+     <span class="cnblogs_code_copy" style="line-height:1.8;"><a title="复制代码" style="color:rgb(0,0,0);border:none;"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码" style="border:none;"></a></span>
+    </div>
+    <pre style="font-family:'Courier New';">-----BEGIN PUBLIC KEY-----<span style="line-height:1.8;">
+MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCyffRONGd8Q</span>/<span style="line-height:1.8;">1kRh1cpsSRi362
+DXLHI7zxdPJGYe5HKDWF7u9b3zZU9erZpM90XE7gZRKsxIgOurH4uqhmVRbto3e</span>+<span style="line-height:1.8;">
+LiYOyNpd6As3Q427KCTIT7ajhHicZ6GWhegTUiVLqiuWLsauQcbI6DO4GEZrlvAd
+zus0WcJiJOxW02rxSQIDAQAB
+</span>-----END PUBLIC KEY-----</pre>
+    <div class="cnblogs_code_toolbar">
+     <span class="cnblogs_code_copy" style="line-height:1.8;"><a title="复制代码" style="color:rgb(0,0,0);border:none;"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码" style="border:none;"></a></span>
+    </div>
+   </div>
+   <p>生成的这个RSA公钥，需要填写到应用中去，填写地址如下所示。私钥不需要填到配置中，到时候配置到代码中。</p>
+   <p><img src="https://images2015.cnblogs.com/blog/340216/201608/340216-20160826153147288-196263525.png" alt="" style="border:0px;"></p>
+   <p>&nbsp;特别注意，密钥要去掉注释部分，且转换成一行字符，否则回车换行也成为密钥的一部分，将导致无法正常加解密。</p>
+   <p><img src="https://images2015.cnblogs.com/blog/340216/201608/340216-20160826153923554-1289835436.png" alt="" style="border:0px;"></p>
+   <p>&nbsp;同时，可以点击 “查看支付宝公钥”，将支付宝的公钥复制保存下来，后面的程序中将需要用到。</p>
+   <p><img src="https://images2015.cnblogs.com/blog/340216/201608/340216-20160826165419726-1456592083.png" alt="" style="border:0px;"></p>
+   <p>&nbsp;</p>
+   <h2 style="color:rgb(0,0,0);line-height:1.5;font-size:21px;">四、密钥生成API与密钥配置</h2>
+   <p id="s0">公共参数</p>
+   <div class="J_sCon">
+    请求地址：
+    <table border="1" cellspacing="0" cellpadding="0" style="border:1px solid #C0C0C0;">
+     <tbody>
+      <tr>
+       <th style="color:rgb(0,0,0);border-color:#C0C0C0;border-collapse:collapse;">环境</th>
+       <th style="color:rgb(0,0,0);border-color:#C0C0C0;border-collapse:collapse;">HTTPS请求地址</th>
+      </tr>
+      <tr>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;">正式环境</td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;">https://openapi.alipay.com/gateway.do</td>
+      </tr>
+     </tbody>
+    </table>公共请求参数：
+    <table border="1" cellspacing="0" cellpadding="0" style="border:1px solid #C0C0C0;">
+     <thead>
+      <tr>
+       <th style="color:rgb(0,0,0);border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">参数</span></th>
+       <th style="color:rgb(0,0,0);border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">类型</span></th>
+       <th style="color:rgb(0,0,0);border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">是否必填</span></th>
+       <th style="color:rgb(0,0,0);border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">最大长度</span></th>
+       <th style="color:rgb(0,0,0);border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">描述</span></th>
+      </tr>
+     </thead>
+     <tbody>
+      <tr>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">app_id</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">String</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">是</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">32</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">支付宝分配给开发者的应用ID</span></td>
+      </tr>
+      <tr>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">method</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">String</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">是</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">128</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">接口名称</span></td>
+      </tr>
+      <tr>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">format</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">String</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">否</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">40</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">仅支持JSON</span></td>
+      </tr>
+      <tr>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">charset</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">String</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">是</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">10</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">请求使用的编码格式，如utf-8,gbk,gb2312等</span></td>
+      </tr>
+      <tr>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">sign_type</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">String</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">是</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">10</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">商户生成签名字符串所使用的签名算法类型，目前支持RSA</span></td>
+      </tr>
+      <tr>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">sign</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">String</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">是</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">256</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">商户请求参数的签名串，详见<a href="https://doc.open.alipay.com/doc2/detail.htm?treeId=200&amp;articleId=105351&amp;docType=1" rel="nofollow" style="color:rgb(0,0,0);border-bottom:1px dotted rgb(51,51,51);">签名</a></span></td>
+      </tr>
+      <tr>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">timestamp</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">String</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">是</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">19</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">发送请求的时间，格式"yyyy-MM-dd HH:mm:ss"</span></td>
+      </tr>
+      <tr>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">version</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">String</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">是</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">3</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">调用的接口版本，固定为：1.0</span></td>
+      </tr>
+      <tr>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">notify_url</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">String</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">否</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">256</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">支付宝服务器主动通知商户服务器里指定的页面http/https路径。</span></td>
+      </tr>
+      <tr>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">app_auth_token</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">String</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">否</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">40</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">详见<a href="https://doc.open.alipay.com/doc2/detail.htm?treeId=216&amp;articleId=105193&amp;docType=1" rel="nofollow" style="color:rgb(0,0,0);border-bottom:1px dotted rgb(51,51,51);">应用授权概述</a></span></td>
+      </tr>
+      <tr>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">biz_content</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">String</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">是</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">-</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">请求参数的集合，最大长度不限，除公共参数外所有请求参数都必须放在这个参数中传递，具体参照各产品快速接入文档</span></td>
+      </tr>
+     </tbody>
+    </table>
+   </div>
+   <p id="s1"><span class="triangle open" style="line-height:1.8;">请求参数</span></p>
+   <div class="J_sCon">
+    <table class="table" border="1" cellspacing="0" cellpadding="0" style="border:1px solid #C0C0C0;">
+     <thead>
+      <tr>
+       <th style="color:rgb(0,0,0);border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">参数</span></th>
+       <th style="color:rgb(0,0,0);border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">类型</span></th>
+       <th style="color:rgb(0,0,0);border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">是否必填</span></th>
+       <th style="color:rgb(0,0,0);border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">最大长度</span></th>
+       <th style="color:rgb(0,0,0);border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">描述</span></th>
+      </tr>
+     </thead>
+     <tbody>
+      <tr>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">out_trade_no</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">String</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">必须</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">64</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">商户订单号,64个字符以内、可包含字母、数字、下划线；需保证在商户端不重复</span></td>
+      </tr>
+      <tr class="even">
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">scene</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">String</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">必须</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">32</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">支付场景 条码支付，取值：bar_code 声波支付，取值：wave_code</span></td>
+      </tr>
+      <tr>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">auth_code</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">String</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">必须</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">32</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">支付授权码</span></td>
+      </tr>
+      <tr class="even">
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">seller_id</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">String</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">可选</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">28</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">如果该值为空，则默认为商户签约账号对应的支付宝用户ID</span></td>
+      </tr>
+      <tr>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">total_amount</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">Price</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">可选</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">11</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">订单总金额，单位为元，</span></td>
+      </tr>
+      <tr class="even">
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">discountable_amount</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">Price</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">可选</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">11</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">参与优惠计算的金额，单位为元</span></td>
+      </tr>
+      <tr>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">undiscountable_amount</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">Price</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">可选</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">11</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">不参与优惠计算的金额，单位为元</span></td>
+      </tr>
+      <tr class="even">
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">subject</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">String</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">必须</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">256</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">订单标题</span></td>
+      </tr>
+      <tr>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">body</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">String</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">可选</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">128</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">订单描述</span></td>
+      </tr>
+      <tr class="J_tableTr J_tableTrigger even">
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span class="icon-wrap J_tableIcon" style="line-height:1.8;font-size:12px;">goods_detail</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">GoodsDetail []</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">可选</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">-</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">订单包含的商品列表信息，Json格式，其它说明详见商品明细说明</span></td>
+      </tr>
+      <tr>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">operator_id</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">String</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">可选</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">28</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">商户操作员编号</span></td>
+      </tr>
+      <tr class="even">
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">store_id</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">String</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">可选</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">32</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">商户门店编号</span></td>
+      </tr>
+      <tr>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">terminal_id</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">String</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">可选</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">32</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">商户机具终端编号</span></td>
+      </tr>
+      <tr class="even">
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">alipay_store_id</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">String</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">可选</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">32</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">支付宝的店铺编号</span></td>
+      </tr>
+      <tr class="J_tableTr J_tableTrigger">
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span class="icon-wrap J_tableIcon" style="line-height:1.8;font-size:12px;">extend_params</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">ExtendParams</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">可选</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">-</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">业务扩展参数</span></td>
+      </tr>
+      <tr class="even">
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">timeout_express</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">String</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">可选</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">6</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">该笔订单允许的最晚付款时间，逾期将关闭交易。</span></td>
+      </tr>
+      <tr class="J_tableTr J_tableTrigger">
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span class="icon-wrap J_tableIcon" style="line-height:1.8;font-size:12px;">royalty_info</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">RoyaltyInfo</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">可选</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">-</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">描述分账信息，Json格式，其它说明详见分账说明</span></td>
+      </tr>
+      <tr class="J_tableTr J_tableTrigger even">
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span class="icon-wrap J_tableIcon" style="line-height:1.8;font-size:12px;">sub_merchant</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">SubMerchant</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">可选</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">-</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">二级商户信息,当前只对特殊银行机构特定场景下使用此字段</span></td>
+      </tr>
+     </tbody>
+    </table>
+   </div>
+   <p id="s2"><span class="triangle open" style="line-height:1.8;">公共响应参数</span></p>
+   <div class="J_sCon">
+    <table class="table" border="1" cellspacing="0" cellpadding="0" style="border:1px solid #C0C0C0;">
+     <thead>
+      <tr>
+       <th style="color:rgb(0,0,0);border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">参数</span></th>
+       <th style="color:rgb(0,0,0);border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">类型</span></th>
+       <th style="color:rgb(0,0,0);border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">是否必填</span></th>
+       <th style="color:rgb(0,0,0);border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">最大长度</span></th>
+       <th style="color:rgb(0,0,0);border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">描述</span></th>
+      </tr>
+     </thead>
+     <tbody>
+      <tr>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">code</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">String</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">是</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">-</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">网关返回码,<a href="https://doc.open.alipay.com/docs/doc.htm?treeId=200&amp;articleId=105351&amp;docType=1#s2" rel="nofollow" style="color:rgb(0,0,0);border-bottom:1px dotted rgb(51,51,51);">详见文档</a></span></td>
+      </tr>
+      <tr>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">msg</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">String</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">是</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">-</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">网关返回码描述,<a href="https://doc.open.alipay.com/docs/doc.htm?treeId=200&amp;articleId=105351&amp;docType=1#s2" rel="nofollow" style="color:rgb(0,0,0);border-bottom:1px dotted rgb(51,51,51);">详见文档</a></span></td>
+      </tr>
+      <tr>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">sub_code</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">String</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">否</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">-</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">业务返回码,<a href="https://doc.open.alipay.com/docs/doc.htm?treeId=200&amp;articleId=105351&amp;docType=1#s2" rel="nofollow" style="color:rgb(0,0,0);border-bottom:1px dotted rgb(51,51,51);">详见文档</a></span></td>
+      </tr>
+      <tr>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">sub_msg</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">String</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">否</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">-</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">业务返回码描述,<a href="https://doc.open.alipay.com/docs/doc.htm?treeId=200&amp;articleId=105351&amp;docType=1#s2" rel="nofollow" style="color:rgb(0,0,0);border-bottom:1px dotted rgb(51,51,51);">详见文档</a></span></td>
+      </tr>
+      <tr>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">sign</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">String</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">是</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">-</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">签名,<a href="https://doc.open.alipay.com/docs/doc.htm?treeId=200&amp;articleId=105351&amp;docType=1" rel="nofollow" style="color:rgb(0,0,0);border-bottom:1px dotted rgb(51,51,51);">详见文档</a></span></td>
+      </tr>
+     </tbody>
+    </table>
+   </div>
+   <p id="s3"><span class="triangle open" style="line-height:1.8;">响应参数</span></p>
+   <div class="J_sCon">
+    <table class="table" border="1" cellspacing="0" cellpadding="0" style="border:1px solid #C0C0C0;">
+     <thead>
+      <tr>
+       <th style="color:rgb(0,0,0);border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">参数</span></th>
+       <th style="color:rgb(0,0,0);border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">类型</span></th>
+       <th style="color:rgb(0,0,0);border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">是否必填</span></th>
+       <th style="color:rgb(0,0,0);border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">最大长度</span></th>
+       <th style="color:rgb(0,0,0);border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">描述</span></th>
+      </tr>
+     </thead>
+     <tbody>
+      <tr>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">trade_no</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">String</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">必填</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">64</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">支付宝交易号</span></td>
+      </tr>
+      <tr class="even">
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">out_trade_no</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">String</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">必填</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">64</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">商户订单号</span></td>
+      </tr>
+      <tr>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">buyer_logon_id</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">String</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">必填</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">100</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">买家支付宝账号</span></td>
+      </tr>
+      <tr class="even">
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">total_amount</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">Price</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">必填</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">11</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">交易金额</span></td>
+      </tr>
+      <tr>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">receipt_amount</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">String</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">必填</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">11</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">实收金额</span></td>
+      </tr>
+      <tr class="even">
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">buyer_pay_amount</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">Price</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">选填</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">11</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">买家付款的金额</span></td>
+      </tr>
+      <tr>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">point_amount</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">Price</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">选填</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">11</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">使用积分宝付款的金额</span></td>
+      </tr>
+      <tr class="even">
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">invoice_amount</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">Price</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">选填</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">11</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">交易中可给用户开具发票的金额</span></td>
+      </tr>
+      <tr>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">gmt_payment</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">Date</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">必填</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">32</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">交易支付时间</span></td>
+      </tr>
+      <tr class="J_tableTr2 J_tableTrigger even">
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span class="icon-wrap J_tableIcon" style="line-height:1.8;font-size:12px;">fund_bill_list</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">TradeFundBill []</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">必填</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">-</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">交易支付使用的资金渠道</span></td>
+      </tr>
+      <tr>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">card_balance</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">Price</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">选填</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">11</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">支付宝卡余额</span></td>
+      </tr>
+      <tr class="even">
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">store_name</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">String</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">选填</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">512</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">发生支付交易的商户门店名称</span></td>
+      </tr>
+      <tr>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">buyer_user_id</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">String</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">必填</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">28</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">买家在支付宝的用户id</span></td>
+      </tr>
+      <tr class="even">
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">discount_goods_detail</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">String</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">必填</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">-</span></td>
+       <td style="border-color:#C0C0C0;border-collapse:collapse;"><span style="line-height:1.8;font-size:12px;">本次交易支付所使用的单品券优惠的商品优惠信息</span></td>
+      </tr>
+     </tbody>
+    </table>
+   </div>
+   <p>&nbsp;</p>
+   <p>系统中配置如下</p>
+   <div class="cnblogs_code" style="background-color:rgb(245,245,245);border:1px solid rgb(204,204,204);color:rgb(0,0,0);font-family:'Courier New';font-size:12px;">
+    <div class="cnblogs_code_toolbar">
+     <span class="cnblogs_code_copy" style="line-height:1.8;"><a title="复制代码" style="color:rgb(0,0,0);border:none;"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码" style="border:none;"></a></span>
+    </div>
+    <pre style="font-family:'Courier New';">&lt;?<span style="line-height:1.8;">php
+</span><span style="line-height:1.8;color:rgb(128,0,128);">$config</span> = <span style="line-height:1.8;color:rgb(0,0,255);">array</span><span style="line-height:1.8;"> (    
+    </span><span style="line-height:1.8;color:rgb(0,128,0);">//</span><span style="line-height:1.8;color:rgb(0,128,0);">支付宝公钥</span>
+    'alipay_public_key' =&gt; "MIGfMA0GCSqGSIb3DQasdfQUAA4GNADCBiQKBgQDDI6d306Q8fIfCOaTXyiUeJHkrIvYISRcc73s3vF1ZT7XN8RNPwJxo8pWaJMmvyTn9N4HQ632qJBVHf8sxHi/fEsraprwCtzvzQETrNRwVxLO5jVmRGi60j8Ue1efIlzPXV9je9mkjzOmdssymZkh2QhUrCmZYI/FCEa3/cNMW0QIDAQAB",
+
+    <span style="line-height:1.8;color:rgb(0,128,0);">//</span><span style="line-height:1.8;color:rgb(0,128,0);">商户私钥</span>
+    'merchant_private_key' =&gt; "MIICXAIBAAKBgQCyasdONGd8Q/1kRh1cpsSRi360DXLHI7zxdPJGYe5HKDWF7u9b3zZU9erZpM90XE7gZRKsxIgOurH4uqhmVRbto3e+LiYOyNpd6As3Q427KCTIT7ajhHicZ6GWhegTUiVLqiuWLsauQcbI6DO4GEZrlvAdzus0WcJiJOxW02rxSQIDAQABAoGAXBJYyVaC4zj3Jph8YOStlR5N13bwdATdW/glWWT+0rnNEi90TQHRNvY7lNVNJgrPrTS182TVgjOPxmwSnebakhIuGIdPq99GLE4LGd5lKWTzkd84BMvhatfNsCCzcEVFqKg3tZd4t3fQ93FrILsnnZpLhiW53jIrStCkR3rx9OECQQDWMSHyc91hEVMQqVNasbGEicKWxhoDqjdm2lHkBx4mrB9JEZFDs6MxWdajf2/Qw+tgtpN3YBcCDw/HnGHhQtStAkEA1VTyjOdAwWode8X4fu0IPq9+E19mcVOAJjLBH46mropwgOdj3raqT/ThaKeaydjabsTAiY2J18HiTiyH+1bGjQJBAKgRJXH5OFxSG7uXIbCofYJiFi34g7EcfxxVcqxaaW4u4N2Uy0c0TXkL5T+lXzeQg8D/gfbJj0QuTVNzgdofdoECQBHYOznCFk6Xe8PguXqUhT4JG/iu4DjWjT+kuzbSjerHtcVylY4JpZFuoHRKoM4Fj6/4UUqwRjmABFgZrX4+sfkCQCNI8RCZ6yprh5kEOePo3uazAlNENP8dKkhgqChawdK77NzlJ727Nt23STHFx6NkhzyruJGQ5Vx1Lkl0wKuKbXM=",
+
+    <span style="line-height:1.8;color:rgb(0,128,0);">//</span><span style="line-height:1.8;color:rgb(0,128,0);">编码格式</span>
+    'charset' =&gt; "UTF-8",
+
+    <span style="line-height:1.8;color:rgb(0,128,0);">//</span><span style="line-height:1.8;color:rgb(0,128,0);">支付宝网关</span>
+    'gatewayUrl' =&gt; "https://openapi.alipay.com/gateway.do",
+
+    <span style="line-height:1.8;color:rgb(0,128,0);">//</span><span style="line-height:1.8;color:rgb(0,128,0);">应用ID</span>
+    'app_id' =&gt; "2016061501400000",
+
+    <span style="line-height:1.8;color:rgb(0,128,0);">//</span><span style="line-height:1.8;color:rgb(0,128,0);">异步通知地址,只有扫码支付预下单可用</span>
+    'notify_url' =&gt; "<span style="line-height:1.8;">http://www.fangbei.org/alipay/notify.html</span>",
+
+    <span style="line-height:1.8;color:rgb(0,128,0);">//</span><span style="line-height:1.8;color:rgb(0,128,0);">最大查询重试次数</span>
+    'MaxQueryRetry' =&gt; "10",
+
+    <span style="line-height:1.8;color:rgb(0,128,0);">//</span><span style="line-height:1.8;color:rgb(0,128,0);">查询间隔</span>
+    'QueryDuration' =&gt; "3"<span style="line-height:1.8;">
+);</span></pre>
+    <div class="cnblogs_code_toolbar">
+     <span class="cnblogs_code_copy" style="line-height:1.8;"><a title="复制代码" style="color:rgb(0,0,0);border:none;"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码" style="border:none;"></a></span>
+    </div>
+   </div>
+   <p>其中支付宝公钥就是在前面中复制保存的，直接复制到程序中即可，而商户私钥是之前OpenSSL中生成的私钥。APPID是该服务的id号。</p>
+   <p>而这个异步通知将会接收扫码支付结果的通知。</p>
+   <p>&nbsp;</p>
+   <p>&nbsp;</p>
+   <h2 style="color:rgb(0,0,0);line-height:1.5;font-size:21px;">五、条码支付、扫码支付、订单查询、退款申请</h2>
+   <h3 style="color:rgb(0,0,0);font-size:16px;line-height:1.5;">1. 条码支付</h3>
+   <p>条码支付的参数配置如下</p>
+   <div class="cnblogs_code" style="background-color:rgb(245,245,245);border:1px solid rgb(204,204,204);color:rgb(0,0,0);font-family:'Courier New';font-size:12px;">
+    <div class="cnblogs_code_toolbar">
+     <span class="cnblogs_code_copy" style="line-height:1.8;"><a title="复制代码" style="color:rgb(0,0,0);border:none;"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码" style="border:none;"></a></span>
+    </div>
+    <pre style="font-family:'Courier New';"><span style="line-height:1.8;color:rgb(0,128,0);">//</span><span style="line-height:1.8;color:rgb(0,128,0);"> (必填) 商户网站订单系统中唯一订单号，64个字符以内，只能包含字母、数字、下划线，
+// 需保证商户系统端不能重复，建议通过数据库sequence生成，</span>
+<span style="line-height:1.8;color:rgb(128,0,128);">$outTradeNo</span> = "barpay" . <span style="line-height:1.8;color:rgb(0,128,128);">date</span>('Ymdhis') . <span style="line-height:1.8;color:rgb(0,128,128);">mt_rand</span>(100, 1000<span style="line-height:1.8;">);
+</span><span style="line-height:1.8;color:rgb(128,0,128);">$subject</span> = "方倍工作室-支付宝-当面付-条码支付"<span style="line-height:1.8;">;
+</span><span style="line-height:1.8;color:rgb(128,0,128);">$totalAmount</span> = 0.01;    <span style="line-height:1.8;color:rgb(0,128,0);">//</span><span style="line-height:1.8;color:rgb(0,128,0);"> (必填) 订单总金额，单位为元，不能超过1亿元
+
+// (必填) 付款条码，用户支付宝钱包手机app点击“付款”产生的付款条码</span>
+<span style="line-height:1.8;color:rgb(128,0,128);">$authCode</span> = <span style="line-height:1.8;color:rgb(128,0,128);">$_POST</span>['auth_code']; <span style="line-height:1.8;color:rgb(0,128,0);">//</span><span style="line-height:1.8;color:rgb(0,128,0);">28开头18位数字
+
+// 支付超时，线下扫码交易定义为5分钟</span>
+<span style="line-height:1.8;color:rgb(128,0,128);">$timeExpress</span> = "5m"<span style="line-height:1.8;">;
+
+</span><span style="line-height:1.8;color:rgb(0,128,0);">//</span><span style="line-height:1.8;color:rgb(0,128,0);"> 创建请求builder，设置请求参数</span>
+<span style="line-height:1.8;color:rgb(128,0,128);">$barPayRequestBuilder</span> = <span style="line-height:1.8;color:rgb(0,0,255);">new</span><span style="line-height:1.8;"> AlipayTradePayContentBuilder();
+</span><span style="line-height:1.8;color:rgb(128,0,128);">$barPayRequestBuilder</span>-&gt;setOutTradeNo(<span style="line-height:1.8;color:rgb(128,0,128);">$outTradeNo</span><span style="line-height:1.8;">);
+</span><span style="line-height:1.8;color:rgb(128,0,128);">$barPayRequestBuilder</span>-&gt;setTotalAmount(<span style="line-height:1.8;color:rgb(128,0,128);">$totalAmount</span><span style="line-height:1.8;">);
+</span><span style="line-height:1.8;color:rgb(128,0,128);">$barPayRequestBuilder</span>-&gt;setAuthCode(<span style="line-height:1.8;color:rgb(128,0,128);">$authCode</span><span style="line-height:1.8;">);
+</span><span style="line-height:1.8;color:rgb(128,0,128);">$barPayRequestBuilder</span>-&gt;setTimeExpress(<span style="line-height:1.8;color:rgb(128,0,128);">$timeExpress</span><span style="line-height:1.8;">);
+</span><span style="line-height:1.8;color:rgb(128,0,128);">$barPayRequestBuilder</span>-&gt;setSubject(<span style="line-height:1.8;color:rgb(128,0,128);">$subject</span><span style="line-height:1.8;">);
+</span><span style="line-height:1.8;color:rgb(0,128,0);">//</span><span style="line-height:1.8;color:rgb(0,128,0);"> 调用barPay方法获取当面付应答</span>
+<span style="line-height:1.8;color:rgb(128,0,128);">$barPay</span> = <span style="line-height:1.8;color:rgb(0,0,255);">new</span> AlipayTradeService(<span style="line-height:1.8;color:rgb(128,0,128);">$config</span><span style="line-height:1.8;">);
+</span><span style="line-height:1.8;color:rgb(128,0,128);">$barPayResult</span> = <span style="line-height:1.8;color:rgb(128,0,128);">$barPay</span>-&gt;barPay(<span style="line-height:1.8;color:rgb(128,0,128);">$barPayRequestBuilder</span><span style="line-height:1.8;">);
+
+</span><span style="line-height:1.8;color:rgb(0,0,255);">switch</span> (<span style="line-height:1.8;color:rgb(128,0,128);">$barPayResult</span>-&gt;<span style="line-height:1.8;">getTradeStatus()) {
+    </span><span style="line-height:1.8;color:rgb(0,0,255);">case</span> "SUCCESS":
+        <span style="line-height:1.8;color:rgb(0,0,255);">echo</span> "支付宝支付成功:" . "&lt;br&gt;--------------------------&lt;br&gt;"<span style="line-height:1.8;">;
+        </span><span style="line-height:1.8;color:rgb(0,128,128);">print_r</span>(<span style="line-height:1.8;color:rgb(128,0,128);">$barPayResult</span>-&gt;<span style="line-height:1.8;">getResponse());
+        </span><span style="line-height:1.8;color:rgb(0,0,255);">break</span><span style="line-height:1.8;">;
+    </span><span style="line-height:1.8;color:rgb(0,0,255);">case</span> "FAILED":
+        <span style="line-height:1.8;color:rgb(0,0,255);">echo</span> "支付宝支付失败!!!" . "&lt;br&gt;--------------------------&lt;br&gt;"<span style="line-height:1.8;">;
+        </span><span style="line-height:1.8;color:rgb(0,0,255);">if</span> (!<span style="line-height:1.8;color:rgb(0,0,255);">empty</span>(<span style="line-height:1.8;color:rgb(128,0,128);">$barPayResult</span>-&gt;<span style="line-height:1.8;">getResponse())) {
+            </span><span style="line-height:1.8;color:rgb(0,128,128);">print_r</span>(<span style="line-height:1.8;color:rgb(128,0,128);">$barPayResult</span>-&gt;<span style="line-height:1.8;">getResponse());
+        }
+        </span><span style="line-height:1.8;color:rgb(0,0,255);">break</span><span style="line-height:1.8;">;
+    </span><span style="line-height:1.8;color:rgb(0,0,255);">case</span> "UNKNOWN":
+        <span style="line-height:1.8;color:rgb(0,0,255);">echo</span> "系统异常，订单状态未知!!!" . "&lt;br&gt;--------------------------&lt;br&gt;"<span style="line-height:1.8;">;
+        </span><span style="line-height:1.8;color:rgb(0,0,255);">if</span> (!<span style="line-height:1.8;color:rgb(0,0,255);">empty</span>(<span style="line-height:1.8;color:rgb(128,0,128);">$barPayResult</span>-&gt;<span style="line-height:1.8;">getResponse())) {
+            </span><span style="line-height:1.8;color:rgb(0,128,128);">print_r</span>(<span style="line-height:1.8;color:rgb(128,0,128);">$barPayResult</span>-&gt;<span style="line-height:1.8;">getResponse());
+        }
+        </span><span style="line-height:1.8;color:rgb(0,0,255);">break</span><span style="line-height:1.8;">;
+    </span><span style="line-height:1.8;color:rgb(0,0,255);">default</span>:
+        <span style="line-height:1.8;color:rgb(0,0,255);">echo</span> "不支持的交易状态，交易返回异常!!!"<span style="line-height:1.8;">;
+        </span><span style="line-height:1.8;color:rgb(0,0,255);">break</span><span style="line-height:1.8;">;
+}
+    </span><span style="line-height:1.8;color:rgb(0,0,255);">return</span><span style="line-height:1.8;">;
+}</span></pre>
+    <div class="cnblogs_code_toolbar">
+     <span class="cnblogs_code_copy" style="line-height:1.8;"><a title="复制代码" style="color:rgb(0,0,0);border:none;"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码" style="border:none;"></a></span>
+    </div>
+   </div>
+   <p>程序监测，最终提交的url如下</p>
+   <div class="cnblogs_code" style="background-color:rgb(245,245,245);border:1px solid rgb(204,204,204);color:rgb(0,0,0);font-family:'Courier New';font-size:12px;">
+    <pre style="font-family:'Courier New';">https:<span style="line-height:1.8;color:rgb(0,128,0);">//</span><span style="line-height:1.8;color:rgb(0,128,0);">openapi.alipay.com/gateway.do?app_id=2016061201500000&amp;version=1.0&amp;format=json&amp;sign_type=RSA&amp;method=alipay.trade.pay&amp;timestamp=2016-08-26+17%3A14%3A52&amp;auth_token=&amp;alipay_sdk=alipay-sdk-php-20160411&amp;terminal_type=&amp;terminal_info=&amp;prod_code=&amp;notify_url=&amp;charset=UTF-8&amp;app_auth_token=&amp;sign=EMVoBAhPkW6B1m%2BoXytdbUpIxnIAq73jtiPhlH2VUYy4OcJQ2UiVTXWttw0y%2B7UEXHWILY8fYasdNrJWSjBATrAqbGCLpPc4YBQSwtPCb%2F76d65dMQEyrEnk2sgcqhxCiJNKRoQjgAQmBQdHneerU7SwSNJ%2FfF%2F025yltZk5lzQ%3D</span></pre>
+   </div>
+   <p>发送的json数据如下：</p>
+   <div class="cnblogs_code" style="background-color:rgb(245,245,245);border:1px solid rgb(204,204,204);color:rgb(0,0,0);font-family:'Courier New';font-size:12px;">
+    <div class="cnblogs_code_toolbar">
+     <span class="cnblogs_code_copy" style="line-height:1.8;"><a title="复制代码" style="color:rgb(0,0,0);border:none;"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码" style="border:none;"></a></span>
+    </div>
+    <pre style="font-family:'Courier New';"><span style="line-height:1.8;">{
+    </span>"scene":"bar_code"<span style="line-height:1.8;">,
+    </span>"out_trade_no":"barpay20160826051452680"<span style="line-height:1.8;">,
+    </span>"total_amount":0.01<span style="line-height:1.8;">,
+    </span>"auth_code":"289723098358413535"<span style="line-height:1.8;">,
+    </span>"timeout_express":"5m"<span style="line-height:1.8;">,
+    </span>"subject":"方倍工作室-支付宝-当面付-条码支付"<span style="line-height:1.8;">
+}</span></pre>
+    <div class="cnblogs_code_toolbar">
+     <span class="cnblogs_code_copy" style="line-height:1.8;"><a title="复制代码" style="color:rgb(0,0,0);border:none;"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码" style="border:none;"></a></span>
+    </div>
+   </div>
+   <p><span style="line-height:1.5;">接收到的数据如下</span></p>
+   <div class="cnblogs_code" style="background-color:rgb(245,245,245);border:1px solid rgb(204,204,204);color:rgb(0,0,0);font-family:'Courier New';font-size:12px;">
+    <div class="cnblogs_code_toolbar">
+     <span class="cnblogs_code_copy" style="line-height:1.8;"><a title="复制代码" style="color:rgb(0,0,0);border:none;"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码" style="border:none;"></a></span>
+    </div>
+    <pre style="font-family:'Courier New';"><span style="line-height:1.8;">{
+    </span>"alipay_trade_pay_response"<span style="line-height:1.8;">:{
+        </span>"code":"10000"<span style="line-height:1.8;">,
+        </span>"msg":"Success"<span style="line-height:1.8;">,
+        </span>"buyer_logon_id":"118***@qq.com"<span style="line-height:1.8;">,
+        </span>"buyer_pay_amount":"0.01"<span style="line-height:1.8;">,
+        </span>"buyer_user_id":"2088002364008751"<span style="line-height:1.8;">,
+        </span>"fund_bill_list"<span style="line-height:1.8;">:[
+            {
+                </span>"amount":"0.01"<span style="line-height:1.8;">,
+                </span>"fund_channel":"ALIPAYACCOUNT"<span style="line-height:1.8;">
+            }
+        ],
+        </span>"gmt_payment":"2016-08-26 17:14:59"<span style="line-height:1.8;">,
+        </span>"invoice_amount":"0.01"<span style="line-height:1.8;">,
+        </span>"open_id":"20880044751374809757981911112575"<span style="line-height:1.8;">,
+        </span>"out_trade_no":"barpay20120826051452680"<span style="line-height:1.8;">,
+        </span>"point_amount":"0.00"<span style="line-height:1.8;">,
+        </span>"receipt_amount":"0.01"<span style="line-height:1.8;">,
+        </span>"total_amount":"0.01"<span style="line-height:1.8;">,
+        </span>"trade_no":"2016082621001004750244100034"<span style="line-height:1.8;">
+    },
+    </span>"sign":"pEDeMwh6x73t9LmWrZpGnVb1npnKtODw6+8asdTurNPVWXR1JHT+x3cRt2G4SDNHzxkJTzSpUXjNylsWisRTnQJJzqRP5XMujxmaAHP/d5xXeyWasDag5Cj7yGD7t80buDAsdE4eoqQ6ox7KzJ6LwKcphOX13tI+Ukt1dGCQS5o="<span style="line-height:1.8;">
+}</span></pre>
+    <div class="cnblogs_code_toolbar">
+     <span class="cnblogs_code_copy" style="line-height:1.8;"><a title="复制代码" style="color:rgb(0,0,0);border:none;"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码" style="border:none;"></a></span>
+    </div>
+   </div>
+   <p>&nbsp;</p>
+   <h3 style="color:rgb(0,0,0);font-size:16px;line-height:1.5;">2. 扫码支付</h3>
+   <p>扫码支付的参数配置如下</p>
+   <div class="cnblogs_code" style="background-color:rgb(245,245,245);border:1px solid rgb(204,204,204);color:rgb(0,0,0);font-family:'Courier New';font-size:12px;">
+    <div class="cnblogs_code_toolbar">
+     <span class="cnblogs_code_copy" style="line-height:1.8;"><a title="复制代码" style="color:rgb(0,0,0);border:none;"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码" style="border:none;"></a></span>
+    </div>
+    <pre style="font-family:'Courier New';"><span style="line-height:1.8;color:rgb(0,128,0);">//</span><span style="line-height:1.8;color:rgb(0,128,0);"> (必填) 商户网站订单系统中唯一订单号，64个字符以内，只能包含字母、数字、下划线，
+// 需保证商户系统端不能重复，建议通过数据库sequence生成，</span>
+<span style="line-height:1.8;color:rgb(128,0,128);">$outTradeNo</span> = "qrpay".<span style="line-height:1.8;color:rgb(0,128,128);">date</span>('Ymdhis').<span style="line-height:1.8;color:rgb(0,128,128);">mt_rand</span>(100,1000<span style="line-height:1.8;">);
+</span><span style="line-height:1.8;color:rgb(128,0,128);">$subject</span> = "方倍工作室-支付宝-当面付-扫码支付"<span style="line-height:1.8;">;
+</span><span style="line-height:1.8;color:rgb(128,0,128);">$totalAmount</span> = "0.01"<span style="line-height:1.8;">;
+
+</span><span style="line-height:1.8;color:rgb(0,128,0);">//</span><span style="line-height:1.8;color:rgb(0,128,0);"> 支付超时，线下扫码交易定义为5分钟</span>
+<span style="line-height:1.8;color:rgb(128,0,128);">$timeExpress</span> = "5m"<span style="line-height:1.8;">;
+
+</span><span style="line-height:1.8;color:rgb(0,128,0);">//</span><span style="line-height:1.8;color:rgb(0,128,0);"> 创建请求builder，设置请求参数</span>
+<span style="line-height:1.8;color:rgb(128,0,128);">$qrPayRequestBuilder</span> = <span style="line-height:1.8;color:rgb(0,0,255);">new</span><span style="line-height:1.8;"> AlipayTradePrecreateContentBuilder();
+</span><span style="line-height:1.8;color:rgb(128,0,128);">$qrPayRequestBuilder</span>-&gt;setOutTradeNo(<span style="line-height:1.8;color:rgb(128,0,128);">$outTradeNo</span><span style="line-height:1.8;">);
+</span><span style="line-height:1.8;color:rgb(128,0,128);">$qrPayRequestBuilder</span>-&gt;setTotalAmount(<span style="line-height:1.8;color:rgb(128,0,128);">$totalAmount</span><span style="line-height:1.8;">);
+</span><span style="line-height:1.8;color:rgb(128,0,128);">$qrPayRequestBuilder</span>-&gt;setTimeExpress(<span style="line-height:1.8;color:rgb(128,0,128);">$timeExpress</span><span style="line-height:1.8;">);
+</span><span style="line-height:1.8;color:rgb(128,0,128);">$qrPayRequestBuilder</span>-&gt;setSubject(<span style="line-height:1.8;color:rgb(128,0,128);">$subject</span><span style="line-height:1.8;">);
+
+</span><span style="line-height:1.8;color:rgb(0,128,0);">//</span><span style="line-height:1.8;color:rgb(0,128,0);"> 调用qrPay方法获取当面付应答</span>
+<span style="line-height:1.8;color:rgb(128,0,128);">$qrPay</span> = <span style="line-height:1.8;color:rgb(0,0,255);">new</span> AlipayTradeService(<span style="line-height:1.8;color:rgb(128,0,128);">$config</span><span style="line-height:1.8;">);
+</span><span style="line-height:1.8;color:rgb(128,0,128);">$qrPayResult</span> = <span style="line-height:1.8;color:rgb(128,0,128);">$qrPay</span>-&gt;qrPay(<span style="line-height:1.8;color:rgb(128,0,128);">$qrPayRequestBuilder</span><span style="line-height:1.8;">);
+
+</span><span style="line-height:1.8;color:rgb(0,128,0);">//</span><span style="line-height:1.8;color:rgb(0,128,0);">    根据状态值进行业务处理</span>
+<span style="line-height:1.8;color:rgb(0,0,255);">switch</span> (<span style="line-height:1.8;color:rgb(128,0,128);">$qrPayResult</span>-&gt;<span style="line-height:1.8;">getTradeStatus()){
+    </span><span style="line-height:1.8;color:rgb(0,0,255);">case</span> "SUCCESS":
+        <span style="line-height:1.8;color:rgb(0,0,255);">echo</span> "支付宝创建订单二维码成功:"."&lt;br&gt;---------------------------------------&lt;br&gt;"<span style="line-height:1.8;">;
+        </span><span style="line-height:1.8;color:rgb(128,0,128);">$response</span> = <span style="line-height:1.8;color:rgb(128,0,128);">$qrPayResult</span>-&gt;<span style="line-height:1.8;">getResponse();
+        </span><span style="line-height:1.8;color:rgb(128,0,128);">$qrcode</span> = <span style="line-height:1.8;color:rgb(128,0,128);">$qrPay</span>-&gt;create_erweima(<span style="line-height:1.8;color:rgb(128,0,128);">$response</span>-&gt;<span style="line-height:1.8;">qr_code);
+        </span><span style="line-height:1.8;color:rgb(0,0,255);">echo</span> <span style="line-height:1.8;color:rgb(128,0,128);">$qrcode</span><span style="line-height:1.8;">;
+        </span><span style="line-height:1.8;color:rgb(0,128,128);">print_r</span>(<span style="line-height:1.8;color:rgb(128,0,128);">$response</span><span style="line-height:1.8;">);
+        
+        </span><span style="line-height:1.8;color:rgb(0,0,255);">break</span><span style="line-height:1.8;">;
+    </span><span style="line-height:1.8;color:rgb(0,0,255);">case</span> "FAILED":
+        <span style="line-height:1.8;color:rgb(0,0,255);">echo</span> "支付宝创建订单二维码失败!!!"."&lt;br&gt;--------------------------&lt;br&gt;"<span style="line-height:1.8;">;
+        </span><span style="line-height:1.8;color:rgb(0,0,255);">if</span>(!<span style="line-height:1.8;color:rgb(0,0,255);">empty</span>(<span style="line-height:1.8;color:rgb(128,0,128);">$qrPayResult</span>-&gt;<span style="line-height:1.8;">getResponse())){
+            </span><span style="line-height:1.8;color:rgb(0,128,128);">print_r</span>(<span style="line-height:1.8;color:rgb(128,0,128);">$qrPayResult</span>-&gt;<span style="line-height:1.8;">getResponse());
+        }
+        </span><span style="line-height:1.8;color:rgb(0,0,255);">break</span><span style="line-height:1.8;">;
+    </span><span style="line-height:1.8;color:rgb(0,0,255);">case</span> "UNKNOWN":
+        <span style="line-height:1.8;color:rgb(0,0,255);">echo</span> "系统异常，状态未知!!!"."&lt;br&gt;--------------------------&lt;br&gt;"<span style="line-height:1.8;">;
+        </span><span style="line-height:1.8;color:rgb(0,0,255);">if</span>(!<span style="line-height:1.8;color:rgb(0,0,255);">empty</span>(<span style="line-height:1.8;color:rgb(128,0,128);">$qrPayResult</span>-&gt;<span style="line-height:1.8;">getResponse())){
+            </span><span style="line-height:1.8;color:rgb(0,128,128);">print_r</span>(<span style="line-height:1.8;color:rgb(128,0,128);">$qrPayResult</span>-&gt;<span style="line-height:1.8;">getResponse());
+        }
+        </span><span style="line-height:1.8;color:rgb(0,0,255);">break</span><span style="line-height:1.8;">;
+    </span><span style="line-height:1.8;color:rgb(0,0,255);">default</span>:
+        <span style="line-height:1.8;color:rgb(0,0,255);">echo</span> "不支持的返回状态，创建订单二维码返回异常!!!"<span style="line-height:1.8;">;
+        </span><span style="line-height:1.8;color:rgb(0,0,255);">break</span><span style="line-height:1.8;">;
+}</span></pre>
+    <div class="cnblogs_code_toolbar">
+     <span class="cnblogs_code_copy" style="line-height:1.8;"><a title="复制代码" style="color:rgb(0,0,0);border:none;"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码" style="border:none;"></a></span>
+    </div>
+   </div>
+   <p>生成的提交请求URL如下</p>
+   <div class="cnblogs_code" style="background-color:rgb(245,245,245);border:1px solid rgb(204,204,204);color:rgb(0,0,0);font-family:'Courier New';font-size:12px;">
+    <div class="cnblogs_code_toolbar">
+     <span class="cnblogs_code_copy" style="line-height:1.8;"><a title="复制代码" style="color:rgb(0,0,0);border:none;"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码" style="border:none;"></a></span>
+    </div>
+    <pre style="font-family:'Courier New';">https:<span style="line-height:1.8;color:rgb(0,128,0);">//</span><span style="line-height:1.8;color:rgb(0,128,0);">openapi.alipay.com/gateway.do?app_id=2016061511500000&amp;version=1.0&amp;format=json&amp;sign_type=RSA&amp;method=alipay.trade.precreate&amp;timestamp=2016-08-26+17%3A38%3A13&amp;auth_token=&amp;alipay_sdk=alipay-sdk-php-20160411&amp;terminal_type=&amp;terminal_info=&amp;prod_code=&amp;notify_url=http%3A%2F%2F123.daoqidata.com%2Fweixin%2Frawpost.php&amp;charset=UTF-8&amp;app_auth_token=&amp;sign=ayYiJRZ63RomVEt8Ayz58Uiyv3y5IrbbX8CTfX6zNHkT%2Fu11U7ISUYWCXjrwrwCo2Oq2tdo%2FjtuhrBbDp5ULnTmuBBUktQDCCF53PF5yiUDGikxUPFYugeUrTg3gwasdxOiNKM6ZB6MI0n%2F9M78a%2FnP8GtZ4WthyHIl%2B%2FozSyT4%3D</span></pre>
+    <div class="cnblogs_code_toolbar">
+     <span class="cnblogs_code_copy" style="line-height:1.8;"><a title="复制代码" style="color:rgb(0,0,0);border:none;"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码" style="border:none;"></a></span>
+    </div>
+   </div>
+   <p><span style="line-height:1.5;">发送的json数据如下：</span></p>
+   <div class="cnblogs_code" style="background-color:rgb(245,245,245);border:1px solid rgb(204,204,204);color:rgb(0,0,0);font-family:'Courier New';font-size:12px;">
+    <div class="cnblogs_code_toolbar">
+     <span class="cnblogs_code_copy" style="line-height:1.8;"><a title="复制代码" style="color:rgb(0,0,0);border:none;"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码" style="border:none;"></a></span>
+    </div>
+    <pre style="font-family:'Courier New';"><span style="line-height:1.8;">{
+    </span>"out_trade_no":"qrpay20160826052313582"<span style="line-height:1.8;">,
+    </span>"total_amount":"0.01"<span style="line-height:1.8;">,
+    </span>"timeout_express":"5m"<span style="line-height:1.8;">,
+    </span>"subject":"方倍工作室-支付宝-当面付-扫码支付"<span style="line-height:1.8;">
+}</span></pre>
+    <div class="cnblogs_code_toolbar">
+     <span class="cnblogs_code_copy" style="line-height:1.8;"><a title="复制代码" style="color:rgb(0,0,0);border:none;"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码" style="border:none;"></a></span>
+    </div>
+   </div>
+   <p>返回的数据如下：</p>
+   <div class="cnblogs_code" style="background-color:rgb(245,245,245);border:1px solid rgb(204,204,204);color:rgb(0,0,0);font-family:'Courier New';font-size:12px;">
+    <div class="cnblogs_code_toolbar">
+     <span class="cnblogs_code_copy" style="line-height:1.8;"><a title="复制代码" style="color:rgb(0,0,0);border:none;"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码" style="border:none;"></a></span>
+    </div>
+    <pre style="font-family:'Courier New';"><span style="line-height:1.8;">{
+    </span>"alipay_trade_precreate_response"<span style="line-height:1.8;">:{
+        </span>"code":"10000"<span style="line-height:1.8;">,
+        </span>"msg":"Success"<span style="line-height:1.8;">,
+        </span>"out_trade_no":"qrpay20160826053813582"<span style="line-height:1.8;">,
+        </span>"qr_code":"https://qr.alipay.com/bax00885xbhszseo9l7p404d"<span style="line-height:1.8;">
+    },
+    </span>"sign":"VfNTGo2WMZ+2CE1L05lNYWtFn4inasd/tUaBZIBHN4fPlXnCvyc9IhS8S7wa3FYw23G30luEPEHkZWobnfpUjILonmExZVElHv3ylINz+Q2mQ5M8Sb/d61YPvf4Bgy1OvlrT4D3H/i3judmzEDBrOyFN9kB9vSkKaYC+b6L41Zw="<span style="line-height:1.8;">
+}</span></pre>
+    <div class="cnblogs_code_toolbar">
+     <span class="cnblogs_code_copy" style="line-height:1.8;"><a title="复制代码" style="color:rgb(0,0,0);border:none;"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码" style="border:none;"></a></span>
+    </div>
+   </div>
+   <p>其中的https://qr.alipay.com/bax00885xbhszseo9l7p404d 就是二维码链接地址，使用接口将其成二维码后如下所示。</p>
+   <p><img src="https://images2015.cnblogs.com/blog/340216/201608/340216-20160826172559460-1256895759.png" alt="" style="border:0px;"></p>
+   <p>当支付宝用户扫码的时候，接口通知将收到如下数据</p>
+   <div class="cnblogs_code" style="background-color:rgb(245,245,245);border:1px solid rgb(204,204,204);color:rgb(0,0,0);font-family:'Courier New';font-size:12px;">
+    <div class="cnblogs_code_toolbar">
+     <span class="cnblogs_code_copy" style="line-height:1.8;"><a title="复制代码" style="color:rgb(0,0,0);border:none;"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码" style="border:none;"></a></span>
+    </div>
+    <pre style="font-family:'Courier New';"><span style="line-height:1.8;">{
+    </span>"notify_id":"4c2c04c3cc50e978d44212febe7c3f0lse"<span style="line-height:1.8;">,
+    </span>"seller_email":"pay***@fangbei.org"<span style="line-height:1.8;">,
+    </span>"notify_type":"trade_status_sync"<span style="line-height:1.8;">,
+    </span>"sign":"R0iRdYmSQ0+zuSUGLzkutHasd0hoOp+CcKojVBCMa1uji3rqQFe5XeHoJB1nMBCApE3zXPKhXMdLis109ngPbGy+NUEBR7YZjYuR/hXq3WXeYfZ8aiWLvloZHrF7dQWxDho/VHYexaLeqvRi/03m0HxrwhZKUOu1eS9wMgZOlqQ="<span style="line-height:1.8;">,
+    </span>"trade_no":"2016082621001004750241229810"<span style="line-height:1.8;">,
+    </span>"buyer_id":"2088002364008751"<span style="line-height:1.8;">,
+    </span>"app_id":"2016061101500000"<span style="line-height:1.8;">,
+    </span>"gmt_create":"2016-08-26 18:20:37"<span style="line-height:1.8;">,
+    </span>"out_trade_no":"qrpay20160826062009757"<span style="line-height:1.8;">,
+    </span>"seller_id":"2088421201724253"<span style="line-height:1.8;">,
+    </span>"notify_time":"2016-08-26 18:20:37"<span style="line-height:1.8;">,
+    </span>"subject":"方倍工作室-支付宝-当面付-扫码支付"<span style="line-height:1.8;">,
+    </span>"trade_status":"WAIT_BUYER_PAY"<span style="line-height:1.8;">,
+    </span>"open_id":"20880044751374809123987911112575"<span style="line-height:1.8;">,
+    </span>"total_amount":"0.01"<span style="line-height:1.8;">,
+    </span>"sign_type":"RSA"<span style="line-height:1.8;">,
+    </span>"buyer_logon_id":"118***@qq.com"<span style="line-height:1.8;">
+}</span></pre>
+    <div class="cnblogs_code_toolbar">
+     <span class="cnblogs_code_copy" style="line-height:1.8;"><a title="复制代码" style="color:rgb(0,0,0);border:none;"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码" style="border:none;"></a></span>
+    </div>
+   </div>
+   <p>当用户输入密码付款成功之后，将收到如下数据</p>
+   <div class="cnblogs_code" style="background-color:rgb(245,245,245);border:1px solid rgb(204,204,204);color:rgb(0,0,0);font-family:'Courier New';font-size:12px;">
+    <div class="cnblogs_code_toolbar">
+     <span class="cnblogs_code_copy" style="line-height:1.8;"><a title="复制代码" style="color:rgb(0,0,0);border:none;"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码" style="border:none;"></a></span>
+    </div>
+    <pre style="font-family:'Courier New';"><span style="line-height:1.8;">{
+    </span>"fund_bill_list":"[{"amount":"0.01","fundChannel":"ALIPAYACCOUNT"}]"<span style="line-height:1.8;">,
+    </span>"subject":"方倍工作室-支付宝-当面付-扫码支付"<span style="line-height:1.8;">,
+    </span>"trade_no":"2016082621001004750241229810"<span style="line-height:1.8;">,
+    </span>"gmt_create":"2016-08-26 18:20:37"<span style="line-height:1.8;">,
+    </span>"notify_type":"trade_status_sync"<span style="line-height:1.8;">,
+    </span>"total_amount":"0.01"<span style="line-height:1.8;">,
+    </span>"out_trade_no":"qrpay20160826062009757"<span style="line-height:1.8;">,
+    </span>"invoice_amount":"0.01"<span style="line-height:1.8;">,
+    </span>"open_id":"20880044751374812357987911112575"<span style="line-height:1.8;">,
+    </span>"seller_id":"2088421202724253"<span style="line-height:1.8;">,
+    </span>"notify_time":"2016-08-26 18:20:50"<span style="line-height:1.8;">,
+    </span>"trade_status":"TRADE_SUCCESS"<span style="line-height:1.8;">,
+    </span>"gmt_payment":"2016-08-26 18:20:50"<span style="line-height:1.8;">,
+    </span>"seller_email":"pay***@fangbei.org"<span style="line-height:1.8;">,
+    </span>"receipt_amount":"0.01"<span style="line-height:1.8;">,
+    </span>"buyer_id":"2088002364008751"<span style="line-height:1.8;">,
+    </span>"app_id":"2016061501500000"<span style="line-height:1.8;">,
+    </span>"notify_id":"56f97611ee609f46384b188b409e75else"<span style="line-height:1.8;">,
+    </span>"buyer_logon_id":"118***@qq.com"<span style="line-height:1.8;">,
+    </span>"sign_type":"RSA"<span style="line-height:1.8;">,
+    </span>"buyer_pay_amount":"0.01"<span style="line-height:1.8;">,
+    </span>"sign":"nf/KJryACk0utqlNrnuYMiSnYw6HsxqpJPk2O5MhCZ+wZUVQbrD3sq5POO3GU7LSRoSiUUIO4JEYEL12Ek2+w3lTcLS9WEi60sYowPOcJEYGmVfNZbVR6+k7yO5au2WIkM3MKsxm2XxIB9xPMmRDACGhvqZ2BXUAQujkPk1FT0s="<span style="line-height:1.8;">,
+    </span>"point_amount":"0.00"<span style="line-height:1.8;">
+}</span></pre>
+    <div class="cnblogs_code_toolbar">
+     <span class="cnblogs_code_copy" style="line-height:1.8;"><a title="复制代码" style="color:rgb(0,0,0);border:none;"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码" style="border:none;"></a></span>
+    </div>
+   </div>
+   <p>&nbsp;</p>
+   <h3 style="color:rgb(0,0,0);font-size:16px;line-height:1.5;">3. 订单查询</h3>
+   <p>订单查询的参数配置如下</p>
+   <div class="cnblogs_code" style="background-color:rgb(245,245,245);border:1px solid rgb(204,204,204);color:rgb(0,0,0);font-family:'Courier New';font-size:12px;">
+    <div class="cnblogs_code_toolbar">
+     <span class="cnblogs_code_copy" style="line-height:1.8;"><a title="复制代码" style="color:rgb(0,0,0);border:none;"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码" style="border:none;"></a></span>
+    </div>
+    <pre style="font-family:'Courier New';"><span style="line-height:1.8;color:rgb(0,128,0);">//</span><span style="line-height:1.8;color:rgb(0,128,0);">//获取商户订单号</span>
+<span style="line-height:1.8;color:rgb(128,0,128);">$out_trade_no</span> = <span style="line-height:1.8;color:rgb(0,128,128);">trim</span>(<span style="line-height:1.8;color:rgb(128,0,128);">$_POST</span>['out_trade_no'<span style="line-height:1.8;">]);
+
+</span><span style="line-height:1.8;color:rgb(0,128,0);">//</span><span style="line-height:1.8;color:rgb(0,128,0);">第三方应用授权令牌,商户授权系统商开发模式下使用</span>
+<span style="line-height:1.8;color:rgb(128,0,128);">$appAuthToken</span> = "";<span style="line-height:1.8;color:rgb(0,128,0);">//</span><span style="line-height:1.8;color:rgb(0,128,0);">根据真实值填写
+
+//构造查询业务请求参数对象</span>
+<span style="line-height:1.8;color:rgb(128,0,128);">$queryContentBuilder</span> = <span style="line-height:1.8;color:rgb(0,0,255);">new</span><span style="line-height:1.8;"> AlipayTradeQueryContentBuilder();
+</span><span style="line-height:1.8;color:rgb(128,0,128);">$queryContentBuilder</span>-&gt;setOutTradeNo(<span style="line-height:1.8;color:rgb(128,0,128);">$out_trade_no</span><span style="line-height:1.8;">);
+
+</span><span style="line-height:1.8;color:rgb(128,0,128);">$queryContentBuilder</span>-&gt;setAppAuthToken(<span style="line-height:1.8;color:rgb(128,0,128);">$appAuthToken</span><span style="line-height:1.8;">);
+
+
+</span><span style="line-height:1.8;color:rgb(0,128,0);">//</span><span style="line-height:1.8;color:rgb(0,128,0);">初始化类对象，调用queryTradeResult方法获取查询应答</span>
+<span style="line-height:1.8;color:rgb(128,0,128);">$queryResponse</span> = <span style="line-height:1.8;color:rgb(0,0,255);">new</span> AlipayTradeService(<span style="line-height:1.8;color:rgb(128,0,128);">$config</span><span style="line-height:1.8;">);
+</span><span style="line-height:1.8;color:rgb(128,0,128);">$queryResult</span> = <span style="line-height:1.8;color:rgb(128,0,128);">$queryResponse</span>-&gt;queryTradeResult(<span style="line-height:1.8;color:rgb(128,0,128);">$queryContentBuilder</span><span style="line-height:1.8;">);
+
+</span><span style="line-height:1.8;color:rgb(0,128,0);">//</span><span style="line-height:1.8;color:rgb(0,128,0);">根据查询返回结果状态进行业务处理</span>
+<span style="line-height:1.8;color:rgb(0,0,255);">switch</span> (<span style="line-height:1.8;color:rgb(128,0,128);">$queryResult</span>-&gt;<span style="line-height:1.8;">getTradeStatus()){
+    </span><span style="line-height:1.8;color:rgb(0,0,255);">case</span> "SUCCESS":
+        <span style="line-height:1.8;color:rgb(0,0,255);">echo</span> "支付宝查询交易成功:"."&lt;br&gt;--------------------------&lt;br&gt;"<span style="line-height:1.8;">;
+        </span><span style="line-height:1.8;color:rgb(0,128,128);">print_r</span>(<span style="line-height:1.8;color:rgb(128,0,128);">$queryResult</span>-&gt;<span style="line-height:1.8;">getResponse());
+        </span><span style="line-height:1.8;color:rgb(0,0,255);">break</span><span style="line-height:1.8;">;
+    </span><span style="line-height:1.8;color:rgb(0,0,255);">case</span> "FAILED":
+        <span style="line-height:1.8;color:rgb(0,0,255);">echo</span> "支付宝查询交易失败或者交易已关闭!!!"."&lt;br&gt;--------------------------&lt;br&gt;"<span style="line-height:1.8;">;
+        </span><span style="line-height:1.8;color:rgb(0,0,255);">if</span>(!<span style="line-height:1.8;color:rgb(0,0,255);">empty</span>(<span style="line-height:1.8;color:rgb(128,0,128);">$queryResult</span>-&gt;<span style="line-height:1.8;">getResponse())){
+            </span><span style="line-height:1.8;color:rgb(0,128,128);">print_r</span>(<span style="line-height:1.8;color:rgb(128,0,128);">$queryResult</span>-&gt;<span style="line-height:1.8;">getResponse());
+        }
+        </span><span style="line-height:1.8;color:rgb(0,0,255);">break</span><span style="line-height:1.8;">;
+    </span><span style="line-height:1.8;color:rgb(0,0,255);">case</span> "UNKNOWN":
+        <span style="line-height:1.8;color:rgb(0,0,255);">echo</span> "系统异常，订单状态未知!!!"."&lt;br&gt;--------------------------&lt;br&gt;"<span style="line-height:1.8;">;
+        </span><span style="line-height:1.8;color:rgb(0,0,255);">if</span>(!<span style="line-height:1.8;color:rgb(0,0,255);">empty</span>(<span style="line-height:1.8;color:rgb(128,0,128);">$queryResult</span>-&gt;<span style="line-height:1.8;">getResponse())){
+            </span><span style="line-height:1.8;color:rgb(0,128,128);">print_r</span>(<span style="line-height:1.8;color:rgb(128,0,128);">$queryResult</span>-&gt;<span style="line-height:1.8;">getResponse());
+        }
+        </span><span style="line-height:1.8;color:rgb(0,0,255);">break</span><span style="line-height:1.8;">;
+    </span><span style="line-height:1.8;color:rgb(0,0,255);">default</span>:
+        <span style="line-height:1.8;color:rgb(0,0,255);">echo</span> "不支持的查询状态，交易返回异常!!!"<span style="line-height:1.8;">;
+        </span><span style="line-height:1.8;color:rgb(0,0,255);">break</span><span style="line-height:1.8;">;
+}</span></pre>
+    <div class="cnblogs_code_toolbar">
+     <span class="cnblogs_code_copy" style="line-height:1.8;"><a title="复制代码" style="color:rgb(0,0,0);border:none;"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码" style="border:none;"></a></span>
+    </div>
+   </div>
+   <p>最终提交的url如下</p>
+   <div class="cnblogs_code" style="background-color:rgb(245,245,245);border:1px solid rgb(204,204,204);color:rgb(0,0,0);font-family:'Courier New';font-size:12px;">
+    <pre style="font-family:'Courier New';">https://openapi.alipay.com/gateway.<span style="line-height:1.8;color:rgb(0,0,255);">do</span>?app_id=2016061401500000&amp;version=1.0&amp;<span style="line-height:1.8;color:rgb(0,0,255);">format</span>=json&amp;sign_type=RSA&amp;method=alipay.trade.query&amp;timestamp=2016-08-26+18<span style="line-height:1.8;color:rgb(128,0,128);">%3</span>A27<span style="line-height:1.8;color:rgb(128,0,128);">%3</span>A07&amp;auth_token=&amp;alipay_sdk=alipay-sdk-php-20160411&amp;terminal_type=&amp;terminal_info=&amp;prod_code=&amp;notify_url=&amp;charset=UTF-8&amp;app_auth_token=&amp;sign=eIuYJtes95quAN3X9eXbQzBa<span style="line-height:1.8;color:rgb(128,0,128);">%2</span>FCvm5QgQ0ToUsS8MSkCjhZACYpnU7ZT5MuD31lPZPFHVEjCKsdWiq4tuNtJPFPxirg7pkTiT09C<span style="line-height:1.8;color:rgb(128,0,128);">%2</span>Bz8PsUA844Y7hjkkX<span style="line-height:1.8;color:rgb(128,0,128);">%2</span>B4asdcGtO11m3Ap0JECrtZW8hhJTE9bPY1v43X2BSL5Cp3Ulpac1FsM<span style="line-height:1.8;color:rgb(128,0,128);">%3</span>D</pre>
+   </div>
+   <p>发送的json数据如下：</p>
+   <div class="cnblogs_code" style="background-color:rgb(245,245,245);border:1px solid rgb(204,204,204);color:rgb(0,0,0);font-family:'Courier New';font-size:12px;">
+    <pre style="font-family:'Courier New';"><span style="line-height:1.8;">{
+    </span>"out_trade_no":"qrpay20160826053813582"<span style="line-height:1.8;">
+}</span></pre>
+   </div>
+   <p>接收到的数据如下</p>
+   <div class="cnblogs_code" style="background-color:rgb(245,245,245);border:1px solid rgb(204,204,204);color:rgb(0,0,0);font-family:'Courier New';font-size:12px;">
+    <div class="cnblogs_code_toolbar">
+     <span class="cnblogs_code_copy" style="line-height:1.8;"><a title="复制代码" style="color:rgb(0,0,0);border:none;"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码" style="border:none;"></a></span>
+    </div>
+    <pre style="font-family:'Courier New';"><span style="line-height:1.8;">{
+    </span>"alipay_trade_query_response"<span style="line-height:1.8;">:{
+        </span>"code":"10000",
+        "msg":"Success",
+        "buyer_logon_id":"118***@qq.com",
+        "buyer_pay_amount":"0.01",
+        "buyer_user_id":"2088123364008751",
+        "fund_bill_list"<span style="line-height:1.8;">:[
+            {
+                </span>"amount":"0.01",
+                "fund_channel":"ALIPAYACCOUNT"<span style="line-height:1.8;">
+            }
+        ]</span>,
+        "invoice_amount":"0.01",
+        "open_id":"20880044751374801237987911112575",
+        "out_trade_no":"qrpay20160826053813582",
+        "point_amount":"0.00",
+        "receipt_amount":"0.01",
+        "send_pay_date":"2016-08-26 17:38:58",
+        "total_amount":"0.01",
+        "trade_no":"2016082621001004750239053830",
+        "trade_status":"TRADE_SUCCESS"<span style="line-height:1.8;">
+    }</span>,
+    "sign":"E2MxjdAhW/EqRFNkZgy/Y//dA5Cmb54Hnqa0cjBz+ZcFTULi1lvFms93onP7cpVK/fI7YxbkZTKBPk29o4aeWKXlSYCrT92domAyqahzYCA7/5A3Msc/awALYrFOdWyJJdlncWdFRN9hx52iVRIjxvLJ0hIMVIQqEDavG28HPbo="<span style="line-height:1.8;">
+}</span></pre>
+    <div class="cnblogs_code_toolbar">
+     <span class="cnblogs_code_copy" style="line-height:1.8;"><a title="复制代码" style="color:rgb(0,0,0);border:none;"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码" style="border:none;"></a></span>
+    </div>
+   </div>
+   <p>&nbsp;</p>
+   <h3 style="color:rgb(0,0,0);font-size:16px;line-height:1.5;">4. 订单退款</h3>
+   <p>订单退款的参数配置如下</p>
+   <div class="cnblogs_code" style="background-color:rgb(245,245,245);border:1px solid rgb(204,204,204);color:rgb(0,0,0);font-family:'Courier New';font-size:12px;">
+    <div class="cnblogs_code_toolbar">
+     <span class="cnblogs_code_copy" style="line-height:1.8;"><a title="复制代码" style="color:rgb(0,0,0);border:none;"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码" style="border:none;"></a></span>
+    </div>
+    <pre style="font-family:'Courier New';"><span style="line-height:1.8;color:rgb(128,0,128);">$out_trade_no</span> = <span style="line-height:1.8;color:rgb(0,128,128);">trim</span>(<span style="line-height:1.8;color:rgb(128,0,128);">$_POST</span>['out_trade_no'<span style="line-height:1.8;">]);
+</span><span style="line-height:1.8;color:rgb(128,0,128);">$refund_amount</span> = <span style="line-height:1.8;color:rgb(0,128,128);">trim</span>(<span style="line-height:1.8;color:rgb(128,0,128);">$_POST</span>['refund_amount'<span style="line-height:1.8;">]);
+</span><span style="line-height:1.8;color:rgb(128,0,128);">$out_request_no</span> = <span style="line-height:1.8;color:rgb(0,128,128);">trim</span>(<span style="line-height:1.8;color:rgb(128,0,128);">$_POST</span>['out_request_no'<span style="line-height:1.8;">]);
+
+</span><span style="line-height:1.8;color:rgb(0,128,0);">//</span><span style="line-height:1.8;color:rgb(0,128,0);">第三方应用授权令牌,商户授权系统商开发模式下使用</span>
+<span style="line-height:1.8;color:rgb(128,0,128);">$appAuthToken</span> = "";<span style="line-height:1.8;color:rgb(0,128,0);">//</span><span style="line-height:1.8;color:rgb(0,128,0);">根据真实值填写
+
+//创建退款请求builder,设置参数</span>
+<span style="line-height:1.8;color:rgb(128,0,128);">$refundRequestBuilder</span> = <span style="line-height:1.8;color:rgb(0,0,255);">new</span><span style="line-height:1.8;"> AlipayTradeRefundContentBuilder();
+</span><span style="line-height:1.8;color:rgb(128,0,128);">$refundRequestBuilder</span>-&gt;setOutTradeNo(<span style="line-height:1.8;color:rgb(128,0,128);">$out_trade_no</span><span style="line-height:1.8;">);
+</span><span style="line-height:1.8;color:rgb(128,0,128);">$refundRequestBuilder</span>-&gt;setRefundAmount(<span style="line-height:1.8;color:rgb(128,0,128);">$refund_amount</span><span style="line-height:1.8;">);
+</span><span style="line-height:1.8;color:rgb(128,0,128);">$refundRequestBuilder</span>-&gt;setOutRequestNo(<span style="line-height:1.8;color:rgb(128,0,128);">$out_request_no</span><span style="line-height:1.8;">);
+
+</span><span style="line-height:1.8;color:rgb(128,0,128);">$refundRequestBuilder</span>-&gt;setAppAuthToken(<span style="line-height:1.8;color:rgb(128,0,128);">$appAuthToken</span><span style="line-height:1.8;">);
+
+</span><span style="line-height:1.8;color:rgb(0,128,0);">//</span><span style="line-height:1.8;color:rgb(0,128,0);">初始化类对象,调用refund获取退款应答</span>
+<span style="line-height:1.8;color:rgb(128,0,128);">$refundResponse</span> = <span style="line-height:1.8;color:rgb(0,0,255);">new</span> AlipayTradeService(<span style="line-height:1.8;color:rgb(128,0,128);">$config</span><span style="line-height:1.8;">);
+</span><span style="line-height:1.8;color:rgb(128,0,128);">$refundResult</span> =    <span style="line-height:1.8;color:rgb(128,0,128);">$refundResponse</span>-&gt;refund(<span style="line-height:1.8;color:rgb(128,0,128);">$refundRequestBuilder</span><span style="line-height:1.8;">);
+
+</span><span style="line-height:1.8;color:rgb(0,128,0);">//</span><span style="line-height:1.8;color:rgb(0,128,0);">根据交易状态进行处理</span>
+<span style="line-height:1.8;color:rgb(0,0,255);">switch</span> (<span style="line-height:1.8;color:rgb(128,0,128);">$refundResult</span>-&gt;<span style="line-height:1.8;">getTradeStatus()){
+    </span><span style="line-height:1.8;color:rgb(0,0,255);">case</span> "SUCCESS":
+        <span style="line-height:1.8;color:rgb(0,0,255);">echo</span> "支付宝退款成功:"."&lt;br&gt;--------------------------&lt;br&gt;"<span style="line-height:1.8;">;
+        </span><span style="line-height:1.8;color:rgb(0,128,128);">print_r</span>(<span style="line-height:1.8;color:rgb(128,0,128);">$refundResult</span>-&gt;<span style="line-height:1.8;">getResponse());
+        </span><span style="line-height:1.8;color:rgb(0,0,255);">break</span><span style="line-height:1.8;">;
+    </span><span style="line-height:1.8;color:rgb(0,0,255);">case</span> "FAILED":
+        <span style="line-height:1.8;color:rgb(0,0,255);">echo</span> "支付宝退款失败!!!"."&lt;br&gt;--------------------------&lt;br&gt;"<span style="line-height:1.8;">;
+        </span><span style="line-height:1.8;color:rgb(0,0,255);">if</span>(!<span style="line-height:1.8;color:rgb(0,0,255);">empty</span>(<span style="line-height:1.8;color:rgb(128,0,128);">$refundResult</span>-&gt;<span style="line-height:1.8;">getResponse())){
+            </span><span style="line-height:1.8;color:rgb(0,128,128);">print_r</span>(<span style="line-height:1.8;color:rgb(128,0,128);">$refundResult</span>-&gt;<span style="line-height:1.8;">getResponse());
+        }
+        </span><span style="line-height:1.8;color:rgb(0,0,255);">break</span><span style="line-height:1.8;">;
+    </span><span style="line-height:1.8;color:rgb(0,0,255);">case</span> "UNKNOWN":
+        <span style="line-height:1.8;color:rgb(0,0,255);">echo</span> "系统异常，订单状态未知!!!"."&lt;br&gt;--------------------------&lt;br&gt;"<span style="line-height:1.8;">;
+        </span><span style="line-height:1.8;color:rgb(0,0,255);">if</span>(!<span style="line-height:1.8;color:rgb(0,0,255);">empty</span>(<span style="line-height:1.8;color:rgb(128,0,128);">$refundResult</span>-&gt;<span style="line-height:1.8;">getResponse())){
+            </span><span style="line-height:1.8;color:rgb(0,128,128);">print_r</span>(<span style="line-height:1.8;color:rgb(128,0,128);">$refundResult</span>-&gt;<span style="line-height:1.8;">getResponse());
+        }
+        </span><span style="line-height:1.8;color:rgb(0,0,255);">break</span><span style="line-height:1.8;">;
+    </span><span style="line-height:1.8;color:rgb(0,0,255);">default</span>:
+        <span style="line-height:1.8;color:rgb(0,0,255);">echo</span> "不支持的交易状态，交易返回异常!!!"<span style="line-height:1.8;">;
+        </span><span style="line-height:1.8;color:rgb(0,0,255);">break</span><span style="line-height:1.8;">;
+}</span></pre>
+    <div class="cnblogs_code_toolbar">
+     <span class="cnblogs_code_copy" style="line-height:1.8;"><a title="复制代码" style="color:rgb(0,0,0);border:none;"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码" style="border:none;"></a></span>
+    </div>
+   </div>
+   <p><span style="line-height:1.5;">最终提交的url如下</span></p>
+   <div class="cnblogs_code" style="background-color:rgb(245,245,245);border:1px solid rgb(204,204,204);color:rgb(0,0,0);font-family:'Courier New';font-size:12px;">
+    <pre style="font-family:'Courier New';">https:<span style="line-height:1.8;color:rgb(0,128,0);">//</span><span style="line-height:1.8;color:rgb(0,128,0);">openapi.alipay.com/gateway.do?app_id=2016061101500000&amp;version=1.0&amp;format=json&amp;sign_type=RSA&amp;method=alipay.trade.refund&amp;timestamp=2016-08-26+18%3A47%3A35&amp;auth_token=&amp;alipay_sdk=alipay-sdk-php-20160411&amp;terminal_type=&amp;terminal_info=&amp;prod_code=&amp;notify_url=&amp;charset=UTF-8&amp;app_auth_token=&amp;sign=Y1c5qWglAQ0t3brViEtqFnIJRQMn%2Fl9vMla1xgXKcExercJopMyS2rPOHaw%2F2PJEOKJC7r9qAfDGkNq4LHzXhBrD8sxLPqImPS6aWcW9p8s%2FzC2oQCJnLfaPx6lh8asdfarj4WzDayeZLA48ttoQLjuMGPrITgOXYjHHyUKdBqSs%3D</span></pre>
+   </div>
+   <p><span style="line-height:1.5;">发送的json数据如下：</span></p>
+   <div class="cnblogs_code" style="background-color:rgb(245,245,245);border:1px solid rgb(204,204,204);color:rgb(0,0,0);font-family:'Courier New';font-size:12px;">
+    <pre style="font-family:'Courier New';"><span style="line-height:1.8;">{
+    </span>"out_trade_no":"qrpay20160826053813582",
+    "refund_amount":"0.01",
+    "out_request_no":"1"<span style="line-height:1.8;">
+}</span></pre>
+   </div>
+   <p><span style="line-height:1.5;">接收到的数据如下</span></p>
+   <div class="cnblogs_code" style="background-color:rgb(245,245,245);border:1px solid rgb(204,204,204);color:rgb(0,0,0);font-family:'Courier New';font-size:12px;">
+    <div class="cnblogs_code_toolbar">
+     <span class="cnblogs_code_copy" style="line-height:1.8;"><a title="复制代码" style="color:rgb(0,0,0);border:none;"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码" style="border:none;"></a></span>
+    </div>
+    <pre style="font-family:'Courier New';"><span style="line-height:1.8;">{
+    </span>"alipay_trade_refund_response":<span style="line-height:1.8;">{
+        </span>"code":"10000",
+        "msg":"Success",
+        "buyer_logon_id":"123***@qq.com",
+        "buyer_user_id":"2088002364008751",
+        "fund_change":"Y",
+        "gmt_refund_pay":"2016-08-26 18:47:41",
+        "open_id":"20880044751374809757987911112575",
+        "out_trade_no":"qrpay20160826053813582",
+        "refund_detail_item_list":<span style="line-height:1.8;">[
+            {
+                </span>"amount":"0.01",
+                "fund_channel":"ALIPAYACCOUNT"<span style="line-height:1.8;">
+            }
+        ]</span>,
+        "refund_fee":"0.01",
+        "send_back_fee":"0.01",
+        "trade_no":"2016082621001004750239053830"<span style="line-height:1.8;">
+    }</span>,
+    "sign":"YDNSMpX5y0rQEs0ZbfNxRFVIp8hf0W30OR74cMtwKVPO2BYee6TQC+pbnwESSZ2XSGLozTyy7o+SIa07L+FMhDv/PTt6QX1mVgQv7RhzoDkls0zDRS/5/fy9Oyj01XS1wb8Od/93iNLZDkd2yw9g0He6qGYlpcXutkmwuASd7BM="<span style="line-height:1.8;">
+}</span></pre>
+    <div class="cnblogs_code_toolbar">
+     <span class="cnblogs_code_copy" style="line-height:1.8;"><a title="复制代码" style="color:rgb(0,0,0);border:none;"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码" style="border:none;"></a></span>
+    </div>
+   </div>
+   <p>&nbsp;</p>
+   <p>&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://images0.cnblogs.com/blog2015/340216/201505/251048095842267.gif" alt="" style="border:0px;"><span style="line-height:1.8;color:rgb(255,0,0);">我们提供支付宝接口配置SDK Demo一条龙服务，费用300元（含PHP源码提供、密钥生成、配置调试，直到demo跑通为止），需要加QQ 1354386063</span></p>
+   <p><span style="line-height:1.8;color:rgb(255,0,0);">　　 &nbsp; &nbsp; &nbsp; &nbsp;有扫码支付定制开发服务，3000元起步，需要加QQ 1354386063</span></p>
+   <p>&nbsp;</p>
+  </div>
+  <div id="MySignature" style="color:rgb(51,51,51);font-family:verdana, Arial, Helvetica, sans-serif;font-size:14px;background-color:rgb(255,255,255);">
+   <table border="1" cellspacing="1" cellpadding="1" style="border:1px solid;">
+    <colgroup>
+     <col>
+     <col>
+     <col>
+     <col>
+     <col>
+     <col>
+    </colgroup>
+    <tbody>
+     <tr align="center">
+      <td>服务项目</td>
+      <td>技术咨询</td>
+      <td>微信图书</td>
+      <td>微信视频</td>
+      <td>微信代码</td>
+      <td>定制开发</td>
+      <td>其他福利</td>
+     </tr>
+     <tr align="center">
+      <td>服务入口</td>
+      <td>QQ群有问必答<br><a href="http://www.cnblogs.com/txw1958/p/weixin-payask.html" rel="nofollow" style="color:rgb(0,0,0);border-bottom:1px dotted rgb(51,51,51);"><span style="line-height:1.8;color:rgb(111,0,210);">查看详情</span></a></td>
+      <td><span style="line-height:1.8;color:rgb(255,0,0);">一本书解决90%问题</span><br><a href="http://www.cnblogs.com/txw1958/p/buy-ebook.html" rel="nofollow" style="color:rgb(0,0,0);border-bottom:1px dotted rgb(51,51,51);"><span style="line-height:1.8;color:rgb(111,0,210);">查看详情</span></a></td>
+      <td><a href="http://www.cnblogs.com/txw1958/p/weixin-video-course.html" rel="nofollow" style="color:rgb(0,0,0);border-bottom:1px dotted rgb(51,51,51);"><span style="line-height:1.8;color:rgb(111,0,210);">微信开发视频</span></a><br><a href="http://www.cnblogs.com/txw1958/p/weixin-video-course.html" rel="nofollow" style="color:rgb(0,0,0);border-bottom:1px dotted rgb(51,51,51);"><span style="line-height:1.8;color:rgb(111,0,210);">小程序开发视频</span></a></td>
+      <td><a href="http://www.fangbei.org/code/freecode" rel="nofollow" style="color:rgb(0,0,0);border-bottom:1px dotted rgb(51,51,51);"><span style="line-height:1.8;color:rgb(111,0,210);">免费代码</span></a><br></td>
+      <td align="center"><a href="http://wpa.qq.com/msgrd?v=3&amp;uin=1354386063&amp;site=qq&amp;menu=yes" rel="nofollow" style="color:rgb(0,0,0);border-bottom:1px dotted rgb(51,51,51);"><img title="在线交谈" src="http://pub.idqqimg.com/qconn/site/images/intro/wpa_style_51.gif" border="0" style="border:0px;" alt=""></a><br>QQ:1354386063</td>
+      <td><a href="http://www.cnblogs.com/txw1958/category/1003229.html" rel="nofollow" style="color:rgb(0,0,0);border-bottom:1px dotted rgb(51,51,51);"><span style="line-height:1.8;color:rgb(0,117,0);">营销工具</span></a><br><a href="http://www.cnblogs.com/txw1958/p/weixin-special-functions.html" rel="nofollow" style="color:rgb(0,0,0);border-bottom:1px dotted rgb(51,51,51);"><span style="line-height:1.8;color:rgb(255,0,0);"><span>微信特异功能<span></span></span></span></a></td>
+     </tr>
+    </tbody>
+   </table>
+  </div>
+  <div class="clear" style="clear:both;color:rgb(51,51,51);font-family:verdana, Arial, Helvetica, sans-serif;font-size:14px;background-color:rgb(255,255,255);"></div>
+  <div id="blog_post_info_block" style="color:rgb(51,51,51);font-family:verdana, Arial, Helvetica, sans-serif;font-size:14px;background-color:rgb(255,255,255);">
+   <div id="BlogPostCategory">
+    分类:&nbsp;
+    <a href="http://www.cnblogs.com/txw1958/category/873256.html" rel="nofollow" style="color:rgb(0,0,0);border-bottom:1px dotted rgb(51,51,51);">支付宝支付</a>
+   </div>
+  </div> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/qq_26562641/article/details/80893848,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/qq_26562641/article/details/80893848,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

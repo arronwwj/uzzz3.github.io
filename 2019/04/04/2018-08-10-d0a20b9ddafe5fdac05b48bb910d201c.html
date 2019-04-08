@@ -1,0 +1,43 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <p>1.参考文档<br> &nbsp; http://www.infoq.com/cn/news/2018/08/google-cirq-quantum-library<br> &nbsp; https://www.zhihu.com/question/67144145<br> &nbsp; https://www.zhihu.com/question/59361487<br> &nbsp; http://www.infoq.com/cn/news/2018/07/quantcomputing-cirq<br> &nbsp; https://blog.csdn.net/yH0VLDe8VG8ep9VGe/article/details/78332653</p> 
+  <p>&nbsp; 为方便计，引用原文之处不再一一注明</p> 
+  <p>2.量子计算解决什么问题<br> &nbsp; 根据量子力学规则来操作一台计算机，就可以高效模拟自然界，由此就可能带来光伏、电源、新材料、制药、超导等领域的突破。<br> &nbsp; 去年，Google在一台超导qubit量子计算机上，用量子计算模拟了一个分子，并发表了论文Scalable Quantum Simulation of Molecular Energies；今年9月，IBM又宣布了一种在量子计算机上模拟大分子结构的新方法，还上了科学期刊《Nature》的封面。<br> &nbsp; 量子计算的应用之一是量子模拟, 即用量子计算机模拟真实的量子系统, 例如原子, 分子等等. 最近一个成果就是Google (UCSB)组用两比特的超导量子系统计算了氢分子的基态能, 文章如下 P. J. J. O’Malley et al., Phys. Rev. X 6, 031007 (2016). 其中使用了Variational Quantum Eigensolver (VQE)这种算法. 这种算法相当于用量子计算机实现变分法来求系统基态.这种算法的优点是需要的量子操作比较少, 从而对量子比特的相干性的要求就比较小. 而且VQE算法可以扩展到多个比特上计算更复杂的问题.<br> &nbsp; 现在的量子计算研究多是计算机或者是学物理的人在做，做算法的有，做硬件的也有。虽然很多人都知道量子计算机对于模拟量子化学体系有很大的优势，但是他们对于量子化学体系并不是特别的熟悉。同时，量子化学领域里懂量子计算的人更是少之又少，毕竟需要学很多的量子信息学才能勉强入门。OpenFermion项目是为了能让这两拨人之间能够相互沟通建立的。而且更多的意义是侧重于让量子化学领域的人能够通过OpenFermion将量子计算作为一个黑箱使用，而不用仔细追究算法或者是如何实现的。</p> 
+  <p>&nbsp;&nbsp;<br> 3.cirq<br> &nbsp; Noisy Intermediate Scale Quantum（NISQ）计算机（具有约50到100量子比特和高保真量子门的设备）的出现，开发用于探索这些机器强大能力的算法变得越来越重要。在基于NISQ处理器设计量子算法时，需要考虑一个常见的问题，即如何充分利用这些有限的量子设备——使用资源来解决问题中最难的部分，而不是在算法与硬件之间做出映射。此外，一些量子处理器具有复杂的几何约束和其他细微差别，忽略这些将会导致错误或次优的量子计算。<br> &nbsp; Google AI Quantum团队发布了Cirq的公开测试版，这是一款用于NISQ计算机的开源框架。Cirq专注于解决近期问题，帮助研究人员了解NISQ量子计算机是否能够解决具有实际重要性的计算问题。<br> &nbsp; Cirq为用户提供了对量子电路的精确控制，使用原生量子门来指定量子门的行为，将这些量子门适当地放置在设备上，并在量子硬件的约束范围内对这些量子门进行调度。它的数据结构经过优化，可用于编写和编译量子电路，从而让用户能够充分利用NISQ架构。Cirq可以在本地模拟器上运行这些算法，并可以轻松地与未来的量子硬件或更大规模的云端模拟器集成。</p> 
+  <p>4.OpenFermion<br> &nbsp; 4.1 介绍<br> &nbsp; OpenFermion是Google主导的量子计算开源软件包，用于编译和分析量子算法来模拟费米子系统，包括量子化学。在其他功能中，当前版本的特征是数据结构和用于获取和操控费米子和量子位哈密顿算符的表示的工具。OpenFermion是生成和编译物理方程式的工具，能够将化学和物质系统描述成可以由量子计算机解释的表征。为量子化学问题构建低深度量子算法的最新进展，帮助用户将化学问题的细节转变为高度优化的可以在特定硬件上运行的量子电路。例如，该库可用于轻松构建量子变分算法，用以模拟分子和复杂材料的特性。<br> &nbsp; 4.2 非常详细的技术文档<br> &nbsp; &nbsp; https://blog.csdn.net/longji/article/details/79488758</p> 
+  <p>5.cirq计算示例</p> 
+  <p>&nbsp; Zapata计算：模拟量子自动编码器（示例代码https://github.com/zapatacomputing/cusp_cirq_demo/，视频教程https://youtu.be/79Hd-M_xN3Q）</p> 
+  <p>&nbsp; QC Ware：QAOA实现并集成到QC Ware的AQUA平台（示例代码https://github.com/qcware/public_demos/blob/master/max_cut/max_cut_cirq.py，视频教程https://www.youtube.com/watch?v=pveM3j4uSTo）</p> 
+  <p>&nbsp; Quantum Benchmark：与True-Q软件工具集成，用于评估和扩展硬件能力（视频教程https://www.youtube.com/watch?v=JWHWs7R-IRs）</p> 
+  <p>&nbsp; 海森堡量子模拟：模拟安德森模型（https://heisenberg.xyz/news/2018/07/heisenberg-cirq/）</p> 
+  <p>&nbsp; 剑桥量子计算：专有量子编译器的集成（视频教程https://www.youtube.com/watch?v=f4jhD4J3-W8&amp;feature=youtu.be）</p> 
+  <p>&nbsp; NASA：基于QAOA时间规划（https://drive.google.com/open?id=1O-Ar44mJweLmVK3S1sPBrrV8X7ulB7EC）的架构感知编译器和量子计算机模拟器（幻灯片https://drive.google.com/open?id=1EgAzSt8eM9bfRvGqrZ2LQa9rC0diu1tJ）</p> 
+  <p><br> 6. cirq的安装<br> &nbsp; 6.1 源码<br> &nbsp; &nbsp; Cirq代码库地址：https://github.com/quantumlib/Cirq<br> &nbsp; 6.2 教程<br> &nbsp; &nbsp; https://cirq.readthedocs.io/en/latest/tutorial.html<br> &nbsp; 6.3 官网文档<br> &nbsp; &nbsp; https://cirq.readthedocs.io/en/latest/index.html<br> &nbsp; &nbsp; https://en.wikipedia.org/wiki/Variational_method_(quantum_mechanics)<br> &nbsp; 6.4 安装<br> &nbsp; &nbsp; cirq需要至少python 3.5.3版本<br> &nbsp; &nbsp; 使用pyenv 安装 新版python: &nbsp;pyenv install 3.6.0<br> &nbsp; &nbsp; 切换到python 3.6.0: &nbsp;pyenv global 3.6.0<br> &nbsp; &nbsp; pip install cirq -i http://pypi.douban.com/simple &nbsp;--trusted-host pypi.douban.com</p> 
+  <p><br> 7. cirq的第一个例子</p> 
+  <pre class="has">
+<code class="language-python">import cirq
+
+# Pick a qubit.
+qubit = cirq.GridQubit(0, 0)
+
+# Create a circuit
+circuit = cirq.Circuit.from_ops(
+&nbsp; &nbsp; cirq.X(qubit)**0.5, &nbsp;# Square root of NOT.
+&nbsp; &nbsp; cirq.measure(qubit, key='m') &nbsp;# Measurement.
+)
+print("Circuit:")
+print(circuit)
+
+# Simulate the circuit several times.
+simulator = cirq.google.XmonSimulator()
+result = simulator.run(circuit, repetitions=20)
+print("Results:")
+print(result)
+</code></pre> 
+  <p>&nbsp;</p> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/lizhe_dashuju/article/details/81567091,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/lizhe_dashuju/article/details/81567091,&quot;}">阅读更多</a> 
+</div>

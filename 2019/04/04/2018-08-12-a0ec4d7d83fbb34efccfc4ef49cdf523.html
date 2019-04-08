@@ -1,0 +1,53 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <h1>原文翻译</h1> 
+  <hr>
+  <h2>5. Network</h2> 
+  <p>The steps to run the network are as follows:</p> 
+  <p>1) &nbsp;New transactions are broadcast to all nodes.</p> 
+  <p>2) &nbsp;Each node collects new transactions into a block.</p> 
+  <p>3) &nbsp;Each node works on finding a difficult proof-of-work for its block.</p> 
+  <p>4) &nbsp;When a node finds a proof-of-work, it broadcasts the block to all nodes.</p> 
+  <p>5) &nbsp;Nodes accept the block only if all transactions in it are valid and not already spent.</p> 
+  <p>6) &nbsp;Nodes express their acceptance of the block by working on creating the next block in the</p> 
+  <p>chain, using the hash of the accepted block as the previous hash.</p> 
+  <p>Nodes always consider the longest chain to be the correct one and will keep working on extending it. If two nodes broadcast different versions of the next block simultaneously, some nodes may receive one or the other first. In that case, they work on the first one they received, but save the other branch in case it becomes longer. The tie will be broken when the next proof-of-work is found and one branch becomes longer; the nodes that were working on the other branch will then switch to the longer one.</p> 
+  <p>New transaction broadcasts do not necessarily need to reach all nodes. As long as they reach many nodes, they will get into a block before long. Block broadcasts are also tolerant of dropped messages. If a node does not receive a block, it will request it when it receives the next block and realizes it missed one.</p> 
+  <h2>4.网络</h2> 
+  <p>运行网络的步骤如下：</p> 
+  <p>1) &nbsp;新的交易被广播到所有节点。</p> 
+  <p>2) &nbsp;每一个节点都把新的交易收集到区块链中。</p> 
+  <p>3) &nbsp;每个节点都试图找到适用于其区块的工作量证明。</p> 
+  <p>4) 一个节点找到了适用于其区块的工作量证明，它将其广播到所有节点。</p> 
+  <p>5) 节点当且仅当该被广播的区块中所有交易都合法以及没有<strong>双重支付</strong>[1]的前提下才接受该区块。</p> 
+  <p>6) 节点通过使用该被广播的区块中的<strong>哈希</strong>[2]值开始计算下一个区块来表示其接受该被广播的区块。</p> 
+  <p>节点永远将最长链视为正确的链并基于它开始工作尝试延长它。如果两个节点同时广播了不同版本的下一区块，一些节点可能会先收到一个或先收到另一个。在这种情况下，它们基于它们先收到的那个开始工作，但同时保存另一个以防万一它变成了更长的链。当下一个区块被找到其中一个分支就会变得更长，这种情形就会被打破；哪些基于另一条分支工作的节点就会切换到更长的那条链上。</p> 
+  <p>新交易的广播没有必要到达所有的节点。只要到达很多节点，它们很快就会进入区块。区块的广播同样也可以容忍消息丢失，如果一个节点没有收到一个区块，当它收到下一个区块时，就会意识到它丢失了一个区块，并会去请求它。</p> 
+  <h1>细节解读</h1> 
+  <hr>
+  <h2>[1]什么是”<strong>双重支付"</strong></h2> 
+  <p>请参考我的另一篇博文:比特币创世论文《Bitcoin: A Peer-to-Peer Electronic Cash System》研读之一：摘要</p> 
+  <p><a href="https://blog.csdn.net/qq_27467365/article/details/81569962" rel="nofollow">https://blog.csdn.net/qq_27467365/article/details/81569962</a></p> 
+  <h2>[1]What is ''double-spending"</h2> 
+  <p>Please refer to my other blog post《Study of《Bitcoin: A Peer-to-Peer Electronic Cash System》1》</p> 
+  <p><a href="https://blog.csdn.net/qq_27467365/article/details/81569962" rel="nofollow">https://blog.csdn.net/qq_27467365/article/details/8156996</a></p> 
+  <hr>
+  <h2>[2]什么是”​​​​​​​<strong>哈希"</strong></h2> 
+  <p>请参考我的另一篇博文:比特币创世论文《Bitcoin: A Peer-to-Peer Electronic Cash System》研读之一：摘要</p> 
+  <p>​​​​​​​<a href="https://blog.csdn.net/qq_27467365/article/details/81569962" rel="nofollow">https://blog.csdn.net/qq_27467365/article/details/81569962</a></p> 
+  <h2>[2]What is ''hash"</h2> 
+  <p>Please refer to my other blog post《Study of《Bitcoin: A Peer-to-Peer Electronic Cash System》1》</p> 
+  <p><a href="https://blog.csdn.net/qq_27467365/article/details/81569962" rel="nofollow">https://blog.csdn.net/qq_27467365/article/details/8156996</a></p> 
+  <hr>
+  <p>《Bitcoin: A Peer-to-Peer Electronic Cash System》论文原文地址如下：<a href="https://bitcoin.org/bitcoin.pdf" rel="nofollow">https://bitcoin.org/bitcoin.pdf</a></p> 
+  <hr>
+  <p>版权所有声明</p> 
+  <p>版权所有归属作者，未经允许不得转载、复制或用作它途。否则作者将具有追究法律责任的权利。</p> 
+  <p>Copyright Clarify</p> 
+  <p>Copyright ownership belongs to the author, shall not be reproduced, copied, or used in other ways without permission. Otherwise, the author will have the right to pursue legal responsibilities.</p> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/qq_27467365/article/details/81607087,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/qq_27467365/article/details/81607087,&quot;}">阅读更多</a> 
+</div>

@@ -1,0 +1,89 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div class="markdown_views"> 
+  <h3 id="nebpay-sdk介绍">NebPay SDK介绍</h3> 
+  <p><a href="https://github.com/nebulasio/nebPay" rel="nofollow">NeyPay</a> 是官方发布的星云链支付工具，可以用来解决Dapp中的支付需求。</p> 
+  <p>用户在使用Dapp过程中需要发送交易，但是直接在Dapp中导入钱包文件或输入私钥是极不安全的，所以Nebulas官方提供了一个支付接口NebPay。Dapp开发者可以使用NebPay作为支付通道，来处理sendTransaction的需求。Dapp用户需要安装浏览器插件（桌面端）或钱包APP（移动端）来完成Dapp页面发起的交易请求。</p> 
+  <p>如果Dapp页面需要与Nebulas网络进行其他非交易类的信息交互，比如查询数据、订阅event等，则可以使用neb.js直接与Nebulas网络交互。</p> 
+  <p>NebPay 根据不同的支付场景提供了4个支付API和1个交易查询API。关于接口的详细说明可以参考<a href="https://github.com/nebulasio/nebPay/blob/master/doc/NebPay%E4%BB%8B%E7%BB%8D.md" rel="nofollow">文档</a>。</p> 
+  <table> 
+   <thead> 
+    <tr> 
+     <th align="left">接口</th> 
+     <th align="left">简介</th> 
+    </tr> 
+   </thead> 
+   <tbody>
+    <tr> 
+     <td align="left">pay</td> 
+     <td align="left">用于账户间的NAS转账</td> 
+    </tr> 
+    <tr> 
+     <td align="left">nrc20pay</td> 
+     <td align="left">用于NRC20代币的转账,仅接口实现，app不支持</td> 
+    </tr> 
+    <tr> 
+     <td align="left">deploy</td> 
+     <td align="left">用于部署智能合约，仅接口实现(目前尚不支持该API)</td> 
+    </tr> 
+    <tr> 
+     <td align="left">call</td> 
+     <td align="left">用于调用智能合约</td> 
+    </tr> 
+    <tr> 
+     <td align="left">queryPayInfo</td> 
+     <td align="left">用于查询支付结果</td> 
+    </tr> 
+   </tbody>
+  </table> 
+  <p>调用支付API时会返回一个交易序列号，然后Dapp可以使用查询API通过该序列号查询交易的结果。</p> 
+  <h3 id="dapp页面中使用-nebpay">Dapp页面中使用 NebPay</h3> 
+  <p>如果在Dapp中使用NebPay，需要在github下载NebPay源码，然后按照readme中的说明用gulp指令打包生成<code>nebpay.js</code>。然后插入到Dapp页面就可以使用了。</p> 
+  <p>示例代码如下：</p> 
+  <pre class="prettyprint"><code class="language-html hljs "><span class="hljs-tag">&lt;<span class="hljs-title">script</span> <span class="hljs-attribute">src</span>=<span class="hljs-value">"nebPay.js"</span>&gt;</span><span class="javascript"></span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">script</span> &gt;</span><span class="javascript"> <span class="hljs-keyword">var</span> NebPay = <span class="hljs-built_in">require</span>(<span class="hljs-string">"nebpay"</span>); <span class="hljs-keyword">var</span> nebPay = <span class="hljs-keyword">new</span> NebPay(); <span class="hljs-keyword">var</span> serialNumber; <span class="hljs-comment">//交易序列号</span> <span class="hljs-keyword">var</span> intervalQuery; <span class="hljs-comment">//定时查询交易结果</span> <span class="hljs-comment">//点击按钮发起交易, 这里为调用智能合约的例子</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">onButtonClick</span><span class="hljs-params">()</span> {</span> <span class="hljs-keyword">var</span> to = dappAddress; <span class="hljs-comment">//Dapp的合约地址</span> <span class="hljs-keyword">var</span> value = <span class="hljs-string">"0"</span>; <span class="hljs-keyword">var</span> callFunction = <span class="hljs-string">""</span> <span class="hljs-comment">//调用的函数名称</span> <span class="hljs-keyword">var</span> callArgs = <span class="hljs-string">""</span> <span class="hljs-comment">//参数格式为参数数组的JSON字符串, 比如'["arg"]','["arg1","arg2]' </span> <span class="hljs-keyword">var</span> options = { goods: { <span class="hljs-comment">//商品描述</span> name: <span class="hljs-string">"example"</span> }, <span class="hljs-comment">//callback 是交易查询服务器地址,</span> <span class="hljs-comment">//callback: NebPay.config.mainnetUrl //在主网查询(默认值)</span> callback: NebPay.config.testnetUrl <span class="hljs-comment">//在测试网查询</span> } <span class="hljs-comment">//发送交易(发起智能合约调用)</span> serialNumber = nebPay.call(to, value, callFunction, callArgs, options); <span class="hljs-comment">//设置定时查询交易结果</span> intervalQuery = setInterval(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span> funcIntervalQuery(); }, <span class="hljs-number">10000</span>); <span class="hljs-comment">//建议查询频率10-15s,因为星云链出块时间为15s,并且查询服务器限制每分钟最多查询10次。</span> } <span class="hljs-comment">//查询交易结果. queryPayInfo返回的是一个Promise对象.</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">funcIntervalQuery</span><span class="hljs-params">()</span> {</span> <span class="hljs-comment">//queryPayInfo的options参数用来指定查询交易的服务器地址,(如果是主网可以忽略,因为默认服务器是在主网查询)</span> nebPay.queryPayInfo(serialNumber, options) <span class="hljs-comment">//search transaction result from server (result upload to server by app)</span> .then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(resp)</span> {</span> console.log(<span class="hljs-string">"tx result: "</span> + resp) <span class="hljs-comment">//resp is a JSON string</span> <span class="hljs-keyword">var</span> respObject = <span class="hljs-built_in">JSON</span>.parse(resp) <span class="hljs-comment">//code==0交易发送成功, status==1交易已被打包上链</span> <span class="hljs-keyword">if</span>(respObject.code === <span class="hljs-number">0</span> &amp;&amp; respObject.data.status === <span class="hljs-number">1</span>){ <span class="hljs-comment">//交易成功,处理后续任务....</span> clearInterval(intervalQuery) <span class="hljs-comment">//清除定时查询</span> } }) .catch(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(err)</span> {</span> console.log(err); }); } </span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span></code></pre> 
+  <p>queryPayInfo(serialNumber) 查询到的结果格式为JSON字符串,可以反序列化<code>JSON.parse(resp)</code>得到JS对象。查询结果的格式为：</p> 
+  <pre class="prettyprint"><code class=" hljs cs"><span class="hljs-comment">//查询失败, 没有该记录, 可以多查询几次</span>
+{
+    <span class="hljs-string">"code"</span>: <span class="hljs-number">1</span>,
+    <span class="hljs-string">"data"</span>: {},
+    <span class="hljs-string">"msg"</span>: <span class="hljs-string">"payId ZBTSkk74dB4tPJI9J8FDFMu270h7yaut get transaction error"</span>
+}
+<span class="hljs-comment">//查询成功</span>
+{
+    <span class="hljs-string">"code"</span>: <span class="hljs-number">0</span>,
+    <span class="hljs-string">"data"</span>: {
+        <span class="hljs-string">"data"</span>: <span class="hljs-keyword">null</span>,
+        <span class="hljs-string">"contractAddress"</span>: <span class="hljs-string">""</span>,
+        <span class="hljs-string">"type"</span>: <span class="hljs-string">"binary"</span>,
+        <span class="hljs-string">"nonce"</span>: <span class="hljs-number">136</span>,
+        <span class="hljs-string">"gasLimit"</span>: <span class="hljs-string">"30000"</span>,
+        <span class="hljs-string">"gasUsed"</span>: <span class="hljs-string">"20000"</span>,
+        <span class="hljs-string">"chainId"</span>: <span class="hljs-number">1001</span>,
+        <span class="hljs-string">"from"</span>: <span class="hljs-string">"n1FF1nz6tarkDVwWQkMnnwFPuPKUaQTdptE"</span>,
+        <span class="hljs-string">"to"</span>: <span class="hljs-string">"n1FF1nz6tarkDVwWQkMnnwFPuPKUaQTdptE"</span>,
+        <span class="hljs-string">"value"</span>: <span class="hljs-string">"1000000000000000000"</span>,
+        <span class="hljs-string">"hash"</span>: <span class="hljs-string">"f9549a5c01f50f372607b9fd29bf15d483246578f6cc7008d6e2a537920802e6"</span>,
+        <span class="hljs-string">"gasPrice"</span>: <span class="hljs-string">"1000000"</span>,
+        <span class="hljs-string">"status"</span>: <span class="hljs-number">1</span>,  <span class="hljs-comment">//建议使用status来判断是否已上链</span>
+        <span class="hljs-string">"timestamp"</span>: <span class="hljs-number">1525508076</span>
+    },
+    <span class="hljs-string">"msg"</span>: <span class="hljs-string">"success"</span>
+}</code></pre> 
+  <p>以NebPay + 钱包App为例，一个交易的发送过程大致有以下几步：</p> 
+  <ul> 
+   <li>用户发起交易，Dapp 调用NebPay 发送交易信息到App, 此时NebPay返回<code>交易序列号</code>给Dapp。</li> 
+   <li>用户通过App将交易发送到星云链， 并得到交易的<code>TxHash</code> </li> 
+   <li>App 将<code>交易序列号</code>和<code>TxHash</code> 发送到由<code>callback</code>指定的交易查询服务器。</li> 
+   <li>Dapp调用<code>queryPayInfo</code> 到交易查询服务器查询交易结果. <br> <img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180515110912231?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3ljeXp5cA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述" title=""></li> 
+  </ul> 
+  <p>需要注意的是，NebPay 并不关心当前使用的是主网或测试网，只是把交易信息发给浏览器插件或手机app，由后者决定将交易发送到哪个网络。callback参数也只是决定使用哪个服务器查询交易结果，并不会影响交易发送的网络。</p> 
+  <h3 id="nebpay-使用范例">NebPay 使用范例</h3> 
+  <p>这里有个使用nebPay的例子可以参考: <a href="https://15010159959.github.io/super-dictionary/" rel="nofollow">SuperDictionary</a> ，<a href="https://github.com/15010159959/super-dictionary" rel="nofollow">GitHub链接</a></p> 
+  <p>SuperDictionary 的使用过程可参见以下视频： <br> <a href="https://www.bilibili.com/video/av23217213/" rel="nofollow">https://www.bilibili.com/video/av23217213/</a></p> 
+  <p>欢迎对星云感兴趣的开发者或爱好者来StackExchange 沟通交流。 <br> <a href="https://area51.stackexchange.com/proposals/117966/nebulas?referrer=ozdNI2Lomd3OnrNwgRariA2" rel="nofollow"><img src="https://area51.stackexchange.com/ads/proposal/117966.png" width="300" height="250" alt="Stack Exchange Q&amp;A site proposal: Nebulas"></a></p> 
+ </div> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/markdown_views-ea0013b516.css"> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/ycyzyp/article/details/80261142,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/ycyzyp/article/details/80261142,&quot;}">阅读更多</a> 
+</div>

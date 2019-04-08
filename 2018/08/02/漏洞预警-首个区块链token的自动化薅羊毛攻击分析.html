@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>【漏洞预警】首个区块链token的自动化薅羊毛攻击分析 | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="【漏洞预警】首个区块链token的自动化薅羊毛攻击分析" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="事件介绍 近期，启明星辰ADLab联合电子科技大学的陈厅副教授追踪到了以太坊token中的首个自动化薅羊毛攻击事件。被攻击的合约地址为0x86c8bf8532aa2601151c9dbbf4e4c4804e042571，token名称为Simoleon (SIM)，截止目前有接近57万账户持有该合约的token： 经过深入分析，我们发现攻击者对以太坊的理解非常深刻，其通过部署攻击合约获得了超过700万的token，从57万账户中脱颖而出，一举成为该合约token的第四大持有者： 被攻击的合约Simoleon 在token发行过程中，为增加人气发行方可能会选择空投，即在一定时间窗口和投放总量的条件下免费给参与地址发送一定数量的token。Simoleon合约也加入了空投能力，在总量发放完之前，任何未接受过该token空投的账户都可以调用本合约的transfer函数给指定账户地址免费转账token： 攻击过程分析 我们分析攻击账户的token来源，通过etherscan查看该账户的token交易记录，一共分为两项：709万和1万，分别来自不同的账户地址： 继续跟踪709万token的交易记录，其来源有三项：550万，155万和3万，都来自同一个账户地址0x73fa30b609249166fa425f34b7142591c92b5548： 分析发现地址0x73fa30b609249166fa425f34b7142591c92b5548是一个闭源智能合约，由账户0x0075fd99426911b2e9650114bedc1195ad027f21创建，该合约总共有23笔交易： Simoleon合约对已经发放token的地址都进行了记录，因此每个地址只能免费获得1万的token。要获得更多的数量，就需要创建很多新账户，然后利用这些新账户调用Simoleon合约的transfer函数给指定账户来获得大量token。如果通过创建EOA账户来进行薅羊毛，则每个账户都需要一些以太币，否则EOA账户就没有gas去调用Simoleon合约的transfer函数，也就无法薅羊毛。显然，给大量EOA账户发送以太币会增加额外的交易手续费。 攻击者在这里采用了一种精妙的攻击手法：首先部署一个恶意的攻击合约，地址为0x73fa30b609249166fa425f34b7142591c92b5548；然后调用攻击合约中签名为0x2b6cab44的函数来动态生成临时合约；最后临时合约在构造函数中直接调用Simoleon合约的transfer函数给攻击合约发送token。因为动态生成的临时合约都是未领取过token的账户，所以都能自动获得空投份额。攻击者只需要给攻击账户发送以太币就有足够的gas调用攻击合约，同时攻击者还能控制临时合约的生成数量。 通过分析攻击合约的23个交易数据，得到攻击者对0x2b6cab44函数的调用过程如下： 其中第一笔的交易（0x7f87268e06b76644ad4b8e162fb76d1c6e2e0480029b14db0e013f7d7d195e2f）细节如下，攻击者通过0x2b6cab44函数的参数来控制只生成2个临时合约，2个临时合约分别获取1万的token，然后发送给攻击合约。临时合约最后还进行了自动销毁，使自己的代码从区块链上消失。 攻击者前面4笔的交易中，每次生成的临时合约数量越来越大。其中第4次生成了80个临时合约，但是执行失败了，查看原因是gas不足。 攻击者在后续的交易中，每次都选择只生成50个临时合约。理论上攻击者可以增大允许的gas消耗量，从而一次性创建80个临时合约来加快薅羊毛，但攻击者却选择一次50个的搬砖模式。通过深入分析，我们发现攻击者对以太坊的底层机制相当熟悉，比如这里的gas消耗问题。 在以太坊中，每一笔交易都会消耗一定量的gas，实际消耗量由交易的复杂度决定，但不会超过发送者指定该交易能允许的最大消耗量。逆向分析0x2b6cab44函数后发现它是在循环创建临时合约，显然循环次数越多，这个函数调用的交易复杂度就越高，实际的gas消耗量就越大，允许的gas消耗量也就必须设置为越大。临时合约数量设置为50的时候，gas实际消耗量为3096224；临时合约数量设置为80时，gas实际消耗量为6174290。 然而，每个区块又有最大gas消耗量的阈值，并且每个区块至少要容纳1笔交易，因此以太坊链上任何一笔交易的gas消耗量都不允许超过区块的阈值。这进一步导致，在矿工最优化收益方案中，如果一个交易允许的gas消耗量过大，就会倾向性把这个交易排除在区块外，从而导致该交易失败。攻击者通过探测尝试找到最佳临时合约数量为50（因为80个临时合约的gas消耗已经超过允许的gas消耗导致交易失败），从而实现一次调用可以薅更多token，同时又不会触发gas问题。 行家一出手，就知有没有！不愧是有知识的攻击者。 暗藏玄机的etherscan 在追踪分析过程中，我们发现了另外一起问题，即etherscan对token的变化记录是不准确的，甚至可能完全是错误的。如下是攻击合约的第一笔token收入，2个临时合约总共获得2万token，然后发送给了攻击合约： 紧接着攻击合约产生了第一笔token支出，发送了3万token给攻击者： 根据etherscan中的交易记录，攻击合约的收入只有2万，结果支持了3万。多支出的1万出自哪里，是否凭空产生？为何这1万的变化，etherscan没有任何记录？&nbsp; 经过分析，找到原因就在Simoleon合约的transfer函数，合约在空投的时候也会对目标地址进行免费发送token，但是这个发放却没有调用Transfer事件： 于是，攻击合约的token变化过程如下： （1）攻击合约被创建，token为零。 （2）攻击合约0x2b6cab44函数第一次被调用，创建2个临时合约： 第1个临时合约初始化时调用Simoleon的transfer函数，该函数首先给临时合约空投initialize(msg.sender)，此时临时合约的token为1万；然后给攻击合约空投initialize(_to)，此时攻击合约的token为1万；最后把临时合约的1万token发送给攻击合约，同时调用事件Transfer记录临时合约给攻击合约的发送量为1万。至此，攻击合约的token总计为2万，由空投的1万加上临时合约发送的1万构成。 第2个临时合约初始化时调用Simoleon的transfer函数，该函数首先给临时合约空投initialize(msg.sender)，此时临时合约拥有的token为1万；然后把临时合约的1万token发送给攻击合约，同时调用事件Transfer记录临时合约给攻击合约的发送量为1万。至此，攻击合约的token总计为3万，由先前2万加临时合约发送的1万构成。 （3）攻击者从攻击合约提取全部token，提取总量token为3万。 因此，从攻击合约账户自身的收支平衡来看，并没有凭空产生token，只是etherscan未能监控到攻击合约因为空投获得的1万token。这说明了etherscan对token变化的监控是基于Transfer事件，而不是基于每个账户的实际token变化。这会带来一些潜在的威胁，因为Transfer事件在本质上只是一个道德约束，EVM本身对其没有任何限制能力，攻击者可以不调用事件，也可以任意修改该事件的参数，实现诸如：实际转移的token量比事件通知的数量不匹配。对于频繁交易token的节点来说，这是一个新的挑战，因为该节点将难以通过链上数据追踪每笔token的来源，因为Transfer事件不再是准确的。 总 结 Simoleon合约能被自动化的薅羊毛，最根本的原因在于其合约代码的空投奖励函数没有任何权限控制，任意未领过空投的账户都可以直接调用Simoleon合约来获取。因此，攻击者可以利用攻击合约来创建大量账户来领取。一种缓解办法是给空投奖励函数设置权限控制，比如只有合约创建者才能给目标地址发放token。&nbsp; 区块链的特性决定了合约代码一经部署就无法修改，无论是合约的开发者，还是投资者，还是交易平台，都应当对合约进行多重安全审计，尽量在上链前消除安全风险。 参考链接： 【1】 Ting Chen, University of ElectronicScience and Technology of China.&nbsp; http://faculty. uestc.edu.cn/chenting/zh_CN/ index.htm 【2】 Simoleon (SIM). https://etherscan.io/address/0x86c8bf8532aa2601151c9dbbf4e4c4804e042571 阅读更多" />
+<meta property="og:description" content="事件介绍 近期，启明星辰ADLab联合电子科技大学的陈厅副教授追踪到了以太坊token中的首个自动化薅羊毛攻击事件。被攻击的合约地址为0x86c8bf8532aa2601151c9dbbf4e4c4804e042571，token名称为Simoleon (SIM)，截止目前有接近57万账户持有该合约的token： 经过深入分析，我们发现攻击者对以太坊的理解非常深刻，其通过部署攻击合约获得了超过700万的token，从57万账户中脱颖而出，一举成为该合约token的第四大持有者： 被攻击的合约Simoleon 在token发行过程中，为增加人气发行方可能会选择空投，即在一定时间窗口和投放总量的条件下免费给参与地址发送一定数量的token。Simoleon合约也加入了空投能力，在总量发放完之前，任何未接受过该token空投的账户都可以调用本合约的transfer函数给指定账户地址免费转账token： 攻击过程分析 我们分析攻击账户的token来源，通过etherscan查看该账户的token交易记录，一共分为两项：709万和1万，分别来自不同的账户地址： 继续跟踪709万token的交易记录，其来源有三项：550万，155万和3万，都来自同一个账户地址0x73fa30b609249166fa425f34b7142591c92b5548： 分析发现地址0x73fa30b609249166fa425f34b7142591c92b5548是一个闭源智能合约，由账户0x0075fd99426911b2e9650114bedc1195ad027f21创建，该合约总共有23笔交易： Simoleon合约对已经发放token的地址都进行了记录，因此每个地址只能免费获得1万的token。要获得更多的数量，就需要创建很多新账户，然后利用这些新账户调用Simoleon合约的transfer函数给指定账户来获得大量token。如果通过创建EOA账户来进行薅羊毛，则每个账户都需要一些以太币，否则EOA账户就没有gas去调用Simoleon合约的transfer函数，也就无法薅羊毛。显然，给大量EOA账户发送以太币会增加额外的交易手续费。 攻击者在这里采用了一种精妙的攻击手法：首先部署一个恶意的攻击合约，地址为0x73fa30b609249166fa425f34b7142591c92b5548；然后调用攻击合约中签名为0x2b6cab44的函数来动态生成临时合约；最后临时合约在构造函数中直接调用Simoleon合约的transfer函数给攻击合约发送token。因为动态生成的临时合约都是未领取过token的账户，所以都能自动获得空投份额。攻击者只需要给攻击账户发送以太币就有足够的gas调用攻击合约，同时攻击者还能控制临时合约的生成数量。 通过分析攻击合约的23个交易数据，得到攻击者对0x2b6cab44函数的调用过程如下： 其中第一笔的交易（0x7f87268e06b76644ad4b8e162fb76d1c6e2e0480029b14db0e013f7d7d195e2f）细节如下，攻击者通过0x2b6cab44函数的参数来控制只生成2个临时合约，2个临时合约分别获取1万的token，然后发送给攻击合约。临时合约最后还进行了自动销毁，使自己的代码从区块链上消失。 攻击者前面4笔的交易中，每次生成的临时合约数量越来越大。其中第4次生成了80个临时合约，但是执行失败了，查看原因是gas不足。 攻击者在后续的交易中，每次都选择只生成50个临时合约。理论上攻击者可以增大允许的gas消耗量，从而一次性创建80个临时合约来加快薅羊毛，但攻击者却选择一次50个的搬砖模式。通过深入分析，我们发现攻击者对以太坊的底层机制相当熟悉，比如这里的gas消耗问题。 在以太坊中，每一笔交易都会消耗一定量的gas，实际消耗量由交易的复杂度决定，但不会超过发送者指定该交易能允许的最大消耗量。逆向分析0x2b6cab44函数后发现它是在循环创建临时合约，显然循环次数越多，这个函数调用的交易复杂度就越高，实际的gas消耗量就越大，允许的gas消耗量也就必须设置为越大。临时合约数量设置为50的时候，gas实际消耗量为3096224；临时合约数量设置为80时，gas实际消耗量为6174290。 然而，每个区块又有最大gas消耗量的阈值，并且每个区块至少要容纳1笔交易，因此以太坊链上任何一笔交易的gas消耗量都不允许超过区块的阈值。这进一步导致，在矿工最优化收益方案中，如果一个交易允许的gas消耗量过大，就会倾向性把这个交易排除在区块外，从而导致该交易失败。攻击者通过探测尝试找到最佳临时合约数量为50（因为80个临时合约的gas消耗已经超过允许的gas消耗导致交易失败），从而实现一次调用可以薅更多token，同时又不会触发gas问题。 行家一出手，就知有没有！不愧是有知识的攻击者。 暗藏玄机的etherscan 在追踪分析过程中，我们发现了另外一起问题，即etherscan对token的变化记录是不准确的，甚至可能完全是错误的。如下是攻击合约的第一笔token收入，2个临时合约总共获得2万token，然后发送给了攻击合约： 紧接着攻击合约产生了第一笔token支出，发送了3万token给攻击者： 根据etherscan中的交易记录，攻击合约的收入只有2万，结果支持了3万。多支出的1万出自哪里，是否凭空产生？为何这1万的变化，etherscan没有任何记录？&nbsp; 经过分析，找到原因就在Simoleon合约的transfer函数，合约在空投的时候也会对目标地址进行免费发送token，但是这个发放却没有调用Transfer事件： 于是，攻击合约的token变化过程如下： （1）攻击合约被创建，token为零。 （2）攻击合约0x2b6cab44函数第一次被调用，创建2个临时合约： 第1个临时合约初始化时调用Simoleon的transfer函数，该函数首先给临时合约空投initialize(msg.sender)，此时临时合约的token为1万；然后给攻击合约空投initialize(_to)，此时攻击合约的token为1万；最后把临时合约的1万token发送给攻击合约，同时调用事件Transfer记录临时合约给攻击合约的发送量为1万。至此，攻击合约的token总计为2万，由空投的1万加上临时合约发送的1万构成。 第2个临时合约初始化时调用Simoleon的transfer函数，该函数首先给临时合约空投initialize(msg.sender)，此时临时合约拥有的token为1万；然后把临时合约的1万token发送给攻击合约，同时调用事件Transfer记录临时合约给攻击合约的发送量为1万。至此，攻击合约的token总计为3万，由先前2万加临时合约发送的1万构成。 （3）攻击者从攻击合约提取全部token，提取总量token为3万。 因此，从攻击合约账户自身的收支平衡来看，并没有凭空产生token，只是etherscan未能监控到攻击合约因为空投获得的1万token。这说明了etherscan对token变化的监控是基于Transfer事件，而不是基于每个账户的实际token变化。这会带来一些潜在的威胁，因为Transfer事件在本质上只是一个道德约束，EVM本身对其没有任何限制能力，攻击者可以不调用事件，也可以任意修改该事件的参数，实现诸如：实际转移的token量比事件通知的数量不匹配。对于频繁交易token的节点来说，这是一个新的挑战，因为该节点将难以通过链上数据追踪每笔token的来源，因为Transfer事件不再是准确的。 总 结 Simoleon合约能被自动化的薅羊毛，最根本的原因在于其合约代码的空投奖励函数没有任何权限控制，任意未领过空投的账户都可以直接调用Simoleon合约来获取。因此，攻击者可以利用攻击合约来创建大量账户来领取。一种缓解办法是给空投奖励函数设置权限控制，比如只有合约创建者才能给目标地址发放token。&nbsp; 区块链的特性决定了合约代码一经部署就无法修改，无论是合约的开发者，还是投资者，还是交易平台，都应当对合约进行多重安全审计，尽量在上链前消除安全风险。 参考链接： 【1】 Ting Chen, University of ElectronicScience and Technology of China.&nbsp; http://faculty. uestc.edu.cn/chenting/zh_CN/ index.htm 【2】 Simoleon (SIM). https://etherscan.io/address/0x86c8bf8532aa2601151c9dbbf4e4c4804e042571 阅读更多" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/08/02/%E6%BC%8F%E6%B4%9E%E9%A2%84%E8%AD%A6-%E9%A6%96%E4%B8%AA%E5%8C%BA%E5%9D%97%E9%93%BEtoken%E7%9A%84%E8%87%AA%E5%8A%A8%E5%8C%96%E8%96%85%E7%BE%8A%E6%AF%9B%E6%94%BB%E5%87%BB%E5%88%86%E6%9E%90.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/08/02/%E6%BC%8F%E6%B4%9E%E9%A2%84%E8%AD%A6-%E9%A6%96%E4%B8%AA%E5%8C%BA%E5%9D%97%E9%93%BEtoken%E7%9A%84%E8%87%AA%E5%8A%A8%E5%8C%96%E8%96%85%E7%BE%8A%E6%AF%9B%E6%94%BB%E5%87%BB%E5%88%86%E6%9E%90.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-08-02T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"事件介绍 近期，启明星辰ADLab联合电子科技大学的陈厅副教授追踪到了以太坊token中的首个自动化薅羊毛攻击事件。被攻击的合约地址为0x86c8bf8532aa2601151c9dbbf4e4c4804e042571，token名称为Simoleon (SIM)，截止目前有接近57万账户持有该合约的token： 经过深入分析，我们发现攻击者对以太坊的理解非常深刻，其通过部署攻击合约获得了超过700万的token，从57万账户中脱颖而出，一举成为该合约token的第四大持有者： 被攻击的合约Simoleon 在token发行过程中，为增加人气发行方可能会选择空投，即在一定时间窗口和投放总量的条件下免费给参与地址发送一定数量的token。Simoleon合约也加入了空投能力，在总量发放完之前，任何未接受过该token空投的账户都可以调用本合约的transfer函数给指定账户地址免费转账token： 攻击过程分析 我们分析攻击账户的token来源，通过etherscan查看该账户的token交易记录，一共分为两项：709万和1万，分别来自不同的账户地址： 继续跟踪709万token的交易记录，其来源有三项：550万，155万和3万，都来自同一个账户地址0x73fa30b609249166fa425f34b7142591c92b5548： 分析发现地址0x73fa30b609249166fa425f34b7142591c92b5548是一个闭源智能合约，由账户0x0075fd99426911b2e9650114bedc1195ad027f21创建，该合约总共有23笔交易： Simoleon合约对已经发放token的地址都进行了记录，因此每个地址只能免费获得1万的token。要获得更多的数量，就需要创建很多新账户，然后利用这些新账户调用Simoleon合约的transfer函数给指定账户来获得大量token。如果通过创建EOA账户来进行薅羊毛，则每个账户都需要一些以太币，否则EOA账户就没有gas去调用Simoleon合约的transfer函数，也就无法薅羊毛。显然，给大量EOA账户发送以太币会增加额外的交易手续费。 攻击者在这里采用了一种精妙的攻击手法：首先部署一个恶意的攻击合约，地址为0x73fa30b609249166fa425f34b7142591c92b5548；然后调用攻击合约中签名为0x2b6cab44的函数来动态生成临时合约；最后临时合约在构造函数中直接调用Simoleon合约的transfer函数给攻击合约发送token。因为动态生成的临时合约都是未领取过token的账户，所以都能自动获得空投份额。攻击者只需要给攻击账户发送以太币就有足够的gas调用攻击合约，同时攻击者还能控制临时合约的生成数量。 通过分析攻击合约的23个交易数据，得到攻击者对0x2b6cab44函数的调用过程如下： 其中第一笔的交易（0x7f87268e06b76644ad4b8e162fb76d1c6e2e0480029b14db0e013f7d7d195e2f）细节如下，攻击者通过0x2b6cab44函数的参数来控制只生成2个临时合约，2个临时合约分别获取1万的token，然后发送给攻击合约。临时合约最后还进行了自动销毁，使自己的代码从区块链上消失。 攻击者前面4笔的交易中，每次生成的临时合约数量越来越大。其中第4次生成了80个临时合约，但是执行失败了，查看原因是gas不足。 攻击者在后续的交易中，每次都选择只生成50个临时合约。理论上攻击者可以增大允许的gas消耗量，从而一次性创建80个临时合约来加快薅羊毛，但攻击者却选择一次50个的搬砖模式。通过深入分析，我们发现攻击者对以太坊的底层机制相当熟悉，比如这里的gas消耗问题。 在以太坊中，每一笔交易都会消耗一定量的gas，实际消耗量由交易的复杂度决定，但不会超过发送者指定该交易能允许的最大消耗量。逆向分析0x2b6cab44函数后发现它是在循环创建临时合约，显然循环次数越多，这个函数调用的交易复杂度就越高，实际的gas消耗量就越大，允许的gas消耗量也就必须设置为越大。临时合约数量设置为50的时候，gas实际消耗量为3096224；临时合约数量设置为80时，gas实际消耗量为6174290。 然而，每个区块又有最大gas消耗量的阈值，并且每个区块至少要容纳1笔交易，因此以太坊链上任何一笔交易的gas消耗量都不允许超过区块的阈值。这进一步导致，在矿工最优化收益方案中，如果一个交易允许的gas消耗量过大，就会倾向性把这个交易排除在区块外，从而导致该交易失败。攻击者通过探测尝试找到最佳临时合约数量为50（因为80个临时合约的gas消耗已经超过允许的gas消耗导致交易失败），从而实现一次调用可以薅更多token，同时又不会触发gas问题。 行家一出手，就知有没有！不愧是有知识的攻击者。 暗藏玄机的etherscan 在追踪分析过程中，我们发现了另外一起问题，即etherscan对token的变化记录是不准确的，甚至可能完全是错误的。如下是攻击合约的第一笔token收入，2个临时合约总共获得2万token，然后发送给了攻击合约： 紧接着攻击合约产生了第一笔token支出，发送了3万token给攻击者： 根据etherscan中的交易记录，攻击合约的收入只有2万，结果支持了3万。多支出的1万出自哪里，是否凭空产生？为何这1万的变化，etherscan没有任何记录？&nbsp; 经过分析，找到原因就在Simoleon合约的transfer函数，合约在空投的时候也会对目标地址进行免费发送token，但是这个发放却没有调用Transfer事件： 于是，攻击合约的token变化过程如下： （1）攻击合约被创建，token为零。 （2）攻击合约0x2b6cab44函数第一次被调用，创建2个临时合约： 第1个临时合约初始化时调用Simoleon的transfer函数，该函数首先给临时合约空投initialize(msg.sender)，此时临时合约的token为1万；然后给攻击合约空投initialize(_to)，此时攻击合约的token为1万；最后把临时合约的1万token发送给攻击合约，同时调用事件Transfer记录临时合约给攻击合约的发送量为1万。至此，攻击合约的token总计为2万，由空投的1万加上临时合约发送的1万构成。 第2个临时合约初始化时调用Simoleon的transfer函数，该函数首先给临时合约空投initialize(msg.sender)，此时临时合约拥有的token为1万；然后把临时合约的1万token发送给攻击合约，同时调用事件Transfer记录临时合约给攻击合约的发送量为1万。至此，攻击合约的token总计为3万，由先前2万加临时合约发送的1万构成。 （3）攻击者从攻击合约提取全部token，提取总量token为3万。 因此，从攻击合约账户自身的收支平衡来看，并没有凭空产生token，只是etherscan未能监控到攻击合约因为空投获得的1万token。这说明了etherscan对token变化的监控是基于Transfer事件，而不是基于每个账户的实际token变化。这会带来一些潜在的威胁，因为Transfer事件在本质上只是一个道德约束，EVM本身对其没有任何限制能力，攻击者可以不调用事件，也可以任意修改该事件的参数，实现诸如：实际转移的token量比事件通知的数量不匹配。对于频繁交易token的节点来说，这是一个新的挑战，因为该节点将难以通过链上数据追踪每笔token的来源，因为Transfer事件不再是准确的。 总 结 Simoleon合约能被自动化的薅羊毛，最根本的原因在于其合约代码的空投奖励函数没有任何权限控制，任意未领过空投的账户都可以直接调用Simoleon合约来获取。因此，攻击者可以利用攻击合约来创建大量账户来领取。一种缓解办法是给空投奖励函数设置权限控制，比如只有合约创建者才能给目标地址发放token。&nbsp; 区块链的特性决定了合约代码一经部署就无法修改，无论是合约的开发者，还是投资者，还是交易平台，都应当对合约进行多重安全审计，尽量在上链前消除安全风险。 参考链接： 【1】 Ting Chen, University of ElectronicScience and Technology of China.&nbsp; http://faculty. uestc.edu.cn/chenting/zh_CN/ index.htm 【2】 Simoleon (SIM). https://etherscan.io/address/0x86c8bf8532aa2601151c9dbbf4e4c4804e042571 阅读更多","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/08/02/%E6%BC%8F%E6%B4%9E%E9%A2%84%E8%AD%A6-%E9%A6%96%E4%B8%AA%E5%8C%BA%E5%9D%97%E9%93%BEtoken%E7%9A%84%E8%87%AA%E5%8A%A8%E5%8C%96%E8%96%85%E7%BE%8A%E6%AF%9B%E6%94%BB%E5%87%BB%E5%88%86%E6%9E%90.html","headline":"【漏洞预警】首个区块链token的自动化薅羊毛攻击分析","dateModified":"2018-08-02T00:00:00+08:00","datePublished":"2018-08-02T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/08/02/%E6%BC%8F%E6%B4%9E%E9%A2%84%E8%AD%A6-%E9%A6%96%E4%B8%AA%E5%8C%BA%E5%9D%97%E9%93%BEtoken%E7%9A%84%E8%87%AA%E5%8A%A8%E5%8C%96%E8%96%85%E7%BE%8A%E6%AF%9B%E6%94%BB%E5%87%BB%E5%88%86%E6%9E%90.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>【漏洞预警】首个区块链token的自动化薅羊毛攻击分析</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <h1>事件介绍</h1> 
+  <p>近期，启明星辰ADLab联合电子科技大学的陈厅副教授追踪到了以太坊token中的首个自动化薅羊毛攻击事件。被攻击的合约地址为0x86c8bf8532aa2601151c9dbbf4e4c4804e042571，token名称为Simoleon (SIM)，截止目前有接近57万账户持有该合约的token：</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180802091241252?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0ZseV9ocHM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>经过深入分析，我们发现攻击者对以太坊的理解非常深刻，其通过部署攻击合约获得了超过700万的token，从57万账户中脱颖而出，一举成为该合约token的第四大持有者：</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180802091329841?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0ZseV9ocHM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <h1><strong>被攻击的合约Simoleon</strong></h1> 
+  <p>在token发行过程中，为增加人气发行方可能会选择空投，即在一定时间窗口和投放总量的条件下免费给参与地址发送一定数量的token。Simoleon合约也加入了空投能力，在总量发放完之前，任何未接受过该token空投的账户都可以调用本合约的transfer函数给指定账户地址免费转账token：</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180802091425643?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0ZseV9ocHM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <h1><strong>攻击过程分析</strong></h1> 
+  <p>我们分析攻击账户的token来源，通过etherscan查看该账户的token交易记录，一共分为两项：709万和1万，分别来自不同的账户地址：</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180802091558829?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0ZseV9ocHM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>继续跟踪709万token的交易记录，其来源有三项：550万，155万和3万，都来自同一个账户地址0x73fa30b609249166fa425f34b7142591c92b5548：</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180802091614436?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0ZseV9ocHM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>分析发现地址0x73fa30b609249166fa425f34b7142591c92b5548是一个闭源智能合约，由账户0x0075fd99426911b2e9650114bedc1195ad027f21创建，该合约总共有23笔交易：</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180802091629195?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0ZseV9ocHM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>Simoleon合约对已经发放token的地址都进行了记录，因此每个地址只能免费获得1万的token。要获得更多的数量，就需要创建很多新账户，然后利用这些新账户调用Simoleon合约的transfer函数给指定账户来获得大量token。如果通过创建EOA账户来进行薅羊毛，则每个账户都需要一些以太币，否则EOA账户就没有gas去调用Simoleon合约的transfer函数，也就无法薅羊毛。显然，给大量EOA账户发送以太币会增加额外的交易手续费。</p> 
+  <p>攻击者在这里采用了一种精妙的攻击手法：首先部署一个恶意的攻击合约，地址为0x73fa30b609249166fa425f34b7142591c92b5548；然后调用攻击合约中签名为0x2b6cab44的函数来动态生成临时合约；最后临时合约在构造函数中直接调用Simoleon合约的transfer函数给攻击合约发送token。因为动态生成的临时合约都是未领取过token的账户，所以都能自动获得空投份额。攻击者只需要给攻击账户发送以太币就有足够的gas调用攻击合约，同时攻击者还能控制临时合约的生成数量。</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180802091653246?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0ZseV9ocHM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>通过分析攻击合约的23个交易数据，得到攻击者对0x2b6cab44函数的调用过程如下：</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/2018080209170976?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0ZseV9ocHM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>其中第一笔的交易（0x7f87268e06b76644ad4b8e162fb76d1c6e2e0480029b14db0e013f7d7d195e2f）细节如下，攻击者通过0x2b6cab44函数的参数来控制只生成2个临时合约，2个临时合约分别获取1万的token，然后发送给攻击合约。临时合约最后还进行了自动销毁，使自己的代码从区块链上消失。</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/2018080209172762?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0ZseV9ocHM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>攻击者前面4笔的交易中，每次生成的临时合约数量越来越大。其中第4次生成了80个临时合约，但是执行失败了，查看原因是gas不足。</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180802091745126?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0ZseV9ocHM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>攻击者在后续的交易中，每次都选择只生成50个临时合约。理论上攻击者可以增大允许的gas消耗量，从而一次性创建80个临时合约来加快薅羊毛，但攻击者却选择一次50个的搬砖模式。通过深入分析，我们发现攻击者对以太坊的底层机制相当熟悉，比如这里的gas消耗问题。</p> 
+  <p>在以太坊中，每一笔交易都会消耗一定量的gas，实际消耗量由交易的复杂度决定，但不会超过发送者指定该交易能允许的最大消耗量。逆向分析0x2b6cab44函数后发现它是在循环创建临时合约，显然循环次数越多，这个函数调用的交易复杂度就越高，实际的gas消耗量就越大，允许的gas消耗量也就必须设置为越大。临时合约数量设置为50的时候，gas实际消耗量为3096224；临时合约数量设置为80时，gas实际消耗量为6174290。</p> 
+  <p>然而，每个区块又有最大gas消耗量的阈值，并且每个区块至少要容纳1笔交易，因此以太坊链上任何一笔交易的gas消耗量都不允许超过区块的阈值。这进一步导致，在矿工最优化收益方案中，如果一个交易允许的gas消耗量过大，就会倾向性把这个交易排除在区块外，从而导致该交易失败。攻击者通过探测尝试找到最佳临时合约数量为50（因为80个临时合约的gas消耗已经超过允许的gas消耗导致交易失败），从而实现一次调用可以薅更多token，同时又不会触发gas问题。</p> 
+  <p>行家一出手，就知有没有！不愧是有知识的攻击者。</p> 
+  <h1><strong>暗藏玄机的etherscan</strong></h1> 
+  <p>在追踪分析过程中，我们发现了另外一起问题，即etherscan对token的变化记录是不准确的，甚至可能完全是错误的。如下是攻击合约的第一笔token收入，2个临时合约总共获得2万token，然后发送给了攻击合约：</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180802091816508?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0ZseV9ocHM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>紧接着攻击合约产生了第一笔token支出，发送了3万token给攻击者：</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180802091830448?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0ZseV9ocHM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>根据etherscan中的交易记录，攻击合约的收入只有2万，结果支持了3万。多支出的1万出自哪里，是否凭空产生？为何这1万的变化，etherscan没有任何记录？&nbsp;</p> 
+  <p>经过分析，找到原因就在Simoleon合约的transfer函数，合约在空投的时候也会对目标地址进行免费发送token，但是这个发放却没有调用Transfer事件：</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180802091846983?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0ZseV9ocHM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>于是，攻击合约的token变化过程如下：</p> 
+  <p>（1）攻击合约被创建，token为零。</p> 
+  <p>（2）攻击合约0x2b6cab44函数第一次被调用，创建2个临时合约：</p> 
+  <ul>
+   <li> <p>第1个临时合约初始化时调用Simoleon的transfer函数，该函数首先给临时合约空投initialize(msg.sender)，此时临时合约的token为1万；然后给攻击合约空投initialize(_to)，此时攻击合约的token为1万；最后把临时合约的1万token发送给攻击合约，同时调用事件Transfer记录临时合约给攻击合约的发送量为1万。至此，攻击合约的token总计为2万，由空投的1万加上临时合约发送的1万构成。</p> </li> 
+   <li> <p>第2个临时合约初始化时调用Simoleon的transfer函数，该函数首先给临时合约空投initialize(msg.sender)，此时临时合约拥有的token为1万；然后把临时合约的1万token发送给攻击合约，同时调用事件Transfer记录临时合约给攻击合约的发送量为1万。至此，攻击合约的token总计为3万，由先前2万加临时合约发送的1万构成。</p> </li> 
+  </ul>
+  <p>（3）攻击者从攻击合约提取全部token，提取总量token为3万。</p> 
+  <p>因此，从攻击合约账户自身的收支平衡来看，并没有凭空产生token，只是etherscan未能监控到攻击合约因为空投获得的1万token。这说明了etherscan对token变化的监控是基于Transfer事件，而不是基于每个账户的实际token变化。这会带来一些潜在的威胁，因为Transfer事件在本质上只是一个道德约束，EVM本身对其没有任何限制能力，攻击者可以不调用事件，也可以任意修改该事件的参数，实现诸如：实际转移的token量比事件通知的数量不匹配。对于频繁交易token的节点来说，这是一个新的挑战，因为该节点将难以通过链上数据追踪每笔token的来源，因为Transfer事件不再是准确的。</p> 
+  <h1><strong>总 结</strong></h1> 
+  <p>Simoleon合约能被自动化的薅羊毛，最根本的原因在于其合约代码的空投奖励函数没有任何权限控制，任意未领过空投的账户都可以直接调用Simoleon合约来获取。因此，攻击者可以利用攻击合约来创建大量账户来领取。一种缓解办法是给空投奖励函数设置权限控制，比如只有合约创建者才能给目标地址发放token。&nbsp;</p> 
+  <p>区块链的特性决定了合约代码一经部署就无法修改，无论是合约的开发者，还是投资者，还是交易平台，都应当对合约进行多重安全审计，尽量在上链前消除安全风险。</p> 
+  <h1><strong>参考链接：</strong></h1> 
+  <p>【1】 Ting Chen, University of ElectronicScience and Technology of China.&nbsp;</p> 
+  <p>http://faculty. uestc.edu.cn/chenting/zh_CN/ index.htm</p> 
+  <p>【2】 Simoleon (SIM). https://etherscan.io/address/0x86c8bf8532aa2601151c9dbbf4e4c4804e042571</p> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/Fly_hps/article/details/81352257,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/Fly_hps/article/details/81352257,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

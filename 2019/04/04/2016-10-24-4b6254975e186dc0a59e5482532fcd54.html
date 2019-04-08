@@ -1,0 +1,78 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <p>最近，华泰、国金相继关掉web交易接口，easytrader空间被压缩，重新寻找交易方向，翻出一年前写的试验代码，权当抛砖引玉，欢迎加qq群探讨交流：StockAuto 208740743</p> 
+  <p></p>
+  <pre><code class="language-plain">;同花顺交易卖出填单工具
+;作者:sunwind
+;时间：2015年10月16日15:45:40
+;用法：需先启动同花顺的交易功能，然后运行本脚本，未完善，只是demo
+DetectHiddenWindows,On
+SetTitleMatchMode,2
+SetTitleMatchMode RegEx
+setbatchlines -1
+
+winTitle:="ahk_class Afx:400000:b:10003:6:*"
+IfWinExist,%winTitle%
+ControlSend,ToolbarWindow321,{F2},%winTitle%
+;全局变量
+s_code_ctr:="Edit1"
+s_price_ctr:="Edit2"
+s_num_ctr:="Edit3"
+stockList=%A_ScriptDir%\待卖出配置.txt
+
+	FileRead,file,%stockList%
+	ifwinexist %winTitle%
+	{
+		t1 := PrecisionTime()
+		Loop,parse,file,`n
+		{	
+				; 把多个空格/TAB/换行替换成一个空格
+			line := RegExReplace(A_LoopField, "\s+", " ")
+			arr:=StrSplit(line,A_Space)
+			code:=arr[1]
+			price:=arr[2]
+			num:=arr[3]
+			sell(code,price,num)
+		}
+		t2 := PrecisionTime()
+		t21 := t2 - t1
+		t:=t21/1000000/30
+		MsgBox 30张卖单用时%t21%微秒·`n 平均每张卖单%t%秒
+	}
+	else
+	{
+		MsgBox 未探测到下单窗体
+	}
+	
+return
+
+;辅助函数
+sell(code,price,num)
+{
+	global
+	WinActivate %winTitle%
+	ControlSetText,%s_code_ctr%,%code%
+	ControlSetText,%s_price_ctr%,%price%
+	ControlSetText,%s_num_ctr%,%num%
+	ControlSend,Button21,{Space},%winTitle%
+}
+
+
+PrecisionTime()
+{
+        DllCall("QueryPerformanceCounter", "Int64*", Time)
+        return, Time
+}</code></pre>
+  <br> 配置文件《待卖出配置.txt》示例，第一列是股票代码，第二列是卖出价，第三列是卖出股数： 
+  <p></p>
+  <pre><code class="language-plain">600050 6.62 200</code></pre>
+  <br>
+  <br>
+  <p><br></p> 
+  <p><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20161024104218489?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br></p> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/liuyukuan/article/details/52909592,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/liuyukuan/article/details/52909592,&quot;}">阅读更多</a> 
+</div>

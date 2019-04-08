@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>关于区块链安全，这四位大咖分享了这么些干货… | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="关于区块链安全，这四位大咖分享了这么些干货…" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="7月28日（周六）下午，由CSDN主办，区块链大本营、柏链道捷、极客帮创投协办的“区块链安全”专场沙龙，在北京朝阳区酒仙桥恒通商务园举行。别看今天是周末，全场没有一点辛苦一周后想要休息的迹象，有的听众还专程从华东、华南地区赶来，实足热情高涨！ 本期沙龙围绕“区块链安全”问题，以“如何应对区块链安全问题”为主题，邀请4位实力派区块链安全专家，分享了智能合约及公链安全、黑客攻击、漏洞、形式化验证等内容，非常精彩。 作为第一位分享嘉宾，PeckShield研发副总吴家志连夜从外地赶到现场，但他在演讲中丝毫没有漏出疲态，反而越讲越兴奋。在此次演讲中，他以智能合约安全和公链安全两方面作为分享内容。 ﻿﻿ 其中智能合约安全方面，他从最近非常火的Fomo3D游戏开始讲起，这个游戏的中奖机制是在某个时间段交易了0.1ETH，就中奖了。然而通过下图Fomo3D的智能合约可以知道，其中标蓝的几个参数是固定的，只有一个参数是随机的，所以通过计算机来模拟是可以猜出来。这是Fomo3D的智能合约设计不严谨的地方。 ﻿﻿ . 此外，吴家志还比较几个典型智能合约漏洞，比如：allowAnyone (CVE-2018-11397, CVE-2018-11398)漏洞。攻击者可以选择一个随机Token账户作为_from并将其账户内的Token转移至其他任意地址。 ﻿﻿ 对于公链安全，他提到公链以太坊上运用比较多的客户端有Geth、Parith等，而对Geth的攻击也是非常的多，其中攻击Geth的方式有智能合约、协议栈等方式进行攻击。 来自360的资深安全工程师李佳峰，以360前段时间发现的EOS史诗级漏洞讲起，介绍了区块链的基本概念，以及几种常见的攻击方式。 ﻿﻿ 首先，在安全方面，他认为开发者不应该只关注智能合约，他提到典型区块链技术架构中的工作量证明、权益证明、数字签名等都可能存在安全问题。 ﻿﻿ 此外，在提到区块链开源软件高危漏洞分布情况时，他认为输入的地方是最可能遭到攻击的地方。 ﻿﻿ 而数字交易安全一直是大家比较关心的安全问题，李佳峰讲到交易所中常见的漏洞主要有以下几种： 越权漏洞 验证码漏洞 条件竞争漏洞 认证漏洞 他认为这类漏洞涉及的业务逻辑非常严谨，必须要对每段业务逻辑代码进行大量的模糊测试与代码审计，对可能出现问题逻辑对应的代码人工审计。 对于智能合约的理解，北京知道创宇安全服务部技术专家于超有着不同的理解，他是从安全工程师的角度理解什么是智能合约？智能合约有什么特别之处？会发生什么问题？ ﻿﻿ 对于智能合约，他的理解是： 1.基于区块链技术，一旦部署便不能修改 2.合约账户，仅由合约代码控制，不受人的干扰 而关于智能合约的特别之处，他分享了以下几点： 1.执行代码需要花费gas： 代码越复杂，执行所需的gas越多； 如果调用者提供的gas不足，则已执行代码回滚 调用者可以设置gasPrice，矿工优先处理gasPrice高的交易 区块有gasLimit 2.可以发生/接受ETH 3.函数调用方式 call：正常的调用 delegatecall：神奇的调用，于超解释到这种调用类似于其他语言的import ﻿﻿ 最后，他通过代码分析，详细解释了提到智能合约可能产生ERC20代币假充值漏洞、重入的问题。 以上都是讲智能合约漏洞方面的，成都链安科技CTO郭文生分享更多的是针对这些漏洞，怎样从审计方面避免安全问题的发生。 ﻿﻿ 他首先介绍了整型溢出、Owner 权限被盗两种类型漏洞。此外，怎样避免安全问题？郭文生出建议，尽量找安全库、做测试、找安全公司审计。他提到，对于开发人员，尽量多做测试，但是测试不能证明代码没有漏洞。对此，他提到形式化验证。 什么是形式化验证呢？郭文生解释到，形式化验证的含义是根据某个或某些形式规范或属性，使用数学的方法证明其正确性或非正确性。比较难理解，郭文生举了一个简单的例子，比如，对S=A-B+C-D的等式进行验证。这个等式需要满足以下几个条件，就能证明代码不存在漏洞。 参数限制：0=&lt; A &lt;255, 0=&lt; B &lt;255, 0=&lt; C &lt;255, 0=&lt; D &lt;255 验证属性：S1=A-B /\ A&gt;B &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;S2=S1+C /\ S2&gt;S1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;S=S2-D /\ S2&gt;D 现场声音 不少前来沙龙听讲的技术人员纷纷对区块链大本营表示，此次沙龙与此前参加过的沙龙活动很不一样，收获颇丰。 其中，北京知物科技有限公司创始人兼CTO郭金宏很有感触，他是一位DApp开发者，他以“收获不错，干货非常多”来评价此次沙龙，通过此次沙龙，他知道了在智能合约开发时要特别注意哪些方面。他认为，此次沙龙达到了他的期望。 而来自一家金融公司的刘松，则希望CSDN区块链大本营以后能够举办技术更深入、对开发者提高最快的技术沙龙分享。 ﻿﻿ 此外，本次沙龙迎来了最小的听众。而作为这位最小听众的爸爸，发表了对这次沙龙的感悟，他希望智能合约能做到越来越安全，区块链能够越来越朝好的方向发展。 ﻿﻿ 虽然沙龙已经结束了，但现场不少人紧紧地围绕在各个讲师身边，他们纷纷表示受益匪浅，希望CSDN区块链大本营能够多举办这样的技术沙龙，以便不错过区块链这样一个技术风口。 最新热文： “冰封”合约背后的老牌劲敌——拒绝服务漏洞 | 漏洞解析连载之二 合约安全漏洞连载之一：溢出漏洞 智能合约没你想得那么智能！5分钟带你重新认识“智能”合约 这45个场景，正在被区块链抽筋扒皮… 扫码加入区块链大本营读者群，群满加微信 qk15732632926 入群 了解更多区块链技术及应用内容 敬请关注： 阅读更多" />
+<meta property="og:description" content="7月28日（周六）下午，由CSDN主办，区块链大本营、柏链道捷、极客帮创投协办的“区块链安全”专场沙龙，在北京朝阳区酒仙桥恒通商务园举行。别看今天是周末，全场没有一点辛苦一周后想要休息的迹象，有的听众还专程从华东、华南地区赶来，实足热情高涨！ 本期沙龙围绕“区块链安全”问题，以“如何应对区块链安全问题”为主题，邀请4位实力派区块链安全专家，分享了智能合约及公链安全、黑客攻击、漏洞、形式化验证等内容，非常精彩。 作为第一位分享嘉宾，PeckShield研发副总吴家志连夜从外地赶到现场，但他在演讲中丝毫没有漏出疲态，反而越讲越兴奋。在此次演讲中，他以智能合约安全和公链安全两方面作为分享内容。 ﻿﻿ 其中智能合约安全方面，他从最近非常火的Fomo3D游戏开始讲起，这个游戏的中奖机制是在某个时间段交易了0.1ETH，就中奖了。然而通过下图Fomo3D的智能合约可以知道，其中标蓝的几个参数是固定的，只有一个参数是随机的，所以通过计算机来模拟是可以猜出来。这是Fomo3D的智能合约设计不严谨的地方。 ﻿﻿ . 此外，吴家志还比较几个典型智能合约漏洞，比如：allowAnyone (CVE-2018-11397, CVE-2018-11398)漏洞。攻击者可以选择一个随机Token账户作为_from并将其账户内的Token转移至其他任意地址。 ﻿﻿ 对于公链安全，他提到公链以太坊上运用比较多的客户端有Geth、Parith等，而对Geth的攻击也是非常的多，其中攻击Geth的方式有智能合约、协议栈等方式进行攻击。 来自360的资深安全工程师李佳峰，以360前段时间发现的EOS史诗级漏洞讲起，介绍了区块链的基本概念，以及几种常见的攻击方式。 ﻿﻿ 首先，在安全方面，他认为开发者不应该只关注智能合约，他提到典型区块链技术架构中的工作量证明、权益证明、数字签名等都可能存在安全问题。 ﻿﻿ 此外，在提到区块链开源软件高危漏洞分布情况时，他认为输入的地方是最可能遭到攻击的地方。 ﻿﻿ 而数字交易安全一直是大家比较关心的安全问题，李佳峰讲到交易所中常见的漏洞主要有以下几种： 越权漏洞 验证码漏洞 条件竞争漏洞 认证漏洞 他认为这类漏洞涉及的业务逻辑非常严谨，必须要对每段业务逻辑代码进行大量的模糊测试与代码审计，对可能出现问题逻辑对应的代码人工审计。 对于智能合约的理解，北京知道创宇安全服务部技术专家于超有着不同的理解，他是从安全工程师的角度理解什么是智能合约？智能合约有什么特别之处？会发生什么问题？ ﻿﻿ 对于智能合约，他的理解是： 1.基于区块链技术，一旦部署便不能修改 2.合约账户，仅由合约代码控制，不受人的干扰 而关于智能合约的特别之处，他分享了以下几点： 1.执行代码需要花费gas： 代码越复杂，执行所需的gas越多； 如果调用者提供的gas不足，则已执行代码回滚 调用者可以设置gasPrice，矿工优先处理gasPrice高的交易 区块有gasLimit 2.可以发生/接受ETH 3.函数调用方式 call：正常的调用 delegatecall：神奇的调用，于超解释到这种调用类似于其他语言的import ﻿﻿ 最后，他通过代码分析，详细解释了提到智能合约可能产生ERC20代币假充值漏洞、重入的问题。 以上都是讲智能合约漏洞方面的，成都链安科技CTO郭文生分享更多的是针对这些漏洞，怎样从审计方面避免安全问题的发生。 ﻿﻿ 他首先介绍了整型溢出、Owner 权限被盗两种类型漏洞。此外，怎样避免安全问题？郭文生出建议，尽量找安全库、做测试、找安全公司审计。他提到，对于开发人员，尽量多做测试，但是测试不能证明代码没有漏洞。对此，他提到形式化验证。 什么是形式化验证呢？郭文生解释到，形式化验证的含义是根据某个或某些形式规范或属性，使用数学的方法证明其正确性或非正确性。比较难理解，郭文生举了一个简单的例子，比如，对S=A-B+C-D的等式进行验证。这个等式需要满足以下几个条件，就能证明代码不存在漏洞。 参数限制：0=&lt; A &lt;255, 0=&lt; B &lt;255, 0=&lt; C &lt;255, 0=&lt; D &lt;255 验证属性：S1=A-B /\ A&gt;B &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;S2=S1+C /\ S2&gt;S1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;S=S2-D /\ S2&gt;D 现场声音 不少前来沙龙听讲的技术人员纷纷对区块链大本营表示，此次沙龙与此前参加过的沙龙活动很不一样，收获颇丰。 其中，北京知物科技有限公司创始人兼CTO郭金宏很有感触，他是一位DApp开发者，他以“收获不错，干货非常多”来评价此次沙龙，通过此次沙龙，他知道了在智能合约开发时要特别注意哪些方面。他认为，此次沙龙达到了他的期望。 而来自一家金融公司的刘松，则希望CSDN区块链大本营以后能够举办技术更深入、对开发者提高最快的技术沙龙分享。 ﻿﻿ 此外，本次沙龙迎来了最小的听众。而作为这位最小听众的爸爸，发表了对这次沙龙的感悟，他希望智能合约能做到越来越安全，区块链能够越来越朝好的方向发展。 ﻿﻿ 虽然沙龙已经结束了，但现场不少人紧紧地围绕在各个讲师身边，他们纷纷表示受益匪浅，希望CSDN区块链大本营能够多举办这样的技术沙龙，以便不错过区块链这样一个技术风口。 最新热文： “冰封”合约背后的老牌劲敌——拒绝服务漏洞 | 漏洞解析连载之二 合约安全漏洞连载之一：溢出漏洞 智能合约没你想得那么智能！5分钟带你重新认识“智能”合约 这45个场景，正在被区块链抽筋扒皮… 扫码加入区块链大本营读者群，群满加微信 qk15732632926 入群 了解更多区块链技术及应用内容 敬请关注： 阅读更多" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/07/28/%E5%85%B3%E4%BA%8E%E5%8C%BA%E5%9D%97%E9%93%BE%E5%AE%89%E5%85%A8-%E8%BF%99%E5%9B%9B%E4%BD%8D%E5%A4%A7%E5%92%96%E5%88%86%E4%BA%AB%E4%BA%86%E8%BF%99%E4%B9%88%E4%BA%9B%E5%B9%B2%E8%B4%A7/html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/07/28/%E5%85%B3%E4%BA%8E%E5%8C%BA%E5%9D%97%E9%93%BE%E5%AE%89%E5%85%A8-%E8%BF%99%E5%9B%9B%E4%BD%8D%E5%A4%A7%E5%92%96%E5%88%86%E4%BA%AB%E4%BA%86%E8%BF%99%E4%B9%88%E4%BA%9B%E5%B9%B2%E8%B4%A7/html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-07-28T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"7月28日（周六）下午，由CSDN主办，区块链大本营、柏链道捷、极客帮创投协办的“区块链安全”专场沙龙，在北京朝阳区酒仙桥恒通商务园举行。别看今天是周末，全场没有一点辛苦一周后想要休息的迹象，有的听众还专程从华东、华南地区赶来，实足热情高涨！ 本期沙龙围绕“区块链安全”问题，以“如何应对区块链安全问题”为主题，邀请4位实力派区块链安全专家，分享了智能合约及公链安全、黑客攻击、漏洞、形式化验证等内容，非常精彩。 作为第一位分享嘉宾，PeckShield研发副总吴家志连夜从外地赶到现场，但他在演讲中丝毫没有漏出疲态，反而越讲越兴奋。在此次演讲中，他以智能合约安全和公链安全两方面作为分享内容。 ﻿﻿ 其中智能合约安全方面，他从最近非常火的Fomo3D游戏开始讲起，这个游戏的中奖机制是在某个时间段交易了0.1ETH，就中奖了。然而通过下图Fomo3D的智能合约可以知道，其中标蓝的几个参数是固定的，只有一个参数是随机的，所以通过计算机来模拟是可以猜出来。这是Fomo3D的智能合约设计不严谨的地方。 ﻿﻿ . 此外，吴家志还比较几个典型智能合约漏洞，比如：allowAnyone (CVE-2018-11397, CVE-2018-11398)漏洞。攻击者可以选择一个随机Token账户作为_from并将其账户内的Token转移至其他任意地址。 ﻿﻿ 对于公链安全，他提到公链以太坊上运用比较多的客户端有Geth、Parith等，而对Geth的攻击也是非常的多，其中攻击Geth的方式有智能合约、协议栈等方式进行攻击。 来自360的资深安全工程师李佳峰，以360前段时间发现的EOS史诗级漏洞讲起，介绍了区块链的基本概念，以及几种常见的攻击方式。 ﻿﻿ 首先，在安全方面，他认为开发者不应该只关注智能合约，他提到典型区块链技术架构中的工作量证明、权益证明、数字签名等都可能存在安全问题。 ﻿﻿ 此外，在提到区块链开源软件高危漏洞分布情况时，他认为输入的地方是最可能遭到攻击的地方。 ﻿﻿ 而数字交易安全一直是大家比较关心的安全问题，李佳峰讲到交易所中常见的漏洞主要有以下几种： 越权漏洞 验证码漏洞 条件竞争漏洞 认证漏洞 他认为这类漏洞涉及的业务逻辑非常严谨，必须要对每段业务逻辑代码进行大量的模糊测试与代码审计，对可能出现问题逻辑对应的代码人工审计。 对于智能合约的理解，北京知道创宇安全服务部技术专家于超有着不同的理解，他是从安全工程师的角度理解什么是智能合约？智能合约有什么特别之处？会发生什么问题？ ﻿﻿ 对于智能合约，他的理解是： 1.基于区块链技术，一旦部署便不能修改 2.合约账户，仅由合约代码控制，不受人的干扰 而关于智能合约的特别之处，他分享了以下几点： 1.执行代码需要花费gas： 代码越复杂，执行所需的gas越多； 如果调用者提供的gas不足，则已执行代码回滚 调用者可以设置gasPrice，矿工优先处理gasPrice高的交易 区块有gasLimit 2.可以发生/接受ETH 3.函数调用方式 call：正常的调用 delegatecall：神奇的调用，于超解释到这种调用类似于其他语言的import ﻿﻿ 最后，他通过代码分析，详细解释了提到智能合约可能产生ERC20代币假充值漏洞、重入的问题。 以上都是讲智能合约漏洞方面的，成都链安科技CTO郭文生分享更多的是针对这些漏洞，怎样从审计方面避免安全问题的发生。 ﻿﻿ 他首先介绍了整型溢出、Owner 权限被盗两种类型漏洞。此外，怎样避免安全问题？郭文生出建议，尽量找安全库、做测试、找安全公司审计。他提到，对于开发人员，尽量多做测试，但是测试不能证明代码没有漏洞。对此，他提到形式化验证。 什么是形式化验证呢？郭文生解释到，形式化验证的含义是根据某个或某些形式规范或属性，使用数学的方法证明其正确性或非正确性。比较难理解，郭文生举了一个简单的例子，比如，对S=A-B+C-D的等式进行验证。这个等式需要满足以下几个条件，就能证明代码不存在漏洞。 参数限制：0=&lt; A &lt;255, 0=&lt; B &lt;255, 0=&lt; C &lt;255, 0=&lt; D &lt;255 验证属性：S1=A-B /\\ A&gt;B &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;S2=S1+C /\\ S2&gt;S1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;S=S2-D /\\ S2&gt;D 现场声音 不少前来沙龙听讲的技术人员纷纷对区块链大本营表示，此次沙龙与此前参加过的沙龙活动很不一样，收获颇丰。 其中，北京知物科技有限公司创始人兼CTO郭金宏很有感触，他是一位DApp开发者，他以“收获不错，干货非常多”来评价此次沙龙，通过此次沙龙，他知道了在智能合约开发时要特别注意哪些方面。他认为，此次沙龙达到了他的期望。 而来自一家金融公司的刘松，则希望CSDN区块链大本营以后能够举办技术更深入、对开发者提高最快的技术沙龙分享。 ﻿﻿ 此外，本次沙龙迎来了最小的听众。而作为这位最小听众的爸爸，发表了对这次沙龙的感悟，他希望智能合约能做到越来越安全，区块链能够越来越朝好的方向发展。 ﻿﻿ 虽然沙龙已经结束了，但现场不少人紧紧地围绕在各个讲师身边，他们纷纷表示受益匪浅，希望CSDN区块链大本营能够多举办这样的技术沙龙，以便不错过区块链这样一个技术风口。 最新热文： “冰封”合约背后的老牌劲敌——拒绝服务漏洞 | 漏洞解析连载之二 合约安全漏洞连载之一：溢出漏洞 智能合约没你想得那么智能！5分钟带你重新认识“智能”合约 这45个场景，正在被区块链抽筋扒皮… 扫码加入区块链大本营读者群，群满加微信 qk15732632926 入群 了解更多区块链技术及应用内容 敬请关注： 阅读更多","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/07/28/%E5%85%B3%E4%BA%8E%E5%8C%BA%E5%9D%97%E9%93%BE%E5%AE%89%E5%85%A8-%E8%BF%99%E5%9B%9B%E4%BD%8D%E5%A4%A7%E5%92%96%E5%88%86%E4%BA%AB%E4%BA%86%E8%BF%99%E4%B9%88%E4%BA%9B%E5%B9%B2%E8%B4%A7/html","headline":"关于区块链安全，这四位大咖分享了这么些干货…","dateModified":"2018-07-28T00:00:00+08:00","datePublished":"2018-07-28T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/07/28/%E5%85%B3%E4%BA%8E%E5%8C%BA%E5%9D%97%E9%93%BE%E5%AE%89%E5%85%A8-%E8%BF%99%E5%9B%9B%E4%BD%8D%E5%A4%A7%E5%92%96%E5%88%86%E4%BA%AB%E4%BA%86%E8%BF%99%E4%B9%88%E4%BA%9B%E5%B9%B2%E8%B4%A7/html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>关于区块链安全，这四位大咖分享了这么些干货...</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <div class="rich_media_content" id="js_content"> 
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">7月28日（周六）下午，由CSDN主办，区块链大本营、柏链道捷、极客帮创投协办的“区块链安全”专场沙龙，在北京朝阳区酒仙桥恒通商务园举行。别看今天是周末，全场没有一点辛苦一周后想要休息的迹象，有的听众还专程从华东、华南地区赶来，实足热情高涨！</span></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="text-align:center;margin-left:8px;"><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_jpg/trm5VMeFp9ndjmrNm43v63UK9ick5JnNb0lY3bVZWvqbibpIJecibaIzx19wAicc5hHRjf2UNceGibf10j9iaEf8TJ7A/640?wx_fmt=jpeg" alt="640?wx_fmt=jpeg"></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;"></span></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">本期沙龙围绕“区块链安全”问题，以“如何应对区块链安全问题”为主题，邀请4位实力派区块链安全专家，分享了智能合约及公链安全、黑客攻击、漏洞、形式化验证</span><span style="font-size:15px;letter-spacing:.5px;">等内容</span><span style="font-size:15px;letter-spacing:.5px;">，非常精彩。</span><span style="font-size:15px;letter-spacing:.5px;"></span></p>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">作为第一位分享嘉宾，PeckShield研发副总吴家志连夜从外地赶到现场，但他在演讲中丝毫没有漏出疲态，反而越讲越兴奋。在此次演讲中，他以</span><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">智能合约安全和公链安全</span></strong><span style="font-size:15px;letter-spacing:.5px;">两方面作为分享内容。</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">﻿</span><img class="gallery-image" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/trm5VMeFp9ndjmrNm43v63UK9ick5JnNbV5noMnDcwvGUoV0cacK6FhylswSib0KK6avt9a5lXeYVLcYzOKbo5ng/640?wx_fmt=png" alt="640?wx_fmt=png"><span style="font-size:15px;letter-spacing:.5px;">﻿</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">其中智能合约安全方面，他从最近非常火的Fomo3D游戏开始讲起，这个游戏的中奖机制是在某个时间段交易了0.1ETH，就中奖了。然而通过下图Fomo3D的智能合约可以知道，其中标蓝的几个参数是固定的，只有一个参数是随机的，所以通过计算机来模拟是可以猜出来。这是Fomo3D的智能合约设计不严谨的地方。</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">﻿</span><img class="gallery-image" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/trm5VMeFp9ndjmrNm43v63UK9ick5JnNbkqo30ibctleE9w9m9icHw9EjD27PTKnffvI7ibnKl8sMRLEVqgWzZgOjg/640?wx_fmt=png" alt="640?wx_fmt=png"><span style="font-size:15px;letter-spacing:.5px;">﻿</span></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">.</span></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">此外，吴家志还比较几个典型智能合约漏洞，比如：</span><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">allowAnyone (CVE-2018-11397, CVE-2018-11398)漏洞。</span></strong><span style="font-size:15px;letter-spacing:.5px;">攻击者可以选择一个随机Token账户作为_from并将其账户内的Token转移至其他任意地址。</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">﻿</span><img class="gallery-image" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/trm5VMeFp9ndjmrNm43v63UK9ick5JnNbibicAKR5mj3LAgLIV0eWnzoBsLP0Cw5vnFJF84mvRdEQJ3ic3g3wDxCHw/640?wx_fmt=png" alt="640?wx_fmt=png"><span style="font-size:15px;letter-spacing:.5px;">﻿</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">对于公链安全，他提到公链以太坊上运用比较多的客户端有Geth、Parith等，而对Geth的攻击也是非常的多，其中攻击Geth的方式有智能合约、协议栈等方式进行攻击。</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">来自360的资深安全工程师李佳峰，以360前段时间发现的EOS史诗级漏洞讲起，介绍了区块链的基本概念，以及几种常见的攻击方式。</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">﻿</span><img class="gallery-image" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_jpg/trm5VMeFp9ndjmrNm43v63UK9ick5JnNbrJxSnsuhh4BibOSYOclWiaGXH5EEbiaX0dfcZKn5enWS3jGIZrKYtFvibw/640?wx_fmt=jpeg" alt="640?wx_fmt=jpeg"><span style="font-size:15px;letter-spacing:.5px;">﻿</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">首先，在安全方面，他认为开发者不应该只关注智能合约，他提到典型区块链技术架构中的工作量证明、权益证明、数字签名等都可能存在安全问题。</span></p>
+   <p class="ql-indent-4 ql-align-justify"><br></p>
+   <p class="ql-indent-4 ql-align-justify"><br></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">﻿</span><img class="gallery-image" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/trm5VMeFp9ndjmrNm43v63UK9ick5JnNbWPvlZvdzuKicSgYSoW6qGXN77XCoTK2ibHKcFX4BqZwWjZgbd5NenJTQ/640?wx_fmt=png" alt="640?wx_fmt=png"><span style="font-size:15px;letter-spacing:.5px;">﻿</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">此外，在提到区块链开源软件高危漏洞分布情况时，他认为输入的地方是最可能遭到攻击的地方。</span></p>
+   <p><br></p>
+   <p><br></p>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">﻿</span><img class="gallery-image" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/trm5VMeFp9ndjmrNm43v63UK9ick5JnNbejobVKHBoPRky0gtwQWm6OHjQxI2cVrduuErNXhsbck4qJia6ZiaicU7A/640?wx_fmt=png" alt="640?wx_fmt=png"><span style="font-size:15px;letter-spacing:.5px;">﻿</span></p>
+   <p><br></p>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">而数字交易安全一直是大家比较关心的安全问题，李佳峰讲到交易所中常见的漏洞主要有以下几种：</span></p>
+   <ul class="ql-long-8866642 list-paddingleft-2" style="margin-left:8px;">
+    <li><p style="text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">越权漏洞</span></p></li>
+   </ul>
+   <ul class="ql-long-8866642 list-paddingleft-2" style="margin-left:8px;">
+    <li><p style="text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">验证码漏洞</span></p></li>
+   </ul>
+   <ul class="ql-long-8866642 list-paddingleft-2" style="margin-left:8px;">
+    <li><p style="text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">条件竞争漏洞</span></p></li>
+   </ul>
+   <ul class="ql-long-8866642 list-paddingleft-2" style="margin-left:8px;">
+    <li><p style="text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">认证漏洞</span></p></li>
+   </ul>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">他认为这类漏洞涉及的业务逻辑非常严谨，必须要对每段业务逻辑代码进行大量的模糊测试与代码审计，对可能出现问题逻辑对应的代码人工审计。</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">对于智能合约的理解，北京知道创宇安全服务部技术专家于超有着不同的理解，他是从安全工程师的角度理解什么是智能合约？智能合约有什么特别之处？会发生什么问题？</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">﻿</span><img class="gallery-image" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_jpg/trm5VMeFp9ndjmrNm43v63UK9ick5JnNb2a4vMGnibMI4Dj5eDYXqTKmYUH1Fnicib3PK7I96Np1znNuBNvRApmprw/640?wx_fmt=jpeg" alt="640?wx_fmt=jpeg"><span style="font-size:15px;letter-spacing:.5px;">﻿</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">对于智能合约，他的理解是：</span></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">1.基于区块链技术，一旦部署便不能修改</span></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">2.合约账户，仅由合约代码控制，不受人的干扰</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">而关于智能合约的特别之处，他分享了以下几点：</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">1.执行代码需要花费gas：</span></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">代码越复杂，执行所需的gas越多；</span></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">如果调用者提供的gas不足，则已执行代码回滚</span></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">调用者可以设置gasPrice，矿工优先处理gasPrice高的交易</span></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">区块有gasLimit</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">2.可以发生/接受ETH</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">3.函数调用方式</span></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">call：正常的调用</span></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">delegatecall：神奇的调用，于超解释到这种调用类似于其他语言的import</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">﻿</span><img class="gallery-image" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/trm5VMeFp9ndjmrNm43v63UK9ick5JnNbYkdlwqeK7icRicCicYY9iaU2g7q7xrKbXUlTx5AiciceLV9iafyWBqELkP3Kw/640?wx_fmt=png" alt="640?wx_fmt=png"><span style="font-size:15px;letter-spacing:.5px;">﻿</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">最后，他通过代码分析，详细解释了提到智能合约可能产生ERC20代币假充值漏洞、重入的问题。</span></p>
+   <p><br></p>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">以上都是讲智能合约漏洞方面的，成都链安科技CTO郭文生分享更多的是针对这些漏洞，怎样从审计方面避免安全问题的发生。</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">﻿</span><img class="gallery-image" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_jpg/trm5VMeFp9ndjmrNm43v63UK9ick5JnNb1l2iaibXSsBUeicZrGiady12CgbUNkOpwx2Stnd131ZvwFB4xruQYTTrZw/640?wx_fmt=jpeg" alt="640?wx_fmt=jpeg"><span style="font-size:15px;letter-spacing:.5px;">﻿</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">他首先介绍了整型溢出、Owner 权限被盗两种类型漏洞。此外，怎样避免安全问题？郭文生出建议，尽量找安全库、做测试、找安全公司审计。他提到，对于开发人员，尽量多做测试，但是测试不能证明代码没有漏洞。对此，他提到形式化验证。</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">什么是形式化验证呢？郭文生解释到，形式化验证的含义是根据某个或某些形式规范或属性，使用数学的方法证明其正确性或非正确性。比较难理解，郭文生举了一个简单的例子，比如，对S=A-B+C-D的等式进行验证。这个等式需要满足以下几个条件，就能证明代码不存在漏洞。</span></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">参数限制：0=&lt; A &lt;255, 0=&lt; B &lt;255, 0=&lt; C &lt;255, 0=&lt; D &lt;255</span></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">验证属性：S1=A-B /\ A&gt;B</span></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;S2=S1+C /\ S2&gt;S1</span></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;S=S2-D /\ S2&gt;D</span></p>
+   <p><br></p>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:center;line-height:1.75em;"><strong><span style="letter-spacing:.5px;color:rgb(0,122,170);font-size:18px;">现场声音</span></strong></p>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">不少前来沙龙听讲的技术人员纷纷对区块链大本营表示，此次沙龙与此前参加过的沙龙活动很不一样，收获颇丰。</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">其中，北京知物科技有限公司创始人兼CTO郭金宏很有感触，他是一位DApp开发者，他以“收获不错，干货非常多”来评价此次沙龙，通过此次沙龙，他知道了在智能合约开发时要特别注意哪些方面。他认为，此次沙龙达到了他的期望。</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">而来自一家金融公司的刘松，则希望CSDN区块链大本营以后能够举办技术更深入、对开发者提高最快的技术沙龙分享。</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">﻿</span><img class="gallery-image" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/trm5VMeFp9ndjmrNm43v63UK9ick5JnNbnicrEWOYsk3cbOj56LVLNJ8Ya5CHGMHib1zxYsMlb366gevxib1kMJb0w/640?wx_fmt=png" alt="640?wx_fmt=png"><span style="font-size:15px;letter-spacing:.5px;">﻿</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">此外，本次沙龙迎来了最小的听众。而作为这位最小听众的爸爸，发表了对这次沙龙的感悟，他希望智能合约能做到越来越安全，区块链能够越来越朝好的方向发展。</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">﻿</span><img class="gallery-image" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_jpg/trm5VMeFp9ndjmrNm43v63UK9ick5JnNbiaiaUHU9ayKNa6fPyyibvXjJ39MTn2ZHuicpJqqUpz7d9cVJ4hict5dziaXQ/640?wx_fmt=jpeg" alt="640?wx_fmt=jpeg"><span style="font-size:15px;letter-spacing:.5px;">﻿</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">虽然沙龙已经结束了，但现场不少人紧紧地围绕在各个讲师身边，他们纷纷表示受益匪浅，希望CSDN区块链大本营能够多举办这样的技术沙龙，以便不错过区块链这样一个技术风口。</span></p>
+   <p><br></p>
+   <p><br></p>
+   <p style="margin-left:8px;font-size:18px;line-height:1.75em;"><span style="letter-spacing:.5px;font-size:15px;color:rgb(136,136,136);"><strong>最新热文：</strong></span></p>
+   <ul class="list-paddingleft-2">
+    <li><p style="text-align:justify;line-height:1.75em;letter-spacing:.5px;"><a href="http://mp.weixin.qq.com/s?__biz=MzU2MTE1NDk2Mg==&amp;mid=2247487456&amp;idx=1&amp;sn=583f9bd63b57a99dd86d0cc81eeb5204&amp;chksm=fc7c511dcb0bd80b6fc07b38d531924766270c17626f2031dc470bbe2784dad569747bfc4edf&amp;scene=21#wechat_redirect" rel="nofollow" style="color:rgb(0,122,170);text-decoration:underline;font-size:15px;"><strong>“冰封”合约背后的老牌劲敌——拒绝服务漏洞 | 漏洞解析连载之</strong></a><span style="font-size:15px;color:rgb(0,122,170);"><strong>二</strong></span><br></p></li>
+    <li><p style="text-align:justify;line-height:1.75em;letter-spacing:.5px;"><a href="https://mp.weixin.qq.com/s?__biz=MzU2MTE1NDk2Mg==&amp;mid=2247487404&amp;idx=2&amp;sn=b5052d7d1f536388e49b256737ce8dc8&amp;chksm=fc7c5151cb0bd847b101514646946509bdffea2b54e75ea64b935699cfddaeea8ba602806497&amp;key=cf1f4b838ddd37c7a9f868d7d267ea8ed119811915314745f1c3885b74d3e095e2034c50135ac9e5f8779a82284da609d37b79b87a7edd344e2a5ebe3c5701a41fb9cc19bce74bf03a6696ce716c539c&amp;ascene=21&amp;uin=MjQ0ODA5ODUwMQ==&amp;devicetype=iMac%20MacBookAir7,2%20OSX%20OSX%2010.12.4%20build(16E195)&amp;version=11020201&amp;lang=zh_CN&amp;pass_ticket=vEhg2rZzPxFI/YTbe6pgJMsdk/kGwUcGMh5jEQUkJovIBZCL6youUOtv78Lclj/t#wechat_redirect" rel="nofollow" style="color:rgb(0,122,170);text-decoration:underline;font-size:15px;"><strong>合约安全漏洞连载之一：溢出漏洞</strong></a><br></p></li>
+    <li><p style="text-align:justify;line-height:1.75em;letter-spacing:.5px;"><a href="http://mp.weixin.qq.com/s?__biz=MzU2MTE1NDk2Mg==&amp;mid=2247487430&amp;idx=1&amp;sn=47bcd99cfd7f158501cd013714173a71&amp;chksm=fc7c513bcb0bd82d426185c4aee7e855d39d560ce1835ee3066f929f24cc8b50c45fcfc56761&amp;scene=21#wechat_redirect" rel="nofollow" style="color:rgb(0,122,170);text-decoration:underline;font-size:15px;"><strong>智能合约没你想得那么智能！5分钟带你重新认识“智能”合约</strong></a><br></p></li>
+    <li><p style="text-align:justify;line-height:1.75em;letter-spacing:.5px;"><a href="http://mp.weixin.qq.com/s?__biz=MzU2MTE1NDk2Mg==&amp;mid=2247487420&amp;idx=1&amp;sn=f1434c65c820d4e7a97228276f0e07c2&amp;chksm=fc7c5141cb0bd857a3625c77db96fdfe8d24e596fa4266030a28550277172c0c30f4159b05ab&amp;scene=21#wechat_redirect" rel="nofollow" style="color:rgb(0,122,170);text-decoration:underline;font-size:15px;"><strong>这45个场景，正在被区块链抽筋扒皮…</strong></a><br></p></li>
+   </ul>
+   <p style="color:rgb(51,51,51);text-align:justify;line-height:1.75em;letter-spacing:.5px;"><br></p>
+   <p style="color:rgb(51,51,51);text-align:justify;line-height:1.75em;letter-spacing:.5px;"><br></p>
+   <p style="color:rgb(51,51,51);text-align:center;"><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/trm5VMeFp9lczGjKyM2GYHrEeRPuutG8OLBiaNVOVpTRkMwPAjauLhuFh7QD79wrNZrRMY9BswRBssMiaEoyRykg/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="margin-left:8px;color:rgb(51,51,51);text-align:center;"><strong style="color:rgb(63,63,63);font-size:15px;letter-spacing:.5px;">扫码加入区块链大本营读者群，群满加微信 qk15732632926 入群</strong></p>
+   <p style="margin-left:8px;color:rgb(51,51,51);text-align:center;"><strong style="color:rgb(63,63,63);font-size:15px;letter-spacing:.5px;"><br></strong></p>
+   <p style="margin-left:8px;color:rgb(51,51,51);"><strong style="color:rgb(63,63,63);font-size:15px;letter-spacing:.5px;text-align:center;"><br></strong></p>
+   <p style="color:rgb(51,51,51);"><img class="__bg_gif" style="margin-left:auto;line-height:28px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_gif/trm5VMeFp9kuuGYcoeg06IYM4TSEE1eCF4aiadptTMnNFDia5JfEBLuUslraYtDcYbKr2b4takjM2MfqeZYcVqkQ/640?wx_fmt=gif" alt="640?wx_fmt=gif"></p>
+   <p style="color:rgb(51,51,51);"><br></p>
+   <p style="color:rgb(51,51,51);"><br></p>
+   <p style="margin-left:8px;color:rgb(51,51,51);text-align:center;"><span style="letter-spacing:.5px;font-size:15px;"><strong><span style="color:rgb(0,122,170);">了解更多区块链技术及应用内容</span></strong></span></p>
+   <p style="margin-left:8px;color:rgb(51,51,51);text-align:center;"><span style="letter-spacing:.5px;font-size:15px;"><strong><span style="color:rgb(0,122,170);">敬请关注：</span></strong></span></p>
+   <p style="margin-left:8px;text-align:center;color:rgb(51,51,51);"><img class="__bg_gif" style="width:644px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_gif/trm5VMeFp9kegUbp0DLNf5dM2JbggFlThJvvibDiaEicHicPaTJV6oOMMWYZynQZcNupmQJIbPAdlVhT8PeicsKaFMQ/640?wx_fmt=gif" alt="640?wx_fmt=gif"></p>
+   <p><br></p> 
+  </div> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/Blockchain_lemon/article/details/81267448,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/Blockchain_lemon/article/details/81267448,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

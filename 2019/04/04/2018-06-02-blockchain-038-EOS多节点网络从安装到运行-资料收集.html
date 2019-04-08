@@ -1,0 +1,227 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views">
+   1.EOS4.0 局域网测试网络搭建教程
+  <br>https://eosfans.io/topics/490
+  <br>
+  <br>
+  <br>局域网自己搭建一个测试网络
+  <br>节点1 &nbsp;192.168.195.144
+  <br>节点2 &nbsp;192.168.195.176
+  <br>节点3 &nbsp;192.168.195.191
+  <br>
+  <br>
+  <br>三个节点的genesis.json是一样的，内容如下：
+  <br>-----------
+  <br>{
+  <br>&nbsp; "initial_timestamp": "2018-03-02T12:00:00.000",
+  <br>&nbsp; "initial_key": "EOS8HF8XSGjfSvG5zfPgXFcUjFJh56ifWzYneWMEQSCkXgSdPJ51R",
+  <br>&nbsp; "initial_configuration": {
+  <br>&nbsp; &nbsp; "max_block_net_usage": 1048576,
+  <br>&nbsp; &nbsp; "target_block_net_usage_pct": 1000,
+  <br>&nbsp; &nbsp; "max_transaction_net_usage": 524288,
+  <br>&nbsp; &nbsp; "base_per_transaction_net_usage": 12,
+  <br>&nbsp; &nbsp; "net_usage_leeway": 500,
+  <br>&nbsp; &nbsp; "context_free_discount_net_usage_num": 20,
+  <br>&nbsp; &nbsp; "context_free_discount_net_usage_den": 100,
+  <br>&nbsp; &nbsp; "max_block_cpu_usage": 100000,
+  <br>&nbsp; &nbsp; "target_block_cpu_usage_pct": 500,
+  <br>&nbsp; &nbsp; "max_transaction_cpu_usage": 100000,
+  <br>&nbsp; &nbsp; "base_per_transaction_cpu_usage": 512,
+  <br>&nbsp; &nbsp; "base_per_action_cpu_usage": 1024,
+  <br>&nbsp; &nbsp; "base_setcode_cpu_usage": 2097152,
+  <br>&nbsp; &nbsp; "per_signature_cpu_usage": 102400,
+  <br>&nbsp; &nbsp; "cpu_usage_leeway": 2048,
+  <br>&nbsp; &nbsp; "context_free_discount_cpu_usage_num": 20,
+  <br>&nbsp; &nbsp; "context_free_discount_cpu_usage_den": 100,
+  <br>&nbsp; &nbsp; "max_transaction_lifetime": 3600,
+  <br>&nbsp; &nbsp; "deferred_trx_expiration_window": 600,
+  <br>&nbsp; &nbsp; "max_transaction_delay": 3888000,
+  <br>&nbsp; &nbsp; "max_inline_action_size": 4096,
+  <br>&nbsp; &nbsp; "max_inline_action_depth": 4,
+  <br>&nbsp; &nbsp; "max_authority_depth": 6,
+  <br>&nbsp; &nbsp; "max_generated_transaction_count": 16
+  <br>&nbsp; },
+  <br>&nbsp; "initial_chain_id": "0000000000000000000000000000000000000000000000000000000000000000"
+  <br>}
+  <br>-----------
+  <br>
+  <br>
+  <br>192.168.195.144的config.ini配置如下
+  <br>-----------
+  <br>genesis-json = "genesis.json"
+  <br>block-log-dir = "blocks"
+  <br>shared-memory-size-mb = 1024
+  <br>http-server-address = 127.0.0.1:8888
+  <br>access-control-allow-credentials = false
+  <br>p2p-listen-endpoint = 0.0.0.0:9876
+  <br>p2p-server-address = 192.168.195.144:9876 &nbsp;#注意此处
+  <br>agent-name = "EOS Test Agent"
+  <br>allowed-connection = any
+  <br>max-clients = 25
+  <br>connection-cleanup-period = 30
+  <br>network-version-match = 0
+  <br>sync-fetch-span = 100
+  <br>max-implicit-request = 1500
+  <br>enable-stale-production = true &nbsp;#注意此处
+  <br>max-transaction-time = 30
+  <br>required-participation = 33
+  <br>producer-name = eosio #注意此处
+  <br>private-key = ["EOS8HF8XSGjfSvG5zfPgXFcUjFJh56ifWzYneWMEQSCkXgSdPJ51R","5JC4FQVzAZuxWmaAfbW1RWsNDEpjjF5enfn9WBHkYTupFJQaBWt"] &nbsp;#注意此处
+  <br>txn-reference-block-lag = 0
+  <br>wallet-dir = "."
+  <br>unlock-timeout = 900
+  <br>plugin = eosio::chain_api_plugin
+  <br>plugin = eosio::chain_plugin
+  <br>plugin = eosio::producer_plugin
+  <br>plugin = eosio::http_plugin
+  <br>-----------
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>192.168.195.176
+  <br>-----------
+  <br>genesis-json = "genesis.json"
+  <br>block-log-dir = "blocks"
+  <br>shared-memory-size-mb = 1024
+  <br>http-server-address = 127.0.0.1:8888
+  <br>access-control-allow-credentials = false
+  <br>p2p-listen-endpoint = 0.0.0.0:9876
+  <br>p2p-server-address = 192.168.195.176:9876
+  <br>p2p-peer-address = 192.168.195.144:9876 &nbsp;#注意此处
+  <br>p2p-peer-address = 192.168.195.191:9876 &nbsp;#注意此处
+  <br>agent-name = "EOS Test Agent"
+  <br>allowed-connection = any
+  <br>max-clients = 25
+  <br>connection-cleanup-period = 30
+  <br>network-version-match = 0
+  <br>sync-fetch-span = 100
+  <br>max-implicit-request = 1500
+  <br>enable-stale-production = false #注意此处
+  <br>max-transaction-time = 30
+  <br>required-participation = 33
+  <br>producer-name = kgtest &nbsp;#注意此处
+  <br>private-key = ["",""] &nbsp;#注意此处
+  <br>txn-reference-block-lag = 0
+  <br>wallet-dir = "."
+  <br>unlock-timeout = 900
+  <br>plugin = eosio::chain_api_plugin
+  <br>plugin = eosio::chain_plugin
+  <br>plugin = eosio::producer_plugin
+  <br>plugin = eosio::http_plugin
+  <br>-----------
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>192.168.195.191
+  <br>-----------
+  <br>genesis-json = "genesis.json"
+  <br>block-log-dir = "blocks"
+  <br>shared-memory-size-mb = 1024
+  <br>http-server-address = 127.0.0.1:8888
+  <br>access-control-allow-credentials = false
+  <br>p2p-listen-endpoint = 0.0.0.0:9876
+  <br>p2p-server-address = 192.168.195.176:9876 &nbsp;#注意此处
+  <br>p2p-peer-address = 192.168.195.144:9876 &nbsp;#注意此处
+  <br>p2p-peer-address = 192.168.195.176:9876 &nbsp;#注意此处
+  <br>agent-name = "EOS Test Agent"
+  <br>allowed-connection = any
+  <br>max-clients = 25
+  <br>connection-cleanup-period = 30
+  <br>network-version-match = 0
+  <br>sync-fetch-span = 100
+  <br>max-implicit-request = 1500
+  <br>enable-stale-production = false &nbsp;#注意此处
+  <br>max-transaction-time = 30
+  <br>required-participation = 33
+  <br>producer-name = kgtest &nbsp;#注意此处
+  <br>private-key = ["",""] &nbsp;#注意此处
+  <br>txn-reference-block-lag = 0
+  <br>wallet-dir = "."
+  <br>unlock-timeout = 900
+  <br>plugin = eosio::chain_api_plugin
+  <br>plugin = eosio::chain_plugin
+  <br>plugin = eosio::producer_plugin
+  <br>plugin = eosio::http_plugin
+  <br>-----------
+  <br>
+  <br>
+  <br>启动网络过程
+  <br>1.首先启动节点1，节点1会出块
+  <br>2.同时启动节点2和节点3,这两个节点会同步节点1的区块
+  <br>3.创建钱包
+  <br>&nbsp; cleos wallet create -n kgbp
+  <br>4. 打开并解锁钱包
+  <br>&nbsp; cleos wallet open -n kgbp
+  <br>&nbsp; cleos wallet uplock -n kgbp
+  <br>5. 导入eosio账户到钱包
+  <br>&nbsp; cleos wallet import -n kgbp 5JC4FQVzAZuxWmaAfbW1RWsNDEpjjF5enfn9WBHkYTupFJQaBWt
+  <br>5. 创建并发布toekn
+  <br>&nbsp; 5.1 创建发布token的帐号eosio.token
+  <br>&nbsp; &nbsp; cleos create account eosio eosio.token EOS721PhsVCdLXatGMxu2kNBMPtQZzV8QU6Wu1qC9YFBZegyiP8if EOS721PhsVCdLXatGMxu2kNBMPtQZzV8QU6Wu1qC9YFBZegyiP8if
+  <br>&nbsp; 5.2 在钱包里导入EOS721PhsVCdLXatGMxu2kNBMPtQZzV8QU6Wu1qC9YFBZegyiP8if的私钥
+  <br>&nbsp; &nbsp; cleos wallet import -n kgbp xxxxxxxx
+  <br>&nbsp; 5.3 发布eosio.token合约
+  <br>&nbsp; &nbsp; cleos set contract eosio.token ./contracts/eosio.token/
+  <br>&nbsp; 5.4 创建和发布代币
+  <br>&nbsp; &nbsp; cleos &nbsp;push action eosio.token create '["eosio","1000000000.0000 EOS",0,0,0]' -p eosio.token
+  <br>&nbsp; &nbsp; cleos &nbsp;push action eosio.token issue '["eosio","1000000000.0000 EOS","issue"]' -p eosio
+  <br>&nbsp; 5.5 检查发布代币情况
+  <br>&nbsp; &nbsp; cleos get currency balance eosio.token eosio
+  <br>&nbsp; 5.6 部署eosio.system合约
+  <br>&nbsp; &nbsp; cleos set contract eosio ./contracts/eosio.system/
+  <br>&nbsp; &nbsp; 如果部署失败，可以多尝试几次。部署了eosio.system合约之后，cleos create account这个命令就不能创建账户了，暂时还不清楚是什么原因。让后可以用下面这个命令创建账户：
+  <br>&nbsp; &nbsp; cleos system newaccount eosio kgtest EOS5VPJHpT6aUfqVyW2XNNc2JgwtAa15nnQXMbzyvSQQHr2NYqCDz EOS5VPJHpT6aUfqVyW2XNNc2JgwtAa15nnQXMbzyvSQQHr2NYqCDz &nbsp;--stake-net '50.00 EOS' --stake-cpu '50.00 EOS'
+  <br>&nbsp; &nbsp; cleos system newaccount eosio kgtestt EOS79bDtiWLaSkWaHi59u5wdWL4XKfLgwBCvWa1FTvCT8bDiYXjQY EOS79bDtiWLaSkWaHi59u5wdWL4XKfLgwBCvWa1FTvCT8bDiYXjQY &nbsp;--stake-net '50.00 EOS' --stake-cpu '50.00 EOS'
+  <br>&nbsp; &nbsp; cleos system newaccount eosio kgtesttt EOS5WhVn5sKfTudx7THKLMSCH9BWchfBMdM1Q6aLU86tCvhUsjJZ6 EOS5WhVn5sKfTudx7THKLMSCH9BWchfBMdM1Q6aLU86tCvhUsjJZ6 &nbsp;--stake-net '50.00 EOS' --stake-cpu '50.00 EOS'
+  <br>&nbsp; &nbsp; 创建完成之后导入EOS5VPJHpT6aUfqVyW2XNNc2JgwtAa15nnQXMbzyvSQQHr2NYqCDz的私钥
+  <br>&nbsp; 5.7 将节点2注册成bp
+  <br>&nbsp; &nbsp; cleos &nbsp;system regproducer kgtest EOS5VPJHpT6aUfqVyW2XNNc2JgwtAa15nnQXMbzyvSQQHr2NYqCDz http://http-server-address:8888
+  <br>&nbsp; 5.8 给创建的账户转账
+  <br>&nbsp; &nbsp; cleos &nbsp;push action eosio.token transfer '["eosio", "kgtest","100000000.0000 EOS","vote"]' -p eosio
+  <br>&nbsp; &nbsp; cleos &nbsp;push action eosio.token transfer '["eosio", "kgtestt","100000000.0000 EOS","vote"]' -p eosio
+  <br>&nbsp; &nbsp; cleos &nbsp;push action eosio.token transfer '["eosio", "kgtesttt","100000000.0000 EOS","vote"]' -p eosio
+  <br>&nbsp; 5.9 锁定代币
+  <br>&nbsp; &nbsp; cleos system delegatebw kgtest kgtest '25000000.0000 EOS' '25000000.0000 EOS' --transfer
+  <br>&nbsp; &nbsp; cleos system delegatebw kgtestt kgtestt '25000000.0000 EOS' '25000000.0000 EOS' --transfer
+  <br>&nbsp; &nbsp; cleos system delegatebw kgtesttt kgtesttt '25000000.0000 EOS' '25000000.0000 EOS' --transfer
+  <br>&nbsp; 5.10 给出块节点投票
+  <br>&nbsp; &nbsp; cleos system voteproducer prods kgtest kgtest
+  <br>&nbsp; &nbsp; cleos system voteproducer prods kgtestt kgtest
+  <br>&nbsp; &nbsp; cleos system voteproducer prods kgtesttt kgtest
+  <br>&nbsp; 5.11 投票之后，就观察到节点2出块了。也就是超级节点运行了。按照这个流程，可以将其他节点都一个一个运行起来。
+  <br>
+  <br>
+  <br>有些参数还不是太了解。
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>××××××××××××××××××××××××××××××××××××××××××××××××××××××
+  <br>1. EOSIO 4.0 测试网络启动教程
+  <br>&nbsp; https://eosfans.io/topics/454
+  <br>
+  <br>
+  <br>2. EOS 安装本地环境，并实现发币转账等功能
+  <br>&nbsp; https://eosfans.io/topics/333
+  <br>
+  <br>
+  <br>3. EOS3.0 测试网络组建-EOS 中文社区特辑
+  <br>&nbsp; https://eosfans.io/topics/265
+  <br>
+  <br>
+  <br>4. Tutorial Bios Boot Sequence
+  <br>&nbsp; https://github.com/EOSIO/eos/wiki/Tutorial-Bios-Boot-Sequence
+  <br>
+  <br> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/lizhe_dashuju/article/details/80549872,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/lizhe_dashuju/article/details/80549872,&quot;}">阅读更多</a> 
+</div>

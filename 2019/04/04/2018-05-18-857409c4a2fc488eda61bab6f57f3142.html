@@ -1,0 +1,173 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <p>在上一篇博客<a href="https://blog.csdn.net/shixinghaha/article/details/80328435" rel="nofollow"> [乙太坊源码学习] 乙太坊node的启动过程</a>&nbsp;中，我们在其中提到了 Ethereum Backend的启动过程，大体总结一下就是：</p>
+  <p>（1）以太坊节点注册Ethereum Backend的构造函数</p>
+  <p>（2）以太坊节点在启动的过程中，调用构造函数，生成Backend，然后启动它。</p>
+  <p>这是一个很简略和过程，下面我们就详细的学习一下Ethereum Backend及它的启动过程。</p>
+  <p><br></p>
+  <p>1. Ethereum结构体代码</p>
+  <p></p>
+  <pre style="background-color:#2b2b2b;color:#a9b7c6;font-family:Menlo;font-size:13.5pt;"><span style="color:#cc7832;"><strong>type </strong></span>Ethereum <span style="color:#cc7832;"><strong>struct </strong></span>{
+   config      *<span style="color:#769aa5;">Config  //这是配置信息，下面再细说
+</span><span style="color:#769aa5;">   </span>chainConfig *params.<span style="color:#769aa5;">ChainConfig   //这是区块链的配置信息
+</span><span style="color:#769aa5;">
+</span><span style="color:#769aa5;">   </span><span style="color:#808080;">// Channel for shutting down the service
+</span><span style="color:#808080;">   </span>shutdownChan  <span style="color:#cc7832;"><strong>chan </strong></span><span style="color:#769aa5;">bool    </span><span style="color:#808080;">// 关闭该线程的标志位，通过goroutin+channel的形式实现。当需要关闭该线程时，只需要往该channel中发送一个bool值就行了
+</span><span style="color:#808080;">   </span>stopDbUpgrade <span style="color:#cc7832;"><strong>func</strong></span>() <span style="color:#769aa5;">error </span><span style="color:#808080;">// 这是一个函数句柄，用于关闭该线程时，提示关闭数据库写入的
+</span><span style="color:#808080;">
+</span><span style="color:#808080;">   // Handlers
+</span><span style="color:#808080;">   </span>txPool          *core.<span style="color:#769aa5;">TxPool&nbsp;&nbsp;&nbsp;&nbsp;//交易池，用来缓存未处理的交易的
+</span><span style="color:#769aa5;">   </span>blockchain      *core.<span style="color:#769aa5;">BlockChain&nbsp;&nbsp;&nbsp;&nbsp;//区块链对象
+</span><span style="color:#769aa5;">   </span>protocolManager *<span style="color:#769aa5;">ProtocolManager&nbsp;&nbsp;&nbsp;&nbsp;//协议管理器
+</span><span style="color:#769aa5;">   </span>lesServer       <span style="color:#769aa5;">LesServer&nbsp;&nbsp;&nbsp;&nbsp;//暂时不知道是做什么的
+</span><span style="color:#769aa5;">
+</span><span style="color:#769aa5;">   </span><span style="color:#808080;">// DB interfaces
+</span><span style="color:#808080;">   </span>chainDb ethdb.<span style="color:#769aa5;">Database </span><span style="color:#808080;">// 数据库对象
+</span><span style="color:#808080;">
+</span><span style="color:#808080;">   </span>eventMux       *event.<span style="color:#769aa5;">TypeMux&nbsp;&nbsp;&nbsp;&nbsp;//事件的收听器和分发器
+</span><span style="color:#769aa5;">   </span>engine         consensus.Engqine&nbsp;&nbsp;&nbsp;&nbsp;//共识算法的引擎，目前用的pow
+   accountManager *accounts.<span style="color:#769aa5;">Manager&nbsp;&nbsp;&nbsp;&nbsp;//账户管理器
+</span><span style="color:#769aa5;">
+</span><span style="color:#769aa5;">   </span>bloomRequests <span style="color:#cc7832;"><strong>chan chan </strong></span>*bloombits.<span style="color:#769aa5;">Retrieval </span><span style="color:#808080;">// 缓存bloom数据接收请求的管道。Channel receiving bloom data retrieval requests
+</span><span style="color:#808080;">   </span>bloomIndexer  *core.<span style="color:#769aa5;">ChainIndexer             </span><span style="color:#808080;">// 对Bloom数据创建索引的工具。 Bloom indexer operating during block imports
+</span><span style="color:#808080;">
+</span><span style="color:#808080;">   </span>ApiBackend *<span style="color:#769aa5;">EthApiBackend  //Backend接口的封装体，其实里面就是一堆函数
+</span><span style="color:#769aa5;">
+</span><span style="color:#769aa5;">   </span>miner     *miner.<span style="color:#769aa5;">Miner  //矿工
+</span><span style="color:#769aa5;">   </span>gasPrice  *big.<span style="color:#769aa5;">Int //gas价格
+</span><span style="color:#769aa5;">   </span>etherbase common.<span style="color:#769aa5;">Address  //矿工收取奖励的地址
+</span><span style="color:#769aa5;">
+</span><span style="color:#769aa5;">   </span>networkId     <span style="color:#769aa5;">uint64  //P2P网络的id
+</span><span style="color:#769aa5;">   </span>netRPCService *ethapi.<span style="color:#769aa5;">PublicNetAPI    //P2P 服务一些接口的封装体，其实就是一些简单的函数
+</span><span style="color:#769aa5;">
+</span><span style="color:#769aa5;">   </span>lock sync.<span style="color:#769aa5;">RWMutex </span><span style="color:#808080;">// 对本结构体进行改写的时候，需要加锁。Protects the variadic fields (e.g. gas price and etherbase)
+</span>}</pre>
+  <p>通过这个结构体所包含的成员变量来看，Ethereum Backend的功能覆盖了账号管理、共识、挖矿、协议管理、数据库写入等等比较核心的功能环节，可见它是乙太坊的核心程序。</p>
+  <p>Ethereum Backend其实实现了node/service.go中的Service接口，该接口有三个方法：</p>
+  <p></p>
+  <pre style="background-color:#2b2b2b;color:#a9b7c6;font-family:Menlo;font-size:13.5pt;"><span style="color:#cc7832;"><strong>type </strong></span>Service <span style="color:#cc7832;"><strong>interface </strong></span>{
+   <span style="color:#808080;">// Protocols retrieves the P2P protocols the service wishes to start.
+</span><span style="color:#808080;">   </span><span style="color:#ffc66d;">Protocols</span>() []p2p.<span style="color:#769aa5;">Protocol
+</span><span style="color:#769aa5;">
+</span><span style="color:#769aa5;">   </span><span style="color:#808080;">// APIs retrieves the list of RPC descriptors the service provides
+</span><span style="color:#808080;">   </span><span style="color:#ffc66d;">APIs</span>() []rpc.<span style="color:#769aa5;">API
+</span><span style="color:#769aa5;">
+</span><span style="color:#769aa5;">   </span><span style="color:#808080;">// Start is called after all services have been constructed and the networking
+</span><span style="color:#808080;">   // layer was also initialized to spawn any goroutines required by the service.
+</span><span style="color:#808080;">   </span><span style="color:#ffc66d;">Start</span>(server *p2p.<span style="color:#769aa5;">Server</span>) <span style="color:#769aa5;">error
+</span><span style="color:#769aa5;">
+</span><span style="color:#769aa5;">   </span><span style="color:#808080;">// Stop terminates all goroutines belonging to the service, blocking until they
+</span><span style="color:#808080;">   // are all terminated.
+</span><span style="color:#808080;">   </span><span style="color:#ffc66d;">Stop</span>() <span style="color:#769aa5;">error
+</span>}</pre>
+  <p>Etherem实现了4个方法，以提供Service的功能。这几个方法，我们稍后会渐渐提到。</p>
+  <p><br></p>
+  <p>2. Ethereum的创建方法New</p>
+  <p></p>
+  <pre style="background-color:#2b2b2b;color:#a9b7c6;font-family:Menlo;font-size:13.5pt;"><span style="color:#cc7832;"><strong>func </strong></span><span style="color:#ffc66d;">New</span>(ctx *node.<span style="color:#769aa5;">ServiceContext</span><span style="color:#cc7832;">, </span>config *<span style="color:#769aa5;">Config</span>) (*<span style="color:#769aa5;">Ethereum</span><span style="color:#cc7832;">, </span><span style="color:#769aa5;">error</span>) {
+   log.Info(<span style="color:#6a8759;">"&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; Will create backend with config: "</span><span style="color:#cc7832;">, </span><span style="color:#6a8759;">"config"</span><span style="color:#cc7832;">, </span>config)
+   log.Info(<span style="color:#6a8759;">"&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; Will create backend with context: "</span><span style="color:#cc7832;">, </span><span style="color:#6a8759;">"context"</span><span style="color:#cc7832;">, </span>ctx)
+   _<span style="color:#cc7832;">,</span>file<span style="color:#cc7832;">,</span>line<span style="color:#cc7832;">,</span>_ := runtime.Caller(<span style="color:#6897bb;">2</span>)
+
+   log.Info(<span style="color:#6a8759;">"&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; backend.New() Caller: "</span><span style="color:#cc7832;">, </span><span style="color:#6a8759;">"file"</span><span style="color:#cc7832;">, </span>file<span style="color:#cc7832;">, </span><span style="color:#6a8759;">"line"</span><span style="color:#cc7832;">, </span>line)
+
+   <span style="color:#cc7832;"><strong>if </strong></span>config.SyncMode == downloader.<span style="color:#9876aa;"><em>LightSync </em></span>{
+      <span style="color:#cc7832;"><strong>return </strong></span>nil<span style="color:#cc7832;">, </span>errors.New(<span style="color:#6a8759;">"can't run eth.Ethereum in light sync mode, use les.LightEthereum"</span>)
+   }
+   <span style="color:#cc7832;"><strong>if </strong></span>!config.SyncMode.IsValid() {
+      <span style="color:#cc7832;"><strong>return </strong></span>nil<span style="color:#cc7832;">, </span>fmt.Errorf(<span style="color:#6a8759;">"invalid sync mode %d"</span><span style="color:#cc7832;">, </span>config.SyncMode)
+   }
+   chainDb<span style="color:#cc7832;">, </span>err := CreateDB(ctx<span style="color:#cc7832;">, </span>config<span style="color:#cc7832;">, </span><span style="color:#6a8759;">"chaindata"</span>)
+   <span style="color:#cc7832;"><strong>if </strong></span>err != nil {
+      <span style="color:#cc7832;"><strong>return </strong></span>nil<span style="color:#cc7832;">, </span>err
+   }
+   stopDbUpgrade := upgradeDeduplicateData(chainDb)
+   chainConfig<span style="color:#cc7832;">, </span>genesisHash<span style="color:#cc7832;">, </span>genesisErr := core.SetupGenesisBlock(chainDb<span style="color:#cc7832;">, </span>config.Genesis)
+   log.Info(<span style="color:#6a8759;">"&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; Genesis Block created: "</span><span style="color:#cc7832;">, </span><span style="color:#6a8759;">"genesis"</span><span style="color:#cc7832;">, </span>genesisHash)
+
+   <span style="color:#cc7832;"><strong>if </strong></span>_<span style="color:#cc7832;">, </span>ok := genesisErr.(*params.<span style="color:#769aa5;">ConfigCompatError</span>)<span style="color:#cc7832;">; </span>genesisErr != nil &amp;&amp; !ok {
+      <span style="color:#cc7832;"><strong>return </strong></span>nil<span style="color:#cc7832;">, </span>genesisErr
+   }
+   log.Info(<span style="color:#6a8759;">"Initialised chain configuration"</span><span style="color:#cc7832;">, </span><span style="color:#6a8759;">"config"</span><span style="color:#cc7832;">, </span>chainConfig)
+
+   eth := &amp;<span style="color:#769aa5;">Ethereum</span>{
+      config:         config<span style="color:#cc7832;">,
+</span><span style="color:#cc7832;">      </span>chainDb:        chainDb<span style="color:#cc7832;">,
+</span><span style="color:#cc7832;">      </span>chainConfig:    chainConfig<span style="color:#cc7832;">,
+</span><span style="color:#cc7832;">      </span>eventMux:       ctx.EventMux<span style="color:#cc7832;">,
+</span><span style="color:#cc7832;">      </span>accountManager: ctx.AccountManager<span style="color:#cc7832;">,
+</span><span style="color:#cc7832;">      </span>engine:         CreateConsensusEngine(ctx<span style="color:#cc7832;">, </span>&amp;config.Ethash<span style="color:#cc7832;">, </span>chainConfig<span style="color:#cc7832;">, </span>chainDb)<span style="color:#cc7832;">,
+</span><span style="color:#cc7832;">      </span>shutdownChan:   <span style="color:#ffc66d;">make</span>(<span style="color:#cc7832;"><strong>chan </strong></span><span style="color:#769aa5;">bool</span>)<span style="color:#cc7832;">,
+</span><span style="color:#cc7832;">      </span>stopDbUpgrade:  stopDbUpgrade<span style="color:#cc7832;">,
+</span><span style="color:#cc7832;">      </span>networkId:      config.NetworkId<span style="color:#cc7832;">,
+</span><span style="color:#cc7832;">      </span>gasPrice:       config.GasPrice<span style="color:#cc7832;">,
+</span><span style="color:#cc7832;">      </span>etherbase:      config.Etherbase<span style="color:#cc7832;">,
+</span><span style="color:#cc7832;">      </span>bloomRequests:  <span style="color:#ffc66d;">make</span>(<span style="color:#cc7832;"><strong>chan chan </strong></span>*bloombits.<span style="color:#769aa5;">Retrieval</span>)<span style="color:#cc7832;">,
+</span><span style="color:#cc7832;">      </span>bloomIndexer:   NewBloomIndexer(chainDb<span style="color:#cc7832;">, </span>params.<span style="color:#9876aa;"><em>BloomBitsBlocks</em></span>)<span style="color:#cc7832;">,
+</span><span style="color:#cc7832;">   </span>}
+
+   log.Info(<span style="color:#6a8759;">"Initialising Ethereum protocol"</span><span style="color:#cc7832;">, </span><span style="color:#6a8759;">"versions"</span><span style="color:#cc7832;">, </span>ProtocolVersions<span style="color:#cc7832;">, </span><span style="color:#6a8759;">"network"</span><span style="color:#cc7832;">, </span>config.NetworkId)
+
+   log.Info(<span style="color:#6a8759;">"&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; Backend created: "</span><span style="color:#cc7832;">, </span><span style="color:#6a8759;">"backend"</span><span style="color:#cc7832;">, </span>eth)
+
+   <span style="color:#cc7832;"><strong>if </strong></span>!config.SkipBcVersionCheck {
+      bcVersion := core.GetBlockChainVersion(chainDb)
+      <span style="color:#cc7832;"><strong>if </strong></span>bcVersion != core.<span style="color:#9876aa;"><em>BlockChainVersion </em></span>&amp;&amp; bcVersion != <span style="color:#6897bb;">0 </span>{
+         <span style="color:#cc7832;"><strong>return </strong></span>nil<span style="color:#cc7832;">, </span>fmt.Errorf(<span style="color:#6a8759;">"Blockchain DB version mismatch (%d / %d). Run geth upgradedb.\n"</span><span style="color:#cc7832;">, </span>bcVersion<span style="color:#cc7832;">, </span>core.<span style="color:#9876aa;"><em>BlockChainVersion</em></span>)
+      }
+      core.WriteBlockChainVersion(chainDb<span style="color:#cc7832;">, </span>core.<span style="color:#9876aa;"><em>BlockChainVersion</em></span>)
+   }
+   <span style="color:#cc7832;"><strong>var </strong></span>(
+      vmConfig    = vm.<span style="color:#769aa5;">Config</span>{EnablePreimageRecording: config.EnablePreimageRecording}
+      cacheConfig = &amp;core.<span style="color:#769aa5;">CacheConfig</span>{Disabled: config.NoPruning<span style="color:#cc7832;">, </span>TrieNodeLimit: config.TrieCache<span style="color:#cc7832;">, </span>TrieTimeLimit: config.TrieTimeout}
+   )
+   log.Info(<span style="color:#6a8759;">"&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; VM config created: "</span>)
+   log.Info(<span style="color:#6a8759;">"&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; Cache config created: "</span><span style="color:#cc7832;">, </span><span style="color:#6a8759;">"cacheconfig"</span><span style="color:#cc7832;">, </span>cacheConfig)
+
+
+   eth.blockchain<span style="color:#cc7832;">, </span>err = core.NewBlockChain(chainDb<span style="color:#cc7832;">, </span>cacheConfig<span style="color:#cc7832;">, </span>eth.chainConfig<span style="color:#cc7832;">, </span>eth.engine<span style="color:#cc7832;">, </span>vmConfig)
+   log.Info(<span style="color:#6a8759;">"&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; Blockchain created: "</span>)
+
+   <span style="color:#cc7832;"><strong>if </strong></span>err != nil {
+      <span style="color:#cc7832;"><strong>return </strong></span>nil<span style="color:#cc7832;">, </span>err
+   }
+   <span style="color:#808080;">// Rewind the chain in case of an incompatible config upgrade.
+</span><span style="color:#808080;">   </span><span style="color:#cc7832;"><strong>if </strong></span>compat<span style="color:#cc7832;">, </span>ok := genesisErr.(*params.<span style="color:#769aa5;">ConfigCompatError</span>)<span style="color:#cc7832;">; </span>ok {
+      log.Warn(<span style="color:#6a8759;">"Rewinding chain to upgrade configuration"</span><span style="color:#cc7832;">, </span><span style="color:#6a8759;">"err"</span><span style="color:#cc7832;">, </span>compat)
+      eth.blockchain.SetHead(compat.RewindTo)
+      core.WriteChainConfig(chainDb<span style="color:#cc7832;">, </span>genesisHash<span style="color:#cc7832;">, </span>chainConfig)
+   }
+   eth.bloomIndexer.Start(eth.blockchain)
+
+   <span style="color:#cc7832;"><strong>if </strong></span>config.TxPool.Journal != <span style="color:#6a8759;">"" </span>{
+      config.TxPool.Journal = ctx.ResolvePath(config.TxPool.Journal)
+      log.Info(<span style="color:#6a8759;">"&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; TxPool Journal created: "</span><span style="color:#cc7832;">, </span><span style="color:#6a8759;">"journal"</span><span style="color:#cc7832;">, </span>config.TxPool.Journal)
+   }
+   eth.txPool = core.NewTxPool(config.TxPool<span style="color:#cc7832;">, </span>eth.chainConfig<span style="color:#cc7832;">, </span>eth.blockchain)
+
+   log.Info(<span style="color:#6a8759;">"&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; Txpool created: "</span><span style="color:#cc7832;">, </span><span style="color:#6a8759;">"txpool"</span><span style="color:#cc7832;">, </span>eth.txPool)
+
+   <span style="color:#cc7832;"><strong>if </strong></span>eth.protocolManager<span style="color:#cc7832;">, </span>err = NewProtocolManager(eth.chainConfig<span style="color:#cc7832;">, </span>config.SyncMode<span style="color:#cc7832;">, </span>config.NetworkId<span style="color:#cc7832;">, </span>eth.eventMux<span style="color:#cc7832;">, </span>eth.txPool<span style="color:#cc7832;">, </span>eth.engine<span style="color:#cc7832;">, </span>eth.blockchain<span style="color:#cc7832;">, </span>chainDb)<span style="color:#cc7832;">; </span>err != nil {
+      <span style="color:#cc7832;"><strong>return </strong></span>nil<span style="color:#cc7832;">, </span>err
+   }
+   eth.miner = miner.New(eth<span style="color:#cc7832;">, </span>eth.chainConfig<span style="color:#cc7832;">, </span>eth.EventMux()<span style="color:#cc7832;">, </span>eth.engine)
+   eth.miner.SetExtra(makeExtraData(config.ExtraData))
+   log.Info(<span style="color:#6a8759;">"&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; Miner created: "</span><span style="color:#cc7832;">, </span><span style="color:#6a8759;">"miner"</span><span style="color:#cc7832;">, </span>eth.miner)
+
+   eth.ApiBackend = &amp;<span style="color:#769aa5;">EthApiBackend</span>{eth<span style="color:#cc7832;">, </span>nil}
+   gpoParams := config.GPO
+   <span style="color:#cc7832;"><strong>if </strong></span>gpoParams.Default == nil {
+      gpoParams.Default = config.GasPrice
+   }
+   eth.ApiBackend.gpo = gasprice.NewOracle(eth.ApiBackend<span style="color:#cc7832;">, </span>gpoParams)
+   log.Info(<span style="color:#6a8759;">"&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; Backend create finished: "</span><span style="color:#cc7832;">, </span><span style="color:#6a8759;">"backend"</span><span style="color:#cc7832;">, </span>eth)
+
+   <span style="color:#cc7832;"><strong>return </strong></span>eth<span style="color:#cc7832;">, </span>nil
+}</pre>
+  <p>未完待续</p> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/shixinghaha/article/details/80333810,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/shixinghaha/article/details/80333810,&quot;}">阅读更多</a> 
+</div>

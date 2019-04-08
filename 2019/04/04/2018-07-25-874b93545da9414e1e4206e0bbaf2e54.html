@@ -1,0 +1,134 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div class="markdown_views"> 
+  <h2 id="前景提要">前景提要</h2> 
+  <h4 id="以太坊地址类型">以太坊地址类型</h4> 
+  <blockquote> 
+   <p>所有的账户地址 皆是 address 类型, address 类型比较特殊, 本质是一个 uint 类型 <br> 但又可以调用 .balance .transfer .send 等, 具体可见官方文档描述</p> 
+  </blockquote> 
+  <h4 id="合约相关的几个概念">合约相关的几个概念</h4> 
+  <blockquote> 
+   <ol> 
+    <li>合约地址 : 在合约中 this 代表合约地址, 合约地址可存储以太币, 他人发起向合约转入以太币(通过 value), 默认存入 this</li> 
+    <li>合约发起者: 在合约中 msg.sender 代表合约发起者, 用户通过 dApp 发起一个合约, msg.sender 即是用户使用钱包浏览器内所选地址, 即用户钱包地址</li> 
+   </ol> 
+  </blockquote> 
+  <h2 id="合约交易-transfer">合约交易 transfer</h2> 
+  <ul> 
+   <li>用户向合约转钱, 发起合约时传入 value 即可</li> 
+   <li>合约向用户转钱 <code>address(user).transfer(address(this).balance)</code>, 当然不必是合约的所有余额, 只要不超过余额, 都可以转出去</li> 
+   <li>用户通过合约向另一个用户转钱: 买家–&gt;卖家 (买家转钱到合约, 合约转到卖家), 买家传入 value 调用 <code>address(seller).transfer(msg.value)</code> </li> 
+  </ul> 
+  <h2 id="实战例子-官网例子">实战例子 (官网例子)</h2> 
+  <pre class="prettyprint"><code class=" hljs cs">pragma solidity ^<span class="hljs-number">0.4</span><span class="hljs-number">.22</span>;
+
+contract Purchase {
+    <span class="hljs-keyword">uint</span> <span class="hljs-keyword">public</span> <span class="hljs-keyword">value</span>;    <span class="hljs-comment">// 商品金额</span>
+    address <span class="hljs-keyword">public</span> seller;<span class="hljs-comment">//卖家地址</span>
+    address <span class="hljs-keyword">public</span> buyer; <span class="hljs-comment">//买家地址</span>
+    <span class="hljs-keyword">enum</span> State { Created, Locked, Inactive }
+    State <span class="hljs-keyword">public</span> state;   
+
+    <span class="hljs-comment">//确保 `msg.value` 是一个偶数。</span>
+    <span class="hljs-comment">//如果它是一个奇数，则它将被截断。</span>
+    <span class="hljs-comment">//通过乘法检查它不是奇数。</span>
+    constructor() <span class="hljs-keyword">public</span> payable {
+        <span class="hljs-comment">// 这个例子是, 合约部署者即是卖家, 部署时传入的 value/2 就是商品价格</span>
+        <span class="hljs-comment">// 部署后, 传入的 value, 自动进入 this.balance</span>
+        seller = msg.sender;
+        <span class="hljs-keyword">value</span> = msg.<span class="hljs-keyword">value</span> / <span class="hljs-number">2</span>;
+        require((<span class="hljs-number">2</span> * <span class="hljs-keyword">value</span>) == msg.<span class="hljs-keyword">value</span>, <span class="hljs-string">"Value has to be even."</span>);
+    }
+
+    <span class="hljs-comment">// 查看合约内金额</span>
+    function getBalance() <span class="hljs-keyword">public</span> <span class="hljs-title">returns</span>(<span class="hljs-keyword">uint</span>) {
+         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.balance;
+    }
+
+    <span class="hljs-comment">//</span>
+    modifier condition(<span class="hljs-keyword">bool</span> _condition) {
+        require(
+            _condition,
+            <span class="hljs-string">"Some thing not right"</span>
+        );
+        _;
+    }
+
+    modifier onlyBuyer() {
+        require(
+            msg.sender == buyer,
+            <span class="hljs-string">"Only buyer can call this."</span>
+        );
+        _;
+    }
+
+    modifier onlySeller() {
+        require(
+            msg.sender == seller,
+            <span class="hljs-string">"Only seller can call this."</span>
+        );
+        _;
+    }
+
+    modifier inState(State _state) {
+        require(
+            state == _state,
+            <span class="hljs-string">"Invalid state."</span>
+        );
+        _;
+    }
+
+    <span class="hljs-keyword">event</span> Aborted();
+    <span class="hljs-keyword">event</span> PurchaseConfirmed();
+    <span class="hljs-keyword">event</span> ItemReceived();
+
+    <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span>中止购买并回收以太币。</span>
+    <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span>只能在合约被锁定之前由卖家调用。</span>
+    function abort()
+        <span class="hljs-keyword">public</span>
+        onlySeller
+        <span class="hljs-title">inState</span>(State.Created)
+    {
+        emit Aborted();
+        state = State.Inactive;
+        seller.transfer(address(<span class="hljs-keyword">this</span>).balance);
+    }
+
+    <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> 买家确认购买。</span>
+    <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> 交易必须包含 `2 * value` 个以太币。</span>
+    <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> 以太币会被锁定，直到 confirmReceived 被调用。</span>
+    function confirmPurchase()
+        <span class="hljs-keyword">public</span>
+        <span class="hljs-title">inState</span>(State.Created)
+        <span class="hljs-title">condition</span>(msg.<span class="hljs-keyword">value</span> == (<span class="hljs-number">2</span> * <span class="hljs-keyword">value</span>))
+        payable
+    {
+        <span class="hljs-comment">// 购买第一步, 买家也转入 商品价*2 的 value, 自动进入合约地址( 我一直以为需要调用 this.send(msg.value) )</span>
+        emit PurchaseConfirmed();
+        buyer = msg.sender;
+        state = State.Locked;
+    }
+
+    <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> 确认你（买家）已经收到商品。</span>
+    <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> 这会释放被锁定的以太币。</span>
+    function confirmReceived()
+        <span class="hljs-keyword">public</span>
+        onlyBuyer
+        <span class="hljs-title">inState</span>(State.Locked)
+    {
+        <span class="hljs-comment">// 购买第二部, 结算: 确认收货, 此时 this.balance 有4*value, 将退回 一个value 给买家, 而卖家则收到 剩余的 3 * value, 2*value 是之前就转入的保证金</span>
+        emit ItemReceived();
+        <span class="hljs-comment">// 首先修改状态很重要，否则的话，由 `transfer` 所调用的合约可以回调进这里（再次接收以太币）。</span>
+        state = State.Inactive;
+
+        <span class="hljs-comment">// 注意: 这实际上允许买方和卖方阻止退款 - 应该使用取回模式。</span>
+        buyer.transfer(<span class="hljs-keyword">value</span>);
+        seller.transfer(address(<span class="hljs-keyword">this</span>).balance);
+    }
+}</code></pre> 
+  <p>PS: 顺便说下这个例子拿去改造成中介平台很不错啊</p> 
+ </div> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/markdown_views-ea0013b516.css"> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/guddqs/article/details/81197515,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/guddqs/article/details/81197515,&quot;}">阅读更多</a> 
+</div>

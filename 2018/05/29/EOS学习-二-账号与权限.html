@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>EOS学习（二）：账号与权限 | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="EOS学习（二）：账号与权限" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="帐户是存储在区块链中的人类可读标识符。每个交易都根据配置的帐户权限对其权限进行评估。每个命名的权限都有一个阈值，在满足该阈值的条件下才能触发易签名。事务通过加解锁钱包的客户端来签署。钱包是保护和利用你的密钥的软件。这些密钥可能会或可能不会被授予区块链上的账户权限。 钱包 钱包是存储密钥的客户，这些密钥可能与一个或多个帐户的权限相关或不相关。理想情况下，钱包具有受高阶密码保护的锁定（加密）和解锁（解密）状态。EOSIO / EOS存储库捆绑了一个名为cleos的命令行界面客户端，它与一个名为keosd的轻客户端进行交互。 账户 帐户是存储在区块链中的具有可读性的名称。它由个人或一组人拥有，具体取决于权限配置。需要账户才能在区块链上实现转账将交易或其他操作。 授权与权限授权决定了某个操作是否被正确的赋予权限。 每个账户都两个原生态的许可属性： 拥有者许可：拥有者许可代表着账户的所有权。虽然只有少数交易需要这种权限，但最值得注意的是对拥有者权限作出任何改变的行为。建议所有者保持冷备份并且不与任何人共享。所有者许可用来恢复和取代已被泄露的另一个权限。 活动许可：活动权限用于资金转账、投票给活动发起者并进行更高级别的账户更改。 除了原生态许可之外，帐户还可设置自定义许可从而扩展帐户管理。自定义权限非常灵活且地址空间巨大，从而实现非常多的可能的应用场景。这很大程度上取决于开发人员如何使用它们以及采用什么约定（如果有的话）。任何给定权限的权限可以分配给一个或多个公用密钥或有效的帐户名称。 组合使用 以下就是将上述概念组合在一起使用的案例。 默认账号配置（单一签名） 每个账户在创建之初就是默认的是唯一的键（key）可用来做拥有者许可和活动许可。这个键拥有1的权重以及阈值也为1.默认的配置可以通过单一签名来授权原生态的活动许可。 @bob 账号授权 许可 账号 权重 阈值 拥有者 &nbsp; &nbsp; 1 &nbsp; EOS5EzTZZQQxdrDaJAPD9pDzGJZ5bj34HaAb8yuvjFHGWzqV25Dch 1 &nbsp; 活动 &nbsp; &nbsp; 1 &nbsp; EOS61chK8GbH4ukWcbom8HgK95AeUfP8MBPn7XRq8FeMBYYTgwmcX 1 &nbsp; 在@bob账号的例子中，@bob的拥有者账号具有许可权重1，并且要求阈值达到1时才能发起一笔交易。 @bob只要使用拥有者许可的账号对该交易进行签名进行合法性授权，即可完成一笔交易。这个拥有者的许可账号被保存在钱包中，并通过cleos进行调用。 多人签名与自定义许可 下面这个例子使用了一个虚构叫做“@multisig”的账号名称。在这个场景中，两个用户被同时授予拥有者许可和活动许可不同的权值。 @multisig 账号授权 许可 账号 权重 阈值 拥有者 &nbsp; &nbsp; 2 &nbsp; @bob 1 &nbsp; &nbsp; @stacy 1 &nbsp; 活动 &nbsp; &nbsp; 1 &nbsp; @bob 1 &nbsp; &nbsp; @stacy 1 &nbsp; 发布 &nbsp; &nbsp; 2 &nbsp; @bob 2 &nbsp; &nbsp; @stacy 2 &nbsp; &nbsp; EOS7Hnv4iBWo1pcEpP8JyFYCJLRUzYcXSqt... 1 &nbsp; 在这个例子中，如果要对拥有者许可进行调整，需要达到阈值2以上。这就意味着拥有权重为1的参与者必须都参与签名才能使得让交易得到充分的授权。 当进行活动授权时，该阈值为1，这就意味着只需一个权重为1的参与方参与授权即可实现许可授权。 这里还有个称之为“发布”的自定义许可类型。在这个例子中，我们假设是在一个blog的DAPP应用中授权发布博客。发布许可的阈值为2，@bob和@stacy都拥有2的权重，还有一个公钥拥有1的权重。这就意味着@bob和@stacy无需其他额外的签名即可执行发布许可，而公钥必须取得其他人的共同签名才能执行发布许可。 上面的例子说明，@bob和@stacy作为拥有者，币普通的修改者拥有更高的优先权。尽管这个原始示例在可扩展性方面有特别的限制，并不一定是一个好的设计，但它充分证明了EOSIO权限系统的灵活性。 此外，请注意上表中的权限是可以同时使用帐户名称或公钥进行设置的。虽然看起来微不足道，但它确实提出了一些额外的灵活性。 附加说明 @bob和@stacy可以显式注明定义为该账号的拥有者。 在没有@bob和@stacy授权的情况下，公钥是无法发起一个发布授权的。 @bob或@stacy可以在没有其他账号附加授权的情况下，独立发起发布授权。 摘至&nbsp;Accounts &amp; Permissions，翻译 by Kevin. 阅读更多" />
+<meta property="og:description" content="帐户是存储在区块链中的人类可读标识符。每个交易都根据配置的帐户权限对其权限进行评估。每个命名的权限都有一个阈值，在满足该阈值的条件下才能触发易签名。事务通过加解锁钱包的客户端来签署。钱包是保护和利用你的密钥的软件。这些密钥可能会或可能不会被授予区块链上的账户权限。 钱包 钱包是存储密钥的客户，这些密钥可能与一个或多个帐户的权限相关或不相关。理想情况下，钱包具有受高阶密码保护的锁定（加密）和解锁（解密）状态。EOSIO / EOS存储库捆绑了一个名为cleos的命令行界面客户端，它与一个名为keosd的轻客户端进行交互。 账户 帐户是存储在区块链中的具有可读性的名称。它由个人或一组人拥有，具体取决于权限配置。需要账户才能在区块链上实现转账将交易或其他操作。 授权与权限授权决定了某个操作是否被正确的赋予权限。 每个账户都两个原生态的许可属性： 拥有者许可：拥有者许可代表着账户的所有权。虽然只有少数交易需要这种权限，但最值得注意的是对拥有者权限作出任何改变的行为。建议所有者保持冷备份并且不与任何人共享。所有者许可用来恢复和取代已被泄露的另一个权限。 活动许可：活动权限用于资金转账、投票给活动发起者并进行更高级别的账户更改。 除了原生态许可之外，帐户还可设置自定义许可从而扩展帐户管理。自定义权限非常灵活且地址空间巨大，从而实现非常多的可能的应用场景。这很大程度上取决于开发人员如何使用它们以及采用什么约定（如果有的话）。任何给定权限的权限可以分配给一个或多个公用密钥或有效的帐户名称。 组合使用 以下就是将上述概念组合在一起使用的案例。 默认账号配置（单一签名） 每个账户在创建之初就是默认的是唯一的键（key）可用来做拥有者许可和活动许可。这个键拥有1的权重以及阈值也为1.默认的配置可以通过单一签名来授权原生态的活动许可。 @bob 账号授权 许可 账号 权重 阈值 拥有者 &nbsp; &nbsp; 1 &nbsp; EOS5EzTZZQQxdrDaJAPD9pDzGJZ5bj34HaAb8yuvjFHGWzqV25Dch 1 &nbsp; 活动 &nbsp; &nbsp; 1 &nbsp; EOS61chK8GbH4ukWcbom8HgK95AeUfP8MBPn7XRq8FeMBYYTgwmcX 1 &nbsp; 在@bob账号的例子中，@bob的拥有者账号具有许可权重1，并且要求阈值达到1时才能发起一笔交易。 @bob只要使用拥有者许可的账号对该交易进行签名进行合法性授权，即可完成一笔交易。这个拥有者的许可账号被保存在钱包中，并通过cleos进行调用。 多人签名与自定义许可 下面这个例子使用了一个虚构叫做“@multisig”的账号名称。在这个场景中，两个用户被同时授予拥有者许可和活动许可不同的权值。 @multisig 账号授权 许可 账号 权重 阈值 拥有者 &nbsp; &nbsp; 2 &nbsp; @bob 1 &nbsp; &nbsp; @stacy 1 &nbsp; 活动 &nbsp; &nbsp; 1 &nbsp; @bob 1 &nbsp; &nbsp; @stacy 1 &nbsp; 发布 &nbsp; &nbsp; 2 &nbsp; @bob 2 &nbsp; &nbsp; @stacy 2 &nbsp; &nbsp; EOS7Hnv4iBWo1pcEpP8JyFYCJLRUzYcXSqt... 1 &nbsp; 在这个例子中，如果要对拥有者许可进行调整，需要达到阈值2以上。这就意味着拥有权重为1的参与者必须都参与签名才能使得让交易得到充分的授权。 当进行活动授权时，该阈值为1，这就意味着只需一个权重为1的参与方参与授权即可实现许可授权。 这里还有个称之为“发布”的自定义许可类型。在这个例子中，我们假设是在一个blog的DAPP应用中授权发布博客。发布许可的阈值为2，@bob和@stacy都拥有2的权重，还有一个公钥拥有1的权重。这就意味着@bob和@stacy无需其他额外的签名即可执行发布许可，而公钥必须取得其他人的共同签名才能执行发布许可。 上面的例子说明，@bob和@stacy作为拥有者，币普通的修改者拥有更高的优先权。尽管这个原始示例在可扩展性方面有特别的限制，并不一定是一个好的设计，但它充分证明了EOSIO权限系统的灵活性。 此外，请注意上表中的权限是可以同时使用帐户名称或公钥进行设置的。虽然看起来微不足道，但它确实提出了一些额外的灵活性。 附加说明 @bob和@stacy可以显式注明定义为该账号的拥有者。 在没有@bob和@stacy授权的情况下，公钥是无法发起一个发布授权的。 @bob或@stacy可以在没有其他账号附加授权的情况下，独立发起发布授权。 摘至&nbsp;Accounts &amp; Permissions，翻译 by Kevin. 阅读更多" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/05/29/EOS%E5%AD%A6%E4%B9%A0-%E4%BA%8C-%E8%B4%A6%E5%8F%B7%E4%B8%8E%E6%9D%83%E9%99%90.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/05/29/EOS%E5%AD%A6%E4%B9%A0-%E4%BA%8C-%E8%B4%A6%E5%8F%B7%E4%B8%8E%E6%9D%83%E9%99%90.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-05-29T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"帐户是存储在区块链中的人类可读标识符。每个交易都根据配置的帐户权限对其权限进行评估。每个命名的权限都有一个阈值，在满足该阈值的条件下才能触发易签名。事务通过加解锁钱包的客户端来签署。钱包是保护和利用你的密钥的软件。这些密钥可能会或可能不会被授予区块链上的账户权限。 钱包 钱包是存储密钥的客户，这些密钥可能与一个或多个帐户的权限相关或不相关。理想情况下，钱包具有受高阶密码保护的锁定（加密）和解锁（解密）状态。EOSIO / EOS存储库捆绑了一个名为cleos的命令行界面客户端，它与一个名为keosd的轻客户端进行交互。 账户 帐户是存储在区块链中的具有可读性的名称。它由个人或一组人拥有，具体取决于权限配置。需要账户才能在区块链上实现转账将交易或其他操作。 授权与权限授权决定了某个操作是否被正确的赋予权限。 每个账户都两个原生态的许可属性： 拥有者许可：拥有者许可代表着账户的所有权。虽然只有少数交易需要这种权限，但最值得注意的是对拥有者权限作出任何改变的行为。建议所有者保持冷备份并且不与任何人共享。所有者许可用来恢复和取代已被泄露的另一个权限。 活动许可：活动权限用于资金转账、投票给活动发起者并进行更高级别的账户更改。 除了原生态许可之外，帐户还可设置自定义许可从而扩展帐户管理。自定义权限非常灵活且地址空间巨大，从而实现非常多的可能的应用场景。这很大程度上取决于开发人员如何使用它们以及采用什么约定（如果有的话）。任何给定权限的权限可以分配给一个或多个公用密钥或有效的帐户名称。 组合使用 以下就是将上述概念组合在一起使用的案例。 默认账号配置（单一签名） 每个账户在创建之初就是默认的是唯一的键（key）可用来做拥有者许可和活动许可。这个键拥有1的权重以及阈值也为1.默认的配置可以通过单一签名来授权原生态的活动许可。 @bob 账号授权 许可 账号 权重 阈值 拥有者 &nbsp; &nbsp; 1 &nbsp; EOS5EzTZZQQxdrDaJAPD9pDzGJZ5bj34HaAb8yuvjFHGWzqV25Dch 1 &nbsp; 活动 &nbsp; &nbsp; 1 &nbsp; EOS61chK8GbH4ukWcbom8HgK95AeUfP8MBPn7XRq8FeMBYYTgwmcX 1 &nbsp; 在@bob账号的例子中，@bob的拥有者账号具有许可权重1，并且要求阈值达到1时才能发起一笔交易。 @bob只要使用拥有者许可的账号对该交易进行签名进行合法性授权，即可完成一笔交易。这个拥有者的许可账号被保存在钱包中，并通过cleos进行调用。 多人签名与自定义许可 下面这个例子使用了一个虚构叫做“@multisig”的账号名称。在这个场景中，两个用户被同时授予拥有者许可和活动许可不同的权值。 @multisig 账号授权 许可 账号 权重 阈值 拥有者 &nbsp; &nbsp; 2 &nbsp; @bob 1 &nbsp; &nbsp; @stacy 1 &nbsp; 活动 &nbsp; &nbsp; 1 &nbsp; @bob 1 &nbsp; &nbsp; @stacy 1 &nbsp; 发布 &nbsp; &nbsp; 2 &nbsp; @bob 2 &nbsp; &nbsp; @stacy 2 &nbsp; &nbsp; EOS7Hnv4iBWo1pcEpP8JyFYCJLRUzYcXSqt... 1 &nbsp; 在这个例子中，如果要对拥有者许可进行调整，需要达到阈值2以上。这就意味着拥有权重为1的参与者必须都参与签名才能使得让交易得到充分的授权。 当进行活动授权时，该阈值为1，这就意味着只需一个权重为1的参与方参与授权即可实现许可授权。 这里还有个称之为“发布”的自定义许可类型。在这个例子中，我们假设是在一个blog的DAPP应用中授权发布博客。发布许可的阈值为2，@bob和@stacy都拥有2的权重，还有一个公钥拥有1的权重。这就意味着@bob和@stacy无需其他额外的签名即可执行发布许可，而公钥必须取得其他人的共同签名才能执行发布许可。 上面的例子说明，@bob和@stacy作为拥有者，币普通的修改者拥有更高的优先权。尽管这个原始示例在可扩展性方面有特别的限制，并不一定是一个好的设计，但它充分证明了EOSIO权限系统的灵活性。 此外，请注意上表中的权限是可以同时使用帐户名称或公钥进行设置的。虽然看起来微不足道，但它确实提出了一些额外的灵活性。 附加说明 @bob和@stacy可以显式注明定义为该账号的拥有者。 在没有@bob和@stacy授权的情况下，公钥是无法发起一个发布授权的。 @bob或@stacy可以在没有其他账号附加授权的情况下，独立发起发布授权。 摘至&nbsp;Accounts &amp; Permissions，翻译 by Kevin. 阅读更多","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/05/29/EOS%E5%AD%A6%E4%B9%A0-%E4%BA%8C-%E8%B4%A6%E5%8F%B7%E4%B8%8E%E6%9D%83%E9%99%90.html","headline":"EOS学习（二）：账号与权限","dateModified":"2018-05-29T00:00:00+08:00","datePublished":"2018-05-29T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/05/29/EOS%E5%AD%A6%E4%B9%A0-%E4%BA%8C-%E8%B4%A6%E5%8F%B7%E4%B8%8E%E6%9D%83%E9%99%90.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>EOS学习（二）：账号与权限</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <p>帐户是存储在区块链中的人类可读标识符。每个交易都根据配置的帐户权限对其权限进行评估。每个命名的权限都有一个阈值，在满足该阈值的条件下才能触发易签名。事务通过加解锁钱包的客户端来签署。钱包是保护和利用你的密钥的软件。这些密钥可能会或可能不会被授予区块链上的账户权限。</p>
+  <p><br></p>
+  <p></p>
+  <h3></h3>
+  <h2></h2>
+  <h1></h1>
+  <h3><span style="font-size:18px;">钱包</span></h3>
+  <p>钱包是存储密钥的客户，这些密钥可能与一个或多个帐户的权限相关或不相关。理想情况下，钱包具有受高阶密码保护的锁定（加密）和解锁（解密）状态。EOSIO / EOS存储库捆绑了一个名为cleos的命令行界面客户端，它与一个名为keosd的轻客户端进行交互。</p>
+  <p></p>
+  <p><br></p>
+  <h2><span style="font-size:18px;">账户</span></h2>
+  <p>帐户是存储在区块链中的具有可读性的名称。它由个人或一组人拥有，具体取决于权限配置。需要账户才能在区块链上实现转账将交易或其他操作。</p>
+  <p><br></p>
+  <p></p>
+  <h2><span style="font-size:18px;">授权与权限</span></h2>授权决定了某个操作是否被正确的赋予权限。
+  <br>每个账户都两个原生态的许可属性：
+  <br>
+  <ul>
+   <li>拥有者许可：拥有者许可代表着账户的所有权。虽然只有少数交易需要这种权限，但最值得注意的是对拥有者权限作出任何改变的行为。建议所有者保持冷备份并且不与任何人共享。所有者许可用来恢复和取代已被泄露的另一个权限。</li>
+   <li>活动许可：活动权限用于资金转账、投票给活动发起者并进行更高级别的账户更改。</li>
+  </ul>
+  <p>除了原生态许可之外，帐户还可设置自定义许可从而扩展帐户管理。自定义权限非常灵活且地址空间巨大，从而实现非常多的可能的应用场景。这很大程度上取决于开发人员如何使用它们以及采用什么约定（如果有的话）。任何给定权限的权限可以分配给一个或多个公用密钥或有效的帐户名称。</p>
+  <p><br></p>
+  <p></p>
+  <h2><span style="font-size:18px;">组合使用</span></h2>
+  <p>以下就是将上述概念组合在一起使用的案例。</p>
+  <p></p>
+  <h3>默认账号配置（单一签名）</h3>
+  <p></p>
+  <p>每个账户在创建之初就是默认的是唯一的键（key）可用来做拥有者许可和活动许可。这个键拥有1的权重以及阈值也为1.默认的配置可以通过单一签名来授权原生态的活动许可。</p>
+  <p><strong>@bob 账号授权</strong></p>
+  <table border="1" cellspacing="1" cellpadding="1">
+   <tbody>
+    <tr>
+     <th scope="col">许可</th>
+     <th scope="col">账号</th>
+     <th scope="col">权重</th>
+     <th scope="col">阈值</th>
+    </tr>
+   </tbody>
+   <tbody>
+    <tr>
+     <td>拥有者</td>
+     <td>&nbsp;</td>
+     <td>&nbsp;</td>
+     <td>1</td>
+    </tr>
+    <tr>
+     <td>&nbsp;</td>
+     <td><span style="color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';background-color:rgb(246,248,250);">EOS5EzTZZQQxdrDaJAPD9pDzGJZ5bj34HaAb8yuvjFHGWzqV25Dch</span></td>
+     <td>1</td>
+     <td>&nbsp;</td>
+    </tr>
+    <tr>
+     <td>活动</td>
+     <td>&nbsp;</td>
+     <td>&nbsp;</td>
+     <td>1</td>
+    </tr>
+    <tr>
+     <td>&nbsp;</td>
+     <td><span style="color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';background-color:rgb(246,248,250);">EOS61chK8GbH4ukWcbom8HgK95AeUfP8MBPn7XRq8FeMBYYTgwmcX</span></td>
+     <td>1</td>
+     <td>&nbsp;</td>
+    </tr>
+   </tbody>
+  </table>
+  <p>在@bob账号的例子中，@bob的拥有者账号具有许可权重1，并且要求阈值达到1时才能发起一笔交易。</p>
+  <p>@bob<span style="color:rgb(0,0,0);font-family:'Microsoft YaHei', Arial, Helvetica, sans-serif;font-size:14px;text-align:left;background-color:rgb(255,255,255);">只要</span>使用拥有者许可的账号对该交易进行签名进行合法性授权，即可完成一笔交易。这个拥有者的许可账号被保存在钱包中，并通过cleos进行调用。</p>
+  <p><br></p>
+  <p></p>
+  <h3>多人签名与自定义许可</h3>
+  <p>下面这个例子使用了一个虚构叫做“@multisig”的账号名称。在这个场景中，两个用户被同时授予拥有者许可和活动许可不同的权值。</p>
+  <p><strong>@multisig 账号授权</strong></p>
+  <table border="1" cellspacing="1" cellpadding="1">
+   <tbody>
+    <tr>
+     <th scope="col">许可</th>
+     <th scope="col">账号</th>
+     <th scope="col">权重</th>
+     <th scope="col">阈值</th>
+    </tr>
+   </tbody>
+   <tbody>
+    <tr>
+     <td>拥有者</td>
+     <td>&nbsp;</td>
+     <td>&nbsp;</td>
+     <td>2</td>
+    </tr>
+    <tr>
+     <td>&nbsp;</td>
+     <td>@bob</td>
+     <td>1</td>
+     <td>&nbsp;</td>
+    </tr>
+    <tr>
+     <td>&nbsp;</td>
+     <td>@stacy</td>
+     <td>1</td>
+     <td>&nbsp;</td>
+    </tr>
+    <tr>
+     <td>活动</td>
+     <td>&nbsp;</td>
+     <td>&nbsp;</td>
+     <td>1</td>
+    </tr>
+    <tr>
+     <td>&nbsp;</td>
+     <td>@bob</td>
+     <td>1</td>
+     <td>&nbsp;</td>
+    </tr>
+    <tr>
+     <td>&nbsp;</td>
+     <td>@stacy</td>
+     <td>1</td>
+     <td>&nbsp;</td>
+    </tr>
+    <tr>
+     <td>发布</td>
+     <td>&nbsp;</td>
+     <td>&nbsp;</td>
+     <td>2</td>
+    </tr>
+    <tr>
+     <td>&nbsp;</td>
+     <td>@bob</td>
+     <td>2</td>
+     <td>&nbsp;</td>
+    </tr>
+    <tr>
+     <td>&nbsp;</td>
+     <td>@stacy</td>
+     <td>2</td>
+     <td>&nbsp;</td>
+    </tr>
+    <tr>
+     <td>&nbsp;</td>
+     <td><span style="color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';background-color:rgb(246,248,250);">EOS7Hnv4iBWo1pcEpP8JyFYCJLRUzYcXSqt...</span></td>
+     <td>1</td>
+     <td>&nbsp;</td>
+    </tr>
+   </tbody>
+  </table>
+  <p></p>
+  <p>在这个例子中，如果要对拥有者许可进行调整，需要达到阈值2以上。这就意味着拥有权重为1的参与者必须都参与签名才能使得让交易得到充分的授权。</p>
+  <p>当进行活动授权时，该阈值为1，这就意味着只需一个权重为1的参与方参与授权即可实现许可授权。</p>
+  <p>这里还有个<span style="color:rgb(0,0,0);font-family:'Microsoft YaHei', Arial, Helvetica, sans-serif;font-size:14px;text-align:left;background-color:rgb(255,255,255);">称之为“发布”的</span>自定义许可类型。在这个例子中，我们假设是在一个blog的DAPP应用中授权发布博客。发布许可的阈值为2，@bob和@stacy都拥有2的权重，还有一个公钥拥有1的权重。这就意味着@bob和@stacy无需其他额外的签名即可执行发布许可，而公钥必须取得其他人的共同签名才能执行发布许可。</p>
+  <p>上面的例子说明，@bob和@stacy作为拥有者，币普通的修改者拥有更高的优先权。尽管这个原始示例在可扩展性方面有特别的限制，并不一定是一个好的设计，但它充分证明了EOSIO权限系统的灵活性。</p>
+  <p>此外，请注意上表中的权限是可以同时使用帐户名称或公钥进行设置的。虽然看起来微不足道，但它确实提出了一些额外的灵活性。</p>
+  <p></p>
+  <h3>附加说明</h3>
+  <p></p>
+  <ul>
+   <li>@bob和@stacy可以显式注明定义为该账号的拥有者。</li>
+   <li>在没有@bob和@stacy授权的情况下，公钥是无法发起一个发布授权的。</li>
+   <li>@bob或@stacy可以在没有其他账号附加授权的情况下，独立发起发布授权。</li>
+  </ul>
+  <span style="color:rgb(79,79,79);font-size:16px;text-align:justify;font-family:'PingFang SC', 'Microsoft YaHei', SimHei, Arial, SimSun;">摘至<a href="https://github.com/EOSIO/eos/wiki/Accounts%20%26%20Permissions" rel="nofollow">&nbsp;Accounts &amp; Permissions</a>，翻译 by Kevin.</span> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/xc70203/article/details/80493605,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/xc70203/article/details/80493605,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

@@ -1,0 +1,73 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <h1>原文翻译</h1> 
+  <h2>4. Proof-of-Work</h2> 
+  <p>To implement a distributed timestamp server on a peer-to-peer basis, we will need to use a proof-of-work system similar to Adam Back's Hashcash [6], rather than newspaper or Usenet posts. The proof-of-work involves scanning for a value that when hashed, such as with SHA-256, the hash begins with a number of zero bits. The average work required is exponential in the number of zero bits required and can be verified by executing a single hash.</p> 
+  <p>For our timestamp network, we implement the proof-of-work by incrementing a nonce in the block until a value is found that gives the block's hash the required zero bits. Once the CPU effort has been expended to make it satisfy the proof-of-work, the block cannot be changed without redoing the work. As later blocks are chained after it, the work to change the block would include redoing all the blocks after it.</p> 
+  <p><img alt="" class="has" src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180812155108563?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NDY3MzY1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>The proof-of-work also solves the problem of determining representation in majority decision making. If the majority were based on one-IP-address-one-vote, it could be subverted by anyone able to allocate many IPs. Proof-of-work is essentially one-CPU-one-vote. The majority decision is represented by the longest chain, which has the greatest proof-of-work effort invested in it. If a majority of CPU power is controlled by honest nodes, the honest chain will grow the fastest and outpace any competing chains. To modify a past block, an attacker would have to redo the proof-of-work of the block and all blocks after it and then catch up with and surpass the work of the honest nodes. We will show later that the probability of a slower attacker catching up diminishes exponentially as subsequent blocks are added.</p> 
+  <p>To compensate for increasing hardware speed and varying interest in running nodes over time, the proof-of-work difficulty is determined by a moving average targeting an average number of blocks per hour. If they're generated too fast, the difficulty increases.</p> 
+  <h2>4.工作量证明</h2> 
+  <p>为了实现基于<strong>点对点</strong>[1]网络的分布式<strong>时间戳</strong>[2]服务器，我们需要使用一种和<strong>Adam Back's Hashcash</strong>[3]相似的<strong>工作量证明</strong>[4]系统，比起报纸或<strong>Usenet</strong>[5]网。工作量证明牵扯到在生成哈希时扫描一个值，以<strong>SHA-256</strong>[6]为例，这个哈希值以一系列的零比特开始。平均工作量随着开头零的个数要求的增加而越来越大并可以通过执行一次hash来验证。</p> 
+  <p>对于我们的时间戳网络来说，我们通过在区块中增加一个临时值直到一个可以让这个区块的哈希值达到要求的值被找到来实现工作量证明。一旦CPU算力被花费来使其满足工作量证明，除非重做工作量证明这个区块就不能被修改。当之后的区块加入进来，修改区块的工作量将包含重算之后所有的工作量证明。</p> 
+  <p>工作量证明也解决了在主要决策中确定代表性的问题如果多数派的确定是靠IP地址一IP一票，它就会被可以产生多个IP的节点操纵。工作量证明是必要的一CPU一票的机制。最长链就是主要决策的代表，其中包含最多的工作量，如果大多数CPU算力被非恶意节点所控制，那么诚实的链就会比所有与它竞争的链都生长的更快并超过他们。为了修改一个之前的区块，攻击者必须重算这个区块以及这个区块之后所有区块的工作量证明，然后赶上并超过非恶意节点。我们待会儿会落后的攻击者赶上的可能性随着区块的增加呈<strong>指数级减少</strong>[7]。</p> 
+  <p>为了匹配硬件速度的增加，和运算节点的变化，工作量证明的难度被变化的每小时平均生成区块数所决定，如果它们产生的过快，就会增加难度。</p> 
+  <hr>
+  <h1>细节解读</h1> 
+  <h2>[1]什么是点对点</h2> 
+  <p>请参考我的另一篇博文:比特币创世论文《Bitcoin: A Peer-to-Peer Electronic Cash System》研读之一：摘要</p> 
+  <p><a href="https://blog.csdn.net/qq_27467365/article/details/81569962" rel="nofollow">https://blog.csdn.net/qq_27467365/article/details/81569962</a></p> 
+  <h2>[1]What is 'peer-to-peer'</h2> 
+  <p>Please refer to my other blog post《Study of《Bitcoin: A Peer-to-Peer Electronic Cash System》1》:</p> 
+  <p><a href="https://blog.csdn.net/qq_27467365/article/details/81569962" rel="nofollow">https://blog.csdn.net/qq_27467365/article/details/8156996</a></p> 
+  <hr>
+  <h2>[2]什么是 <strong>时间戳</strong></h2> 
+  <p>请参考我的另一篇博文:比特币创世论文《Bitcoin: A Peer-to-Peer Electronic Cash System》研读之四：时间戳服务器</p> 
+  <p><a href="https://blog.csdn.net/qq_27467365/article/details/81589805" rel="nofollow">https://blog.csdn.net/qq_27467365/article/details/81589805</a></p> 
+  <h2>[2]What is 'timestamps'</h2> 
+  <p>Please refer to my other blog post《Study of《Bitcoin: A Peer-to-Peer Electronic Cash System》4》:timestamps</p> 
+  <p><a href="https://blog.csdn.net/qq_27467365/article/details/81589805" rel="nofollow">https://blog.csdn.net/qq_27467365/article/details/81589805</a></p> 
+  <hr>
+  <p>&nbsp;</p> 
+  <h2>[3]什么是”Adam Back's Hashcash“</h2> 
+  <p>Hashcash是一种用于限制电子邮件垃圾邮件和拒绝服务攻击的工作量证明系统，最近因其在比特币（和其他加密货币）中的使用而闻名，作为挖掘算法的一部分。 Hashcash由Adam Back于1997年提出。</p> 
+  <h2>[3]What is 'Adam Back's Hashcash'</h2> 
+  <p><strong>Hashcash</strong>&nbsp;is a&nbsp;<a href="https://en.wikipedia.org/wiki/Proof-of-work_system" rel="nofollow">proof-of-work system</a>&nbsp;used to limit&nbsp;<a href="https://en.wikipedia.org/wiki/E-mail_spam" rel="nofollow">email spam</a>&nbsp;and&nbsp;<a href="https://en.wikipedia.org/wiki/Denial-of-service_attack" rel="nofollow">denial-of-service attacks</a> and more recently has become known for its use in&nbsp;<a href="https://en.wikipedia.org/wiki/Bitcoin" rel="nofollow">bitcoin</a>&nbsp;(and other&nbsp;<a href="https://en.wikipedia.org/wiki/Cryptocurrency" rel="nofollow">cryptocurrencies</a>) as part of the mining algorithm. Hashcash was proposed in 1997 by&nbsp;<a href="https://en.wikipedia.org/wiki/Adam_Back" rel="nofollow">Adam Back</a>.</p> 
+  <p>Adam Back's Hashcash的维基百科地址：<a href="https://en.wikipedia.org/wiki/Hashcash" rel="nofollow">https://en.wikipedia.org/wiki/Hashcash</a></p> 
+  <hr>
+  <h2><strong>[4]&nbsp;</strong>什么是 <strong>工作量证明</strong></h2> 
+  <p>请参考我的另一篇博文:比特币创世论文《Bitcoin: A Peer-to-Peer Electronic Cash System》研读之一：摘要</p> 
+  <p><a href="https://blog.csdn.net/qq_27467365/article/details/81569962" rel="nofollow">https://blog.csdn.net/qq_27467365/article/details/81569962</a></p> 
+  <h2>[4]What is 'proof-of-work'</h2> 
+  <p>Please refer to my other blog post《Study of《Bitcoin: A Peer-to-Peer Electronic Cash System》1》</p> 
+  <p><a href="https://blog.csdn.net/qq_27467365/article/details/81569962" rel="nofollow">https://blog.csdn.net/qq_27467365/article/details/8156996</a></p> 
+  <hr>
+  <h2>[5]什么是 “<strong>Usenet“</strong></h2> 
+  <p>请参考我的另一篇博文:比特币创世论文《Bitcoin: A Peer-to-Peer Electronic Cash System》研读之四：时间戳服务器</p> 
+  <p><a href="https://blog.csdn.net/qq_27467365/article/details/81589805" rel="nofollow">https://blog.csdn.net/qq_27467365/article/details/81589805</a></p> 
+  <h2>[5]What is”<strong>Usenet“</strong></h2> 
+  <p>Please refer to my other blog post《Study of《Bitcoin: A Peer-to-Peer Electronic Cash System》4》:timestamps</p> 
+  <p><a href="https://blog.csdn.net/qq_27467365/article/details/81589805" rel="nofollow">https://blog.csdn.net/qq_27467365/article/details/81589805</a></p> 
+  <hr>
+  <h2>[6]什么是“<strong>SHA-256“</strong></h2> 
+  <p>&nbsp;</p> 
+  <h2>[6]What is”<strong>SHA-256”</strong></h2> 
+  <p>&nbsp;</p> 
+  <hr>
+  <h2>[7]为什么<strong>指数级减少？</strong></h2> 
+  <h2>&nbsp;</h2> 
+  <h2>[7]</h2> 
+  <p>&nbsp;</p> 
+  <hr>
+  <p>《Bitcoin: A Peer-to-Peer Electronic Cash System》论文原文地址如下：<a href="https://bitcoin.org/bitcoin.pdf" rel="nofollow">https://bitcoin.org/bitcoin.pdf</a></p> 
+  <hr>
+  <p>版权所有声明</p> 
+  <p>版权所有归属作者，未经允许不得转载、复制或用作它途。否则作者将具有追究法律责任的权利。</p> 
+  <p>Copyright Clarify</p> 
+  <p>Copyright ownership belongs to the author, shall not be reproduced, copied, or used in other ways without permission. Otherwise, the author will have the right to pursue legal responsibilities.</p> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/qq_27467365/article/details/81590311,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/qq_27467365/article/details/81590311,&quot;}">阅读更多</a> 
+</div>

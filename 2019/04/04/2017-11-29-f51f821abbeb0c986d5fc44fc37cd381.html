@@ -1,0 +1,57 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div class="markdown_views"> 
+  <p>/* <br> This creates a public tradeable fungible token in the Ethereum Blockchain. <br> <a href="https://github.com/ethereum/wiki/wiki/Standardized_Contract_APIs" rel="nofollow">https://github.com/ethereum/wiki/wiki/Standardized_Contract_APIs</a> <br> 这是一套标准的具有固定市值的以太坊密码合约。最新代码可以forkgithub的以下标准合约APIs地址。</p> 
+  <p>Unmodified this will create a cryptoasset with a fixed market cap <br> wholly owned by the contract creator. You can create any function <br> to change this contract, like allowing specific rules for the issuance, <br> destruction and freezing of any assets. This contract is intended for <br> educational purposes, you are fully responsible for compliance with <br> present or future regulations of finance, communications and the <br> universal rights of digital beings. <br> 不需要进行修便能创建一个具有固定市值的token。其所有权由合同创造者全权拥有。您可以创建任何功能改变这个合同，比如允许发行的具体规则，破坏和冻结任何资产。本合同适用于教育目的，您完全有责任遵守目前或未来的金融，通讯和管理条例数字生存的普遍权利。</p> 
+  <p>Anyone is free to copy, modify, publish, use, compile, sell, or <br> distribute this software, either in source code form or as a compiled <br> binary, for any purpose, commercial or non-commercial, and by any <br> means. <br> 任何人都可以自由复制，修改，发布，使用，编译，出售或者以源代码形式或以编译形式分发此软件二进制，出于任何目的，商业或非商业，以及任何目的手段。</p> 
+  <p>In jurisdictions that recognize copyright laws, the author or authors <br> of this software dedicate any and all copyright interest in the <br> software to the public domain. We make this dedication for the benefit <br> of the public at large and to the detriment of our heirs and <br> successors. We intend this dedication to be an overt act of <br> relinquishment in perpetuity of all present and future rights to this <br> software under copyright law. <br> 在承认版权法的司法管辖区中，作者或作者本软件的任何和所有版权利益软件都将贡献到公共领域。我们为此付出了我们的努力。根据版权法，此贡献行为是我们自己的一种公开的行为永远放弃所有现在和将来的权利软件。</p> 
+  <p>THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, <br> EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF <br> MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p> 
+  <p>本软件按“原样”提供，不提供任何形式的担保，明示或暗示，包括但不限于保证 <br> 适销性，针对特定用途的适用性和不侵权。在任何情况下，作者均不对任何索赔，损害或责任负责其他责任，无论是在合同行为，侵权行为还是其他方面，来自，与本软件或使用有关的或与之相关的软件中的其他交易。</p> 
+  <p>For more information, please refer to <a href="http://unlicense.org" rel="nofollow">http://unlicense.org</a> <br> 更多信息请参考<a href="http://unlicense.org" rel="nofollow">http://unlicense.org</a> <br> */ <br> /* 定义函数我的通证LekkoToken */ <br> contract LekkoToken {</p> 
+  <pre><code>/* 定义LekkoToken通证的变量包含 字符串定义的名称name，字符串定义的标识符symbol和8位无符号整型位decimals */
+string public name;
+string public symbol;
+uint8 public decimals;
+
+/* 定义了一个数组，用来表征合约所有余额的balanceOf */
+mapping (address =&gt; uint256) public balanceOf;
+
+/* 定义一个区块链上的一个公共事件Transfer来通知客户，其三个参数包含来源地址，去向地址和数值value */
+event Transfer(address indexed from, address indexed to, uint256 value);
+
+/* 通过对函数LekkoToken设置参数如通证总量的无符号256位整数_supply，通证名称字符串_name，通证缩写字母字符串_symbol以及无符号8位整数的代币精度对整个合约进行初始化 */
+function LekkoToken(uint256 _supply, string _name, string _symbol, uint8 _decimals) {
+
+    /* 如果没有对通证总量_supply进行设置，则默认设定为最小的100万个通证数量，当然这里在代码里面可以进行自定义最小数量额度。 */
+    if (_supply == 0) _supply = 1000000;
+
+    /* 如果增加其他函数对这些变量进行修改的话，这些定义的通证总量，名称和标识符是不会进行变更的*/
+    balanceOf[msg.sender] = _supply;
+    name = _name;
+    symbol = _symbol;
+
+    /* 如果你想要对通证的精度进行更细的分割或者粗放化，你可以在这个定义中进行修改，然后添加基本单位的小数位数  */
+    decimals = _decimals;
+}
+    /* 以下是定义转账通证的函数transfer，主要包含发送目的地地址_to和256位无符号整型_value   */
+function transfer(address _to, uint256 _value) {
+    /* 根据以太坊规则，如果发送者发送超过其本身拥有余额以上的通证到其他地址取得时候，会判定失败throw掉。另外，对于发送目的地的余额加上获得的值_value小于发送目的地的余额的情况下，也会判定失败throw掉。第二个逻辑的目的即为发送的余额不能为负数。强调下，基本上一些比较低级的安全漏洞通过这个地方进行攻击。因为有些项目想要设置特定业务的时候，往往会在发送代币的逻辑上进行定制化，这样很容易造成漏洞被攻击并转移掉balance。因此要特别小心。   */
+    if (balanceOf[msg.sender] &lt; _value) throw;
+    if (balanceOf[_to] + _value &lt; balanceOf[_to]) throw;
+
+    /* 这里是基本逻辑的定义，主要是对通证转移前后，原有_value的拥有者balanceOf[msg.sender]如果发送通证成功，应该在总额上减去转移的通证数量。相应的，通证转移的接收者balanceOf[_to]应该增加相应的数额_value。从逻辑上来说，如果上述逻辑成功，是不用判定转移后balanceOf[msg.sender]小于0的情况。如果特定业务逻辑需要修改的时候，对于0的判断还是很重要的，注意任何漏洞形成的可能。 */
+    balanceOf[msg.sender] -= _value;
+    balanceOf[_to] += _value;
+
+    /* 对任何监听此次转账的人进行通知，区块链上更多的是通知满足条件进行此项智能合约作业的矿工 */
+    Transfer(msg.sender, _to, _value);
+}
+</code></pre> 
+  <p>}</p> 
+  <p>整个发币的合约详解到此结束。其实可以看出来任何一个核心智能合约的编写并不是很难，逻辑其实也很简单。但是处于安全性的考虑，对于任何需要定制化的智能合约来说，一定要注意，对通证进行转账定义的时候，余额进出的控制。比较有名的几次攻击，尤其是历史上第一大案DAO的攻击，都基本问题出在这个地方。有兴趣的可以看我之前对DAO详解的文章。<a href="https://blog.csdn.net/lsttoy/article/details/70156527" rel="nofollow">https://blog.csdn.net/lsttoy/article/details/70156527</a></p> 
+  <p>如果有任何心得也欢迎留言。</p> 
+ </div> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/markdown_views-ea0013b516.css"> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/lsttoy/article/details/78665675,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/lsttoy/article/details/78665675,&quot;}">阅读更多</a> 
+</div>

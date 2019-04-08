@@ -1,0 +1,47 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div class="markdown_views"> 
+  <p>今天下午2点多，币圈链圈各个媒体突然爆料 美图科技发行的数字货币——美链(BEC) 的<a href="https://etherscan.io/address/0xc5d105e63711398af9bbff092d4b6769c82f793d" rel="nofollow">Token 智能合约</a>出现重大漏洞，攻击者可无限生成代币。</p> 
+  <blockquote> 
+   <p>【小葱独家：BEC合约出现重大漏洞，攻击者可无限生成代币】OKEx今日发布最新公告称，暂停BEC交易和提现。据小葱APP了解，这是因为BEC美蜜合约出现重大漏洞，攻击者可以通过代币合约的批量转账方法无限生成代币。 小葱注：美链今年2月在OKex上线BEC交易。美链和美图公司合作帮助美图旗下的BeautyPlus提升内容价值和市场占有率，同时Beautyplus作为美链的种子应用，协助美链的冷启动。美链发的Token叫做美蜜BEC。</p> 
+  </blockquote> 
+  <p>美链官方声明 <br> <img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180423002844654?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1NlY2JpdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述" title="">美链官方声明</p> 
+  <p>坊间传闻下午时候，美链团队发现异常交易，于是立刻通知各交易所，停止 BEC 的交易和提现功能。正好实验室的同事们忙里偷闲，一起分析了下这个出问题的合约代码。</p> 
+  <p>这个漏洞比较明显，属于常见的 <strong>整数溢出（overflow）问题</strong>。</p> 
+  <p>下面我们来简单分析下这个出问题的合约函数：</p> 
+  <pre class="prettyprint"><code class="language-js hljs "><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">batchTransfer</span><span class="hljs-params">(address[] _receivers, uint256 _value)</span> <span class="hljs-title">public</span> <span class="hljs-title">whenNotPaused</span> <span class="hljs-title">returns</span> <span class="hljs-params">(bool)</span> {</span>
+    uint cnt = _receivers.length;
+    uint256 amount = uint256(cnt) * _value;
+    <span class="hljs-built_in">require</span>(cnt &gt; <span class="hljs-number">0</span> &amp;&amp; cnt &lt;= <span class="hljs-number">20</span>);
+    <span class="hljs-built_in">require</span>(_value &gt; <span class="hljs-number">0</span> &amp;&amp; balances[msg.sender] &gt;= amount);
+
+    balances[msg.sender] = balances[msg.sender].sub(amount);
+    <span class="hljs-keyword">for</span> (uint i = <span class="hljs-number">0</span>; i &lt; cnt; i++) {
+        balances[_receivers[i]] = balances[_receivers[i]].add(_value);
+        Transfer(msg.sender, _receivers[i], _value);
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+ }</code></pre> 
+  <p>这个函数 <code>batchTransfer(..)</code> 的功能为批量转账，是美链团队在 ERC20 标准合约基础上扩展的函数。调用者可以传入若干个地址和转账金额，经过一些强制检查交易，再依次对<code>balances</code>进行增减操作，以实现 Token 的转移： <br> 很明显，当传入值<code>_value</code>过大时，<code>uint256 amount = uint256(cnt) * _value</code>会发生溢出（overflow），导致<code>amount</code>变量无法正确等于<code>cnt</code>倍的<code>_value</code>，变得异常变小，从而使得后面的<code>require</code>对转账发起者的余额校验可正常通过。</p> 
+  <p>我们再来观察<a href="https://etherscan.io/tx/0xad89ff16fd1ebe3a0a7cf4ed282302c06626c1af33221ebe0d3a470aba4a660f" rel="nofollow">攻击交易</a>详细信息。</p> 
+  <pre class="prettyprint"><code class=" hljs http"><span class="hljs-attribute">Function</span>: <span class="hljs-string">batchTransfer(address[] _receivers, uint256 _value)</span>
+
+<span class="markdown">MethodID: 0x83f12fec [<span class="hljs-link_reference">0</span>]:<span class="hljs-link_url"> 0000000000000000000000000000000000000000000000000000000000000040</span><span class="hljs-link_url"> [1]: 8000000000000000000000000000000000000000000000000000000000000000</span><span class="hljs-link_url"> [2]: 0000000000000000000000000000000000000000000000000000000000000002</span><span class="hljs-link_url"> [3]: 000000000000000000000000b4d30cac5124b46c2df0cf3e3e1be05f42119033</span><span class="hljs-link_url"> [4]: 0000000000000000000000000e823ffe018727585eaf5bc769fa80472f76c3d7</span></span></code></pre> 
+  <p>攻击者传入<code>8000000000000000000000000000000000000000000000000000000000000000</code>作为<code>_value</code>，而<code>_receivers</code>数组的大小为<code>2</code>，相乘之后刚好可超过<code>uint256</code>所能表示的整数大小上限，引发溢出问题，最终使得原本总量固定的 Token 得到“增发”，并成功让两个目标账户 Token 余额剧增。对于这种整数溢出漏洞，最为 <br> 推荐的方法是采用 <code>SafeMath</code> 数学计算库来避免。但是很不幸的是，这个问题合约的其余函数都正常使用了<code>SafeMath</code> 来避免 overflow 和 underflow 问题， <br> 但是却在最关键的地方，漏掉了防溢出检查，正所谓“百密而一疏”。</p> 
+  <p>顺便提一句，上面的问题代码，仅需这样简单修改，即可防止 overflow 问题。</p> 
+  <pre class="prettyprint"><code class="language-js hljs "><span class="hljs-comment">// uint256 amount = uint256(cnt) * _value; // 问题代码</span>
+uint256 amount = _value.mul(uint256(cnt)); <span class="hljs-comment">// 使用 SafeMath 库</span></code></pre> 
+  <p>交易记录 <br> <img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180423002945766?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1NlY2JpdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述" title=""></p> 
+  <p>持仓异常统计 <br> <img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180423003001883?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1NlY2JpdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述" title=""></p> 
+  <p>如图中所示的巨额数量 Token，我们很容易计算下，大约有10的58次方个 BEC。而事发前其市场价约为 0.3 美元。如果这些币流入交易所并卖出，其后果不敢想象。而发币方美链(BEC)则会遇到大麻烦。</p> 
+  <p>币价闪崩 <br> <img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180423003031573?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1NlY2JpdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述" title=""></p> 
+  <p>国内的区块链团队如雨后春笋，但是代码在上线前可能并没有做过专业审计，也没有通过设置赏金来悬赏漏洞。 <br> 对待安全这一问题上，国外的多数区块链项目要更成熟一些，智能合约在上线部署前都会寻求专业安全审计团队的帮助。 <br> 一些大的交易所和钱包也都会要求提供第三方审计报告。去年12月份，美国明星交易所 Coinbase 的一个潜在<a href="https://gizmodo.com/coinbase-bug-allowed-users-to-give-themselves-unlimited-1823951499" rel="nofollow">合约漏洞</a>被荷兰的一家专业安全公司发现并上报，从而避免了巨额的损失。可能有的朋友不明白，为何智能合约的代码这么短，还会出这么多的问题？ <br> 其实，但凡从事智能合约开发2个月以上的同行都会对 EVM 以及 solidity 的各种坑印象深刻。</p> 
+  <p>BEC事件不会是个案，安全问题容易被忽视。实验室同事也果断迅速扫描了一下整个以太坊上的全部合约， <br> 居然发现了还有 12 个 Token 也存在着几乎一模一样的问题，于是第一时间给相关开发团队发了个邮件提醒。 <br> 同时我们也希望越来越多的团队能够选择上线前，找专业团队做审计工作。除了代码上的漏洞和缺陷外，也请大家也更加关注合约中的规则漏洞或后门。 <br> 相比整数溢出漏洞，这一类的高级规则漏洞则是非常，非常，非常不容易被发现。</p> 
+  <p>在这里我们再次提醒各个区块链团队以及智能合约开发爱好者，合约发布需要慎之又慎。</p> 
+  <hr> 
+  <p><code>SECBIT实验室</code> 由一群热爱区块链技术的极客组建，专注于可信智能合约与安全共识协议研究。实验室成员遍布在多个国家，专业领域涉及区块链底层架构、智能合约语言、形式化验证、密码学与安全协议、编译与分析技术、博弈论与加密经济学等诸多领域。SECBIT实验室 目前着重于研究区块链智能合约的安全问题，助力区块链团队提高智能合约的可靠性与安全性，同时也开展构建智能合约安全框架的理论探索与技术研发。</p> 
+ </div> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/markdown_views-ea0013b516.css"> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/Secbit/article/details/80045167,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/Secbit/article/details/80045167,&quot;}">阅读更多</a> 
+</div>

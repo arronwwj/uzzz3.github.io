@@ -1,0 +1,58 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div class="article-copyright">
+   版权声明：分享或转载请获得授权并标注来源。版权合作可以联系微信：13218779868。对区块链感兴趣可以加入我们的telegram群：https://t.me/eonblock，微信号搜索：eonDAOclub ，点击‘关注‘ https://blog.csdn.net/lsttoy/article/details/61624287 
+ </div> 
+ <div class="markdown_views prism-atom-one-dark"> 
+  <!-- flowchart 箭头图标 勿删 --> 
+  <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+   <path stroke-linecap="round" d="M5,0 0,2.5 5,5z" id="raphael-marker-block" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></path>
+  </svg> 
+  <h2 id="powproof-of-work工作证明">POW：Proof of Work，工作证明。</h2> 
+  <p>比特币在Block的生成过程中使用了POW机制，一个符合要求的Block Hash由N个前导零构成，零的个数取决于网络的难度值。要得到合理的Block Hash需要经过大量尝试计算，计算时间取决于机器的哈希运算速度。当某个节点提供出一个合理的Block Hash值，说明该节点确实经过了大量的尝试计算，当然，并不能得出计算次数的绝对值，因为寻找合理hash是一个概率事件。当节点拥有占全网n%的算力时，该节点即有n/100的概率找到Block Hash。</p> 
+  <h2 id="posproof-of-stake股权证明">POS：Proof of Stake，股权证明。</h2> 
+  <p>POS：也称股权证明，类似于财产储存在银行，这种模式会根据你持有数字货币的量和时间，分配给你相应的利息。 <br> 简单来说，就是一个根据你持有货币的量和时间，给你发利息的一个制度，在股权证明POS模式下，有一个名词叫币龄，每个币每天产生1币龄，比如你持有100个币，总共持有了30天，那么，此时你的币龄就为3000，这个时候，如果你发现了一个POS区块，你的币龄就会被清空为0。你每被清空365币龄，你将会从区块中获得0.05个币的利息(假定利息可理解为年利率5%)，那么在这个案例中，利息 = 3000 * 5% / 365 = 0.41个币，这下就很有意思了，持币有利息。</p> 
+  <h2 id="dposdelegated-proof-of-stake委任权益证明关于此协议的详细内容可以参考最新的博文区块链dpos官方共识机制btseos详解">DPOS：Delegated Proof of Stake，委任权益证明。关于此协议的详细内容，可以参考最新的博文《<a href="https://blog.csdn.net/lsttoy/article/details/80041033" rel="nofollow">[区块链]DPoS官方共识机制（BTS/EOS）详解</a>》</h2> 
+  <p>比特股的DPoS机制，中文名叫做股份授权证明机制（又称受托人机制），它的原理是让每一个持有比特股的人进行投票，由此产生101位代表 , 我们可以将其理解为101个超级节点或者矿池，而这101个超级节点彼此的权利是完全相等的。从某种角度来看，DPOS有点像是议会制度或人民代表大会制度。如果代表不能履行他们的职责（当轮到他们时，没能生成区块），他们会被除名，网络会选出新的超级节点来取代他们。DPOS的出现最主要还是因为矿机的产生，大量的算力在不了解也不关心比特币的人身上，类似演唱会的黄牛，大量囤票而丝毫不关心演唱会的内容。</p> 
+  <h2 id="pbftpractical-byzantine-fault-tolerance实用拜占庭容错算法见前文拜占庭容错算法介绍">PBFT：Practical Byzantine Fault Tolerance，实用拜占庭容错算法。见前文<a href="https://blog.csdn.net/lsttoy/article/details/60883227" rel="nofollow">拜占庭容错算法介绍</a>。</h2> 
+  <p>PBFT是一种状态机副本复制算法，即服务作为状态机进行建模，状态机在分布式系统的不同节点进行副本复制。每个状态机的副本都保存了服务的状态，同时也实现了服务的操作。将所有的副本组成的集合使用大写字母R表示，使用0到|R|-1的整数表示每一个副本。为了描述方便，假设|R|=3f+1，这里f是有可能失效的副本的最大个数。尽管可以存在多于3f+1个副本，但是额外的副本除了降低性能之外不能提高可靠性。</p> 
+  <p>以上主要是目前主流的共识算法。 <br> 从时间上来看，这个顺序也是按该共识算法从诞生到热门的顺序来定。 <br> 对于POW，直接让比特币成为了现实，并投入使用。而POS的存在主要是从经济学上的考虑和创新。而最终由于专业矿工和矿机的存在，让社区对这个标榜去中心化的算法有了实质性的中心化担忧，即传闻60％～70%的算力集中在中国。因此后来又出现DPOS，这种不需要消耗太多额外的算力来进行矿池产出物的分配权益方式。但要说能起到替代作用，DPOS来单独替代POW，POS或者POW＋POS也不太可能，毕竟存在即合理。每种算法都在特定的时间段中有各自的考虑和意义，无论是技术上，还是业务上。</p> 
+  <p>如果跳出技术者的角度，更多结合政治与经济的思考方式在里面，或许还会跳出更多的共识算法，如结合类似PPP概念的共识方式，不仅能达到对恶意者的惩罚性质，还能达到最高效节约算力的目的也说不定。</p> 
+  <p>至于说算法的选择，这里引用季总的这一段话作为结束：</p> 
+  <p>一言以蔽之，共识最好的设计是模块化,例如Notary，共识算法的选择与应用场景高度相关，可信环境使用paxos 或者raft，带许可的联盟可使用pbft ，非许可链可以是pow，pos，ripple共识等，根据对手方信任度分级，自由选择共识机制，这样才是真的最优。</p> 
+  <h2 id="结束语">结束语</h2> 
+  <p>觉得好的朋友可以给我大赏一杯咖啡，获得作者的友谊！原创不易：） <br> 方式一：支付宝 <br> <img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180831103219683?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xzdHRveQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述" title=""> <br> 方式二：以太坊 <br> <img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180831103238733?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xzdHRveQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述" title=""></p> 
+ </div> 
+ <link href="https://csdnimg.cn/release/phoenix/mdeditor/markdown_views-7f770a53f2.css" rel="stylesheet"> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/lsttoy/article/details/61624287,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/lsttoy/article/details/61624287,&quot;}">阅读更多</a> 
+</div> 
+<script>
+						(function(){
+							function setArticleH(btnReadmore,posi){
+								var winH = $(window).height();
+								var articleBox = $("div.article_content");
+								var artH = articleBox.height();
+								if(artH > winH*posi){
+									articleBox.css({
+										'height':winH*posi+'px',
+										'overflow':'hidden'
+									})
+									btnReadmore.click(function(){
+										articleBox.removeAttr("style");
+										$(this).parent().remove();
+									})
+								}else{
+									btnReadmore.parent().remove();
+								}
+							}
+							var btnReadmore = $("#btn-readmore");
+							if(btnReadmore.length>0){
+								if(currentUserName){
+									setArticleH(btnReadmore,3);
+								}else{
+									setArticleH(btnReadmore,1.2);
+								}
+							}
+						})()
+					</script>

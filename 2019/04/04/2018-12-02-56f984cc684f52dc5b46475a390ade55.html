@@ -1,0 +1,47 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-5edb848729.css"> 
+ <div class="htmledit_views" id="content_views"> 
+  <p>题目：1000瓶毒药里面只有1瓶是有毒的，毒发时间为24个小时，问需要多少只老鼠才能在<span style="color:#f33b45;">24小时后</span>试出那瓶有毒。</p> 
+  <p>&nbsp;</p> 
+  <p>思路：这题试Bloom Fliter 算法。详情可以参考：<a href="https://blog.csdn.net/jiaomeng/article/details/1495500" rel="nofollow">https://blog.csdn.net/jiaomeng/article/details/1495500</a></p> 
+  <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;这题和我之前看到的一道题有点像。题为，</p> 
+  <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;有1000个苹果，分别装在10个箱子里，任意给出1到1000之间的整数，都可以利用某几个箱子中的苹果数量获得次数。</p> 
+  <p>&nbsp;</p> 
+  <p>2^10 =1024 。也就是说10层二叉树一定可以记录1000种的状态。每个节点放1。每一层的和就是一个数。</p> 
+  <p>所以数分别为1 ， 2 ，4 ，8，16, 32,64,128,256,489。（489=488+1，因为总数为1000）。</p> 
+  <p>&nbsp;</p> 
+  <p>我们能表示出1024种状态。</p> 
+  <p>这个题是对bit位的应用，1000接近1024，所以需要10个bit位，对瓶子进行编号，从0到999，这样需要10只老鼠。瓶子的编号分别为：</p> 
+  <p>老鼠用&nbsp; a ,b ,c ,d ,e ,f ,g ,h ,i , j ,表示</p> 
+  <p>第0号瓶：00000,00000</p> 
+  <p>第1号瓶：00000,00001&nbsp; a</p> 
+  <p>第2号瓶：00000,00010,&nbsp; &nbsp; &nbsp; b&nbsp; &nbsp; &nbsp;</p> 
+  <p>第3号瓶：00000,00011&nbsp; &nbsp;a&nbsp; &nbsp;b</p> 
+  <p>第4号瓶：00000,00101&nbsp; &nbsp;a&nbsp; &nbsp; &nbsp; &nbsp; c</p> 
+  <p>第5号瓶：00000,00111&nbsp; &nbsp; a&nbsp; &nbsp;b&nbsp; &nbsp;c</p> 
+  <p>。。。。。。</p> 
+  <p>第999号瓶：11111，00111&nbsp; a&nbsp; &nbsp; b&nbsp; &nbsp;c&nbsp; &nbsp; []&nbsp; []&nbsp; f g&nbsp; h&nbsp; i&nbsp; j&nbsp;</p> 
+  <p>同时给老鼠编号，从1,2,...10，从低位开始，让第n个老鼠喝下第n个bit位为1瓶子中的药水。一周后，若所有的老鼠都没有发病，那么是第一个瓶子有毒，如果有一些老鼠发病，那么共同喝的那瓶毒药的二进制做与运算，得到的就是共同喝的那瓶，最低位+1，变成整数后，对应的数字即为有毒药水的编号。</p> 
+  <p>比如：第四瓶有毒，全部做与运算得到的（编号第三号）00000011&nbsp;+1 =00000100 = 4 。第四瓶有毒（没有第零瓶，所以+加1）</p> 
+  <p>所以只要10只老鼠就能在 24小时后&nbsp;排查出到底那瓶有毒。</p> 
+  <p>&nbsp;</p> 
+  <p>&nbsp;</p> 
+  <p>&nbsp;</p> 
+  <p>&nbsp;</p> 
+  <p>看到有人用二分法解决：</p> 
+  <p>第一次： 将1-500瓶兑在一起喝。</p> 
+  <p>如果老鼠死了，则拿另一只老鼠去品尝501-725瓶兑的药水。否则去喝2-250瓶兑的水。</p> 
+  <p>采用如此二分法，因为2^10&gt;1000 &nbsp;2^9&lt;1000,所以10次就可以找出。</p> 
+  <p>现在回到原题，老鼠会在24小时后死亡，这样的化就不能跟去前一次的结果作出决策。但是可以覆盖二分的所有支路，在24小时后，一次性作出判断。</p> 
+  <p>相当于将串行的二分法，改为并行的二分法。</p> 
+  <p>具体如下：</p> 
+  <p>第一只： 喝 1-500</p> 
+  <p>第二只 1-250 &nbsp;&nbsp;500-725</p> 
+  <p>第三只 &nbsp;1-125 &nbsp;250-375 &nbsp;&nbsp;500-625 &nbsp;725-850</p> 
+  <p>....</p> 
+  <p>到最后中毒的可以通过交叉中毒分析出是那瓶。这个其实和Bloomfliter算法思想很像。也是一只老鼠喝多瓶药水与其他老鼠部分相交而且与每只相交的部分还不一样。当老鼠达到一定数量，就能过滤出到底那瓶有毒了。<br> 、</p> 
+  <p>&nbsp;</p> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center">  
+</div>

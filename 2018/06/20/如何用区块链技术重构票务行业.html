@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>如何用区块链技术重构票务行业？ | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="如何用区块链技术重构票务行业？" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="记者 | 卢凯 2016年12月5日，王菲“幻乐一场”演唱会门票在其官方指定票务网站瞬间售罄，与此同时，其他渠道则开始出现清一色数万甚至数十万天价票的“盛况”。而随着时间推移，大量囤积在黄牛手中的票“有价无市的消息开始流传，天价门票大概从未真正成交——两周后，黄牛们手中“奇货可居”的高价票，开始在跌至白菜价的路上奔跑。 尽管闹剧当由谁负责仍是罗生门，但经历风波的歌迷或愤怒或意兴阑珊，歌手遭受指责，票务网站蒙受损失，多方皆输已成事实——这仅是为大众所知的一次传统票务问题集中爆发，类似事件，几乎每天都在上演。StoneTicket项目和它的设计者们相信，运用区块链技术，能根除传统票务交易的弊病。在“2018以太坊技术及应用大会”上，项目联合创始人，链石科技COO刘进治接受了CSDN的采访。 以下为采访内容。 CSDN：已经出现和短期可能会出现的“数字票务交易链”项目，可以归为哪些类别，这些类别的特点、 难点分别是什么？ 刘进治: 目前我观察到的和票务相关的区块链应用有以下几类： 1. 简单的2C票务，基本是发Token，然后用户可以通过这个token来购票和实现一些活动众筹。 2.泛娱乐方向，通常是主打娱乐IP，KOL或者艺人发明星Token，有时会充当某些活动票。尽管市场上这个方向的发展如火如荼，不过对于解决痛点或创造新价值，设计合理的方案并用区块链应用实现，仍面临不小的挑战。 3. 以StoneTicket为代表的垂直票务行业平台，这个方向需要有丰富大型票务经验，并且有深厚技术功底的团队才能提供，了解真正的痛点和区块链能解决哪些问题，并提供适合行业的二次开发能力的丰富接口。 4. 我了解还有人想尝试会议票务，但市场太小，没有确实痛点，这块可以由票务垂直平台轻易实现。 5. 交通票务并不是我们通常意义提到的票务，比如机票，火车票等，这块讲旅游概念的区块链提及比较多，但进展很小，因为推进航空公司这种超大型垄断企业的难度颇高。 6. 金融票据类，但并非票务，这里就不展开解释了。 CSDN：进入票务这一领域的项目，门槛主要是什么？未来，不同项目之间，是会相互竞争还是趋于统一？ 刘进治: 门槛主要体现在以下两个方面： 1.票务行业经验，尤其是大型演出、赛事活动，从筹备报批到售票、检票涉及到的主体、环节非常多，水很深，很多是在实际运营中累积出来。例如很多人以为解决票务痛点在于“去黄牛”，然而黄牛若能带来高质量观众，便自有其价值，从这个意义上来说，系统需要剔除扰乱秩序的黄牛，而将另一些人，转化为正规的分销商。 2. 团队的技术基因——区块链首先是个技术平台，参与者不仅需要真正从事并了解这个行业，还需要给出区块链技术方案。例如需要依据业务，设计并实现票品和支付的双Token、主链和侧链（还需包含回收机制）、赠票和粉丝拉票机制，以及针对分销商和追踪流转渠道的一系列合约机制和工具。 目前区块链行业本身还处在概念期，用户有时很难评判一个项目是炒概念还是要做真正的项目。不同项目之间会存在竞争，但比拼的还是以上两方面的能力，假如再向远处看一步，泛娱乐和票务背后的概念是“社群”，如何激活社群，创造新的经济和业态，则又是另一种能力。 关于未来项目之间的关系，我觉得也像竞争主链一样，票务公链可能不会有许多家共存。同时，不同行业（例如泛娱乐和票务）间，由于其优势资源不同，又可能会展开紧密的合作。 CSDN：阻碍“数字票务交易链”项目的难点（包括技术和非技术），包括哪些？对于项目依靠的工具或技术（例如以太坊），目前迫切有需求，但尚未完善的有哪些，为什么这些技术很重要？ 刘进治：当下的技术难点，包括区块链本身的性能（当然，区块链目前并非定位为一个业务管理系统），跨链技术，以及挖矿机制。其中最有待解决的是跨链问题，比如多个子平台，之间的资产交换等。 不论以太坊，抑或未来的EOS，本质还是分布式账本，其定位均不是类似ERP或电商平台那种能解决高并发量的业务系统。那么面对既需要解决部分业务问题，又缺少高并发量支持的矛盾，应当如何解决？这就需要根据票务场景，设计主链和子链机制，子链又面临着如何令其节点够多、够健壮，又有一定节点限制，满足对性能的需求。 而挖矿机制之所以存在，既是为了增加节点，保障公链强健，也为粉丝提供一种公平获取赠票的方式。 相对于多数区块链平台，我们具有的优势比困难多，票务本身天然就是一段时间的数字资产，适合用Token实现，而不需要与实物锚定。 CSDN：关于应用落地，可否通过几个实际案例，从技术角度将StoneTicket与传统技术做对比，尤其哪些方面是原有技术无法解决的？ 刘进治：可以通过下面的表格，对这个问题有直观的了解。 传统票务系统 以StoneTicket为代表的区块链票务系统 优势 中心化票库 去中心化票库 任何人都可以依靠自身资源，成为分销者 人工结算 智能合约 可实现更合理的结算逻辑 赠票 “挖”票 公平，并对整个系统有利 积分 “主题通证” 可为Token打上标签，建立精准社群和快速激励 CSDN：根据你的观察，对于“数字票务交易链”，开发者和潜在用户，存在哪些误区？ 刘进治：我观察到的误区，主要有两个：票这件事很简单，以及票务没必要用区块链。 许多初次踏入这个领域的从业者，往往低估了票务的复杂度——大型活动异常复杂，涉及层层嵌套的渠道，需要对上座率等不同环节做出保证，每个流程和可能出现的问题，都需要提供应对方案，若非对行业有着深刻地理解，几乎无法应付可能出现的问题。而对于已经流转到黄牛手中的实体票，观众无法通过传统方式验证其真伪——即使提供中心化的验证数据库和电话验证网站，但数据库和网站本身可被伪造。而依靠区块链的票务平台，可以确保电子化票据唯一可信。 最新热文： 干货 | 以太坊工具集合，解决你的入门困难 辟谣！关于网传的ERC20 approve函数重大安全漏洞，大家不必过度慌张！ 世界杯开赛在即，告诉你5个用区块链玩转球赛的秘密 | 内附独家资源 暴跌至6500美金的比特币，要不要买入迎牛市？这篇好文或许能启发你 扫码加入区块链大本营读者群，群满加微信 qk15732632926 入群 了解更多区块链技术及应用内容 敬请关注： 阅读更多" />
+<meta property="og:description" content="记者 | 卢凯 2016年12月5日，王菲“幻乐一场”演唱会门票在其官方指定票务网站瞬间售罄，与此同时，其他渠道则开始出现清一色数万甚至数十万天价票的“盛况”。而随着时间推移，大量囤积在黄牛手中的票“有价无市的消息开始流传，天价门票大概从未真正成交——两周后，黄牛们手中“奇货可居”的高价票，开始在跌至白菜价的路上奔跑。 尽管闹剧当由谁负责仍是罗生门，但经历风波的歌迷或愤怒或意兴阑珊，歌手遭受指责，票务网站蒙受损失，多方皆输已成事实——这仅是为大众所知的一次传统票务问题集中爆发，类似事件，几乎每天都在上演。StoneTicket项目和它的设计者们相信，运用区块链技术，能根除传统票务交易的弊病。在“2018以太坊技术及应用大会”上，项目联合创始人，链石科技COO刘进治接受了CSDN的采访。 以下为采访内容。 CSDN：已经出现和短期可能会出现的“数字票务交易链”项目，可以归为哪些类别，这些类别的特点、 难点分别是什么？ 刘进治: 目前我观察到的和票务相关的区块链应用有以下几类： 1. 简单的2C票务，基本是发Token，然后用户可以通过这个token来购票和实现一些活动众筹。 2.泛娱乐方向，通常是主打娱乐IP，KOL或者艺人发明星Token，有时会充当某些活动票。尽管市场上这个方向的发展如火如荼，不过对于解决痛点或创造新价值，设计合理的方案并用区块链应用实现，仍面临不小的挑战。 3. 以StoneTicket为代表的垂直票务行业平台，这个方向需要有丰富大型票务经验，并且有深厚技术功底的团队才能提供，了解真正的痛点和区块链能解决哪些问题，并提供适合行业的二次开发能力的丰富接口。 4. 我了解还有人想尝试会议票务，但市场太小，没有确实痛点，这块可以由票务垂直平台轻易实现。 5. 交通票务并不是我们通常意义提到的票务，比如机票，火车票等，这块讲旅游概念的区块链提及比较多，但进展很小，因为推进航空公司这种超大型垄断企业的难度颇高。 6. 金融票据类，但并非票务，这里就不展开解释了。 CSDN：进入票务这一领域的项目，门槛主要是什么？未来，不同项目之间，是会相互竞争还是趋于统一？ 刘进治: 门槛主要体现在以下两个方面： 1.票务行业经验，尤其是大型演出、赛事活动，从筹备报批到售票、检票涉及到的主体、环节非常多，水很深，很多是在实际运营中累积出来。例如很多人以为解决票务痛点在于“去黄牛”，然而黄牛若能带来高质量观众，便自有其价值，从这个意义上来说，系统需要剔除扰乱秩序的黄牛，而将另一些人，转化为正规的分销商。 2. 团队的技术基因——区块链首先是个技术平台，参与者不仅需要真正从事并了解这个行业，还需要给出区块链技术方案。例如需要依据业务，设计并实现票品和支付的双Token、主链和侧链（还需包含回收机制）、赠票和粉丝拉票机制，以及针对分销商和追踪流转渠道的一系列合约机制和工具。 目前区块链行业本身还处在概念期，用户有时很难评判一个项目是炒概念还是要做真正的项目。不同项目之间会存在竞争，但比拼的还是以上两方面的能力，假如再向远处看一步，泛娱乐和票务背后的概念是“社群”，如何激活社群，创造新的经济和业态，则又是另一种能力。 关于未来项目之间的关系，我觉得也像竞争主链一样，票务公链可能不会有许多家共存。同时，不同行业（例如泛娱乐和票务）间，由于其优势资源不同，又可能会展开紧密的合作。 CSDN：阻碍“数字票务交易链”项目的难点（包括技术和非技术），包括哪些？对于项目依靠的工具或技术（例如以太坊），目前迫切有需求，但尚未完善的有哪些，为什么这些技术很重要？ 刘进治：当下的技术难点，包括区块链本身的性能（当然，区块链目前并非定位为一个业务管理系统），跨链技术，以及挖矿机制。其中最有待解决的是跨链问题，比如多个子平台，之间的资产交换等。 不论以太坊，抑或未来的EOS，本质还是分布式账本，其定位均不是类似ERP或电商平台那种能解决高并发量的业务系统。那么面对既需要解决部分业务问题，又缺少高并发量支持的矛盾，应当如何解决？这就需要根据票务场景，设计主链和子链机制，子链又面临着如何令其节点够多、够健壮，又有一定节点限制，满足对性能的需求。 而挖矿机制之所以存在，既是为了增加节点，保障公链强健，也为粉丝提供一种公平获取赠票的方式。 相对于多数区块链平台，我们具有的优势比困难多，票务本身天然就是一段时间的数字资产，适合用Token实现，而不需要与实物锚定。 CSDN：关于应用落地，可否通过几个实际案例，从技术角度将StoneTicket与传统技术做对比，尤其哪些方面是原有技术无法解决的？ 刘进治：可以通过下面的表格，对这个问题有直观的了解。 传统票务系统 以StoneTicket为代表的区块链票务系统 优势 中心化票库 去中心化票库 任何人都可以依靠自身资源，成为分销者 人工结算 智能合约 可实现更合理的结算逻辑 赠票 “挖”票 公平，并对整个系统有利 积分 “主题通证” 可为Token打上标签，建立精准社群和快速激励 CSDN：根据你的观察，对于“数字票务交易链”，开发者和潜在用户，存在哪些误区？ 刘进治：我观察到的误区，主要有两个：票这件事很简单，以及票务没必要用区块链。 许多初次踏入这个领域的从业者，往往低估了票务的复杂度——大型活动异常复杂，涉及层层嵌套的渠道，需要对上座率等不同环节做出保证，每个流程和可能出现的问题，都需要提供应对方案，若非对行业有着深刻地理解，几乎无法应付可能出现的问题。而对于已经流转到黄牛手中的实体票，观众无法通过传统方式验证其真伪——即使提供中心化的验证数据库和电话验证网站，但数据库和网站本身可被伪造。而依靠区块链的票务平台，可以确保电子化票据唯一可信。 最新热文： 干货 | 以太坊工具集合，解决你的入门困难 辟谣！关于网传的ERC20 approve函数重大安全漏洞，大家不必过度慌张！ 世界杯开赛在即，告诉你5个用区块链玩转球赛的秘密 | 内附独家资源 暴跌至6500美金的比特币，要不要买入迎牛市？这篇好文或许能启发你 扫码加入区块链大本营读者群，群满加微信 qk15732632926 入群 了解更多区块链技术及应用内容 敬请关注： 阅读更多" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/06/20/%E5%A6%82%E4%BD%95%E7%94%A8%E5%8C%BA%E5%9D%97%E9%93%BE%E6%8A%80%E6%9C%AF%E9%87%8D%E6%9E%84%E7%A5%A8%E5%8A%A1%E8%A1%8C%E4%B8%9A.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/06/20/%E5%A6%82%E4%BD%95%E7%94%A8%E5%8C%BA%E5%9D%97%E9%93%BE%E6%8A%80%E6%9C%AF%E9%87%8D%E6%9E%84%E7%A5%A8%E5%8A%A1%E8%A1%8C%E4%B8%9A.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-06-20T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"记者 | 卢凯 2016年12月5日，王菲“幻乐一场”演唱会门票在其官方指定票务网站瞬间售罄，与此同时，其他渠道则开始出现清一色数万甚至数十万天价票的“盛况”。而随着时间推移，大量囤积在黄牛手中的票“有价无市的消息开始流传，天价门票大概从未真正成交——两周后，黄牛们手中“奇货可居”的高价票，开始在跌至白菜价的路上奔跑。 尽管闹剧当由谁负责仍是罗生门，但经历风波的歌迷或愤怒或意兴阑珊，歌手遭受指责，票务网站蒙受损失，多方皆输已成事实——这仅是为大众所知的一次传统票务问题集中爆发，类似事件，几乎每天都在上演。StoneTicket项目和它的设计者们相信，运用区块链技术，能根除传统票务交易的弊病。在“2018以太坊技术及应用大会”上，项目联合创始人，链石科技COO刘进治接受了CSDN的采访。 以下为采访内容。 CSDN：已经出现和短期可能会出现的“数字票务交易链”项目，可以归为哪些类别，这些类别的特点、 难点分别是什么？ 刘进治: 目前我观察到的和票务相关的区块链应用有以下几类： 1. 简单的2C票务，基本是发Token，然后用户可以通过这个token来购票和实现一些活动众筹。 2.泛娱乐方向，通常是主打娱乐IP，KOL或者艺人发明星Token，有时会充当某些活动票。尽管市场上这个方向的发展如火如荼，不过对于解决痛点或创造新价值，设计合理的方案并用区块链应用实现，仍面临不小的挑战。 3. 以StoneTicket为代表的垂直票务行业平台，这个方向需要有丰富大型票务经验，并且有深厚技术功底的团队才能提供，了解真正的痛点和区块链能解决哪些问题，并提供适合行业的二次开发能力的丰富接口。 4. 我了解还有人想尝试会议票务，但市场太小，没有确实痛点，这块可以由票务垂直平台轻易实现。 5. 交通票务并不是我们通常意义提到的票务，比如机票，火车票等，这块讲旅游概念的区块链提及比较多，但进展很小，因为推进航空公司这种超大型垄断企业的难度颇高。 6. 金融票据类，但并非票务，这里就不展开解释了。 CSDN：进入票务这一领域的项目，门槛主要是什么？未来，不同项目之间，是会相互竞争还是趋于统一？ 刘进治: 门槛主要体现在以下两个方面： 1.票务行业经验，尤其是大型演出、赛事活动，从筹备报批到售票、检票涉及到的主体、环节非常多，水很深，很多是在实际运营中累积出来。例如很多人以为解决票务痛点在于“去黄牛”，然而黄牛若能带来高质量观众，便自有其价值，从这个意义上来说，系统需要剔除扰乱秩序的黄牛，而将另一些人，转化为正规的分销商。 2. 团队的技术基因——区块链首先是个技术平台，参与者不仅需要真正从事并了解这个行业，还需要给出区块链技术方案。例如需要依据业务，设计并实现票品和支付的双Token、主链和侧链（还需包含回收机制）、赠票和粉丝拉票机制，以及针对分销商和追踪流转渠道的一系列合约机制和工具。 目前区块链行业本身还处在概念期，用户有时很难评判一个项目是炒概念还是要做真正的项目。不同项目之间会存在竞争，但比拼的还是以上两方面的能力，假如再向远处看一步，泛娱乐和票务背后的概念是“社群”，如何激活社群，创造新的经济和业态，则又是另一种能力。 关于未来项目之间的关系，我觉得也像竞争主链一样，票务公链可能不会有许多家共存。同时，不同行业（例如泛娱乐和票务）间，由于其优势资源不同，又可能会展开紧密的合作。 CSDN：阻碍“数字票务交易链”项目的难点（包括技术和非技术），包括哪些？对于项目依靠的工具或技术（例如以太坊），目前迫切有需求，但尚未完善的有哪些，为什么这些技术很重要？ 刘进治：当下的技术难点，包括区块链本身的性能（当然，区块链目前并非定位为一个业务管理系统），跨链技术，以及挖矿机制。其中最有待解决的是跨链问题，比如多个子平台，之间的资产交换等。 不论以太坊，抑或未来的EOS，本质还是分布式账本，其定位均不是类似ERP或电商平台那种能解决高并发量的业务系统。那么面对既需要解决部分业务问题，又缺少高并发量支持的矛盾，应当如何解决？这就需要根据票务场景，设计主链和子链机制，子链又面临着如何令其节点够多、够健壮，又有一定节点限制，满足对性能的需求。 而挖矿机制之所以存在，既是为了增加节点，保障公链强健，也为粉丝提供一种公平获取赠票的方式。 相对于多数区块链平台，我们具有的优势比困难多，票务本身天然就是一段时间的数字资产，适合用Token实现，而不需要与实物锚定。 CSDN：关于应用落地，可否通过几个实际案例，从技术角度将StoneTicket与传统技术做对比，尤其哪些方面是原有技术无法解决的？ 刘进治：可以通过下面的表格，对这个问题有直观的了解。 传统票务系统 以StoneTicket为代表的区块链票务系统 优势 中心化票库 去中心化票库 任何人都可以依靠自身资源，成为分销者 人工结算 智能合约 可实现更合理的结算逻辑 赠票 “挖”票 公平，并对整个系统有利 积分 “主题通证” 可为Token打上标签，建立精准社群和快速激励 CSDN：根据你的观察，对于“数字票务交易链”，开发者和潜在用户，存在哪些误区？ 刘进治：我观察到的误区，主要有两个：票这件事很简单，以及票务没必要用区块链。 许多初次踏入这个领域的从业者，往往低估了票务的复杂度——大型活动异常复杂，涉及层层嵌套的渠道，需要对上座率等不同环节做出保证，每个流程和可能出现的问题，都需要提供应对方案，若非对行业有着深刻地理解，几乎无法应付可能出现的问题。而对于已经流转到黄牛手中的实体票，观众无法通过传统方式验证其真伪——即使提供中心化的验证数据库和电话验证网站，但数据库和网站本身可被伪造。而依靠区块链的票务平台，可以确保电子化票据唯一可信。 最新热文： 干货 | 以太坊工具集合，解决你的入门困难 辟谣！关于网传的ERC20 approve函数重大安全漏洞，大家不必过度慌张！ 世界杯开赛在即，告诉你5个用区块链玩转球赛的秘密 | 内附独家资源 暴跌至6500美金的比特币，要不要买入迎牛市？这篇好文或许能启发你 扫码加入区块链大本营读者群，群满加微信 qk15732632926 入群 了解更多区块链技术及应用内容 敬请关注： 阅读更多","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/06/20/%E5%A6%82%E4%BD%95%E7%94%A8%E5%8C%BA%E5%9D%97%E9%93%BE%E6%8A%80%E6%9C%AF%E9%87%8D%E6%9E%84%E7%A5%A8%E5%8A%A1%E8%A1%8C%E4%B8%9A.html","headline":"如何用区块链技术重构票务行业？","dateModified":"2018-06-20T00:00:00+08:00","datePublished":"2018-06-20T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/06/20/%E5%A6%82%E4%BD%95%E7%94%A8%E5%8C%BA%E5%9D%97%E9%93%BE%E6%8A%80%E6%9C%AF%E9%87%8D%E6%9E%84%E7%A5%A8%E5%8A%A1%E8%A1%8C%E4%B8%9A.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>如何用区块链技术重构票务行业？</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <div class="rich_media_content"> 
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><img style="text-align:center;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_jpg/trm5VMeFp9koLlDk4foYBHFxaxoE0tPMBwO1vDX1iaaMsnkhnjuNAYUgQh2rnic3N9kYuiaSVWAibOVf5d2ibZURIYQ/640?wx_fmt=jpeg" alt="640?wx_fmt=jpeg"><span style="font-size:15px;letter-spacing:.5px;"></span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;color:rgb(136,136,136);">记者 | 卢凯</span><span style="font-size:15px;letter-spacing:.5px;"></span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><br></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">2016年12月5日，王菲“幻乐一场”演唱会门票在其官方指定票务网站瞬间售罄，与此同时，其他渠道则开始出现清一色数万甚至数十万天价票的“盛况”。而随着时间推移，大量囤积在黄牛手中的票“有价无市的消息开始流传，天价门票大概从未真正成交——两周后，黄牛们手中“奇货可居”的高价票，开始在跌至白菜价的路上奔跑。</span><span style="font-size:15px;letter-spacing:.5px;"></span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">尽管闹剧当由谁负责仍是罗生门，但经历风波的歌迷或愤怒或意兴阑珊，歌手遭受指责，票务网站蒙受损失，多方皆输已成事实——这仅是为大众所知的一次传统票务问题集中爆发，类似事件，几乎每天都在上演。StoneTicket项目和它的设计者们相信，运用区块链技术，能根除传统票务交易的弊病。在“2018以太坊技术及应用大会”上，项目联合创始人，链石科技COO刘进治接受了CSDN的采访。</span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">以下为采访内容。</span></strong></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">CSDN：</span></strong><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(136,136,136);">已经出现和短期可能会出现的“数字票务交易链”项目，可以归为哪些类别，这些类别的特点、 难点分别是什么？</span></strong></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">刘进治:</span></strong><span style="font-size:15px;letter-spacing:.5px;"> 目前我观察到的和票务相关的区块链应用有以下几类：</span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">1. 简单的2C票务，基本是发Token，然后用户可以通过这个token来购票和实现一些活动众筹。</span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">2.泛娱乐方向，通常是主打娱乐IP，KOL或者艺人发明星Token，有时会充当某些活动票。尽管市场上这个方向的发展如火如荼，不过对于解决痛点或创造新价值，设计合理的方案并用区块链应用实现，仍面临不小的挑战。</span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;"><br>3. 以StoneTicket为代表的垂直票务行业平台，这个方向需要有丰富大型票务经验，并且有深厚技术功底的团队才能提供，了解真正的痛点和区块链能解决哪些问题，并提供适合行业的二次开发能力的丰富接口。</span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;"><br>4. 我了解还有人想尝试会议票务，但市场太小，没有确实痛点，这块可以由票务垂直平台轻易实现。</span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;"><br>5. 交通票务并不是我们通常意义提到的票务，比如机票，火车票等，这块讲旅游概念的区块链提及比较多，但进展很小，因为推进航空公司这种超大型垄断企业的难度颇高。</span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;"><br>6. 金融票据类，但并非票务，这里就不展开解释了。</span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">CSDN：</span></strong><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(136,136,136);">进入票务这一领域的项目，门槛主要是什么？未来，不同项目之间，是会相互竞争还是趋于统一？</span></strong></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">刘进治:</span></strong><span style="font-size:15px;letter-spacing:.5px;"> 门槛主要体现在以下两个方面：</span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">1.票务行业经验，尤其是大型演出、赛事活动，从筹备报批到售票、检票涉及到的主体、环节非常多，水很深，很多是在实际运营中累积出来。例如很多人以为解决票务痛点在于“去黄牛”，然而黄牛若能带来高质量观众，便自有其价值，从这个意义上来说，系统需要剔除扰乱秩序的黄牛，而将另一些人，转化为正规的分销商。</span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;"><br>2. 团队的技术基因——区块链首先是个技术平台，参与者不仅需要真正从事并了解这个行业，还需要给出区块链技术方案。例如需要依据业务，设计并实现票品和支付的双Token、主链和侧链（还需包含回收机制）、赠票和粉丝拉票机制，以及针对分销商和追踪流转渠道的一系列合约机制和工具。</span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="text-align:center;margin-left:8px;"><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/trm5VMeFp9koLlDk4foYBHFxaxoE0tPM0kyynnOlrSWM48d4XMdz5eicohDDoJz3iaNouqviaLT1BxJW4E1C7rmWg/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">目前区块链行业本身还处在概念期，用户有时很难评判一个项目是炒概念还是要做真正的项目。不同项目之间会存在竞争，但比拼的还是以上两方面的能力，假如再向远处看一步，泛娱乐和票务背后的概念是“社群”，如何激活社群，创造新的经济和业态，则又是另一种能力。</span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">关于未来项目之间的关系，我觉得也像竞争主链一样，票务公链可能不会有许多家共存。同时，不同行业（例如泛娱乐和票务）间，由于其优势资源不同，又可能会展开紧密的合作。</span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">CSDN：</span></strong><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(136,136,136);">阻碍“数字票务交易链”项目的难点（包括技术和非技术），包括哪些？对于项目依靠的工具或技术（例如以太坊），目前迫切有需求，但尚未完善的有哪些，为什么这些技术很重要？</span></strong></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">刘进治：</span></strong><span style="font-size:15px;letter-spacing:.5px;">当下的技术难点，包括区块链本身的性能（当然，区块链目前并非定位为一个业务管理系统），跨链技术，以及挖矿机制。其中最有待解决的是跨链问题，比如多个子平台，之间的资产交换等。</span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">不论以太坊，抑或未来的EOS，本质还是分布式账本，其定位均不是类似ERP或电商平台那种能解决高并发量的业务系统。那么面对既需要解决部分业务问题，又缺少高并发量支持的矛盾，应当如何解决？这就需要根据票务场景，设计主链和子链机制，子链又面临着如何令其节点够多、够健壮，又有一定节点限制，满足对性能的需求。</span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">而挖矿机制之所以存在，既是为了增加节点，保障公链强健，也为粉丝提供一种公平获取赠票的方式。</span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">相对于多数区块链平台，我们具有的优势比困难多，票务本身天然就是一段时间的数字资产，适合用Token实现，而不需要与实物锚定。</span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">CSDN：</span></strong><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(136,136,136);">关于应用落地，可否通过几个实际案例，从技术角度将StoneTicket与传统技术做对比，尤其哪些方面是原有技术无法解决的？</span></strong></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">刘进治：</span></strong><span style="font-size:15px;letter-spacing:.5px;">可以通过下面的表格，对这个问题有直观的了解。</span></p>
+   <p><br></p>
+   <table>
+    <tbody>
+     <tr>
+      <td valign="middle" align="center"><span style="font-size:15px;letter-spacing:.5px;text-align:justify;">传统票务系统</span></td>
+      <td valign="middle" align="center"><span style="font-size:15px;letter-spacing:.5px;text-align:justify;">以StoneTicket为代表的区块链票务系统</span></td>
+      <td valign="middle" align="center"><span style="font-size:15px;letter-spacing:.5px;text-align:justify;">优势</span></td>
+     </tr>
+     <tr>
+      <td valign="middle" align="center"><span style="font-size:15px;letter-spacing:.5px;text-align:justify;">中心化票库</span></td>
+      <td valign="middle" align="center"><span style="font-size:15px;letter-spacing:.5px;text-align:justify;">去中心化票库</span></td>
+      <td valign="middle" align="center"><span style="font-size:15px;letter-spacing:.5px;text-align:justify;">任何人都可以依靠自身资源，成为分销者</span></td>
+     </tr>
+     <tr>
+      <td valign="middle" align="center"><span style="font-size:15px;letter-spacing:.5px;text-align:justify;">人工结算</span></td>
+      <td valign="middle" align="center"><span style="font-size:15px;letter-spacing:.5px;text-align:justify;">智能合约</span></td>
+      <td valign="middle" align="center"><span style="font-size:15px;letter-spacing:.5px;text-align:justify;">可实现更合理的结算逻辑</span></td>
+     </tr>
+     <tr>
+      <td valign="middle" align="center"><span style="font-size:15px;letter-spacing:.5px;text-align:justify;">赠票</span></td>
+      <td valign="middle" align="center"><span style="font-size:15px;letter-spacing:.5px;text-align:justify;">“挖”票</span></td>
+      <td valign="middle" align="center"><span style="font-size:15px;letter-spacing:.5px;text-align:justify;">公平，并对整个系统有利</span></td>
+     </tr>
+     <tr>
+      <td valign="middle" align="center"><span style="font-size:15px;letter-spacing:.5px;text-align:justify;">积分</span></td>
+      <td valign="middle" align="center"><span style="font-size:15px;letter-spacing:.5px;text-align:justify;">“主题通证”</span></td>
+      <td valign="middle" align="center"><span style="font-size:15px;letter-spacing:.5px;text-align:justify;">可为Token打上标签，建立精准社群和快速激励</span></td>
+     </tr>
+    </tbody>
+   </table>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;"></span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">CSDN：</span></strong><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(136,136,136);">根据你的观察，对于“数字票务交易链”，开发者和潜在用户，存在哪些误区？</span></strong></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">刘进治：</span></strong><span style="font-size:15px;letter-spacing:.5px;">我观察到的误区，主要有两个：票这件事很简单，以及票务没必要用区块链。</span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">许多初次踏入这个领域的从业者，往往低估了票务的复杂度——大型活动异常复杂，涉及层层嵌套的渠道，需要对上座率等不同环节做出保证，每个流程和可能出现的问题，都需要提供应对方案，若非对行业有着深刻地理解，几乎无法应付可能出现的问题。而对于已经流转到黄牛手中的实体票，观众无法通过传统方式验证其真伪——即使提供中心化的验证数据库和电话验证网站，但数据库和网站本身可被伪造。而依靠区块链的票务平台，可以确保电子化票据唯一可信。</span></p>
+   <p><br></p>
+   <p><br></p>
+   <p style="line-height:22px;font-size:18px;"><strong>最新热文：</strong></p>
+   <ul class="list-paddingleft-2" style="margin-left:8px;">
+    <li><p style="text-align:justify;line-height:1.75em;"><a href="http://mp.weixin.qq.com/s?__biz=MzU2MTE1NDk2Mg==&amp;mid=2247486874&amp;idx=1&amp;sn=9a5250e428738622f6dbbb9352e5ca8e&amp;chksm=fc7c5367cb0bda713f6c1f29791eedfd39e86ee55fc71b22b58646acecc4496dac8129d481cb&amp;scene=21#wechat_redirect" rel="nofollow" style="text-decoration:underline;color:rgb(0,122,170);font-size:15px;letter-spacing:.5px;"><span style="color:rgb(0,122,170);font-size:15px;letter-spacing:.5px;">干货 | 以太坊工具集合，解决你的入门困难</span></a><br></p></li>
+    <li><p><span style="color:rgb(0,122,170);font-size:15px;text-decoration:underline;"><a href="http://mp.weixin.qq.com/s?__biz=MzU2MTE1NDk2Mg==&amp;mid=2247486858&amp;idx=1&amp;sn=e69a7c49bfcc9e362500323d0b6cd36f&amp;chksm=fc7c5377cb0bda61a203d829cc05e7fecdf580367080539af9dd53a4421eab443e6f2ba1ea7e&amp;scene=21#wechat_redirect" rel="nofollow" style="color:rgb(0,122,170);">辟谣！关于网传的ERC20 approve函数重大安全漏洞，大家不必过度慌张！</a></span></p></li>
+    <li><p><a href="https://mp.weixin.qq.com/s?__biz=MzU2MTE1NDk2Mg==&amp;mid=2247486815&amp;idx=1&amp;sn=0dcc1550c8fe1e35d3591b4d61cf8b2c&amp;chksm=fc7c53a2cb0bdab41034604fdcba9656b816f48c81d179fdd1c60bf1764e9f65137e875bcb9b&amp;mpshare=1&amp;scene=21&amp;srcid=0615G5j9HTWssdR6XKcp2nsN&amp;key=8e3829ebeae3b9e3ce01d470cccafbdad8dc2923430cd7c3cc97be2b90c99d2ae858d379b0c9c23bb0b218f7e1874333a494151904af0232664183f53f2c3e673f5c320ca4990d8422b93ab354f8adcc&amp;ascene=0&amp;uin=MjQ0ODA5ODUwMQ==&amp;devicetype=iMac%20MacBookAir7,2%20OSX%20OSX%2010.12.4%20build(16E195)&amp;version=11020201&amp;lang=zh_CN&amp;pass_ticket=3pRjQ2XEZKP4r4yM5WgaEnLcP%20M0onbGSPpygzNeyAGsqgBI10aiBtUHDPNse66m#wechat_redirect" rel="nofollow" style="color:rgb(0,122,170);text-decoration:underline;font-size:15px;">世界杯开赛在即，告诉你5个用区块链玩转球赛的秘密 | 内附独家资源</a><br></p></li>
+    <li><p><a href="https://mp.weixin.qq.com/s?__biz=MzU2MTE1NDk2Mg==&amp;mid=2247486788&amp;idx=1&amp;sn=590b0a708223ae2b6c3408ca348c45d0&amp;chksm=fc7c53b9cb0bdaafe4206333a74c5721783699ad28f8dd1b9ae6ba1f98540b6639f4fe5aac58&amp;mpshare=1&amp;scene=21&amp;srcid=0614z2YCc3uI8D7nY9KQqlH7&amp;key=76e4dc351f4ac1afc4d99cc2c3d7144e8f3158a46dc1a24ada1a610cc5a885a6a8b38c88faf26da85f9cb153cecddccccebb32f0d742b8051b5cf43506c18a97ef55be35e669b635ef45a38081a0f818&amp;ascene=0&amp;uin=MjQ0ODA5ODUwMQ==&amp;devicetype=iMac%20MacBookAir7,2%20OSX%20OSX%2010.12.4%20build(16E195)&amp;version=11020201&amp;lang=zh_CN&amp;pass_ticket=%20zuERiFMgvt3Aq7u5TGTWENAKftOII/nm1%20iotat79BFk6jZqWi9Qlh9UTWA9GO/#wechat_redirect" rel="nofollow" style="color:rgb(0,122,170);text-decoration:underline;font-size:15px;">暴跌至6500美金的比特币，要不要买入迎牛市？这篇好文或许能启发你</a></p></li>
+   </ul>
+   <br>
+   <br>
+   <p style="margin-left:8px;color:rgb(51,51,51);text-align:center;"><img style="color:rgb(62,62,62);width:183px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/trm5VMeFp9lT6AhI2P4Sm9rXL2cBQ7j4N81QuGH1w7Wl1RJVmiczzpgwhSNJacFqhVQ27j4LMplWugO2BjpUxkA/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="margin-left:8px;color:rgb(51,51,51);text-align:center;"><span style="color:rgb(63,63,63);letter-spacing:.5px;"><strong><span style="font-size:15px;">扫码加入区块链大本营读者群，群满加微信 qk15732632926 入群</span></strong></span></p>
+   <p style="color:rgb(51,51,51);"><br></p>
+   <p style="color:rgb(51,51,51);"><br></p>
+   <p style="margin-left:8px;color:rgb(51,51,51);"><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);"></span></strong></p>
+   <p style="color:rgb(51,51,51);"><img class="__bg_gif" style="margin-left:auto;line-height:28px;width:22px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_gif/trm5VMeFp9kuuGYcoeg06IYM4TSEE1eCF4aiadptTMnNFDia5JfEBLuUslraYtDcYbKr2b4takjM2MfqeZYcVqkQ/640?wx_fmt=gif" alt="640?wx_fmt=gif"></p>
+   <p style="color:rgb(51,51,51);"><br></p>
+   <p style="color:rgb(51,51,51);"><br></p>
+   <p style="margin-left:8px;color:rgb(51,51,51);text-align:center;"><span style="font-size:15px;letter-spacing:.5px;"><strong><span style="font-size:14px;color:rgb(0,122,170);">了解更多区块链技术及应用内容</span></strong></span></p>
+   <p style="margin-left:8px;color:rgb(51,51,51);text-align:center;"><span style="font-size:15px;letter-spacing:.5px;"><strong><span style="font-size:14px;color:rgb(0,122,170);">敬请关注：</span></strong></span></p>
+   <p style="margin-left:8px;color:rgb(51,51,51);text-align:center;"><img class="__bg_gif" style="width:512px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_gif/trm5VMeFp9kegUbp0DLNf5dM2JbggFlThJvvibDiaEicHicPaTJV6oOMMWYZynQZcNupmQJIbPAdlVhT8PeicsKaFMQ/640?wx_fmt=gif" alt="640?wx_fmt=gif"></p> 
+  </div> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/Blockchain_lemon/article/details/80749544,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/Blockchain_lemon/article/details/80749544,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

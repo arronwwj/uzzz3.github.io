@@ -1,0 +1,131 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <p>以太坊作为一个去中心化的系统，其底层个体相互间的通信显然非常重要，所有数据的同步，各个个体状态的更新，都依赖于整个网络中每个个体相互间的通信机制。以太坊的网络通信基于peer-to-peer(p2p)通信协议，又根据自身传输数据类型(区块，交易，哈希值等)，网络节点业务相关性等需求，在各方面做了特别设计。</p> 
+  <p>由于以太坊中p2p通信相关代码量较大，打算分为上下两篇文章来加以详解：上篇主要介绍管理p2p通信的核心类ProtocolManager内部主要流程，以及通信相关协议族的设计；下篇主要介绍ProtocolManager的两个成员Fetcher和Downloader，这里是上篇。<br></p> 
+  <h1>1. 一般意义上的p2p网络</h1> 
+  <p>在开始介绍以太坊的p2p通信机制之前，不妨先来看看一般意义上的p2p网络通信的一些特征，以下部分内容摘自<a href="https://en.wikipedia.org/wiki/Peer-to-peer" rel="nofollow">peer-to-peer_wiki</a></p> 
+  <p>peer-to-peer(p2p)首先是一种网络拓扑类型，与之对比最显著的就是client/server（C/S）架构。从TCP/IP协议族分层的角度来说，p2p网络中实际的数据交换，依然是网络层用IP协议，传输层用TCP协议；而p2p协议--如果可称之为协议的话，应算作应用层再往上，类似于逻辑拓扑层，毕竟著名的应用层协议之一FTP，就属于非常典型的一种C/S架构类型。<br></p> 
+  <p><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171107214638849?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""></p> 
+  <p>上图是C/S架构和p2p架构的一个简单示意图，原图来自wiki。左图中C/S架构被描绘成星型拓扑，这当然仅仅是特例，大家可能在工作中遇到各种各样拓扑形状的C/S架构，而其核心特征是不变的：<strong>C/S 网络中的个体地位和功能是不平等的</strong>，client个体主要消耗资源，发起请求，server个体主要提供资源并处理请求，这使得<strong>C/S架构天然是中心化的</strong>。</p> 
+  <p>相比之下，p2p架构中最重要的特点在于：<strong>其网络中的个体在地位和功能上是平等的</strong>，虽然每个个体可能处理不同的请求，实际提供的资源在具体量化后可能有差异，但它们都能同时既消耗资源又提供资源。如果把整个所处网络中的资源--此处的资源包括但不限于运算能力、存储空间、网络带宽等，视为一个总量，那么p2p网络中的资源分布，是分散于各个个体中的(也许不一定均匀分布)。所以，<strong>p2p网络架构天然是去中心化的、分布式的</strong>。<br></p> 
+  <p>注意上图右侧p2p网络中，<strong>并非每个个体与网络中其他同类均有通信</strong>。这其实也是p2p网络的一个很重要的特点：一个个体只需要与相邻的一部分同类有通信即可，每个个体可与多少相邻个体、哪些个体有通信，是可以加以设计的，</p> 
+  <h2>无结构化的和有结构化的p2p网络<br></h2> 
+  <p>根据p2p网络中节点相互之间如何联系，可以将p2p网络简单区分为无结构化的(unstructured)，和结构化的(structured)两大类。<strong><br></strong></p> 
+  <h3>无结构化的<br></h3> 
+  <p>这种p2p网络即最普通的，不对结构作特别设计的实现方案。优点是结构简单易于组建，网络局部区域内个体可任意分布，反正此时网络结构对此也没有限制；特别是在应对大量新个体加入网络和旧个体离开网络(“churn”)时它的表现非常稳定。缺点在于在该网络中查找数据的效率太低，因为没有预知信息，所以往往需要将查询请求发遍整个网络(至少大多数个体)，这会占用很大一部分网络资源，并大大拖慢网络中其他业务运行。</p> 
+  <h3>结构化的<br></h3> 
+  <p>这种p2p网络中的个体分布经过精心设计，主要目的是为了<strong>提高查询数据的效率，降低查询数据带来的资源消耗</strong>。提高查询效率的基本手段是对数据建立索引，结构化p2p网络最普遍的实现方案中使用了分布式哈希表(Distributed Hash Table，DHT)，它会对每项数据(value)分配一个key以组成(key,value)键值对，同时网络中每个个体的分布--这里的分布主要指相互通信关系-根据key键进行关联和扩展。这样，当要查找某项数据时，只要跟据其key键就能不断的缩小查找区域，大大减少资源消耗。</p> 
+  <p>尽管如此，这样的p2p网络<strong>缺点</strong>也很明显：由于每个个体需要存有数量不少的相邻个体列表，所以当网络中发生大量新旧个体频繁加入和离开的“churn”事件时，整个网络的性能会大幅恶化，因为每个个体的很大一部分资源消耗在相邻列表更新上(包括自身相邻列表的更新，和相互之间更新所储列表)，同时许多peer所在的key也需要重新定义；另外，哈希表本身容量是有使用限制的，当哈希表中存储的数据空间大于其设计容量的一半时，哈希表就会大概率出现“碰撞”事故，这样的限制也使得依据DHT建立的p2p网络的整体效率大打折扣。<br></p> 
+  <h2>对于以太坊通信机制的借鉴<br></h2> 
+  <p>根据以太坊的运行特点，我们可以大概勾勒出以太坊个体也就是客户端所组成网络的一些需求特征：</p> 
+  <ol>
+   <li>网络中随时可能存在一些个体加入和离开网络的情况，但同一时间内大量新旧个体同时发生加入或离开的概率很低。</li>
+   <li><strong>每个个体所存储的数据(区块)，理想状态下是相同的。</strong>也许有些个体会存在更新不够及时，例如新挖掘区块/新创建交易的广播事件到达有延迟，或者有些个体需要在状态更新后更换自己所维持区块链中的区块，但相应的通信机制一定是希望将这些差异抹平的。所以在以太坊网络中，查找数据时并不需要针对某些特定区域以提高效率，当然也不需要向整个网络大水漫灌的发送请求，正常情况下任意一个(或相邻几个)个体就可以提供。</li>
+  </ol>
+  <p>综上所述，我们对以太坊中的p2p网络设计可以有个初步思路了：</p> 
+  <ul>
+   <li><strong>不需要结构化</strong>，经过改进的非结构化(比如设计好相邻个体列表)网络模型可以满足需求；</li>
+   <li><strong>个体间的相互同步更新</strong>需要仔细设计；</li>
+  </ul>
+  <p>之后的章节中，我们可以逐步了解以太坊中的这个p2p网络通信是如何完善并实现的。<br></p> 
+  <h1>2. p2p通信的管理模块ProtocolManager</h1> 
+  <p>以太坊中，管理个体间p2p通信的顶层结构体叫eth.ProtocolManager，它也是eth.Ethereum的核心成员变量之一。先来看一下它的主要UML关系：</p> 
+  <p><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171108141219288?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br></p> 
+  <p>ProtocolManager主要成员包括：<strong><br></strong></p> 
+  <ul>
+   <li><strong>peertSet{}</strong>类型成员用来缓存相邻个体列表，<strong>peer{}</strong>表示网络中的一个远端个体。</li>
+   <li>通过各种<strong>通道(chan)</strong>和<strong>事件订阅(subscription)</strong>的方式，接收和发送包括交易和区块在内的数据更新。当然在应用中，订阅也往往利用通道来实现事件通知。</li>
+   <li>ProtocolManager用到的这些<strong>通道的另一端</strong>，可能是其他的个体peer，也可能是系统内单例的数据源比如txPool，或者是事件订阅的管理者比如event.Mux。</li>
+   <li><strong>Fetcher</strong>类型成员累积所有其他个体发送来的有关新数据的宣布消息，并在自身对照后，安排相应的获取请求。</li>
+   <li><strong>Downloader</strong>类型成员负责所有向相邻个体主动发起的同步流程。<br></li>
+  </ul>
+  <p>小小说明：这里提到的"远端"个体，即非本peer的其他peer对象。以太坊的p2p网络中，所有进行通信的两个peer都必须率先经过相互的注册(register)，并被添加到各自缓存的peer列表，也就是peerSet{}对象中，这样的两个peers，就可以称为“相邻”。所以，这里提到的“远端"个体，如果处于可通信状态，则必定已经“相邻”。<br></p> 
+  <p>在运行方面，Start()函数是ProtocolManager的启动函数，它会在eth.Ethereum.Start()中被主动调用。ProtocolManager.Start()会启用4个单独线程(goroutine,协程)去分别执行4个函数，这也标志着该以太坊个体p2p通信的全面启动。</p> 
+  <h2>Start()：全面启动p2p通信</h2> 
+  <p>由Start()启动的四个函数在业务逻辑上各有侧重，下图是关于它们所在流程的简单示意图：<br></p> 
+  <p><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171108165446684?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br></p> 
+  <p>以上这四段相对独立的业务流程的逻辑分别是：</p> 
+  <ul>
+   <li><strong>广播新出现的交易对象</strong>。txBroadcastLoop()会在txCh通道的收端持续等待，一旦接收到有关新交易的事件，会立即调用BroadcastTx()函数广播给那些尚无该交易对象的相邻个体。</li>
+   <li><strong>广播新挖掘出的区块</strong>。minedBroadcastLoop()持续等待本个体的新挖掘出区块事件，然后立即广播给需要的相邻个体。当不再订阅新挖掘区块事件时，这个函数才会结束等待并返回。很有意思的是,在收到新挖掘出区块事件后，minedBroadcastLoop()会<strong>连续调用两次BroadcastBlock()</strong>，两次调用仅仅一个bool型参数@propagate不一样，当该参数为true时，会将整个新区块依次发给相邻区块中的一小部分；而当其为false时，仅仅将新区块的Hash值和Number发送给所有相邻列表。<br></li>
+   <li><strong>定时与相邻个体进行区块全链的强制同步</strong>。syncer()首先启动fetcher成员，然后进入一个无限循环，每次循环中都会向相邻peer列表中<strong>“最优”的那个peer作一次区块全链同步</strong>。发起上述同步的理由分两种：如果有新登记(加入)的相邻个体，则在整个peer列表数目大于5时，发起之；如果没有新peer到达，则以10s为间隔定时的发起之。这里所谓"最优"指的是peer中所维护区块链的TotalDifficulty(td)最高，由于Td是全链中从创世块到最新头块的Difficulty值总和，所以<strong>Td值最高就意味着它的区块链是最新的</strong>，跟这样的peer作区块全链同步，显然改动量是最小的，此即"最优"。</li>
+   <li><strong>将新出现的交易对象均匀的同步给相邻个体</strong>。txsyncLoop()主体也是一个无限循环，它的逻辑稍微复杂一些：首先有一个数据类型txsync{p, txs},包含peer和tx列表；通道txsyncCh用来接收txsync{}对象；txsyncLoop()每次循环时，如果从通道txsyncCh中收到新数据，则将它存入一个本地map[]结构，k为peer.ID，v为txsync{}，并将这组tx对象发送给这个peer；每次向peer发送tx对象的上限数目100*1024，如果txsync{}对象中有剩余tx，则该txsync{}对象继续存入map[]并更新tx数目；如果本次循环没有新到达txsync{},则从map[]结构中<strong>随机</strong>找出一个txsync对象，将其中的tx组发送给相应的peer，重复以上循环。<br></li>
+  </ul>
+  <p>以上四段流程就是ProtocolManager向相邻peer主动发起的通信过程。尽管上述各函数细节从文字阅读起来容易模糊，不过最重要的内容还是值得留意下的：本个体(peer)向其他peer主动发起的通信中，<strong>按照数据类型可分两类：交易tx和区块block</strong>；<strong>而按照通信方式划分，亦可分为广播新的单个数据和同步一组同类型数据</strong>，这样简单的两两配对，便可组成上述四段流程。</p> 
+  <p><br></p> 
+  <p>上述函数的实现中，很多地方都体现出巧妙的设计，比如BroadcastBlock()中，如果发送区块block，由于数据量相对重量级，则仅仅选择一小部分相邻peer，而如果发送hash值 + Number值，则发给所有相邻peer；又比如txsyncLoop()中，会从map[]中随机选择一个peer进行发送(随机选择的txsync{}中包含peer)。这些细节，很好的控制了单次业务请求的资源消耗对于定向区域的倾向性，使得整个网络资源消耗愈加均衡，体现出非常全面的设计思路。</p> 
+  <h2>handle()：交给其他peer的回调函数<br></h2> 
+  <p>对于peer间通信而言，除了己方需要主动向对方peer发起通信(比如Start()中启动的四个独立流程)之外，还需要一种<strong>由对方peer主动调用的数据传输</strong>，这种传输不仅仅是由对方peer发给己方，更多的用法是对方peer主动调用一个函数让己方发给它们某些特定数据。这种通信方式，在代码实现上适合用回调(callback)来实现。</p> 
+  <p>ProtocolManager.handle()就是这样一个函数，它会在ProtocolManager对象创建时，以回调函数的方式“埋入”每个p2p.Protocol对象中(实现了Protocol.Run()方法)。之后每当有新peer要与己方建立通信时，如果对方能够支持该Protocol，那么双方就可以顺利的建立并开始通信。以下是handle()的基本代码：</p> 
+  <p></p> 
+  <pre><code class="language-plain">// /eth/handler.go
+func (pm *ProtocolManager) handle(p *peer) error {
+    td, head, genesis := pm.blockchain.Status()
+    p.Handshake(pm.networkId, td, head, genesis)
+
+    if rw, ok := p.rw.(*meteredMsgReadWriter); ok {
+        rm.Init(p.version)
+    }
+
+&nbsp; &nbsp; pm.peers.Register(p)
+    defer pm.removePeer(p.id)
+
+    pm.downloader.RegisterPeer(p.id, p.version, p)
+
+    pm.syncTransactions(p)
+&nbsp; &nbsp; ...
+&nbsp; &nbsp; for {
+&nbsp; &nbsp; &nbsp; &nbsp; if err := pm.handleMsg(p); err != nil {
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; return err
+&nbsp; &nbsp; &nbsp; &nbsp; }
+&nbsp; &nbsp; }
+}</code></pre>handle()函数针对一个新peer做了如下几件事： 
+  <p></p> 
+  <ol>
+   <li>握手，与对方peer沟通己方的区块链状态</li>
+   <li>初始化一个读写通道，用以跟对方peer相互数据传输。</li>
+   <li>注册对方peer，存入己方peer列表；只有handle()函数退出时，才会将这个peer移除出列表。</li>
+   <li>Downloader成员注册这个新peer；Downloader会自己维护一个相邻peer列表。</li>
+   <li>调用syncTransactions()，用当前txpool中新累计的tx对象组装成一个txsync{}对象，推送到内部通道txsyncCh。还记得Start()启动的四个函数么? 其中第四项txsyncLoop()中用以等待txsync{}数据的通道txsyncCh，正是在这里被推入txsync{}的。</li>
+   <li><strong>在无限循环中启动handleMsg()</strong>，当对方peer发出任何msg时，handleMsg()可以捕捉相应类型的消息并在己方进行处理。</li>
+  </ol>
+  <h2>建立新peer连接和传递Protocol[]</h2> 
+  <p>刚才提到，handle()函数以回调函数的形式被放入一个p2p.Protocol{}里，那么Protocol对象是如何交给新peer的呢？这部分细节，隐藏在新peer连接建立的过程中。</p> 
+  <p>所有远端peer与己方之间的通信，都是通过p2p.Server{}来管理的，Server在整个客户端最早的启动步骤Node.Start()中被创建并启动，而node.Node是用来承载客户端中所有node.&lt;Service&gt;实现体的容器，下图简单示意了Node.Start()中与Server相关的一些步骤：</p> 
+  <p><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171109212949846?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br></p> 
+  <p>Node.Start()中首先会创建p2p.Server{}，此时Server中的Protocol[]还是空的；然后将Node中载入的所有&lt;Service&gt;实现体中的Protocol都收集起来，一并交给Server对象，作为Server.Protocols列表；然后启动Server对象，并将Server对象作为参数去逐一启动每个&lt;Service&gt;实现体。</p> 
+  <p>而由于eth.Ethereum对于&lt;Service&gt;.Protocols()的实现中，正是搜集了ProtocolManager.Protocols而成，所以<strong>ProtocolManager.Protocols最终被导入了p2p.Server.Protocols</strong>.</p> 
+  <p>那么Server.Start()中做了什么呢？ 下图是Server.Start()和run()函数体内，与新peer创建相关的主要逻辑：<br></p> 
+  <p><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171109213434290?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br></p> 
+  <p>可以看到，Server.Start()中启动一个单独线程(listenLoop())去监听某个端口有无主动发来的IP连接；另外一个单独线程启动run()函数，在无限循环里处理接收到的任何新消息新对象。在run()函数中，如果有远端peer发来连接请求(新的p2p.conn{})，则调用Server.newPeer()生成新的peer对象，并把Server.Protocols全交给peer。</p> 
+  <p>综合这两部分代码逻辑，可以发现：</p> 
+  <ol>
+   <li>ProtocolManager.Protocols 最终由Server赋予了每一个新连接上(新创建)的peer对象中，所以<strong>回调函数ProtocolManager.handle()</strong>，<strong>也会进入每一个新的远端peer对象中</strong>。而peer对象，需要接受目前客户端Node中所有&lt;Service&gt;的Protocols列表。</li>
+   <li>以太坊中每个peer接收新连接的过程，源于标准的TCP/IP监听来访连接的方式(listener)。而每个新连接上的peer，都会由p2p.Server交给ProtocolManager。</li>
+  </ol>
+  <p><br></p> 
+  <p><strong>一点体会</strong>：<br></p> 
+  <p>从上述逻辑流程中可以感受到，对于以太坊的p2p通信管理模块来说，管理Protocol才是其最重要的任务，尤其是通过Protocol中的回调函数的设定，可以在对方peer在发生任何事件时，己方有足够的逻辑进行响应。这也是这个核心结构体<strong>为何被命名为ProtocolManager，而不是PeerManager的原因</strong>。至于管理peer群的功能，基本上用一个列表或者map结构，或者peerSet{}就够了。<br></p> 
+  <h1>3. p2p通信协议族的结构设计</h1> 
+  <p>在上文的介绍中，出现了多处有关p2p通信协议的结构类型，比如eth.peer，p2p.Peer，Server等等。这里不妨对这些p2p通信协议族的结构一并作个总解。以太坊中用到的p2p通信协议族的结构类型，大致可分为三层：</p> 
+  <ul>
+   <li>第一层处于pkg eth中，可以直接被eth.Ethereum，eth.ProtocolManager等顶层管理模块使用，在类型声明上也明显考虑了eth.Ethereum的使用特点。典型的有eth.peer{}, eth.peerSet{}，其中peerSet是peer的集合类型，而eth.peer代表了<strong>远端通信对象和其所有通信操作</strong>，它封装更底层的p2p.Peer对象以及读写通道等。</li>
+   <li>第二层属于pkg p2p，可认为是泛化的p2p通信结构，比较典型的结构类型包括代表远端<strong>通信对象</strong>的p2p.Peer{}, 封装自更底层<strong>连接对象</strong>的conn{}，通信用<strong>通道对象</strong>protoRW{}, 以及启动监听、处理新加入连接或断开连接的Server{}。这一层中，各种数据类型的界限比较清晰，尽量不出现揉杂的情况，这也是泛化结构的需求。值得关注的是<strong>p2p.Protocol{}</strong>，它应该是针对上层应用特意开辟的类型，主要作用包括容纳应用程序所要求的回调函数等，并通过p2p.Server{}在新连接建立后，将其传递给通信对象peer。从这个类型所起的作用来看，命名为Protocol还是比较贴切的，尽管不应将其与TCP/IP协议等既有概念混淆。</li>
+   <li>第三层处于golang自带的网络代码包中，也可分为两部分：第一部分pkg net，包括代表网络连接的&lt;Conn&gt;接口，代表网络地址的&lt;Addr&gt;以及它们的实现类；第二部分pkg syscall，包括更底层的网络相关系统调用类等，可视为封装了网络层(IP)和传输层(TCP)协议的系统实现。</li>
+  </ul>
+  <p>下列UML图描绘了上述三层p2p通信协议族中的一些主要结构，希望对于理解以太坊中p2p通信相关代码有所帮助。<br></p> 
+  <p><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171109221913736?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br></p> 
+  <p><br></p> 
+  <h1>小结:</h1> 
+  <p>诸如以太坊这种去中心化的数字货币运行系统，天生适用p2p通信架构。不过原理虽然简单，在系统架构的层面，依然有很多实现细节需要加以关注。</p> 
+  <ol>
+   <li>eth.ProtocolManager中，会对每一个远端peer发起<strong>主动传输数据</strong>的操作，这组操作按照数据类型区分，可分为<strong>交易和区块</strong>；而若以发送数据方式来区分，亦可分为<strong>广播单项数据</strong>，<strong>和同步一组同类型数据</strong>。这样两两配对，即可形成4组主动传输数据的操作。</li>
+   <li>ProtocolManager通过<strong>在p2p.Protocol{}对象中埋入回调函数</strong>，可以对远端peer的任何事件及状态更新作出响应。这些Protocol对象，会由p2p.Server传递给每一个新连接上的远端peer。</li>
+   <li>以太坊目前实现的<strong>p2p通信协议族</strong>的结构类型中，<strong>按照功能和作用，可分为三层</strong>：顶层pkg eth中的类型直接服务于当前以太坊系统（Ethereum，ProtocolManager等模块），中间层pkg p2p是泛化结构类型，底层包括golang语言包自带的pkg net， syscall等，封装了网络层和传输层协议的系统实现。<br></li>
+  </ol> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/teaspring/article/details/78455046,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/teaspring/article/details/78455046,&quot;}">阅读更多</a> 
+</div>

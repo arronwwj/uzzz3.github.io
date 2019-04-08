@@ -1,0 +1,38 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div class="markdown_views"> 
+  <p><img src="https://img-blog.csdn.net/20160819195706140" alt="这里写图片描述" title=""> <br> Vagrant是用ruby写的一个工具, 它的出现是为了更加容易的解决开发环境的一致性问题. 在DevOps文化导入之前, 很常见的一个场景中, 我们Dev很容易会说, it works on my machine. 但是为什么在别人的machine上不work呢, 开发环境不一致嘛。使用vagrant, 结合其已成生态的box, 很容易的能够解决这个问题. vagrant在一定程度上和docker machine的应用场景多多少少有些重叠, 后续如何还难说。先看一下如何在CentOS上安装最新版的Vagrant1.8.5吧.</p> 
+  <h1 id="下载rpm安装包">下载rpm安装包</h1> 
+  <pre class="prettyprint"><code class=" hljs vala"><span class="hljs-preprocessor"># cd /tmp</span>
+<span class="hljs-preprocessor"># wget https://releases.hashicorp.com/vagrant/1.8.5/vagrant_1.8.5_x86_64.rpm</span></code></pre> 
+  <h1 id="yum本地安装">yum本地安装</h1> 
+  <pre class="prettyprint"><code class=" hljs vala"><span class="hljs-preprocessor"># yum localinstall vagrant_1.8.5_x86_64.rpm</span></code></pre> 
+  <h1 id="安装plugin">安装plugin</h1> 
+  <pre class="prettyprint"><code class=" hljs vala"><span class="hljs-preprocessor"># vagrant plugin install vagrant-proxyconf</span>
+<span class="hljs-preprocessor"># vagrant plugin install landrush</span></code></pre> 
+  <h1 id="确认版本">确认版本</h1> 
+  <pre class="prettyprint"><code class=" hljs vala"><span class="hljs-preprocessor"># vagrant --version</span></code></pre> 
+  <h1 id="安装脚本">安装脚本</h1> 
+  <pre class="prettyprint"><code class=" hljs bash"><span class="hljs-shebang">#!/bin/bash </span>
+VAGRANT_VERSION=<span class="hljs-string">"1.8.5"</span>
+
+<span class="hljs-built_in">cd</span> /etc/yum.repos.d/
+wget http://download.virtualbox.org/virtualbox/rpm/rhel/virtualbox.repo
+yum update -y
+yum install -y binutils qt gcc make patch libgomp glibc-headers glibc-devel kernel-headers kernel-devel dkms
+DIR=`ls -lrt /usr/src/kernels/|tail -n1 |awk <span class="hljs-string">'{print $NF}'</span>`
+<span class="hljs-keyword">export</span> KERN_DIR=<span class="hljs-string">"/usr/src/kernels/<span class="hljs-variable">${DIR}</span>"</span>
+yum install -y VirtualBox-<span class="hljs-number">5.1</span>
+/usr/lib/virtualbox/vboxdrv.sh setup
+
+<span class="hljs-built_in">cd</span> /tmp
+wget https://releases.hashicorp.com/vagrant/<span class="hljs-variable">${VAGRANT_VERSION}</span>/vagrant_<span class="hljs-variable">${VAGRANT_VERSION}</span>_x86_64.rpm
+yum localinstall vagrant_1.<span class="hljs-number">8.5</span>_x86_64.rpm
+vagrant plugin install vagrant-proxyconf
+vagrant plugin install landrush
+vagrant --version</code></pre> 
+ </div> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/markdown_views-ea0013b516.css"> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/liumiaocn/article/details/52254049,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/liumiaocn/article/details/52254049,&quot;}">阅读更多</a> 
+</div>

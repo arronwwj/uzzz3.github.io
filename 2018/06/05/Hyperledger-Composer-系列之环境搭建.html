@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>Hyperledger Composer 系列之环境搭建 | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="Hyperledger Composer 系列之环境搭建" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="从企业区块链的背景来看Hyperledger Composer 到底是什么？ 企业区块链的背景——区块链技术在企业领域的飞速增长 比特币是区块链技术的第一个主流应用方式，最早在2008年由中本聪（Satoshi Nakamoto）提出。随后区块链技术的应用快速增长，而“区块链”这个词甚至被用于称呼所有分布账应用程序，那么本文也就沿用相同的称呼了。 区块链应用大受欢迎，公众（通常为匿名）网络和私有（企业）网络均有广泛应用。虽然这两种模式均可提供很大的价值，但企业区块链技术的需求与公众用途有很大不同，原因主要有三点： 1) 企业通常需要在受管控的环境中运营，而诸如反洗钱（AML）以及了解客户（KYC）等制度要求企业必须对与自己进行交易的参与者身份有着充分了解。比特币是全匿名（确切来说，是基于假名[Pseudonymity]）的，虽然可以看到事务的具体情况，但几乎不可能确定对方身份。而企业需求通常与之截然相反：需要隐私，用户需要知道网络中参与者的身份并且可以信任对方，但并非必须了解所完成的具体事务。 2) 在假名区块链中，必须防止不可信任的参与者破坏网络。目前，比特币以及其他主流的公用区块链体系通常会使用一种名为“工作证明（Proof of Work）”的概念大幅增加进行欺诈行为的难度，但这会增加事务的处理成本，最明显的体现就是电力的消耗。事务验证程序（Transaction validator）会通过计算非常困难的密码学运算，并将计算后的答案告知整个网络，借此证明自己是真实可信的，这种方式很好地解决了信任问题，但会导致处理能力的使用效率大幅降低。私链并不需要这样做，因为参与者都是已知并且可信的。如果事务最终被证明无效，业务网络中的参与者会声誉受损甚至面临经济损失。 3) 私链的应用范围也有所不同。诸如比特币等公链最初的设计主要围绕点对点支付，但企业的“账本”需要能用于描述任何有价值的东西。通常业务网络的规模也更小，是一种封闭的系统（例如可以类比供应链网络）。这一点与非企业用途的区块链大为不同，非企业用途的区块链通常可被任何有计算机的人所访问。 仔细看看目前业务网络的运转方式就可以了解这些需求。通过商品和服务创造的财富在业务网络内流动，这些商品和服务的转移会以一系列事务（交易）的方式记录在账本中。账本是一种极为有用的记录系统，其中描述了业务的所有投入和产出，以及因此产生的财务状况。自从15世纪甚至更早以前，就已经出现了各种形式的账本。 企业区块链技术意在为业务中的这些基本原则建立模型。目前，账本由企业自己所拥有，业务规则决定了商品和服务在网络中的流动。在企业区块链技术的帮助下，账本和业务规则都可以在业务网络内共享，借此可降低开展业务过程中遇到的摩擦（以及相应的成本）。 资产、参与者，以及事务 企业区块链应用可以通过在业务网络内共享的资产、参与者，以及事务来描述： 资产代表任何有价值，可以共享或交易的东西：从汽车、房屋、钻石等有形资产，到有价证券、知识产权，甚至参考数据等无形资产，均可代表。现金本身也是一种资产。&nbsp; 参与者则是指需要在业务网络内共享事务信息的人员。参与者通常是指企业，但也可以包括普通人、监管人员，或其他利益相关者。&nbsp; 事务可用于描述在业务网络内传递的过程中，可针对资产执行的具体操作。 通过将这些组件结合在一起，即可打造一种分布式处理系统，也叫做设施（Fabric），借此对区块链应用的运行进行管控。智能合约（用于实现事务的业务规则汇编后的产物）实际上是一种存储的过程调用，可在网络中多个节点上运行，运行后输出的结果通过合意过程被所有网络成员认可。 目前最大的挑战在于，如何将区块链解决方案中的资产、参与者以及事务与此类区块链处理系统的现实技术进行映射。区块链应用的实现需要极高成本，因为需要通过大量工作实现用于定义业务目标的逻辑，同时需要让智能合约能够顺利使用区块链所提供的服务。 Hyperledger Composer Linux基金会托管的Hyperledger项目所提供的Hyperledger Composer致力于解决这样的问题，借此区块链开发者可以轻松地对业务资产、参与者以及事务建模，将这些模型变成可行的区块链应用。Hyperledger项目始于2015年12月，包含了一系列适用于企业，先进的跨行业开源区块链技术。这是Linux基金会有史以来发展速度最快的项目，而Hyperledger“联盟”目前已包含多种技术，如Hyperledger Fabric和Hyperledger Sawtooth等区块链框架，以及提供监视、身份、开发和部署等服务的工具。Hyperledger Composer正是其中的一种工具。 Hyperledger Composer为资产、参与者，以及事务的建模提供了一种面向特定领域，非常简单的建模语言，开发者可以通过JavaScript编写实现事务逻辑的方法。开发者可以在自己惯用的任何开发环境中编写这些文件（针对大部分编辑器提供了必要的插件），并可在一种基于Web的“试验场（Playground）”帮助下开发、打包、部署并测试这些项目，同时还为脚本环境提供了所需的命令行工具。应用程序可部署至Hyperledger Fabric实例，或在Web浏览器中进行本地模拟。 &nbsp;&nbsp;&nbsp;&nbsp;Hyperledger Composer 主要模块和开发流程 Hyperledger Composer还可针对不同资产生成骨架（Skeleton）命令行或Angular2应用，对Loopback的支持使得我们可以通过RESTful与应用交互，这样区块链即可连接至现有记录系统，例如可使用集成中间件，如Node.RED或IBM Integration Bus进行连接。 Hyperledger Composer主要概念简介 Hyperledger Composer是一种包含建模语言和一组API的编程模型，用于快速定义和部署允许参与者发送交换资产的交易的业务网络和应用程序。Hyperledger Composer组件您可以使用称为Hyperledger Composer Playground的基于浏览器的用户界面体验Hyperledger Composer。游乐场可作为托管版本（无需安装）或本地安装（适用于离线编辑和测试示例业务网络）。想要使用Hyperledger Composer的完整应用程序开发功能的开发人员应安装开发人员工具。 Hyperledger Composer中的重要概念 &nbsp;&nbsp; 基本组件如下： 区块链状态存储通过商业网络提交的所有交易都存储在区块链分类帐中，资产和参与者的当前状态存储在区块链状态数据库中。区块链通过一组对等点分配账本和状态数据库，并确保对使用一致算法的所有对等点的分类账和状态数据库的更新保持一致。连接配置文件Hyperledger Composer使用连接配置文件来定义要连接的系统。连接配置文件是一个JSON文档，它是业务网卡的一部分。这些配置文件通常由系统的创建者提供，并且应该用于创建业务网卡以便能够连接到该系统。资产资产是有形或无形的商品，服务或财产，并存储在注册管理机构中。资产几乎可以代表商业网络中的任何东西，例如，待售房屋，销售清单，该房屋的土地登记证书以及该房屋的保险文件可能都是一个或多个商业网络中的资产。资产必须具有唯一标识符，但除此之外，它们可以包含您定义的任何属性。资产可能与其他资产或参与者有关。参与者参与者是商业网络的成员。他们可能拥有资产并提交交易。参与者类型是建模的，并且像资产一样，必须具有标识符并且可以根据需要具有任何其他属性。参与者可以映射到一个或多个身份。身份身份是数字证书和私钥。身份用于在业务网络上进行交易，并且必须映射到业务网络中的参与者。单个身份存储在商业网卡中，如果该身份已映射到参与者，则它允许该商业网卡的用户在该参与者的商业网络上进行交易。业务网卡业务网卡是标识，连接配置文件和元数据的组合，元数据可以包含要连接的业务网络的名称。业务网卡简化了连接到业务网络的过程，并将业务网络之外的身份概念扩展为身份的“钱包”，每个身份都与特定的业务网络和连接配置文件相关联。交易交易是参与者与资产交互的机制。这可以像参与者对拍卖中的资产投标或拍卖人标记拍卖关闭一样简单，自动将资产所有权转移给出价最高的投标人。查询查询用于返回有关区块链世界状态的数据。查询在业务网络中定义，并且可以包含用于简单定制的可变参数。通过使用查询，可以轻松地从您的区块链网络中提取数据。查询通过使用Hyperledger Composer API发送。活动业务网络定义中的事件与资产或参与者相同。一旦事件已被定义，它们可以由事务处理器功能发出，以向外部系统指示分类账发生了重要的事情。应用程序可以通过composer-client API订阅发出的事件。访问控制业务网络可能包含一组访问控制规则。访问控制规则允许对参与者访问业务网络中的哪些资产以及在什么条件下进行细粒度控制。访问控制语言足够丰富，可以通过声明捕捉复杂的条件，例如“只有车主才能转让车辆所有权”。事务处理器功能逻辑的外部访问控制使检查，调试，开发和维护变得更加容易。历史记录注册表注册表是一个专门的登记处，记录成功的交易，包括提交他们的参与者和身份。历史记录将事务存储为HistorianRecord资产，这些资产在Hyperledger Composer系统名称空间中定义。 Hyperledger Composer 搭建本地环境 Hyperledger Composer 公共在线playground 网址：composer-playground.mybluemix.net/ 下面的视频介绍如何搭建本地环境： 值得注意的是， 要选择npm 8.9.1： nvm install v8.9.1 &nbsp; nvm use 8.9.1&nbsp; # telling nvm to use npm 8.9.1 npm install -g&nbsp; composer-cli&nbsp; --unsafe-perm&nbsp; 如有什么问题和建议， 请留言哦 阅读更多" />
+<meta property="og:description" content="从企业区块链的背景来看Hyperledger Composer 到底是什么？ 企业区块链的背景——区块链技术在企业领域的飞速增长 比特币是区块链技术的第一个主流应用方式，最早在2008年由中本聪（Satoshi Nakamoto）提出。随后区块链技术的应用快速增长，而“区块链”这个词甚至被用于称呼所有分布账应用程序，那么本文也就沿用相同的称呼了。 区块链应用大受欢迎，公众（通常为匿名）网络和私有（企业）网络均有广泛应用。虽然这两种模式均可提供很大的价值，但企业区块链技术的需求与公众用途有很大不同，原因主要有三点： 1) 企业通常需要在受管控的环境中运营，而诸如反洗钱（AML）以及了解客户（KYC）等制度要求企业必须对与自己进行交易的参与者身份有着充分了解。比特币是全匿名（确切来说，是基于假名[Pseudonymity]）的，虽然可以看到事务的具体情况，但几乎不可能确定对方身份。而企业需求通常与之截然相反：需要隐私，用户需要知道网络中参与者的身份并且可以信任对方，但并非必须了解所完成的具体事务。 2) 在假名区块链中，必须防止不可信任的参与者破坏网络。目前，比特币以及其他主流的公用区块链体系通常会使用一种名为“工作证明（Proof of Work）”的概念大幅增加进行欺诈行为的难度，但这会增加事务的处理成本，最明显的体现就是电力的消耗。事务验证程序（Transaction validator）会通过计算非常困难的密码学运算，并将计算后的答案告知整个网络，借此证明自己是真实可信的，这种方式很好地解决了信任问题，但会导致处理能力的使用效率大幅降低。私链并不需要这样做，因为参与者都是已知并且可信的。如果事务最终被证明无效，业务网络中的参与者会声誉受损甚至面临经济损失。 3) 私链的应用范围也有所不同。诸如比特币等公链最初的设计主要围绕点对点支付，但企业的“账本”需要能用于描述任何有价值的东西。通常业务网络的规模也更小，是一种封闭的系统（例如可以类比供应链网络）。这一点与非企业用途的区块链大为不同，非企业用途的区块链通常可被任何有计算机的人所访问。 仔细看看目前业务网络的运转方式就可以了解这些需求。通过商品和服务创造的财富在业务网络内流动，这些商品和服务的转移会以一系列事务（交易）的方式记录在账本中。账本是一种极为有用的记录系统，其中描述了业务的所有投入和产出，以及因此产生的财务状况。自从15世纪甚至更早以前，就已经出现了各种形式的账本。 企业区块链技术意在为业务中的这些基本原则建立模型。目前，账本由企业自己所拥有，业务规则决定了商品和服务在网络中的流动。在企业区块链技术的帮助下，账本和业务规则都可以在业务网络内共享，借此可降低开展业务过程中遇到的摩擦（以及相应的成本）。 资产、参与者，以及事务 企业区块链应用可以通过在业务网络内共享的资产、参与者，以及事务来描述： 资产代表任何有价值，可以共享或交易的东西：从汽车、房屋、钻石等有形资产，到有价证券、知识产权，甚至参考数据等无形资产，均可代表。现金本身也是一种资产。&nbsp; 参与者则是指需要在业务网络内共享事务信息的人员。参与者通常是指企业，但也可以包括普通人、监管人员，或其他利益相关者。&nbsp; 事务可用于描述在业务网络内传递的过程中，可针对资产执行的具体操作。 通过将这些组件结合在一起，即可打造一种分布式处理系统，也叫做设施（Fabric），借此对区块链应用的运行进行管控。智能合约（用于实现事务的业务规则汇编后的产物）实际上是一种存储的过程调用，可在网络中多个节点上运行，运行后输出的结果通过合意过程被所有网络成员认可。 目前最大的挑战在于，如何将区块链解决方案中的资产、参与者以及事务与此类区块链处理系统的现实技术进行映射。区块链应用的实现需要极高成本，因为需要通过大量工作实现用于定义业务目标的逻辑，同时需要让智能合约能够顺利使用区块链所提供的服务。 Hyperledger Composer Linux基金会托管的Hyperledger项目所提供的Hyperledger Composer致力于解决这样的问题，借此区块链开发者可以轻松地对业务资产、参与者以及事务建模，将这些模型变成可行的区块链应用。Hyperledger项目始于2015年12月，包含了一系列适用于企业，先进的跨行业开源区块链技术。这是Linux基金会有史以来发展速度最快的项目，而Hyperledger“联盟”目前已包含多种技术，如Hyperledger Fabric和Hyperledger Sawtooth等区块链框架，以及提供监视、身份、开发和部署等服务的工具。Hyperledger Composer正是其中的一种工具。 Hyperledger Composer为资产、参与者，以及事务的建模提供了一种面向特定领域，非常简单的建模语言，开发者可以通过JavaScript编写实现事务逻辑的方法。开发者可以在自己惯用的任何开发环境中编写这些文件（针对大部分编辑器提供了必要的插件），并可在一种基于Web的“试验场（Playground）”帮助下开发、打包、部署并测试这些项目，同时还为脚本环境提供了所需的命令行工具。应用程序可部署至Hyperledger Fabric实例，或在Web浏览器中进行本地模拟。 &nbsp;&nbsp;&nbsp;&nbsp;Hyperledger Composer 主要模块和开发流程 Hyperledger Composer还可针对不同资产生成骨架（Skeleton）命令行或Angular2应用，对Loopback的支持使得我们可以通过RESTful与应用交互，这样区块链即可连接至现有记录系统，例如可使用集成中间件，如Node.RED或IBM Integration Bus进行连接。 Hyperledger Composer主要概念简介 Hyperledger Composer是一种包含建模语言和一组API的编程模型，用于快速定义和部署允许参与者发送交换资产的交易的业务网络和应用程序。Hyperledger Composer组件您可以使用称为Hyperledger Composer Playground的基于浏览器的用户界面体验Hyperledger Composer。游乐场可作为托管版本（无需安装）或本地安装（适用于离线编辑和测试示例业务网络）。想要使用Hyperledger Composer的完整应用程序开发功能的开发人员应安装开发人员工具。 Hyperledger Composer中的重要概念 &nbsp;&nbsp; 基本组件如下： 区块链状态存储通过商业网络提交的所有交易都存储在区块链分类帐中，资产和参与者的当前状态存储在区块链状态数据库中。区块链通过一组对等点分配账本和状态数据库，并确保对使用一致算法的所有对等点的分类账和状态数据库的更新保持一致。连接配置文件Hyperledger Composer使用连接配置文件来定义要连接的系统。连接配置文件是一个JSON文档，它是业务网卡的一部分。这些配置文件通常由系统的创建者提供，并且应该用于创建业务网卡以便能够连接到该系统。资产资产是有形或无形的商品，服务或财产，并存储在注册管理机构中。资产几乎可以代表商业网络中的任何东西，例如，待售房屋，销售清单，该房屋的土地登记证书以及该房屋的保险文件可能都是一个或多个商业网络中的资产。资产必须具有唯一标识符，但除此之外，它们可以包含您定义的任何属性。资产可能与其他资产或参与者有关。参与者参与者是商业网络的成员。他们可能拥有资产并提交交易。参与者类型是建模的，并且像资产一样，必须具有标识符并且可以根据需要具有任何其他属性。参与者可以映射到一个或多个身份。身份身份是数字证书和私钥。身份用于在业务网络上进行交易，并且必须映射到业务网络中的参与者。单个身份存储在商业网卡中，如果该身份已映射到参与者，则它允许该商业网卡的用户在该参与者的商业网络上进行交易。业务网卡业务网卡是标识，连接配置文件和元数据的组合，元数据可以包含要连接的业务网络的名称。业务网卡简化了连接到业务网络的过程，并将业务网络之外的身份概念扩展为身份的“钱包”，每个身份都与特定的业务网络和连接配置文件相关联。交易交易是参与者与资产交互的机制。这可以像参与者对拍卖中的资产投标或拍卖人标记拍卖关闭一样简单，自动将资产所有权转移给出价最高的投标人。查询查询用于返回有关区块链世界状态的数据。查询在业务网络中定义，并且可以包含用于简单定制的可变参数。通过使用查询，可以轻松地从您的区块链网络中提取数据。查询通过使用Hyperledger Composer API发送。活动业务网络定义中的事件与资产或参与者相同。一旦事件已被定义，它们可以由事务处理器功能发出，以向外部系统指示分类账发生了重要的事情。应用程序可以通过composer-client API订阅发出的事件。访问控制业务网络可能包含一组访问控制规则。访问控制规则允许对参与者访问业务网络中的哪些资产以及在什么条件下进行细粒度控制。访问控制语言足够丰富，可以通过声明捕捉复杂的条件，例如“只有车主才能转让车辆所有权”。事务处理器功能逻辑的外部访问控制使检查，调试，开发和维护变得更加容易。历史记录注册表注册表是一个专门的登记处，记录成功的交易，包括提交他们的参与者和身份。历史记录将事务存储为HistorianRecord资产，这些资产在Hyperledger Composer系统名称空间中定义。 Hyperledger Composer 搭建本地环境 Hyperledger Composer 公共在线playground 网址：composer-playground.mybluemix.net/ 下面的视频介绍如何搭建本地环境： 值得注意的是， 要选择npm 8.9.1： nvm install v8.9.1 &nbsp; nvm use 8.9.1&nbsp; # telling nvm to use npm 8.9.1 npm install -g&nbsp; composer-cli&nbsp; --unsafe-perm&nbsp; 如有什么问题和建议， 请留言哦 阅读更多" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/06/05/Hyperledger-Composer-%E7%B3%BB%E5%88%97%E4%B9%8B%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/06/05/Hyperledger-Composer-%E7%B3%BB%E5%88%97%E4%B9%8B%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-06-05T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"从企业区块链的背景来看Hyperledger Composer 到底是什么？ 企业区块链的背景——区块链技术在企业领域的飞速增长 比特币是区块链技术的第一个主流应用方式，最早在2008年由中本聪（Satoshi Nakamoto）提出。随后区块链技术的应用快速增长，而“区块链”这个词甚至被用于称呼所有分布账应用程序，那么本文也就沿用相同的称呼了。 区块链应用大受欢迎，公众（通常为匿名）网络和私有（企业）网络均有广泛应用。虽然这两种模式均可提供很大的价值，但企业区块链技术的需求与公众用途有很大不同，原因主要有三点： 1) 企业通常需要在受管控的环境中运营，而诸如反洗钱（AML）以及了解客户（KYC）等制度要求企业必须对与自己进行交易的参与者身份有着充分了解。比特币是全匿名（确切来说，是基于假名[Pseudonymity]）的，虽然可以看到事务的具体情况，但几乎不可能确定对方身份。而企业需求通常与之截然相反：需要隐私，用户需要知道网络中参与者的身份并且可以信任对方，但并非必须了解所完成的具体事务。 2) 在假名区块链中，必须防止不可信任的参与者破坏网络。目前，比特币以及其他主流的公用区块链体系通常会使用一种名为“工作证明（Proof of Work）”的概念大幅增加进行欺诈行为的难度，但这会增加事务的处理成本，最明显的体现就是电力的消耗。事务验证程序（Transaction validator）会通过计算非常困难的密码学运算，并将计算后的答案告知整个网络，借此证明自己是真实可信的，这种方式很好地解决了信任问题，但会导致处理能力的使用效率大幅降低。私链并不需要这样做，因为参与者都是已知并且可信的。如果事务最终被证明无效，业务网络中的参与者会声誉受损甚至面临经济损失。 3) 私链的应用范围也有所不同。诸如比特币等公链最初的设计主要围绕点对点支付，但企业的“账本”需要能用于描述任何有价值的东西。通常业务网络的规模也更小，是一种封闭的系统（例如可以类比供应链网络）。这一点与非企业用途的区块链大为不同，非企业用途的区块链通常可被任何有计算机的人所访问。 仔细看看目前业务网络的运转方式就可以了解这些需求。通过商品和服务创造的财富在业务网络内流动，这些商品和服务的转移会以一系列事务（交易）的方式记录在账本中。账本是一种极为有用的记录系统，其中描述了业务的所有投入和产出，以及因此产生的财务状况。自从15世纪甚至更早以前，就已经出现了各种形式的账本。 企业区块链技术意在为业务中的这些基本原则建立模型。目前，账本由企业自己所拥有，业务规则决定了商品和服务在网络中的流动。在企业区块链技术的帮助下，账本和业务规则都可以在业务网络内共享，借此可降低开展业务过程中遇到的摩擦（以及相应的成本）。 资产、参与者，以及事务 企业区块链应用可以通过在业务网络内共享的资产、参与者，以及事务来描述： 资产代表任何有价值，可以共享或交易的东西：从汽车、房屋、钻石等有形资产，到有价证券、知识产权，甚至参考数据等无形资产，均可代表。现金本身也是一种资产。&nbsp; 参与者则是指需要在业务网络内共享事务信息的人员。参与者通常是指企业，但也可以包括普通人、监管人员，或其他利益相关者。&nbsp; 事务可用于描述在业务网络内传递的过程中，可针对资产执行的具体操作。 通过将这些组件结合在一起，即可打造一种分布式处理系统，也叫做设施（Fabric），借此对区块链应用的运行进行管控。智能合约（用于实现事务的业务规则汇编后的产物）实际上是一种存储的过程调用，可在网络中多个节点上运行，运行后输出的结果通过合意过程被所有网络成员认可。 目前最大的挑战在于，如何将区块链解决方案中的资产、参与者以及事务与此类区块链处理系统的现实技术进行映射。区块链应用的实现需要极高成本，因为需要通过大量工作实现用于定义业务目标的逻辑，同时需要让智能合约能够顺利使用区块链所提供的服务。 Hyperledger Composer Linux基金会托管的Hyperledger项目所提供的Hyperledger Composer致力于解决这样的问题，借此区块链开发者可以轻松地对业务资产、参与者以及事务建模，将这些模型变成可行的区块链应用。Hyperledger项目始于2015年12月，包含了一系列适用于企业，先进的跨行业开源区块链技术。这是Linux基金会有史以来发展速度最快的项目，而Hyperledger“联盟”目前已包含多种技术，如Hyperledger Fabric和Hyperledger Sawtooth等区块链框架，以及提供监视、身份、开发和部署等服务的工具。Hyperledger Composer正是其中的一种工具。 Hyperledger Composer为资产、参与者，以及事务的建模提供了一种面向特定领域，非常简单的建模语言，开发者可以通过JavaScript编写实现事务逻辑的方法。开发者可以在自己惯用的任何开发环境中编写这些文件（针对大部分编辑器提供了必要的插件），并可在一种基于Web的“试验场（Playground）”帮助下开发、打包、部署并测试这些项目，同时还为脚本环境提供了所需的命令行工具。应用程序可部署至Hyperledger Fabric实例，或在Web浏览器中进行本地模拟。 &nbsp;&nbsp;&nbsp;&nbsp;Hyperledger Composer 主要模块和开发流程 Hyperledger Composer还可针对不同资产生成骨架（Skeleton）命令行或Angular2应用，对Loopback的支持使得我们可以通过RESTful与应用交互，这样区块链即可连接至现有记录系统，例如可使用集成中间件，如Node.RED或IBM Integration Bus进行连接。 Hyperledger Composer主要概念简介 Hyperledger Composer是一种包含建模语言和一组API的编程模型，用于快速定义和部署允许参与者发送交换资产的交易的业务网络和应用程序。Hyperledger Composer组件您可以使用称为Hyperledger Composer Playground的基于浏览器的用户界面体验Hyperledger Composer。游乐场可作为托管版本（无需安装）或本地安装（适用于离线编辑和测试示例业务网络）。想要使用Hyperledger Composer的完整应用程序开发功能的开发人员应安装开发人员工具。 Hyperledger Composer中的重要概念 &nbsp;&nbsp; 基本组件如下： 区块链状态存储通过商业网络提交的所有交易都存储在区块链分类帐中，资产和参与者的当前状态存储在区块链状态数据库中。区块链通过一组对等点分配账本和状态数据库，并确保对使用一致算法的所有对等点的分类账和状态数据库的更新保持一致。连接配置文件Hyperledger Composer使用连接配置文件来定义要连接的系统。连接配置文件是一个JSON文档，它是业务网卡的一部分。这些配置文件通常由系统的创建者提供，并且应该用于创建业务网卡以便能够连接到该系统。资产资产是有形或无形的商品，服务或财产，并存储在注册管理机构中。资产几乎可以代表商业网络中的任何东西，例如，待售房屋，销售清单，该房屋的土地登记证书以及该房屋的保险文件可能都是一个或多个商业网络中的资产。资产必须具有唯一标识符，但除此之外，它们可以包含您定义的任何属性。资产可能与其他资产或参与者有关。参与者参与者是商业网络的成员。他们可能拥有资产并提交交易。参与者类型是建模的，并且像资产一样，必须具有标识符并且可以根据需要具有任何其他属性。参与者可以映射到一个或多个身份。身份身份是数字证书和私钥。身份用于在业务网络上进行交易，并且必须映射到业务网络中的参与者。单个身份存储在商业网卡中，如果该身份已映射到参与者，则它允许该商业网卡的用户在该参与者的商业网络上进行交易。业务网卡业务网卡是标识，连接配置文件和元数据的组合，元数据可以包含要连接的业务网络的名称。业务网卡简化了连接到业务网络的过程，并将业务网络之外的身份概念扩展为身份的“钱包”，每个身份都与特定的业务网络和连接配置文件相关联。交易交易是参与者与资产交互的机制。这可以像参与者对拍卖中的资产投标或拍卖人标记拍卖关闭一样简单，自动将资产所有权转移给出价最高的投标人。查询查询用于返回有关区块链世界状态的数据。查询在业务网络中定义，并且可以包含用于简单定制的可变参数。通过使用查询，可以轻松地从您的区块链网络中提取数据。查询通过使用Hyperledger Composer API发送。活动业务网络定义中的事件与资产或参与者相同。一旦事件已被定义，它们可以由事务处理器功能发出，以向外部系统指示分类账发生了重要的事情。应用程序可以通过composer-client API订阅发出的事件。访问控制业务网络可能包含一组访问控制规则。访问控制规则允许对参与者访问业务网络中的哪些资产以及在什么条件下进行细粒度控制。访问控制语言足够丰富，可以通过声明捕捉复杂的条件，例如“只有车主才能转让车辆所有权”。事务处理器功能逻辑的外部访问控制使检查，调试，开发和维护变得更加容易。历史记录注册表注册表是一个专门的登记处，记录成功的交易，包括提交他们的参与者和身份。历史记录将事务存储为HistorianRecord资产，这些资产在Hyperledger Composer系统名称空间中定义。 Hyperledger Composer 搭建本地环境 Hyperledger Composer 公共在线playground 网址：composer-playground.mybluemix.net/ 下面的视频介绍如何搭建本地环境： 值得注意的是， 要选择npm 8.9.1： nvm install v8.9.1 &nbsp; nvm use 8.9.1&nbsp; # telling nvm to use npm 8.9.1 npm install -g&nbsp; composer-cli&nbsp; --unsafe-perm&nbsp; 如有什么问题和建议， 请留言哦 阅读更多","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/06/05/Hyperledger-Composer-%E7%B3%BB%E5%88%97%E4%B9%8B%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA.html","headline":"Hyperledger Composer 系列之环境搭建","dateModified":"2018-06-05T00:00:00+08:00","datePublished":"2018-06-05T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/06/05/Hyperledger-Composer-%E7%B3%BB%E5%88%97%E4%B9%8B%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>Hyperledger Composer 系列之环境搭建</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <div class="rich_media_content"> 
+   <p><span style="font-size:20px;"><br></span></p>
+   <p><span style="font-size:20px;"></span></p>
+   <h2 style="font-size:20px;border:0px;clear:none;width:610px;color:rgb(34,34,34);line-height:24px;">从企业区块链的背景来看<span>Hyperledger Composer 到底是什么？</span></h2>
+   <p><span style="font-size:20px;"></span></p>
+   <hr>
+   <p><span style="font-size:20px;"></span><br></p>
+   <h2 style="font-size:20px;border:0px;clear:none;width:610px;color:rgb(34,34,34);line-height:24px;">企业区块链的背景——<span style="font-size:18px;">区块链技术在企业领域的飞速增长</span></h2>
+   <p style="border:0px;font-size:14px;line-height:1.8;clear:none;width:610px;">比特币是区块链技术的第一个主流应用方式，最早在2008年由中本聪（Satoshi Nakamoto）提出。随后区块链技术的应用快速增长，而“区块链”这个词甚至被用于称呼所有分布账应用程序，那么本文也就沿用相同的称呼了。</p>
+   <p style="border:0px;font-size:14px;line-height:1.8;clear:none;width:610px;">区块链应用大受欢迎，公众（通常为匿名）网络和私有（企业）网络均有广泛应用。虽然这两种模式均可提供很大的价值，但企业区块链技术的需求与公众用途有很大不同，原因主要有三点：</p>
+   <p style="border:0px;font-size:14px;line-height:1.8;clear:none;width:610px;">1) 企业通常需要在受管控的环境中运营，而诸如反洗钱（AML）以及了解客户（KYC）等制度要求企业必须对与自己进行交易的参与者身份有着充分了解。比特币是全匿名（确切来说，是基于假名[Pseudonymity]）的，虽然可以看到事务的具体情况，但几乎不可能确定对方身份。而企业需求通常与之截然相反：需要隐私，用户需要知道网络中参与者的身份并且可以信任对方，但并非必须了解所完成的具体事务。</p>
+   <p style="border:0px;font-size:14px;line-height:1.8;clear:none;width:610px;">2) 在假名区块链中，必须防止不可信任的参与者破坏网络。目前，比特币以及其他主流的公用区块链体系通常会使用一种名为“工作证明（Proof of Work）”的概念大幅增加进行欺诈行为的难度，但这会增加事务的处理成本，最明显的体现就是电力的消耗。事务验证程序（Transaction validator）会通过计算非常困难的密码学运算，并将计算后的答案告知整个网络，借此证明自己是真实可信的，这种方式很好地解决了信任问题，但会导致处理能力的使用效率大幅降低。私链并不需要这样做，因为参与者都是已知并且可信的。如果事务最终被证明无效，业务网络中的参与者会声誉受损甚至面临经济损失。</p>
+   <p style="border:0px;font-size:14px;line-height:1.8;clear:none;width:610px;">3) 私链的应用范围也有所不同。诸如比特币等公链最初的设计主要围绕点对点支付，但企业的“账本”需要能用于描述任何有价值的东西。通常业务网络的规模也更小，是一种封闭的系统（例如可以类比供应链网络）。这一点与非企业用途的区块链大为不同，非企业用途的区块链通常可被任何有计算机的人所访问。</p>
+   <p style="border:0px;font-size:14px;line-height:1.8;clear:none;width:610px;">仔细看看目前业务网络的运转方式就可以了解这些需求。通过商品和服务创造的财富在业务网络内流动，这些商品和服务的转移会以一系列事务（交易）的方式记录在账本中。账本是一种极为有用的记录系统，其中描述了业务的所有投入和产出，以及因此产生的财务状况。自从15世纪甚至更早以前，就已经出现了各种形式的账本。</p>
+   <p style="border:0px;font-size:14px;line-height:1.8;clear:none;width:610px;">企业区块链技术意在为业务中的这些基本原则建立模型。目前，账本由企业自己所拥有，业务规则决定了商品和服务在网络中的流动。在企业区块链技术的帮助下，账本和业务规则都可以在业务网络内共享，借此可降低开展业务过程中遇到的摩擦（以及相应的成本）。</p>
+   <h2 style="font-size:20px;border:0px;clear:none;width:610px;color:rgb(34,34,34);line-height:24px;">资产、参与者，以及事务</h2>
+   <p style="border:0px;font-size:14px;line-height:1.8;clear:none;width:610px;">企业区块链应用可以通过在业务网络内共享的资产、参与者，以及事务来描述：</p>
+   <ul style="margin-left:10px;" class="list-paddingleft-2">
+    <li><p><span style="text-decoration:underline;">资产代表任何有价值，可以共享或交易的东西</span>：从汽车、房屋、钻石等有形资产，到有价证券、知识产权，甚至参考数据等无形资产，均可代表。现金本身也是一种资产。&nbsp;</p></li>
+    <li><p><span style="text-decoration:underline;">参与者则是指需要在业务网络内共享事务信息的人员</span>。参与者通常是指企业，但也可以包括普通人、监管人员，或其他利益相关者。&nbsp;</p></li>
+    <li><p><span style="text-decoration:underline;">事务可用于描述在业务网络内传递的过程中，可针对资产执行的具体操作</span>。</p></li>
+   </ul>
+   <p style="border:0px;font-size:14px;line-height:1.8;clear:none;width:610px;">通过将这些组件结合在一起，即可打造一种分布式处理系统，也叫做设施（Fabric），借此对区块链应用的运行进行管控。智能合约（用于实现事务的业务规则汇编后的产物）实际上是一种存储的过程调用，可在网络中多个节点上运行，运行后输出的结果通过合意过程被所有网络成员认可。</p>
+   <p style="border:0px;font-size:14px;line-height:1.8;clear:none;width:610px;">目前最大的挑战在于，如何将区块链解决方案中的资产、参与者以及事务与此类区块链处理系统的现实技术进行映射。区块链应用的实现需要极高成本，因为需要通过大量工作实现用于定义业务目标的逻辑，同时需要让智能合约能够顺利使用区块链所提供的服务。</p>
+   <h2 style="font-size:20px;border:0px;clear:none;width:610px;color:rgb(34,34,34);line-height:24px;">Hyperledger Composer</h2>
+   <p style="border:0px;font-size:14px;line-height:1.8;clear:none;width:610px;"><span style="font-size:16px;">Linux基金会托管的Hyperledger项目所提供的Hyperledger Composer致力于解决这样的问题，借此区块链开发者可以轻松地对业务资产、参与者以及事务建模，将这些模型变成可行的区块链应用。Hyperledger项目始于2015年12月，包含了一系列适用于企业，先进的跨行业开源区块链技术。这是Linux基金会有史以来发展速度最快的项目，而Hyperledger“联盟”目前已包含多种技术，如</span><span style="font-size:16px;">Hyperledger Fabric</span><span style="font-size:16px;">和</span><span style="font-size:16px;">Hyperledger Sawtooth</span><span style="font-size:16px;">等区块链框架，以及提供监视、身份、开发和部署等服务的工具。</span><span style="font-size:16px;">Hyperledger Composer</span><span style="font-size:16px;">正是其中的一种工具。</span></p>
+   <p style="border:0px;font-size:14px;line-height:1.8;clear:none;width:610px;"><span style="font-size:16px;"><span style="text-decoration:underline;">Hyperledger Composer为资产、参与者，以及事务的建模提供了一种面向特定领域，非常简单的建模语言</span>，开发者可以通过JavaScript编写实现事务逻辑的方法。开发者可以在自己惯用的任何开发环境中编写这些文件（针对大部分编辑器提供了必要的插件），并可在一种基于Web的“试验场（Playground）”帮助下开发、打包、部署并测试这些项目，同时还为脚本环境提供了所需的命令行工具。应用程序可部署至Hyperledger Fabric实例，或在Web浏览器中进行本地模拟。</span></p>
+   <p style="border:0px;font-size:14px;line-height:1.8;clear:none;width:610px;"><span style="font-size:16px;"></span></p>
+   <p><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/Muy9CdcjzFsojXI3ibfumYLkSTuHgvE8AlbG5gC3txuMHeARs3fWRJlgAIAd27eWcEgic8qjnVkoQJqSq12eiclog/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="border:0px;font-size:14px;line-height:1.8;clear:none;width:610px;"><span style="font-size:16px;"></span>&nbsp;&nbsp;&nbsp;&nbsp;Hyperledger Composer 主要模块和开发流程<br></p>
+   <p style="border:0px;font-size:14px;line-height:1.8;clear:none;width:610px;"><span style="font-size:16px;">Hyperledger Composer还可针对不同资产生成骨架（Skeleton）命令行或Angular2应用，对Loopback的支持使得我们可以通过RESTful与应用交互，这样区块链即可连接至现有记录系统，例如可使用集成中间件，如</span><span style="font-size:16px;">Node.RED</span><span style="font-size:16px;">或</span><span style="font-size:16px;">IBM Integration Bus</span><span style="font-size:16px;">进行连接。</span></p>
+   <p><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/Muy9CdcjzFsojXI3ibfumYLkSTuHgvE8A3EqwSEJgSOMda2HT8iaHvkszVJLBI2cCPDOM9eBcQsia9sicnB5HXQ9zA/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p><br></p>
+   <h2 style="font-size:20px;border:0px;width:610px;color:rgb(34,34,34);line-height:24px;"><br></h2>
+   <h2 style="font-size:20px;border:0px;width:610px;color:rgb(34,34,34);line-height:24px;">Hyperledger Composer主要概念简介</h2>
+   <hr>
+   <p><br></p>
+   <p><br></p>
+   <p><span lang="zh-cn" style="font-family:'-webkit-standard';" xml:lang="zh-cn"><span>Hyperledger Composer是一种包含建模语言和一组API的编程模型，用于快速定义和部署允许参与者发送交换资产的交易的业务网络和应用程序。</span><br><br><strong><span>Hyperledger Composer组件</span></strong><br><span>您可以使用称为Hyperledger Composer Playground的基于浏览器的用户界面体验Hyperledger Composer。</span><span>游乐场可作为托管版本（无需安装）或本地安装（适用于离线编辑和测试示例业务网络）。</span><br><br><span>想要使用Hyperledger Composer的完整应用程序开发功能的开发人员应安装开发人员工具。</span></span></p>
+   <p><span lang="zh-cn" style="font-family:'-webkit-standard';" xml:lang="zh-cn"><span></span></span></p>
+   <p><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/Muy9CdcjzFsojXI3ibfumYLkSTuHgvE8AibYcRnPbZXLaZ8RBPGNMiaN3t5zeJyOcKt8h3rTZ0YaGpbb924CKPvEA/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p><span style="font-family:'-webkit-standard';font-size:18px;"><br></span></p>
+   <p><span lang="zh-cn" style="font-family:'-webkit-standard';" xml:lang="zh-cn"></span><span style="font-family:'-webkit-standard';font-size:18px;">Hyperledger Composer中的重要概念</span></p>
+   <p><span lang="zh-cn" style="font-family:'-webkit-standard';" xml:lang="zh-cn"><span title="Key Concepts in Hyperledger Composer">&nbsp;&nbsp;</span></span></p>
+   <p><span lang="zh-cn" style="font-family:'-webkit-standard';" xml:lang="zh-cn"><span title="Key Concepts in Hyperledger Composer">基本组件如下：</span></span></p>
+   <p><span lang="zh-cn" style="font-family:'-webkit-standard';" xml:lang="zh-cn"><span title="Key Concepts in Hyperledger Composer"></span></span></p>
+   <p><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/Muy9CdcjzFsojXI3ibfumYLkSTuHgvE8Az04Fm0TGP4aC1mow7p8vx7iba9dkiaFwpWl5WLYliaM0ib1zfQDMr6O6Dw/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p><br></p>
+   <p><span lang="zh-cn" style="font-family:'-webkit-standard';" xml:lang="zh-cn"><span title="Key Concepts in Hyperledger Composer"></span><strong><span title="Blockchain State Storage">区块链状态存储</span></strong><span title="Blockchain State Storage"><br></span><span title="All transactions submitted through a business network are stored on the blockchain ledger, and the current state of assets and participants are stored in the blockchain state database.">通过商业网络提交的所有交易都存储在区块链分类帐中，资产和参与者的当前状态存储在区块链状态数据库中。</span><span title="The blockchain distributes the ledger and the state database across a set of peers and ensures that updates to the ledger and state database are consistent across all peers using a consensus algorithm.">区块链通过一组对等点分配账本和状态数据库，并确保对使用一致算法的所有对等点的分类账和状态数据库的更新保持一致。<br><br></span><strong><span title="Connection Profiles">连接配置文件</span></strong><span title="Connection Profiles"><br></span><span title="Hyperledger Composer uses Connection Profiles to define the system to connect to.">Hyperledger Composer使用连接配置文件来定义要连接的系统。</span><span title="A connection profile is a JSON document the is part of a business network card.">连接配置文件是一个JSON文档，它是业务网卡的一部分。</span><span title="These profiles are usually provided by the creator of the system they refer to and should be used to create business network cards in order to be able to connect to that system.">这些配置文件通常由系统的创建者提供，并且应该用于创建业务网卡以便能够连接到该系统。<br><br></span><strong><span title="Assets">资产</span></strong><span title="Assets"><br></span><span title="Assets are tangible or intangible goods, services, or property, and are stored in registries.">资产是有形或无形的商品，服务或财产，并存储在注册管理机构中。</span><span title="Assets can represent almost anything in a business network, for example, a house for sale, the sale listing, the land registry certificate for that house, and the insurance documents for that house may all be assets in one or more business networks.">资产几乎可以代表商业网络中的任何东西，例如，待售房屋，销售清单，该房屋的土地登记证书以及该房屋的保险文件可能都是一个或多个商业网络中的资产。<br><br></span><span title="Assets must have a unique identifier, but other than that, they can contain whatever properties you define.">资产必须具有唯一标识符，但除此之外，它们可以包含您定义的任何属性。</span><span title="Assets may be related to other assets or participants.">资产可能与其他资产或参与者有关。<br><br></span><strong><span title="Participants">参与者</span></strong><span title="Participants"><br></span><span title="Participants are members of a business network.">参与者是商业网络的成员。</span><span title="They may own assets and submit transactions.">他们可能拥有资产并提交交易。</span><span title="Participant types are modeled, and like assets, must have an identifier and can have any other properties as required.">参与者类型是建模的，并且像资产一样，必须具有标识符并且可以根据需要具有任何其他属性。</span><span title="A participant can be mapped to one or multiple identities.">参与者可以映射到一个或多个身份。<br><br></span><strong><span title="Identities">身份</span></strong><span title="Identities"><br></span><span title="An identity is a digital certificate and private key.">身份是数字证书和私钥。</span><span title="Identities are used to transact on a business network and must be mapped to a participant in the business network.">身份用于在业务网络上进行交易，并且必须映射到业务网络中的参与者。</span><span title="A single identity is stored in a business network card and if that identity has been mapped to a participant, it allows the user of that business network card to transact on a business network as that participant.">单个身份存储在商业网卡中，如果该身份已映射到参与者，则它允许该商业网卡的用户在该参与者的商业网络上进行交易。<br><br></span><strong><span title="Business Network cards">业务网卡</span></strong><span title="Business Network cards"><br></span><span title="Business network cards are a combination of an identity, a connection profile, and metadata, the metadata optionally containing the name of the business network to connect to.">业务网卡是标识，连接配置文件和元数据的组合，元数据可以包含要连接的业务网络的名称。</span><span title="Business network cards simplify the process of connecting to a business network, and extend the concept of an identity outside the business network to a 'wallet' of identities, each associated with a specific business network and connection profile.">业务网卡简化了连接到业务网络的过程，并将业务网络之外的身份概念扩展为身份的“钱包”，每个身份都与特定的业务网络和连接配置文件相关联。<br><br></span><strong><span title="Transactions">交易</span></strong><span title="Transactions"><br></span><span title="Transactions are the mechanism by which participants interact with assets.">交易是参与者与资产交互的机制。</span><span title="This could be as simple as a participant placing a bid on a asset in an auction, or an auctioneer marking an auction closed, automatically transferring ownership of the asset to the highest bidder.">这可以像参与者对拍卖中的资产投标或拍卖人标记拍卖关闭一样简单，自动将资产所有权转移给出价最高的投标人。<br><br></span><strong><span title="Queries">查询</span></strong><span title="Queries"><br></span><span title="Queries are used to return data about the blockchain world-state.">查询用于返回有关区块链世界状态的数据。</span><span title="Queries are defined within a business network, and can include variable parameters for simple customization.">查询在业务网络中定义，并且可以包含用于简单定制的可变参数。</span><span title="By using queries, data can be easily extracted from your blockchain network.">通过使用查询，可以轻松地从您的区块链网络中提取数据。</span><span title="Queries are sent by using the Hyperledger Composer API.">查询通过使用Hyperledger Composer API发送。<br><br></span><strong><span title="Events">活动</span></strong><span title="Events"><br></span><span title="Events are defined in the business network definition in the same way as assets or participants.">业务网络定义中的事件与资产或参与者相同。</span><span title="Once events have been defined, they can be emitted by transaction processor functions to indicate to external systems that something of importance has happened to the ledger.">一旦事件已被定义，它们可以由事务处理器功能发出，以向外部系统指示分类账发生了重要的事情。</span><span title="Applications can subscribe to emitted events through the composer-client API.">应用程序可以通过composer-client API订阅发出的事件。<br><br></span><strong><span title="Access Control">访问控制</span></strong><span title="Access Control"><br></span><span title="Business networks may contain a set of access control rules.">业务网络可能包含一组访问控制规则。</span><span title="Access control rules allow fine-grained control over what participants have access to what assets in the business network and under what conditions.">访问控制规则允许对参与者访问业务网络中的哪些资产以及在什么条件下进行细粒度控制。</span><span title="The access control language is rich enough to capture sophisticated conditions declaratively, such as &quot;only the owner of a vehicle can transfer ownership of the vehicle&quot;.">访问控制语言足够丰富，可以通过声明捕捉复杂的条件，例如“只有车主才能转让车辆所有权”。</span><span title="Externalizing access control from transaction processor function logic makes it easier to inspect, debug, develop and maintain.">事务处理器功能逻辑的外部访问控制使检查，调试，开发和维护变得更加容易。<br><br></span><strong><span title="Historian registry">历史记录注册表</span></strong><span title="Historian registry"><br></span><strong><span title="The historian is a specialised registry which records successful transactions, including the participants and identities that submitted them."><strong style="font-family:'-webkit-standard';"><span title="Historian registry">注册表</span></strong></span></strong><span title="The historian is a specialised registry which records successful transactions, including the participants and identities that submitted them.">是一个专门的登记处，记录成功的交易，包括提交他们的参与者和身份。</span><span title="The historian stores transactions as HistorianRecord assets, which are defined in the Hyperledger Composer system namespace.">历史记录将事务存储为HistorianRecord资产，这些资产在Hyperledger Composer系统名称空间中定义。</span></span><br></p>
+   <p><span lang="zh-cn" style="font-family:'-webkit-standard';" xml:lang="zh-cn"><span title="The historian stores transactions as HistorianRecord assets, which are defined in the Hyperledger Composer system namespace."><br></span></span></p>
+   <p><span lang="zh-cn" style="font-family:'-webkit-standard';" xml:lang="zh-cn"><span title="The historian stores transactions as HistorianRecord assets, which are defined in the Hyperledger Composer system namespace."></span></span></p>
+   <h2 style="font-size:20px;border:0px;clear:none;width:610px;color:rgb(34,34,34);line-height:24px;">Hyperledger Composer 搭建本地环境</h2>
+   <hr>
+   <p><span lang="zh-cn" style="font-family:'-webkit-standard';" xml:lang="zh-cn"><span title="The historian stores transactions as HistorianRecord assets, which are defined in the Hyperledger Composer system namespace."></span></span><br></p>
+   <p><span title="The historian stores transactions as HistorianRecord assets, which are defined in the Hyperledger Composer system namespace." style="font-family:'-webkit-standard';">Hyperledger Composer 公共在线playground 网址：composer-playground.mybluemix.net/</span></p>
+   <p><span style="font-family:'-webkit-standard';">下面的视频介绍如何搭建本地环境：</span></p>
+   <p><span style="font-family:'-webkit-standard';"><br></span></p>
+   <p><br></p>
+   <p>值得注意的是， 要选择npm 8.9.1：</p>
+   <blockquote>
+    <p><br></p>
+    <p><br></p>
+    <p style="font-size:12px;line-height:normal;">nvm install v8.9.1 &nbsp;</p>
+    <p style="font-size:12px;line-height:normal;">nvm use 8.9.1&nbsp; # telling nvm to use npm 8.9.1</p>
+    <p style="font-size:12px;line-height:normal;">npm install -g&nbsp; composer-cli&nbsp; --unsafe-perm&nbsp;</p>
+    <p style="font-size:12px;line-height:normal;"><br></p>
+   </blockquote>
+   <p><br></p>
+   <p><br></p>
+   <p>如有什么问题和建议， 请留言哦</p>
+   <p><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_jpg/Muy9CdcjzFuwnMtEVpqLOic0eW4y1EsSLJXVHJLL7asjgjVlBrhUpdVic6NuKs3fjTibLzeleoF4ogOY0TrVOWXsA/640?wx_fmt=jpeg" alt="640?wx_fmt=jpeg"></p>
+   <p><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_jpg/Muy9CdcjzFukia6ViasuAgxOhliafx0BhbO6hvytj9nvstO1PYVJUU6QwxInRCvqvDN9QibmZ90MAkIKR4Ajlgpm3w/640?wx_fmt=jpeg" alt="640?wx_fmt=jpeg"></p>
+   <p><br></p> 
+  </div> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/hintcnuie/article/details/80579711,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/hintcnuie/article/details/80579711,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

@@ -1,0 +1,117 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-7f5a1a725b.css"> 
+ <div class="htmledit_views"> 
+  <p>啊...时隔多日，我又回来了，当然我知道你们想看的不是这个，以太坊的开发网上一抓一大把，所以今天教教大家怎么开发eos，毕竟eos马上主网上线了，笔者是很看好eos的，无论炒币还是开发<img alt="" class="has" src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180427124445724?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2l0X3poYW5neGlhbmc=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">墙裂建议大家使用linux系统，毕竟用win系统开发这玩意是确实能遇到很多玄学bug的，开发问题主要有两个，一是，配置工具和环境，二是开发智能合约本身，首先我们来看配置工具和环境吧。</p> 
+  <p>基本借鉴<em>EOS Asia</em>团队，这里贴一下他们的地址：<a href="https://steemit.com/devs/@eos-asia/eos-smart-contracts-part-1-getting-started-ping-equivalent-in-eos?from=groupmessage&amp;isappinstalled=0" rel="nofollow">点击打开链接</a>。不过可能我的教程更人性化hhhh，</p> 
+  <p><span style="color:#000000;">EOS的智能合约由 C++ 编写，并编译成Web Assembly</span>，c++嘛，大家都懂的，我就不解释了，区块链开发第一步都是搞私有链，eos也不例外，我们先来搞私链，可以直接从官方下载，贴一下地址：<a href="https://github.com/EOSIO/eos/wiki/Local-Environment#getting-the-code" rel="nofollow">点我进入。</a></p> 
+  <p>这次和以后，我们都使用<code style="margin-left:.15em;"><span style="color:#000000;">EOSIO Dawn 3.0</span></code>，进入终端敲命令吧，无论哪里出问题了，把出问题的那个命令重新敲一遍，就ok<img alt="" class="has" src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180427135115268?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2l0X3poYW5neGlhbmc=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">，另外请全程保持还不错的网速，否则你可能会崩溃hhhh</p> 
+  <p>&nbsp;</p> 
+  <pre class="has">
+<code style="margin-left:.15em;">git clone https://github.com/EOSIO/eos --recursive </code></pre> 
+  <p>获取源码</p> 
+  <p>recursive参数会将所有子组件自动克隆下来，最终我们会在本地得到全部完整的源码。</p> 
+  <p>第一次用可能会提示你需要更新，照着它提示给你的代码敲就行，更新完以后是这个界面</p> 
+  <p><img alt="" class="has" src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180427131908703?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2l0X3poYW5neGlhbmc=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>然后主文件夹里会出来一个eos的文件夹，这里面有很多东西可以看看，<img alt="" class="has" src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180427132923727?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2l0X3poYW5neGlhbmc=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>eos的模型之类的，可以研究一下</p> 
+  <p>更新到这就ok，有问题的话回去继续更新。</p> 
+  <p>&nbsp;</p> 
+  <pre class="has">
+<code style="margin-left:.15em;">cd eos </code></pre> 
+  <p>进入eos目录。当然笔者此时已经进入这个目录</p> 
+  <p>&nbsp;</p> 
+  <pre class="has">
+<code style="margin-left:.15em;">./eosio_build.sh</code></pre> 
+  <p>&nbsp;</p> 
+  <p>自动构建源码。</p> 
+  <p>输入之后又会刷一大堆东西然后让你确认，并输密码，没什么好说的，等待～</p> 
+  <p>可以趁这个时间打几把魔兽真三什么的，时间相当之长</p> 
+  <p><img alt="" class="has" src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180427150300676?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2l0X3poYW5neGlhbmc=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>接着就是跑单元测试，验证源码完整度</p> 
+  <p>&nbsp;</p> 
+  <pre class="has">
+<code>cd build &amp;&amp; make test</code></pre> 
+  <p>然后是安装命令</p> 
+  <p>&nbsp;</p> 
+  <pre class="has">
+<code>sudo make install</code></pre> 
+  <p>命令会被安装在/usr/local。执行完这个命令以后，我们可以在系统任何位置进行命令启用。</p> 
+  <p>&nbsp;</p> 
+  <h2>启动一个单独节点</h2> 
+  <p>构建完成后，会在build/programs/目录中出现nodeos文件夹，这是我们要启动节点的工具。通过以下命令启动你自己的独立节点区块链</p> 
+  <p>&nbsp;</p> 
+  <pre class="has">
+<code style="margin-left:.15em;">./nodeos -e -p eosio --plugin eosio::wallet_api_plugin --plugin eosio::chain_api_plugin --plugin eosio::account_history_api_plugin --access-control-allow-origin=*</code></pre> 
+  <p>中间可能会提示创世时间戳过时，加</p> 
+  <pre class="has">
+<code>timestamp</code></pre> 
+  <p>修改一下就可以</p> 
+  <p>然后会报错<code>No producers configured! Please add producer IDs and private keys to configuration</code></p> 
+  <p>这是正常的，根据挂官方的意思，我们要去修改config.ini文件</p> 
+  <p>首先找到它，这玩意的路径是/home/the/.local/share/eosio/nodeos/config.ini</p> 
+  <p>因为.local文件夹是被隐藏的，所以大家找它时建议ctrl+h，才能看到这个文件夹</p> 
+  <p><img alt="" class="has" src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180504165922123?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2l0X3poYW5neGlhbmc=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>在终端输入cd .local/share/eosio/nodeos/config</p> 
+  <p>然后用vi或者vim打开config.ini</p> 
+  <p>可以看到一大堆东西</p> 
+  <p><img alt="" class="has" src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180504170207598?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2l0X3poYW5neGlhbmc=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>要改的有这几项</p> 
+  <p>genesis-json=""这里，在""中间，加上genesis.json的路径，笔者的路径是"/home/the/.local/share/eosio/nodeos/config/genesis.json"你的这个genesis.json文件在哪里，就加那个路径</p> 
+  <p>enable-stale-production=false,这里要把false改成true，也就是enable-stale-production=true.</p> 
+  <p><code>producer-name =&nbsp;&nbsp; <strong>eosio,</strong></code></p> 
+  <p>在produce-name后面加上eosio就可以</p> 
+  <p>最后在后面加这几行</p> 
+  <p>&nbsp;</p> 
+  <ul>
+   <li><code>plugin = eosio::producer_plugin</code></li> 
+   <li><code>plugin = eosio::wallet_api_plugin</code></li> 
+   <li><code>plugin = eosio::chain_api_plugin</code></li> 
+   <li><code>plugin = eosio::http_plugin</code></li> 
+  </ul>
+  <p>就没问题了，重复之前的出块操作</p> 
+  <p>&nbsp;</p> 
+  <pre class="has">
+<code style="margin-left:.15em;">./nodeos -e -p eosio --plugin eosio::wallet_api_plugin --plugin eosio::chain_api_plugin --plugin eosio::account_history_api_plugin --access-control-allow-origin=*</code></pre> 
+  <p>或者直接./nodeos</p> 
+  <p>接下来就在正常出块</p> 
+  <p>&nbsp;</p> 
+  <p><img alt="" class="has" src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180427155047849?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2l0X3poYW5neGlhbmc=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>断开出块摁ctrl+c就行</p> 
+  <p>&nbsp;</p> 
+  <p>安装会花很多时间，胜在简单直接且没有玄学bug，基本上一路next的节奏。出错重来就行</p> 
+  <p>eos的环境配置就这些，说白了几个命令而已</p> 
+  <p>eos的环境搭建就到这里，有哪里不懂的直接留言问我，在线答疑哦亲<img alt="" class="has" src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180504171207376?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2l0X3poYW5neGlhbmc=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">，下一章讲合约的编写，和发币的问题</p> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/it_zhangxiang/article/details/80106220,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/it_zhangxiang/article/details/80106220,&quot;}">阅读更多</a> 
+</div> 
+<script>
+						(function(){
+							function setArticleH(btnReadmore,posi){
+								var winH = $(window).height();
+								var articleBox = $("div.article_content");
+								var artH = articleBox.height();
+								if(artH > winH*posi){
+									articleBox.css({
+										'height':winH*posi+'px',
+										'overflow':'hidden'
+									})
+									btnReadmore.click(function(){
+										articleBox.removeAttr("style");
+										$(this).parent().remove();
+									})
+								}else{
+									btnReadmore.parent().remove();
+								}
+							}
+							var btnReadmore = $("#btn-readmore");
+							if(btnReadmore.length>0){
+								if(currentUserName){
+									setArticleH(btnReadmore,3);
+								}else{
+									setArticleH(btnReadmore,1.2);
+								}
+							}
+						})()
+					</script>

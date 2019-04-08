@@ -1,0 +1,945 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <div>
+   <span style="font-weight:bold;"><span style="font-size:16px;"></span></span>
+  </div>
+  <h2><span style="font-weight:bold;"><span style="font-size:18px;"></span></span></h2>
+  <h2></h2>
+  <blockquote style="color:rgb(0,0,0);border-left-width:3px;border-left-style:solid;border-left-color:rgb(219,219,219);font-family:'Helvetica Neue', Helvetica, 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;">
+   <p style="font-size:11px;color:rgb(175,173,36);line-height:normal;clear:both;font-family:Menlo;background-color:rgb(255,255,255);"><span style="font-size:16px;color:rgb(0,128,255);">本文所有实践都是基于EOS dawn-v4.1.0，请切到该分支然后实践</span></p>
+   <p style="color:rgb(175,173,36);line-height:normal;clear:both;font-family:Menlo;background-color:rgb(255,255,255);"><span style="color:rgb(0,128,255);">切换命令:git checkout&nbsp;</span><span style="color:rgb(255,104,39);"><span><span style="color:rgb(0,128,255);">dawn-v4.1.0</span></span></span></p>
+  </blockquote>
+  <h2><span style="font-weight:bold;"><span style="font-size:18px;">cleos</span></span></h2>
+  <div>
+   <span style="font-size:16px;">&nbsp; &nbsp; cleos应用程序是用户<span style="font-family:'Helvetica Neue', Helvetica, STheiti, '微软雅黑', '黑体', Arial, Tahoma, sans-serif, serif;">端命令行交互模块，用于解析用户命令,执行钱包，账号等如下操作</span></span>
+  </div>
+  <div>
+   <span style="font-size:16px;">&nbsp; &nbsp; cleos依赖<span style="font-family:Monaco;">keosd和nodeos等应用程序处理这些操作。</span></span>
+  </div>
+  <div>
+   <span style="font-family:Monaco;"><span style="font-size:16px;">&nbsp; 当keosd没有启动时，cleos会自动启动该程序，对应的代码如下：</span></span>
+  </div>
+  <div>
+   <span style="font-size:12px;color:rgb(163,21,21);font-family:Monaco;">&nbsp;&nbsp; &nbsp;</span>
+  </div>
+  <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;font-size:12px;color:rgb(51,51,51);background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+   <div>
+    <span style="font-family:Monaco;">void ensure_keosd_running() {</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp; &nbsp;&nbsp;…</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;"><span style="color:#942192;">&nbsp;&nbsp;&nbsp;&nbsp;binPath.append("keosd"); // if cleos and keosd are in the same installation directory</span></span>
+   </div>
+   <div>
+    <br style="font-family:Monaco;">
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;if (boost::filesystem::exists(binPath)) {</span>
+   </div>
+   <div>
+    <span style="color:#942192;">&nbsp; &nbsp; &nbsp; &nbsp; //启动keosd</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;"><span style="color:#942192;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;::boost::process::child keos(binPath, pargs,</span></span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bp::std_in.close(),</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bp::std_out &gt; bp::null,</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bp::std_err &gt; bp::null);</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (keos.running()) {</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;"><span style="color:#942192;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;std::cerr &lt;&lt; binPath &lt;&lt; " launched" &lt;&lt; std::endl;</span></span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;keos.detach();</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sleep(1);</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} else {</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;} else {</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;}</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">}</span>
+   </div>
+  </div>
+  <div>
+   <br>
+  </div>
+  <h2><span style="font-size:18px;"><span style="font-family:Verdana;"><strong>action&amp;message&amp;</strong></span><span style="font-family:Verdana;color:rgb(51,51,51);"><strong>Transaction</strong></span></span></h2>
+  <div>
+   <span style="font-family:Verdana;"><strong><span style="font-size:16px;">&nbsp;&nbsp; &nbsp;</span></strong></span>
+  </div>
+  <div>
+   <strong>&nbsp; &nbsp;&nbsp;&nbsp; <span style="font-size:16px;">&nbsp;</span></strong>
+   <span style="color:rgb(51,51,51);font-family:arial;"><span style="font-size:16px;">目前在EOS中message和action的概念是一样的，实际上action是自3.0以后的新规范，message的概念已经可以抛弃，由于3.0版本发布不久，互联网上的大部分文字和材料依然使用message的概念.</span></span>
+  </div>
+  <div>
+   <span style="font-size:16px;"><span style="font-family:arial;color:rgb(51,51,51);">&nbsp; &nbsp; </span><span style="font-family:arial;color:rgb(51,51,51);">&nbsp;&nbsp; &nbsp;</span><span style="font-family:arial;color:rgb(51,51,51);">一个transaction包含一个或者多个action， 和以太坊交易概念差不多。所以，你可以简单的把action看成以太坊的transaction</span></span>
+  </div>
+  <div>
+   <span style="font-weight:bold;"><span style="font-size:16px;"><br></span></span>
+  </div>
+  <h2><span style="font-size:18px;">key</span></h2>
+  <div>
+   <span style="font-size:16px;"><br></span>
+  </div>
+  <div>
+   <span style="font-size:16px;">&nbsp; &nbsp; EOS里的key就是public key公钥，类似以太坊的地址。key是通过类似RSA,椭圆曲线算法生成的公钥。</span>
+  </div>
+  <div>
+   <span style="font-size:16px;">&nbsp;&nbsp; &nbsp;</span>
+  </div>
+  <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;font-size:12px;color:rgb(51,51,51);background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+   <div>
+    <span style="font-family:Monaco;">$ cleos create key</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">Private key: 5JdchMrwMwD1PsZKCjpbaCQ4aJ3cFKzSWmCQfRzKCiGrDWds3PU</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">Public key: EOS7KBTMkUq4VPakqsZUnZfBbMbS2U7cn9qSa3q6G5ZzEeUeNSVgv</span>
+   </div>
+  </div>
+  <div>
+   <br>
+  </div>
+  <div>
+   <span style="font-size:16px;">&nbsp; &nbsp; 以太坊地址可以收款，付款，而EOS的key只具备验证作用，只有account才具备收款，付款功能。<br></span>
+  </div>
+  <div>
+   <span style="color:#000000;"><span style="font-family:'PingFangSC-Light', 'hiragino sans gb', 'helvetica neue', 'microsoft yahei ui', 'microsoft yahei', simsun, arial, sans-serif;"> <em>注意：cleos并不保存生成的私钥，所以得你自己记录private key,public key</em></span><br></span>
+  </div>
+  <h2><span style="color:rgb(0,0,0);"><span style="font-size:18px;">钱包</span></span></h2>
+  <div>
+   <span style="color:rgb(0,0,0);"><span style="font-size:16px;">&nbsp; &nbsp;<span style="background-color:rgb(255,255,255);"><span style="font-family:Verdana, Arial, Helvetica, sans-serif;">钱包是一个私钥库，里面保存着私钥公钥对, 类似以太坊里的keystore信息。里面保存的私钥数据其实是私钥加密后数据，需要用户输入密码才能还原出真正的私钥。智能合约的action执行都需要钱包来解锁相关的公钥(key).所以钱包可以看成是钥匙箱。</span></span></span></span>
+  </div>
+  <h3><span style="font-size:16px;color:#000000;">创建默认钱包并导入key</span></h3>
+  <p><span style="font-size:16px;color:#000000;">创建钱包</span></p>
+  <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+   <div>
+    <span style="line-height:normal;color:rgb(0,0,0);font-family:Monaco;">$ cleos wallet create</span>
+   </div>
+   <div style="font-size:12px;color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">Creating wallet: default</span>
+   </div>
+   <div style="font-size:12px;color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">Save password to use in the future to unlock this wallet.</span>
+   </div>
+   <div style="font-size:12px;color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">Without password imported keys will not be retrievable.</span>
+   </div>
+   <div style="font-size:12px;color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">"<span style="line-height:normal;">PW5KWPhDnRCLBFjBuEBdUmFP4a2F8H36KvTv4DhtfHRZokrqAK9bT</span>"</span>
+   </div>
+  </div>
+  <div>
+   <span style="background-color:rgb(255,255,255);"><span style="color:rgb(0,0,0);font-family:Verdana, Arial, Helvetica, sans-serif;"><span style="font-size:16px;">&nbsp; &nbsp; 钱包本身也是有密码的，用来加密钱包数据的</span></span></span>
+  </div>
+  <p><span style="font-size:16px;color:#000000;">导入key</span></p>
+  <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;font-size:12px;color:rgb(51,51,51);background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+   <span style="line-height:normal;color:rgb(0,0,0);font-family:Monaco;">$ cleos wallet import 5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3</span>
+  </div>
+  <div>
+   <br>
+  </div>
+  <h3><span style="font-weight:bold;"><span style="font-size:16px;">查看wallet里的keys</span></span></h3>
+  <div>
+   <span style="background-color:rgb(255,250,165);"></span>
+   <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;font-size:12px;color:rgb(51,51,51);background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+    <div>
+     <span style="line-height:normal;color:rgb(0,0,0);font-family:Monaco;">$ cleos wallet keys</span>
+    </div>
+    <div>
+     <span style="line-height:normal;color:rgb(0,0,0);font-family:Monaco;">[[</span>
+    </div>
+    <div>
+     <span style="line-height:normal;color:rgb(0,0,0);font-family:Monaco;">&nbsp;&nbsp;&nbsp; "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV”, </span>
+     <span style="line-height:normal;font-family:Monaco;"><span style="color:#ff2600;">//公钥</span></span>
+    </div>
+    <div>
+     <span style="line-height:normal;color:rgb(0,0,0);font-family:Monaco;">&nbsp;&nbsp;&nbsp; “5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3” &nbsp; &nbsp;</span>
+     <span style="line-height:normal;font-family:Monaco;"><span style="color:#ff2600;">//私钥</span></span>
+    </div>
+    <div>
+     <span style="line-height:normal;color:rgb(0,0,0);font-family:Monaco;">&nbsp; ]</span>
+    </div>
+    <div>
+     <span style="line-height:normal;color:rgb(0,0,0);font-family:Monaco;">]</span>
+    </div>
+   </div>
+  </div>
+  <div>
+   <br>
+  </div>
+  <h3><span style="font-weight:bold;"><span style="font-size:16px;">创建其他钱包并导入key</span></span></h3>
+  <div>
+   <br>
+  </div>
+  <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;font-size:12px;color:rgb(51,51,51);background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+   <div>
+    <span style="line-height:normal;color:rgb(0,0,0);font-family:Monaco;">$ cleos wallet create -n test</span>
+   </div>
+   <div>
+    <div>
+     <span style="font-family:Monaco;">Creating wallet: test</span>
+    </div>
+    <div>
+     <span style="font-family:Monaco;">Save password to use in the future to unlock this wallet.</span>
+    </div>
+    <div>
+     <span style="font-family:Monaco;">Without password imported keys will not be retrievable.</span>
+    </div>
+    <div>
+     <span style="font-family:Monaco;">“PW5KNZ27fR8qcYpsw2B5uM7yir1CnYVSejAi8R3sYdRK4DyW6BN6v"</span>
+    </div>
+   </div>
+   <div>
+    <br>
+   </div>
+   <div>
+    <span style="font-family:Monaco;"><span style="line-height:normal;color:rgb(0,0,0);"><span style="line-height:normal;">$ </span>cleos wallet import </span>5JdchMrwMwD1PsZKCjpbaCQ4aJ3cFKzSWmCQfRzKCiGrDWds3PU</span>
+   </div>
+   <div>
+    <br>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">$ build/programs/cleos/cleos wallet keys</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">[[</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;background-color:rgb(255,250,165);">&nbsp; &nbsp;&nbsp;//这个是default钱包的key</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;"EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV",</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp; &nbsp;&nbsp;“5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3”&nbsp;</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;],[</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;background-color:rgb(255,250,165);">&nbsp; &nbsp; //这个是test钱包的key</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;"EOS7KBTMkUq4VPakqsZUnZfBbMbS2U7cn9qSa3q6G5ZzEeUeNSVgv",</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;"5JdchMrwMwD1PsZKCjpbaCQ4aJ3cFKzSWmCQfRzKCiGrDWds3PU"</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;]</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">]</span>
+   </div>
+  </div>
+  <div>
+   <br>
+  </div>
+  <h3><span style="font-weight:bold;"><span style="font-size:16px;">列出所有钱包</span></span></h3>
+  <div>
+   <br>
+  </div>
+  <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;font-size:12px;color:rgb(51,51,51);background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+   <div>
+    <span style="font-family:Monaco;">$ build/programs/cleos/cleos wallet list</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">Wallets:</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">[</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;"default *",</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;"test *"</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">]</span>
+   </div>
+  </div>
+  <div>
+   <br>
+  </div>
+  <h3><span style="font-weight:bold;"><span style="font-size:16px;">解锁及锁定钱包</span></span></h3>
+  <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;color:rgb(51,51,51);background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+   <div>
+    <span style="font-family:Monaco;">$ cleos wallet unlock -n test</span>
+   </div>
+   <div style="font-size:12px;">
+    <span style="font-family:Monaco;">$ cleos wallet lock -n test</span>
+   </div>
+  </div>
+  <div>
+   <br>
+  </div>
+  <div>
+   <span style="font-size:16px;">-n xxx是指定操作的钱包名字，如果不带-n xxx则是操作默认钱包</span>
+  </div>
+  <h3><span style="font-weight:bold;"><span style="font-size:16px;">钱包数据文件</span></span></h3>
+  <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;color:rgb(51,51,51);background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+   <div>
+    <span style="font-family:Monaco;">$ls ~/eosio-wallet/</span>
+   </div>
+   <div style="font-size:12px;">
+    <span style="font-family:Monaco;">config.ini&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <span style="font-family:Monaco;background-color:rgb(255,250,165);">default.wallet&nbsp;&nbsp; &nbsp;test.wallet</span>
+   </div>
+   <div style="font-size:12px;">
+    <span style="font-family:Monaco;">$ cat ~/eosio-wallet/default.wallet </span>
+   </div>
+   <div style="font-size:12px;">
+    <span style="font-family:Monaco;">{</span>
+   </div>
+   <div style="font-size:12px;">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;"cipher_keys": "0bcea4c898817192773ca628e9f829eed0c1e5024bf3de3d5032e2e029842b9756b46e37357403858a6f38a67268f30d9f70d8ce45e930802927f227d65b0162615872173637142a645cb50f1816d47c187e6345f8ced73896efe5a5a636197595f457641379408afb501dc483b108c131cf4f7fdd3381497c6a3245b9773c02217a4cd77b30f4da23a519c5caa01e56"</span>
+   </div>
+   <div style="font-size:12px;">
+    <span style="font-family:Monaco;">}</span>
+   </div>
+  </div>
+  <div>
+   <br>
+  </div>
+  <div>
+   <span style="font-family:Verdana, Arial, Helvetica, sans-serif;"><span style="font-size:16px;">&nbsp;&nbsp; &nbsp;可见一个钱包对应~/eosio-wallet/的一个文件，文件里面的内容就是密码加密私钥后的内容</span></span>
+  </div>
+  <div>
+   <span style="font-size:16px;"><br></span>
+  </div>
+  <h2><span style="font-family:Verdana, Arial, Helvetica, sans-serif;"><span style="font-size:18px;">Account(账号)</span></span></h2>
+  <div>
+   <span style="font-family:Verdana, Arial, Helvetica, sans-serif;"><span style="font-size:16px;">&nbsp; &nbsp; EOS的账号对应以太坊的智能合约地址，它扩展了账号的概念，一个账号由智能合约+权限管理构成。</span></span>
+  </div>
+  <div>
+   <img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180522144706230" alt="">
+   <br>
+  </div>
+  <h3><span style="font-size:16px;">权限管理</span></h3>
+  <div>
+   <span style="font-family:Verdana, Arial, Helvetica, sans-serif;"><span style="font-size:16px;">&nbsp;&nbsp; &nbsp;权限管理模块可以精细的定义一个Account/key或者几个Account/key(比如多重签名机制)对账号数据的访问权限。目前有两个默认的权限类型</span></span>
+  </div>
+  <ul>
+   <li><span style="font-family:Verdana, Arial, Helvetica, sans-serif;"><span style="font-size:16px;">owner权限</span></span></li>
+  </ul>
+  <div>
+   <span style="font-family:Verdana;"><span style="font-size:16px;">&nbsp;&nbsp; &nbsp;&nbsp; &nbsp; 可以修改任意账号和key的权限</span></span>
+  </div>
+  <ul>
+   <li><span style="font-family:Verdana, Arial, Helvetica, sans-serif;"><span style="font-size:16px;">active</span></span></li>
+  </ul>
+  <div>
+   <span style="font-family:Verdana;"><span style="font-size:16px;">&nbsp;&nbsp; &nbsp;&nbsp; &nbsp; 可转账，DPOS投票，及其它上层定义的权限修改</span></span>
+  </div>
+  <div>
+   <span style="font-size:16px;"><span style="font-family:Verdana;">&nbsp; 用户也可自定义权限类型。</span><span style="font-family:Verdana, Arial, Helvetica, sans-serif;">同时引入了权重和阈值的概念，该机制使得多重签名实现非常简单，也更有扩展性，</span><span style="color:rgb(51,51,51);font-family:Verdana;">permission</span><span style="font-family:Verdana;">格式如下</span></span>
+  </div>
+  <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;font-size:12px;color:rgb(51,51,51);background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+   <div>
+    <span style="font-family:Monaco;">{</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;"threshold": 100,/*An integer that defines cumulative signature weight required for authorization*/ </span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;"keys": [], /*An array made up of individual permissions defined with an EOS PUBLIC KEY*/ </span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;"accounts": [] /*An array made up of individual permissions defined with an EOS ACCOUNT*/</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">}</span>
+   </div>
+  </div>
+  <div></div>
+  <div>
+   <span style="font-size:16px;">配置示例如下：</span>
+  </div>
+  <span style="font-family:Verdana, Arial, Helvetica, sans-serif;text-align:center;"><strong><span style="font-size:16px;">默认权限配置</span></strong></span>
+  <br>
+  <table style="border-spacing:0px;font-size:16px;width:532px;">
+   <colgroup>
+    <col style="width:130px;">
+    <col style="width:142px;">
+    <col style="width:130px;">
+    <col style="width:130px;">
+   </colgroup>
+   <tbody>
+    <tr>
+     <td style="border-color:rgb(223,226,229);"><span style="font-size:16px;color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';"><strong>Permission</strong></span></td>
+     <td style="border-color:rgb(223,226,229);"><span style="font-size:16px;color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';"><strong>Accounts/Keys</strong></span></td>
+     <td style="border-color:rgb(223,226,229);"><span style="font-size:16px;color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';"><strong>Weight</strong></span></td>
+     <td style="border-color:rgb(223,226,229);"><span style="font-size:16px;color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';"><strong>Threshold</strong></span></td>
+    </tr>
+    <tr style="background-color:rgb(255,255,255);">
+     <td style="border-color:rgb(223,226,229);"><span style="font-size:16px;color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">owner </span></td>
+     <td style="border-color:rgb(223,226,229);">&nbsp;</td>
+     <td style="border-color:rgb(223,226,229);">&nbsp;</td>
+     <td style="border-color:rgb(223,226,229);"><span style="font-size:16px;color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">1 </span></td>
+    </tr>
+    <tr style="background-color:rgb(246,248,250);">
+     <td style="border-color:rgb(223,226,229);">&nbsp;</td>
+     <td style="border-color:rgb(223,226,229);"><span style="font-family:Monaco;font-size:12px;color:rgb(51,51,51);">EOS7KBTMkUq4VPakqsZUnZfBbMbS2U7cn9qSa3q6G5ZzEeUeNSVgv</span></td>
+     <td style="border-color:rgb(223,226,229);"><span style="font-size:16px;color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">1 </span></td>
+     <td style="border-color:rgb(223,226,229);">&nbsp;</td>
+    </tr>
+    <tr style="background-color:rgb(246,248,250);">
+     <td style="border-color:rgb(223,226,229);"><span style="font-size:16px;color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">active </span></td>
+     <td style="border-color:rgb(223,226,229);">&nbsp;</td>
+     <td style="border-color:rgb(223,226,229);">&nbsp;</td>
+     <td style="border-color:rgb(223,226,229);"><span style="font-size:16px;color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">1 </span></td>
+    </tr>
+    <tr style="background-color:rgb(246,248,250);">
+     <td style="border-color:rgb(223,226,229);">&nbsp;</td>
+     <td style="border-color:rgb(223,226,229);"><span style="font-family:Monaco;font-size:12px;color:rgb(51,51,51);">EOS7KBTMkUq4VPakqsZUnZfBbMbS2U7cn9qSa3q6G5ZzEeUeNSVgv</span></td>
+     <td style="border-color:rgb(223,226,229);"><span style="font-size:16px;color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">1 </span></td>
+     <td style="border-color:rgb(223,226,229);">&nbsp;</td>
+    </tr>
+   </tbody>
+  </table>
+  <div style="text-align:left;">
+   <span style="font-size:16px;"><span style="font-family:Verdana, Arial, Helvetica, sans-serif;"><strong><strong>组合和自定义权限</strong><span style="text-align:center;font-family:Verdana, Arial, Helvetica, sans-serif;"><strong>&nbsp;</strong></span></strong></span><br></span>
+  </div>
+  <div style="text-align:left;">
+   <span style="font-family:Verdana, Arial, Helvetica, sans-serif;"><strong><span style="text-align:center;font-family:Verdana, Arial, Helvetica, sans-serif;"><strong><br></strong></span></strong></span>
+  </div>
+  <table style="border-spacing:0px;font-size:16px;width:520px;">
+   <colgroup>
+    <col style="width:130px;">
+    <col style="width:130px;">
+    <col style="width:130px;">
+    <col style="width:130px;">
+   </colgroup>
+   <tbody>
+    <tr>
+     <td style="border-color:rgb(223,226,229);"><span style="font-size:16px;color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';font-weight:600;">Permission</span></td>
+     <td style="border-color:rgb(223,226,229);"><span style="font-size:16px;color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';font-weight:600;">Account/Key</span></td>
+     <td style="border-color:rgb(223,226,229);"><span style="font-size:16px;color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';font-weight:600;">Weight</span></td>
+     <td style="border-color:rgb(223,226,229);"><span style="font-size:16px;color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';font-weight:600;">Threshold</span></td>
+    </tr>
+    <tr style="background-color:rgb(255,255,255);">
+     <td style="border-color:rgb(223,226,229);"><span style="font-size:16px;color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">owner </span></td>
+     <td style="border-color:rgb(223,226,229);">&nbsp;</td>
+     <td style="border-color:rgb(223,226,229);">&nbsp;</td>
+     <td style="border-color:rgb(223,226,229);"><span style="font-size:16px;color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">2 </span></td>
+    </tr>
+    <tr style="background-color:rgb(246,248,250);">
+     <td style="border-color:rgb(223,226,229);">&nbsp;</td>
+     <td style="border-color:rgb(223,226,229);"><span style="font-size:16px;color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">@bob </span></td>
+     <td style="border-color:rgb(223,226,229);"><span style="font-size:16px;color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">1 </span></td>
+     <td style="border-color:rgb(223,226,229);">&nbsp;</td>
+    </tr>
+    <tr style="background-color:rgb(255,255,255);">
+     <td style="border-color:rgb(223,226,229);">&nbsp;</td>
+     <td style="border-color:rgb(223,226,229);"><span style="font-size:16px;color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">@stacy </span></td>
+     <td style="border-color:rgb(223,226,229);"><span style="font-size:16px;color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">1 </span></td>
+     <td style="border-color:rgb(223,226,229);">&nbsp;</td>
+    </tr>
+    <tr style="background-color:rgb(246,248,250);">
+     <td style="border-color:rgb(223,226,229);"><span style="font-size:16px;color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">active </span></td>
+     <td style="border-color:rgb(223,226,229);">&nbsp;</td>
+     <td style="border-color:rgb(223,226,229);">&nbsp;</td>
+     <td style="border-color:rgb(223,226,229);"><span style="font-size:16px;color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">1 </span></td>
+    </tr>
+    <tr style="background-color:rgb(255,255,255);">
+     <td style="border-color:rgb(223,226,229);">&nbsp;</td>
+     <td style="border-color:rgb(223,226,229);"><span style="font-size:16px;color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">@bob </span></td>
+     <td style="border-color:rgb(223,226,229);"><span style="font-size:16px;color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">1 </span></td>
+     <td style="border-color:rgb(223,226,229);">&nbsp;</td>
+    </tr>
+    <tr style="background-color:rgb(246,248,250);">
+     <td style="border-color:rgb(223,226,229);">&nbsp;</td>
+     <td style="border-color:rgb(223,226,229);"><span style="font-size:16px;color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">@stacy </span></td>
+     <td style="border-color:rgb(223,226,229);"><span style="font-size:16px;color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">1 </span></td>
+     <td style="border-color:rgb(223,226,229);">&nbsp;</td>
+    </tr>
+    <tr style="background-color:rgb(255,255,255);">
+     <td style="border-color:rgb(223,226,229);"><span style="font-size:16px;color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">publish </span></td>
+     <td style="border-color:rgb(223,226,229);">&nbsp;</td>
+     <td style="border-color:rgb(223,226,229);">&nbsp;</td>
+     <td style="border-color:rgb(223,226,229);"><span style="font-size:16px;color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">2 </span></td>
+    </tr>
+    <tr style="background-color:rgb(246,248,250);">
+     <td style="border-color:rgb(223,226,229);">&nbsp;</td>
+     <td style="border-color:rgb(223,226,229);"><span style="font-size:16px;color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">@bob </span></td>
+     <td style="border-color:rgb(223,226,229);"><span style="font-size:16px;color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">2 </span></td>
+     <td style="border-color:rgb(223,226,229);">&nbsp;</td>
+    </tr>
+    <tr style="background-color:rgb(255,255,255);">
+     <td style="border-color:rgb(223,226,229);">&nbsp;</td>
+     <td style="border-color:rgb(223,226,229);"><span style="font-size:16px;color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">@stacy </span></td>
+     <td style="border-color:rgb(223,226,229);">1</td>
+     <td style="border-color:rgb(223,226,229);">&nbsp;</td>
+    </tr>
+    <tr>
+     <td style="border-color:rgb(223,226,229);">&nbsp;</td>
+     <td style="border-color:rgb(223,226,229);"><span style="font-family:Monaco;color:rgb(51,51,51);"><span style="font-size:12px;">EOS7KBTMkUq4VPakqsZUnZfBbMbS2U7cn9qSa3q6G5ZzEeUeNSVgv</span></span></td>
+     <td style="border-color:rgb(223,226,229);"><span style="font-size:16px;color:rgb(36,41,46);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">1</span></td>
+     <td style="border-color:rgb(204,204,204);">&nbsp;</td>
+    </tr>
+   </tbody>
+  </table>
+  <div>
+   <ul>
+    <li><span style="font-size:16px;">bob和stacy两个账号一起才能行使owner权限</span></li>
+    <li><span style="font-size:16px;">bob, stacy两个账号的任一一个都可以行使active权限</span></li>
+    <li><span style="font-size:16px;"><span style="font-family:Verdana;">bob可以行使</span><span style="font-family:Verdana;">publish</span><span style="font-family:Verdana;">权限,但是stacy和”</span><span style="font-family:Monaco;color:rgb(51,51,51);">EOS7KBTMkU…"</span><span style="font-family:Verdana;">没法单独行使publish权限，但是他们一起可以行使publish权限</span></span></li>
+   </ul>
+  </div>
+  <div>
+   <span style="font-size:16px;"><span style="font-family:Verdana;">&nbsp;&nbsp;&nbsp;&nbsp;这些权限的检测一般在执行action操作时执行。</span>&nbsp; &nbsp; &nbsp;</span>
+  </div>
+  <h3><span style="font-size:16px;">创建账号account</span></h3>
+  <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;font-size:12px;color:rgb(51,51,51);background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+   <span style="color:rgb(0,0,0);font-family:'PingFang SC', 'Helvetica Neue', Helvetica, Arial, sans-serif;line-height:1.5;"><span style="font-size:14px;">cleos create account [OPTIONS] creator name OwnerKey ActiveKey</span></span>
+  </div>
+  <div>
+   <span style="font-size:16px;">&nbsp; &nbsp; </span>
+   <span style="font-size:16px;">该命令本身是一个action,会产生一个transaction,最后会保存在链上的，所以该操作依赖nodeos程序，必须启动nodeos程序。上面的OwnerKey，ActiveKey都是公钥。creator必须是一个已经存在的账号，这里就有个问题了，我们第一次创建账号，从哪里获取这个creator账号？这个账号就是eosio, eosio这个特殊账号是在nodeos启动时自动生成的，且这个账号的private key,和public key是hardcode固定的。当然搭建私有网络你可以通过修改config文件来修改这两个值，但是你同时也得修改这个私有网络的其他节点对应的private key, public key值。</span>
+  </div>
+  <div></div>
+  <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;font-size:12px;color:rgb(51,51,51);background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+   <div style="text-align:left;">
+    <span style="font-family:Monaco;">$ <span style="background-color:rgb(255,250,165);">cleos create account -j eosio testaccount EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV</span></span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">{</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;"transaction_id": "18440905e1dc17eecee17eaa50f5c589f703c3c4f66738316c2f56d12ce7ec84",</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;"action_traces": [{</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ...</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"data": {</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"creator": "eosio",</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"name": "testaccount",</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;</span>
+    <span style="color:rgb(4,51,255);font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <span style="color:rgb(4,51,255);font-family:Monaco;">"owner": {</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;color:rgb(4,51,255);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"threshold": 1,</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;color:rgb(4,51,255);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"keys": [{</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;color:rgb(4,51,255);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"key": "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV",</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;color:rgb(4,51,255);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"weight": 1</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;color:rgb(4,51,255);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;color:rgb(4,51,255);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;],</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;color:rgb(4,51,255);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"accounts": [],</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;color:rgb(4,51,255);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"waits": []</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;color:rgb(4,51,255);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;color:rgb(148,33,146);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"active": {</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;color:rgb(148,33,146);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"threshold": 1,</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;color:rgb(148,33,146);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"keys": [{</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;color:rgb(148,33,146);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"key": "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV",</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;color:rgb(148,33,146);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"weight": 1</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;color:rgb(148,33,146);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;color:rgb(148,33,146);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;],</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;color:rgb(148,33,146);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"accounts": [],</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;color:rgb(148,33,146);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"waits": []</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;color:rgb(148,33,146);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;….</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp; &nbsp; &nbsp; &nbsp; ...</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;],</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp; }</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">}</span>
+   </div>
+  </div>
+  <div></div>
+  <div>
+   <span style="font-size:16px;">会产生两种默认权限<span style="color:rgb(4,51,255);">owner(蓝色字体)</span>和<span style="color:rgb(148,33,146);">active(紫色字体)</span></span>
+  </div>
+  <div>
+   <span style="font-size:16px;">创建账号其实就是创建一个action</span>
+  </div>
+  <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;font-size:12px;color:rgb(51,51,51);background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+   <div>
+    <span style="font-family:Monaco;">chain::action <span style="background-color:rgb(255,250,165);">create_newaccount</span>(const name&amp; creator, const name&amp; newaccount, public_key_type owner, public_key_type active) {</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;return <span style="background-color:rgb(255,250,165);">action</span> {</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tx_permission.empty() ? vector&lt;chain::permission_level&gt;{{creator,config::active_name}} : get_account_permissions(tx_permission),</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eosio::chain::newaccount{</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.creator&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= creator,</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= newaccount,</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.owner&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= eosio::chain::authority{1, {{owner, 1}}, {}},</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.active&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= eosio::chain::authority{1, {{active, 1}}, {}}</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;};</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">}</span>
+   </div>
+  </div>
+  <div>
+   <span style="font-size:16px;">你在nodeos程序端会看到一个trxs<br></span>
+  </div>
+  <div>
+   <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;font-size:12px;color:rgb(51,51,51);background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+    <span style="font-family:Monaco;">1254502ms thread-0&nbsp;&nbsp;&nbsp;producer_plugin.cpp:585&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;block_production_loo ] Produced block 000006d1c28d6c68... #1745 @ 2018-05-22T02:20:54.500 signed by eosio [</span>
+    <span style="font-family:Monaco;"><span style="color:#ff2600;">trxs: 1</span></span>
+    <span style="font-family:Monaco;">, lib: 1744, confirmed: 0]</span>
+   </div>
+  </div>
+  <div>
+   <br>
+  </div>
+  <h3><span style="font-size:16px;">查看账号信息</span></h3>
+  <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;font-size:12px;color:rgb(51,51,51);background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+   <div>
+    <span style="font-family:Monaco;">$ cleos&nbsp;&nbsp;get account testaccount</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">privileged: false</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">permissions: </span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;"><span style="color:#0433ff;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;owner&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1:&nbsp;&nbsp;&nbsp;&nbsp;1 EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV</span></span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;"><span style="color:#942192;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;active&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1:&nbsp;&nbsp;&nbsp;&nbsp;1 EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV</span></span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">memory: </span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;quota:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1 bytes&nbsp;&nbsp;used:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.66 Kb&nbsp;&nbsp;&nbsp;</span>
+   </div>
+   <div>
+    <br style="font-family:Monaco;">
+   </div>
+   <div>
+    <span style="font-family:Monaco;">net bandwidth: (averaged over 3 days)</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;used:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1 bytes</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;available:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1 bytes</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;limit:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1 bytes</span>
+   </div>
+   <div>
+    <br style="font-family:Monaco;">
+   </div>
+   <div>
+    <span style="font-family:Monaco;">cpu bandwidth: (averaged over 3 days)</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;used:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1 us&nbsp;&nbsp;&nbsp;</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;available:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1 us&nbsp;&nbsp;&nbsp;</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;limit:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1 us </span>
+   </div>
+  </div>
+  <div>
+   <span style="font-size:18px;"><br></span>
+  </div>
+  <h3><span style="font-size:16px;">修改权限<span style="font-family:Verdana;">命令格式</span></span></h3>
+  <div>
+   <br>
+  </div>
+  <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;font-size:12px;color:rgb(51,51,51);background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+   <span style="font-family:Verdana;"><span style="font-size:14px;">$ cleos set account permission [OPTIONS] account permission authority [parent]</span></span>
+  </div>
+  <ul>
+   <li><span style="font-family:Verdana;"><span style="font-size:16px;">account，表示要修改的账户</span></span></li>
+   <li><span style="font-family:Verdana;"><span style="font-size:16px;">permission 表示要设置的权限(上面的owner,active,publish)</span></span></li>
+   <li><span style="font-family:Verdana;"><span style="font-size:16px;">authority 权限内容，JSON字符串</span></span></li>
+   <li><span style="font-family:Verdana;"><span style="font-size:16px;">parent 上级权限</span></span></li>
+  </ul>
+  <h3><span style="font-family:Verdana;"><span style="font-size:16px;">修改active权限</span></span></h3>
+  <div>
+   <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;font-size:12px;color:rgb(51,51,51);background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+    <div>
+     <span style="font-family:Monaco;">$ <span style="background-color:rgb(255,250,165);">cleos set account permission testaccount active '{"threshold" : 1, "keys" : [], "accounts" : [{"permission":{"actor":"bob","permission":"active"},"weight":1}, {"permission":{"actor":"stacy","permission":"active"},"weight":1}]}’&nbsp;owner</span></span>
+    </div>
+    <div style="font-family:Verdana;font-size:14px;">
+     <span style="font-family:Monaco;font-size:12px;">executed transaction: b1bc9680a9ba615a6de8c3f7c692d7d28ff97edae245bb40f948692b14ea6c15&nbsp;&nbsp;160 bytes&nbsp;&nbsp;189 us</span>
+    </div>
+    <div>
+     <span style="font-family:Monaco;">#&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eosio &lt;= eosio::updateauth&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{"account":"testaccount","permission":"active","parent":"owner","auth":{"threshold":1,"keys":[],"acc...</span>
+    </div>
+    <div>
+     <span style="font-family:Monaco;">warning: transaction executed locally, but may not be confirmed by the network yet</span>
+    </div>
+    <div>
+     <span style="font-family:Monaco;">$ <span style="background-color:rgb(255,250,165);">build/programs/cleos/cleos&nbsp;&nbsp;get account testaccount</span></span>
+    </div>
+    <div>
+     <span style="font-family:Monaco;">privileged: false</span>
+    </div>
+    <div>
+     <span style="font-family:Monaco;">permissions: </span>
+    </div>
+    <div>
+     <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;owner&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1:&nbsp;&nbsp;&nbsp;&nbsp;1 EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV</span>
+    </div>
+    <div>
+     <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+     <span style="font-family:Monaco;color:rgb(148,33,146);">active&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1:&nbsp;&nbsp;&nbsp;&nbsp;1 bob@active, 1 stacy@active, </span>
+    </div>
+    <div>
+     <span style="font-family:Monaco;">memory: </span>
+    </div>
+    <div>
+     <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;quota:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1 bytes&nbsp;&nbsp;used:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.674 Kb&nbsp;&nbsp;&nbsp;</span>
+    </div>
+    <div>
+     <br style="font-family:Monaco;">
+    </div>
+    <div>
+     <span style="font-family:Monaco;">net bandwidth: (averaged over 3 days)</span>
+    </div>
+    <div>
+     <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;used:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1 bytes</span>
+    </div>
+    <div>
+     <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;available:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1 bytes</span>
+    </div>
+    <div>
+     <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;limit:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1 bytes</span>
+    </div>
+    <div>
+     <br style="font-family:Monaco;">
+    </div>
+    <div>
+     <span style="font-family:Monaco;">cpu bandwidth: (averaged over 3 days)</span>
+    </div>
+    <div>
+     <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;used:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1 us&nbsp;&nbsp;&nbsp;</span>
+    </div>
+    <div>
+     <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;available:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1 us&nbsp;&nbsp;&nbsp;</span>
+    </div>
+    <div style="font-family:Verdana;font-size:14px;">
+     <span style="font-family:Monaco;font-size:12px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;limit:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1 us&nbsp;&nbsp;</span>
+     <span style="font-family:Monaco;font-size:12px;"><br></span>
+    </div>
+   </div>
+  </div>
+  <div>
+   <br>
+  </div>
+  <h3><span style="font-size:16px;">新增自定义权限</span></h3>
+  <div>
+   <br>
+  </div>
+  <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;font-size:12px;color:rgb(51,51,51);background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+   <div>
+    <span style="font-family:Verdana;">$ <span style="background-color:rgb(255,250,165);">cleos set account permission testaccount publish '{"threshold" : 2, "keys" : [{"permission":{"key":"EOS8X7Mp7apQWtL6T2sfSZzBcQNUqZB7tARFEm9gA9Tn9nbMdsvBB","permission":"active"},"weight":1}], "accounts" : [{"permission":{"actor":"bob","permission":"active"},"weight":2}, {"permission":{"actor":"stacy","permission":"active"},"weight":1}]}’ active</span></span>
+   </div>
+   <div>
+    <span style="font-family:Verdana;">executed transaction: a0f8d79f92e375b13c6f6da55b5b1f1aeebcbf1240a9bd287d3c845fc6b6941d&nbsp;&nbsp;200 bytes&nbsp;&nbsp;171 us</span>
+   </div>
+   <div>
+    <span style="font-family:Verdana;">#&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eosio &lt;= eosio::updateauth&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{"account":"testaccount","permission":"publish","parent":"active","auth":{"threshold":2,"keys":[{"ke...</span>
+   </div>
+   <div>
+    <span style="font-family:Verdana;">warning: transaction executed locally, but may not be confirmed by the network yet</span>
+   </div>
+   <div>
+    <span style="font-family:Verdana;">$ <span style="background-color:rgb(255,250,165);">cleos&nbsp;&nbsp;get account testaccount</span></span>
+   </div>
+   <div>
+    <span style="font-family:Verdana;">privileged: false</span>
+   </div>
+   <div>
+    <span style="font-family:Verdana;">permissions: </span>
+   </div>
+   <div>
+    <span style="font-family:Verdana;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;owner&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1:&nbsp;&nbsp;&nbsp;&nbsp;1 EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV</span>
+   </div>
+   <div>
+    <span style="font-family:Verdana;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;active&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1:&nbsp;&nbsp;&nbsp;&nbsp;1 bob@active, 1 stacy@active, </span>
+   </div>
+   <div>
+    <span style="font-family:Verdana;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;publish&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2:&nbsp;&nbsp;&nbsp;&nbsp;1 EOS1111111111111111111111111111111114T1Anm2 bob@active, 1 stacy@active, </span>
+   </div>
+   <div>
+    <span style="font-family:Verdana;">memory: </span>
+   </div>
+   <div>
+    <span style="font-family:Verdana;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;quota:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1 bytes&nbsp;&nbsp;used:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.066 Kb&nbsp;&nbsp;&nbsp;</span>
+   </div>
+   <div>
+    <br style="font-family:Verdana;">
+   </div>
+   <div>
+    <span style="font-family:Verdana;">net bandwidth: (averaged over 3 days)</span>
+   </div>
+   <div>
+    <span style="font-family:Verdana;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;used:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1 bytes</span>
+   </div>
+   <div>
+    <span style="font-family:Verdana;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;available:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1 bytes</span>
+   </div>
+   <div>
+    <span style="font-family:Verdana;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;limit:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1 bytes</span>
+   </div>
+   <div>
+    <br style="font-family:Verdana;">
+   </div>
+   <div>
+    <span style="font-family:Verdana;">cpu bandwidth: (averaged over 3 days)</span>
+   </div>
+   <div>
+    <span style="font-family:Verdana;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;used:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1 us&nbsp;&nbsp;&nbsp;</span>
+   </div>
+   <div>
+    <span style="font-family:Verdana;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;available:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1 us&nbsp;&nbsp;&nbsp;</span>
+   </div>
+   <div>
+    <span style="font-family:Verdana, Arial, Helvetica, sans-serif;background-color:transparent;"></span>
+    <br>
+    <span style="font-family:Verdana;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;limit:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1 us&nbsp;&nbsp;&nbsp;</span>
+   </div>
+  </div>
+  <div>
+   <span style="font-family:Verdana, Arial, Helvetica, sans-serif;">&nbsp;&nbsp; &nbsp;</span>
+  </div>
+  <h3><span style="font-size:16px;">权限应用场景</span></h3>
+  <div>
+   <span style="font-size:16px;">&nbsp; &nbsp; &nbsp;一个account(账号）可以有智能合约，智能合约有各种action，每个action可以指定permission,这样就可以限制action的执行权限了，具体细节我会在后面的博文里单独介绍</span>
+   <br>
+  </div>
+  <div>
+   <span style="font-size:16px;"><br></span>
+  </div>
+  <div>
+   <span style="font-size:16px;"></span>
+   <div style="font-size:14px;background-color:rgb(255,255,255);color:rgb(69,69,69);">
+    <span style="font-size:18px;font-family:SimSun;">/********************************</span>
+   </div>
+   <div style="font-size:14px;background-color:rgb(255,255,255);color:rgb(69,69,69);">
+    <span style="font-size:18px;"><span style="line-height:19px;font-family:'Courier New';">* 本文来自CSDN博主"爱踢门"</span></span>
+   </div>
+   <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+    <span style="color:rgb(69,69,69);font-size:18px;font-family:'Courier New';line-height:19px;">* 转载请标明出处</span>
+    <span style="color:rgb(69,69,69);font-size:18px;font-family:'Courier New';line-height:19px;">:</span>
+    <a href="http://blog.csdn.net/itleaks" rel="nofollow" style="font-family:'Courier New';line-height:19px;"><span style="font-weight:700;"><span style="color:rgb(51,102,255);">http://blog.csdn.net/itleaks</span></span></a>
+   </div>
+   <div style="font-size:14px;background-color:rgb(255,255,255);color:rgb(69,69,69);">
+    <span style="font-family:SimSun;line-height:19px;">******************************************/</span>
+   </div>
+   <p style="background-color:rgb(255,255,255);"><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180507174317244" alt=""></p>
+  </div>
+  <div></div>
+  <div></div> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/ITleaks/article/details/80405104,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/ITleaks/article/details/80405104,&quot;}">阅读更多</a> 
+</div>

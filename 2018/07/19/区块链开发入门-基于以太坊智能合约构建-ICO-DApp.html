@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>区块链开发入门：基于以太坊智能合约构建 ICO DApp | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="区块链开发入门：基于以太坊智能合约构建 ICO DApp" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="写给前端开发者的第一本区块链开发入门指南，通过从 0 到 1 实战开发一个 ICO DApp 项目（基于 V 神的 DAICO 设计思想），深入掌握区块链及以太坊技术。 为什么要选择区块链开发？ 未来已来，只是尚未流行！区块链技术的爆炸式发展引起了很多人的注意，相信看到本文的你早就听说过比特币、ICO，甚至购买过区块链资产。 区块链技术集密码学、分布式网络、经济学、社会学等多种学科之大成，使用共识算法（Consensus Algorithm）、公开账本（Open Ledger）解决了一个实实在在的问题：分布式环境下节点之间的信任和双花（Double Spending）问题。 区块链是个天然和钱离得很近的领域，离钱越近就越容易赚到钱，尽早开始准备并在区块链领域站稳脚跟的人将能享受到行业崛起的巨大红利，就像四年前的微信公众号，两年前的知识付费，一年前的微信小程序。 然而，从对身边同学的观察来看，前端工程师很容易产生区块链是底层技术、离前端很远的错觉。实际上任何区块链应用落地都需要以为用户创造实实在在的价值为基础，区块链应用的用户不会仅限于少数极客，有普通用户就需要界面，有界面就需要前端工程师。 区块链可以简单理解为分布式的、公开的、不可篡改的数据库，区块链应用在项目架构、前后端交互方式等方面和传统的端应用会有比较大的差别。从技术栈的视角来看，如下图，构建在分布式网络、公开账本、共识算法等三个核心要素之上的智能合约和 DApp 才是未来百花齐放的地方，底层协议会逐渐趋于稳定。 那么，作为前端工程师，我们在区块链领域的机会到底在哪里？炒币？貌似不是长久之计。如果说做成任何事情都需要依赖技能和和运气两个要素，不同的事情只是两种要素的比重不同，那么理智的人会想尽办法让事情更依赖技能，而不是运气。 随着技术的发展，区块链开发不再局限于底层的 C++/Go 开发，在成熟的应用平台上构建 DApp（Decentralized Application，去中心化的应用）要求工程师对区块链底层技术有正确理解即可，大量的开发工作集中在业务逻辑和用户界面上，随着底层技术的成熟，对 DApp 应用研发工程师的需求也会出现井喷式的增长，而前端工程师在这方面有着天然的优势。 &nbsp; 为什么要选以太坊？ 以太坊（Ethereum）是目前最成熟的、最被广泛使用的、支持构建和部署基于智能合约的 DApp 的区块链应用平台，根据 State of DApps 的统计，目前运行在以太坊上的应用多达 1379 个，这些 DApp 全部由两部分组成：存储在以太坊网络上的智能合约（使用 Solidity 编写，和 JS 很类似，未来 EOS 也会支持使用 Solidity 编写智能合约），以及能和智能合约交互的用 Web 技术开发的 DApp。 围绕以太坊的 DApp 开发生态是目前相对最成熟的，比如有开发框架 Truffle，有智能合约在线集成开发环境 Remix，还有专设的 StackExchange 开发者问答频道。 为什么有这本小册？ 虽然有大量的以太坊开发工具可以使用，但是它们的演化和迭代却非常快，很多工具、框架、库的教程可能过两周就就过时了，或者接口不再兼容了，这成了很多新同学入门区块链开发时最大的障碍，这也是这本小册的切入点：前端工程师写给前端工程师的以太坊智能合约和DApp 开发入门指南。 学会某个新技术的最佳路径是先掌握最小可用知识（Minimum Actionable Knowledge），然后立马动手开始做，在做的过程中不断优化和迭代自己对新技术的理解和掌握。 在这本小册里我会把最近半年摸索出来的以太坊智能合约、DApp 开发套路、最佳实践悉数分享给你，无需花费大量的时间去做诸如启动本地测试网络、编译和运行全节点之类的事情，在只依赖核心工具如 solc、Chrome 的情况下，用由浅入深的方式手把手带你熟悉 Solidity 智能合约开发、测试、部署，搭建和智能合约交互的 DApp 开发框架，为成为区块链工程师做好准备。 文不如表，表不如图，在小册中使用了大量的图片（目前完成度 35%，插图 55副）和类比，即使你完全没接触过区块链，也能轻松理解区块链世界里面的关键概念。 小册的内容划分为 5 大部分： 入门篇（上）：理解区块链原理与以太坊的运行机制，熟悉以太坊开发的基本概念，如账户、交易等； 入门篇（下）：Solidity 开发入门，基于 Remix 的智能合约工作流； 进阶篇：基于现代前端环境的智能合约开发、构建、部署、测试工作流； 实战篇（上）：设计、开发、部署、测试 ICO 智能合约； 实战篇（下）：使用 web3、next.js 开发能和智能合约交互的ICO DApp； 作者介绍 王仕军，爱折腾、爱分享的前端老司机： 6 年以上前端开发经验，4 年大型互联网公司工作经验； 前端周刊主笔，掘金专栏作者：王仕军； 掘金小册作者：《使用 npm script 构建超溜的前端工作流》； 熟知（是的，到现在我还不敢说精通）&nbsp;Javascript、Node.js； 入坑区块链 1 年，接触区块链开发半年，对区块链技术有广泛涉猎； 对开发效率和软件质量有极致追求。 目标是&nbsp;Be a Power User of Everything。 名人推荐 你会得到什么？ 在小册中，你将学会在自己熟悉的前端开发环境中组合使用 Ethereum、Solidity、JavaScript 编写、调试、测试、部署和管理自己的 DApp 的基本方法。具体包括： 理解在以太坊上构建 DApp 需要掌握的关键概念，比如 Gas、Transaction； 熟悉以太坊不同测试网络，以及测试网络提供工具的使用方法； 熟悉 Solidity 语言，并用其开发真实的智能合约； 熟悉以太坊智能合约调试工具 Remix 的基本用法； 掌握设计、开发、测试、部署智能合约的工作流和最佳实践； 熟悉以太坊智能合约工具库 web3 最新版的基本使用方法； 熟悉 web3 和 next.js 结合使用的方方面面； 构建并掌握完整的、能被重用的智能合约、DApp 应用架构和构建工具链条； 适合什么群体？ 具备基本的 JavaScript 知识，最好是写过 Web 应用，熟悉 npm 使用的同学； 对区块链、以太坊、智能合约技术感兴趣，想做深入了解的前端同学； 期望使用区块链技术开发能实际落地的应用的前端同学； 期望储备区块链开发技能，为跨界区块链做好准备的前端同学； 期望从事区块链行业的计算机相关专业学生； 想抓取区块链行业红利，靠技能赚更多钱的同学； 最后如果你有兴趣，可以通过长按下方的二维码，以及复制好本公众号专属优惠码（xiaoceoffline）享受5折优惠购买。 长按识别，并在优惠码中输入 xiaoceoffline 点击【阅读原文】也可以购买 阅读更多" />
+<meta property="og:description" content="写给前端开发者的第一本区块链开发入门指南，通过从 0 到 1 实战开发一个 ICO DApp 项目（基于 V 神的 DAICO 设计思想），深入掌握区块链及以太坊技术。 为什么要选择区块链开发？ 未来已来，只是尚未流行！区块链技术的爆炸式发展引起了很多人的注意，相信看到本文的你早就听说过比特币、ICO，甚至购买过区块链资产。 区块链技术集密码学、分布式网络、经济学、社会学等多种学科之大成，使用共识算法（Consensus Algorithm）、公开账本（Open Ledger）解决了一个实实在在的问题：分布式环境下节点之间的信任和双花（Double Spending）问题。 区块链是个天然和钱离得很近的领域，离钱越近就越容易赚到钱，尽早开始准备并在区块链领域站稳脚跟的人将能享受到行业崛起的巨大红利，就像四年前的微信公众号，两年前的知识付费，一年前的微信小程序。 然而，从对身边同学的观察来看，前端工程师很容易产生区块链是底层技术、离前端很远的错觉。实际上任何区块链应用落地都需要以为用户创造实实在在的价值为基础，区块链应用的用户不会仅限于少数极客，有普通用户就需要界面，有界面就需要前端工程师。 区块链可以简单理解为分布式的、公开的、不可篡改的数据库，区块链应用在项目架构、前后端交互方式等方面和传统的端应用会有比较大的差别。从技术栈的视角来看，如下图，构建在分布式网络、公开账本、共识算法等三个核心要素之上的智能合约和 DApp 才是未来百花齐放的地方，底层协议会逐渐趋于稳定。 那么，作为前端工程师，我们在区块链领域的机会到底在哪里？炒币？貌似不是长久之计。如果说做成任何事情都需要依赖技能和和运气两个要素，不同的事情只是两种要素的比重不同，那么理智的人会想尽办法让事情更依赖技能，而不是运气。 随着技术的发展，区块链开发不再局限于底层的 C++/Go 开发，在成熟的应用平台上构建 DApp（Decentralized Application，去中心化的应用）要求工程师对区块链底层技术有正确理解即可，大量的开发工作集中在业务逻辑和用户界面上，随着底层技术的成熟，对 DApp 应用研发工程师的需求也会出现井喷式的增长，而前端工程师在这方面有着天然的优势。 &nbsp; 为什么要选以太坊？ 以太坊（Ethereum）是目前最成熟的、最被广泛使用的、支持构建和部署基于智能合约的 DApp 的区块链应用平台，根据 State of DApps 的统计，目前运行在以太坊上的应用多达 1379 个，这些 DApp 全部由两部分组成：存储在以太坊网络上的智能合约（使用 Solidity 编写，和 JS 很类似，未来 EOS 也会支持使用 Solidity 编写智能合约），以及能和智能合约交互的用 Web 技术开发的 DApp。 围绕以太坊的 DApp 开发生态是目前相对最成熟的，比如有开发框架 Truffle，有智能合约在线集成开发环境 Remix，还有专设的 StackExchange 开发者问答频道。 为什么有这本小册？ 虽然有大量的以太坊开发工具可以使用，但是它们的演化和迭代却非常快，很多工具、框架、库的教程可能过两周就就过时了，或者接口不再兼容了，这成了很多新同学入门区块链开发时最大的障碍，这也是这本小册的切入点：前端工程师写给前端工程师的以太坊智能合约和DApp 开发入门指南。 学会某个新技术的最佳路径是先掌握最小可用知识（Minimum Actionable Knowledge），然后立马动手开始做，在做的过程中不断优化和迭代自己对新技术的理解和掌握。 在这本小册里我会把最近半年摸索出来的以太坊智能合约、DApp 开发套路、最佳实践悉数分享给你，无需花费大量的时间去做诸如启动本地测试网络、编译和运行全节点之类的事情，在只依赖核心工具如 solc、Chrome 的情况下，用由浅入深的方式手把手带你熟悉 Solidity 智能合约开发、测试、部署，搭建和智能合约交互的 DApp 开发框架，为成为区块链工程师做好准备。 文不如表，表不如图，在小册中使用了大量的图片（目前完成度 35%，插图 55副）和类比，即使你完全没接触过区块链，也能轻松理解区块链世界里面的关键概念。 小册的内容划分为 5 大部分： 入门篇（上）：理解区块链原理与以太坊的运行机制，熟悉以太坊开发的基本概念，如账户、交易等； 入门篇（下）：Solidity 开发入门，基于 Remix 的智能合约工作流； 进阶篇：基于现代前端环境的智能合约开发、构建、部署、测试工作流； 实战篇（上）：设计、开发、部署、测试 ICO 智能合约； 实战篇（下）：使用 web3、next.js 开发能和智能合约交互的ICO DApp； 作者介绍 王仕军，爱折腾、爱分享的前端老司机： 6 年以上前端开发经验，4 年大型互联网公司工作经验； 前端周刊主笔，掘金专栏作者：王仕军； 掘金小册作者：《使用 npm script 构建超溜的前端工作流》； 熟知（是的，到现在我还不敢说精通）&nbsp;Javascript、Node.js； 入坑区块链 1 年，接触区块链开发半年，对区块链技术有广泛涉猎； 对开发效率和软件质量有极致追求。 目标是&nbsp;Be a Power User of Everything。 名人推荐 你会得到什么？ 在小册中，你将学会在自己熟悉的前端开发环境中组合使用 Ethereum、Solidity、JavaScript 编写、调试、测试、部署和管理自己的 DApp 的基本方法。具体包括： 理解在以太坊上构建 DApp 需要掌握的关键概念，比如 Gas、Transaction； 熟悉以太坊不同测试网络，以及测试网络提供工具的使用方法； 熟悉 Solidity 语言，并用其开发真实的智能合约； 熟悉以太坊智能合约调试工具 Remix 的基本用法； 掌握设计、开发、测试、部署智能合约的工作流和最佳实践； 熟悉以太坊智能合约工具库 web3 最新版的基本使用方法； 熟悉 web3 和 next.js 结合使用的方方面面； 构建并掌握完整的、能被重用的智能合约、DApp 应用架构和构建工具链条； 适合什么群体？ 具备基本的 JavaScript 知识，最好是写过 Web 应用，熟悉 npm 使用的同学； 对区块链、以太坊、智能合约技术感兴趣，想做深入了解的前端同学； 期望使用区块链技术开发能实际落地的应用的前端同学； 期望储备区块链开发技能，为跨界区块链做好准备的前端同学； 期望从事区块链行业的计算机相关专业学生； 想抓取区块链行业红利，靠技能赚更多钱的同学； 最后如果你有兴趣，可以通过长按下方的二维码，以及复制好本公众号专属优惠码（xiaoceoffline）享受5折优惠购买。 长按识别，并在优惠码中输入 xiaoceoffline 点击【阅读原文】也可以购买 阅读更多" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/07/19/%E5%8C%BA%E5%9D%97%E9%93%BE%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8-%E5%9F%BA%E4%BA%8E%E4%BB%A5%E5%A4%AA%E5%9D%8A%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E6%9E%84%E5%BB%BA-ICO-DApp.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/07/19/%E5%8C%BA%E5%9D%97%E9%93%BE%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8-%E5%9F%BA%E4%BA%8E%E4%BB%A5%E5%A4%AA%E5%9D%8A%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E6%9E%84%E5%BB%BA-ICO-DApp.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-07-19T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"写给前端开发者的第一本区块链开发入门指南，通过从 0 到 1 实战开发一个 ICO DApp 项目（基于 V 神的 DAICO 设计思想），深入掌握区块链及以太坊技术。 为什么要选择区块链开发？ 未来已来，只是尚未流行！区块链技术的爆炸式发展引起了很多人的注意，相信看到本文的你早就听说过比特币、ICO，甚至购买过区块链资产。 区块链技术集密码学、分布式网络、经济学、社会学等多种学科之大成，使用共识算法（Consensus Algorithm）、公开账本（Open Ledger）解决了一个实实在在的问题：分布式环境下节点之间的信任和双花（Double Spending）问题。 区块链是个天然和钱离得很近的领域，离钱越近就越容易赚到钱，尽早开始准备并在区块链领域站稳脚跟的人将能享受到行业崛起的巨大红利，就像四年前的微信公众号，两年前的知识付费，一年前的微信小程序。 然而，从对身边同学的观察来看，前端工程师很容易产生区块链是底层技术、离前端很远的错觉。实际上任何区块链应用落地都需要以为用户创造实实在在的价值为基础，区块链应用的用户不会仅限于少数极客，有普通用户就需要界面，有界面就需要前端工程师。 区块链可以简单理解为分布式的、公开的、不可篡改的数据库，区块链应用在项目架构、前后端交互方式等方面和传统的端应用会有比较大的差别。从技术栈的视角来看，如下图，构建在分布式网络、公开账本、共识算法等三个核心要素之上的智能合约和 DApp 才是未来百花齐放的地方，底层协议会逐渐趋于稳定。 那么，作为前端工程师，我们在区块链领域的机会到底在哪里？炒币？貌似不是长久之计。如果说做成任何事情都需要依赖技能和和运气两个要素，不同的事情只是两种要素的比重不同，那么理智的人会想尽办法让事情更依赖技能，而不是运气。 随着技术的发展，区块链开发不再局限于底层的 C++/Go 开发，在成熟的应用平台上构建 DApp（Decentralized Application，去中心化的应用）要求工程师对区块链底层技术有正确理解即可，大量的开发工作集中在业务逻辑和用户界面上，随着底层技术的成熟，对 DApp 应用研发工程师的需求也会出现井喷式的增长，而前端工程师在这方面有着天然的优势。 &nbsp; 为什么要选以太坊？ 以太坊（Ethereum）是目前最成熟的、最被广泛使用的、支持构建和部署基于智能合约的 DApp 的区块链应用平台，根据 State of DApps 的统计，目前运行在以太坊上的应用多达 1379 个，这些 DApp 全部由两部分组成：存储在以太坊网络上的智能合约（使用 Solidity 编写，和 JS 很类似，未来 EOS 也会支持使用 Solidity 编写智能合约），以及能和智能合约交互的用 Web 技术开发的 DApp。 围绕以太坊的 DApp 开发生态是目前相对最成熟的，比如有开发框架 Truffle，有智能合约在线集成开发环境 Remix，还有专设的 StackExchange 开发者问答频道。 为什么有这本小册？ 虽然有大量的以太坊开发工具可以使用，但是它们的演化和迭代却非常快，很多工具、框架、库的教程可能过两周就就过时了，或者接口不再兼容了，这成了很多新同学入门区块链开发时最大的障碍，这也是这本小册的切入点：前端工程师写给前端工程师的以太坊智能合约和DApp 开发入门指南。 学会某个新技术的最佳路径是先掌握最小可用知识（Minimum Actionable Knowledge），然后立马动手开始做，在做的过程中不断优化和迭代自己对新技术的理解和掌握。 在这本小册里我会把最近半年摸索出来的以太坊智能合约、DApp 开发套路、最佳实践悉数分享给你，无需花费大量的时间去做诸如启动本地测试网络、编译和运行全节点之类的事情，在只依赖核心工具如 solc、Chrome 的情况下，用由浅入深的方式手把手带你熟悉 Solidity 智能合约开发、测试、部署，搭建和智能合约交互的 DApp 开发框架，为成为区块链工程师做好准备。 文不如表，表不如图，在小册中使用了大量的图片（目前完成度 35%，插图 55副）和类比，即使你完全没接触过区块链，也能轻松理解区块链世界里面的关键概念。 小册的内容划分为 5 大部分： 入门篇（上）：理解区块链原理与以太坊的运行机制，熟悉以太坊开发的基本概念，如账户、交易等； 入门篇（下）：Solidity 开发入门，基于 Remix 的智能合约工作流； 进阶篇：基于现代前端环境的智能合约开发、构建、部署、测试工作流； 实战篇（上）：设计、开发、部署、测试 ICO 智能合约； 实战篇（下）：使用 web3、next.js 开发能和智能合约交互的ICO DApp； 作者介绍 王仕军，爱折腾、爱分享的前端老司机： 6 年以上前端开发经验，4 年大型互联网公司工作经验； 前端周刊主笔，掘金专栏作者：王仕军； 掘金小册作者：《使用 npm script 构建超溜的前端工作流》； 熟知（是的，到现在我还不敢说精通）&nbsp;Javascript、Node.js； 入坑区块链 1 年，接触区块链开发半年，对区块链技术有广泛涉猎； 对开发效率和软件质量有极致追求。 目标是&nbsp;Be a Power User of Everything。 名人推荐 你会得到什么？ 在小册中，你将学会在自己熟悉的前端开发环境中组合使用 Ethereum、Solidity、JavaScript 编写、调试、测试、部署和管理自己的 DApp 的基本方法。具体包括： 理解在以太坊上构建 DApp 需要掌握的关键概念，比如 Gas、Transaction； 熟悉以太坊不同测试网络，以及测试网络提供工具的使用方法； 熟悉 Solidity 语言，并用其开发真实的智能合约； 熟悉以太坊智能合约调试工具 Remix 的基本用法； 掌握设计、开发、测试、部署智能合约的工作流和最佳实践； 熟悉以太坊智能合约工具库 web3 最新版的基本使用方法； 熟悉 web3 和 next.js 结合使用的方方面面； 构建并掌握完整的、能被重用的智能合约、DApp 应用架构和构建工具链条； 适合什么群体？ 具备基本的 JavaScript 知识，最好是写过 Web 应用，熟悉 npm 使用的同学； 对区块链、以太坊、智能合约技术感兴趣，想做深入了解的前端同学； 期望使用区块链技术开发能实际落地的应用的前端同学； 期望储备区块链开发技能，为跨界区块链做好准备的前端同学； 期望从事区块链行业的计算机相关专业学生； 想抓取区块链行业红利，靠技能赚更多钱的同学； 最后如果你有兴趣，可以通过长按下方的二维码，以及复制好本公众号专属优惠码（xiaoceoffline）享受5折优惠购买。 长按识别，并在优惠码中输入 xiaoceoffline 点击【阅读原文】也可以购买 阅读更多","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/07/19/%E5%8C%BA%E5%9D%97%E9%93%BE%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8-%E5%9F%BA%E4%BA%8E%E4%BB%A5%E5%A4%AA%E5%9D%8A%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E6%9E%84%E5%BB%BA-ICO-DApp.html","headline":"区块链开发入门：基于以太坊智能合约构建 ICO DApp","dateModified":"2018-07-19T00:00:00+08:00","datePublished":"2018-07-19T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/07/19/%E5%8C%BA%E5%9D%97%E9%93%BE%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8-%E5%9F%BA%E4%BA%8E%E4%BB%A5%E5%A4%AA%E5%9D%8A%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E6%9E%84%E5%BB%BA-ICO-DApp.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>区块链开发入门：基于以太坊智能合约构建 ICO DApp</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <div class="rich_media_content" id="js_content"> 
+   <p style="min-height:1em;"><span style="color:rgb(119,119,119);font-size:15px;">写给前端开发者的第一本区块链开发入门指南，通过从 0 到 1 实战开发一个 ICO DApp 项目（基于 V 神的 DAICO 设计思想），深入掌握区块链及以太坊技术。</span><br></p>
+   <p style="min-height:1em;"><span style="color:rgb(119,119,119);font-size:15px;"><br></span></p>
+   <p style="min-height:1em;text-align:center;"><img style="border-width:0px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/2A8tXicCG8ymnc6oUs7icll9ICIxpibx66iaHzM68rpzdBjDSGzymoNFGUszZU9v7ecKiaqwUcoyhNbxLebtdKZGBbA/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="min-height:1em;"><span style="color:rgb(61,167,66);font-size:15px;"><br></span></p>
+   <p style="min-height:1em;"><span style="color:rgb(61,167,66);font-size:15px;"></span></p>
+   <p><br></p>
+   <span style="width:0px;border-left:.6em solid rgb(71,193,168);border-top:.5em solid transparent;border-bottom:.5em solid transparent;"></span>
+   <span style="width:0px;border-left:.6em solid rgb(71,193,168);border-top:.5em solid transparent;border-bottom:.5em solid transparent;"></span>
+   <p style="min-height:1em;"><strong>为什么要选择区块链开发？</strong></p>
+   <p><br></p>
+   <p style="min-height:1em;"><span style="font-size:15px;">未来已来，只是尚未流行！区块链技术的爆炸式发展引起了很多人的注意，相信看到本文的你早就听说过比特币、ICO，甚至购买过区块链资产。</span><br><span style="color:rgb(61,167,66);font-size:15px;"></span></p>
+   <p style="min-height:1em;"><span style="font-size:15px;"><br></span></p>
+   <p style="min-height:1em;"><span style="font-size:15px;">区块链技术集密码学、分布式网络、经济学、社会学等多种学科之大成，使用共识算法（Consensus Algorithm）、公开账本（Open Ledger）解决了一个实实在在的问题：分布式环境下节点之间的信任和双花（Double Spending）问题。</span></p>
+   <p style="min-height:1em;"><span style="font-size:15px;"><br></span></p>
+   <p style="min-height:1em;"><span style="color:rgb(217,33,66);"><strong><span style="font-size:15px;">区块链是个天然和钱离得很近的领域，离钱越近就越容易赚到钱</span></strong></span><span style="font-size:15px;">，尽早开始准备并在区块链领域站稳脚跟的人将能享受到行业崛起的巨大红利，就像四年前的微信公众号，两年前的知识付费，一年前的微信小程序。</span></p>
+   <p style="min-height:1em;"><span style="font-size:15px;"><br></span></p>
+   <p style="min-height:1em;"><span style="font-size:15px;">然而，从对身边同学的观察来看，前端工程师很容易产生区块链是底层技术、离前端很远的错觉。实际上任何区块链应用落地都需要以为用户创造实实在在的价值为基础，区块链应用的用户不会仅限于少数极客，有普通用户就需要界面，有界面就需要前端工程师。</span></p>
+   <p style="min-height:1em;"><span style="font-size:15px;"><br></span></p>
+   <p style="min-height:1em;text-align:center;"><img style="border-width:0px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_jpg/2A8tXicCG8ymnc6oUs7icll9ICIxpibx66iaTibyJEb3UhGzMmMZw4sonIb18ID5R729BstZns1icCQcswfcVqWBIVMA/640?wx_fmt=jpeg" alt="640?wx_fmt=jpeg"></p>
+   <p style="min-height:1em;"><span style="font-size:15px;"><br></span></p>
+   <p style="min-height:1em;"><span style="font-size:15px;">区块链可以简单理解为分布式的、公开的、不可篡改的数据库，区块链应用在项目架构、前后端交互方式等方面和传统的端应用会有比较大的差别。从技术栈的视角来看，如下图，构建在分布式网络、公开账本、共识算法等三个核心要素之上的智能合约和 DApp 才是未来百花齐放的地方，底层协议会逐渐趋于稳定。</span></p>
+   <p style="min-height:1em;"><span style="font-size:15px;"><br></span></p>
+   <p style="min-height:1em;"><span style="font-size:15px;">那么，作为前端工程师，我们在区块链领域的机会到底在哪里？炒币？貌似不是长久之计。如果说做成任何事情都需要依赖技能和和运气两个要素，不同的事情只是两种要素的比重不同，那么理智的人会想尽办法让事情更依赖技能，而不是运气。</span></p>
+   <p style="min-height:1em;"><span style="font-size:15px;"><br></span></p>
+   <p style="min-height:1em;"><span style="font-size:15px;">随着技术的发展，区块链开发不再局限于底层的 C++/Go 开发，在成熟的应用平台上构建 DApp（Decentralized Application，去中心化的应用）要求工程师</span><span style="font-size:15px;color:rgb(217,33,66);"><strong>对区块链底层技术有正确理解即可，大量的开发工作集中在业务逻辑和用户界面上</strong></span><span style="font-size:15px;">，随着底层技术的成熟，对 DApp 应用研发工程师的需求也会出现井喷式的增长，而前端工程师在这方面有着天然的优势。</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p><br></p>
+   <span style="width:0px;border-left:.6em solid rgb(71,193,168);border-top:.5em solid transparent;border-bottom:.5em solid transparent;"></span>
+   <span style="width:0px;border-left:.6em solid rgb(71,193,168);border-top:.5em solid transparent;border-bottom:.5em solid transparent;"></span>&nbsp;
+   <p style="min-height:1em;"><strong>为什么要选以太坊？</strong></p>
+   <p><br></p>
+   <p style="min-height:1em;"><span style="font-size:15px;"><br></span></p>
+   <p style="min-height:1em;"><span style="font-size:15px;">以太坊（Ethereum）是目前最成熟的、最被广泛使用的、支持构建和部署基于智能合约的 DApp 的区块链应用平台，根据 State of DApps 的统计，目前运行在以太坊上的应用多达 1379 个，这些 DApp 全部由两部分组成：存储在以太坊网络上的智能合约（使用 Solidity 编写，和 JS 很类似，未来 EOS 也会支持使用 Solidity 编写智能合约），以及能和智能合约交互的用 Web 技术开发的 DApp。</span></p>
+   <p style="min-height:1em;"><span style="font-size:15px;"><br></span></p>
+   <p style="min-height:1em;"><span style="font-size:15px;">围绕以太坊的 DApp 开发生态是目前相对最成熟的，比如有开发框架 Truffle，有智能合约在线集成开发环境 Remix，还有专设的 StackExchange 开发者问答频道。</span></p>
+   <p style="min-height:1em;"><span style="font-size:15px;"><br></span></p>
+   <p style="min-height:1em;"><span style="color:rgb(61,167,66);font-size:15px;"></span></p>
+   <p><br></p>
+   <span style="width:0px;border-left:.6em solid rgb(71,193,168);border-top:.5em solid transparent;border-bottom:.5em solid transparent;"></span>
+   <span style="width:0px;border-left:.6em solid rgb(71,193,168);border-top:.5em solid transparent;border-bottom:.5em solid transparent;"></span>
+   <p style="min-height:1em;"><strong>为什么有这本小册？</strong></p>
+   <p><br></p>
+   <p style="min-height:1em;"><span style="font-size:15px;">虽然有大量的以太坊开发工具可以使用，但是它们的演化和迭代却非常快，很多工具、框架、库的教程可能过两周就就过时了，或者接口不再兼容了，这成了很多新同学入门区块链开发时最大的障碍，这也是这本小册的切入点：</span><span style="font-size:15px;color:rgb(217,33,66);"><strong>前端工程师写给前端工程师的以太坊智能合约和DApp 开发入门指南</strong></span><span style="font-size:15px;">。</span><br><span style="color:rgb(61,167,66);font-size:15px;"></span></p>
+   <p style="min-height:1em;"><span style="font-size:15px;"><br></span></p>
+   <p style="min-height:1em;text-align:center;"><img style="border-width:0px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/2A8tXicCG8ymnc6oUs7icll9ICIxpibx66iauziak3hAzOFokoGKUYu2HDoQlFnLWXibDMSZbYCwQHOfdqUouZxty19A/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="min-height:1em;"><span style="font-size:15px;"><br></span></p>
+   <p style="min-height:1em;"><span style="font-size:15px;">学会某个新技术的最佳路径是先掌握最小可用知识（Minimum Actionable Knowledge），然后立马动手开始做，在做的过程中不断优化和迭代自己对新技术的理解和掌握。</span></p>
+   <p style="min-height:1em;"><span style="font-size:15px;"><br></span></p>
+   <p style="min-height:1em;"><span style="font-size:15px;">在这本小册里我会把最近半年摸索出来的以太坊智能合约、DApp 开发套路、最佳实践悉数分享给你，无需花费大量的时间去做诸如启动本地测试网络、编译和运行全节点之类的事情，在只依赖核心工具如 solc、Chrome 的情况下，用由浅入深的方式手把手带你熟悉 Solidity 智能合约开发、测试、部署，搭建和智能合约交互的 DApp 开发框架，为成为区块链工程师做好准备。</span></p>
+   <p style="min-height:1em;"><span style="font-size:15px;"><br></span></p>
+   <p style="min-height:1em;"><span style="font-size:15px;">文不如表，表不如图，在小册中使用了大量的图片（目前完成度 35%，插图 55副）和类比，即使你完全没接触过区块链，也能轻松理解区块链世界里面的关键概念。</span></p>
+   <p style="min-height:1em;"><span style="font-size:15px;"><br></span></p>
+   <p style="min-height:1em;"><span style="font-size:15px;">小册的内容划分为 5 大部分：</span></p>
+   <ul class="list-paddingleft-2">
+    <li><p style="min-height:1em;"><span style="font-size:15px;">入门篇（上）：理解区块链原理与以太坊的运行机制，熟悉以太坊开发的基本概念，如账户、交易等；</span></p></li>
+    <li><p style="min-height:1em;"><span style="font-size:15px;">入门篇（下）：Solidity 开发入门，基于 Remix 的智能合约工作流；</span></p></li>
+    <li><p style="min-height:1em;"><span style="font-size:15px;">进阶篇：基于现代前端环境的智能合约开发、构建、部署、测试工作流；</span></p></li>
+    <li><p style="min-height:1em;"><span style="font-size:15px;">实战篇（上）：设计、开发、部署、测试 ICO 智能合约；</span></p></li>
+    <li><p style="min-height:1em;"><span style="font-size:15px;">实战篇（下）：使用 web3、next.js 开发能和智能合约交互的ICO DApp；</span></p><p style="min-height:1em;"><span style="font-size:15px;"></span></p><p style="min-height:1em;"><span style="font-size:15px;"></span></p></li>
+   </ul>
+   <p style="min-height:1em;"><span style="font-size:15px;"></span></p>
+   <p style="min-height:1em;text-align:center;"><img style="border-width:0px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_jpg/2A8tXicCG8ymnc6oUs7icll9ICIxpibx66ia4fMHqKjD10eI9IVhsWFia4KibKwRU1ibsicM4nFg6vpudiafZIwj8bhkOJg/640?wx_fmt=jpeg" alt="640?wx_fmt=jpeg"></p>
+   <p style="min-height:1em;"><span style="color:rgb(0,150,136);font-size:15px;"><br></span></p>
+   <p style="min-height:1em;"><span style="color:rgb(0,150,136);font-size:15px;"></span></p>
+   <p><br></p>
+   <span style="width:0px;border-left:.6em solid rgb(71,193,168);border-top:.5em solid transparent;border-bottom:.5em solid transparent;"></span>
+   <span style="width:0px;border-left:.6em solid rgb(71,193,168);border-top:.5em solid transparent;border-bottom:.5em solid transparent;"></span>
+   <p style="min-height:1em;"><strong>作者介绍</strong></p>
+   <p><br></p>
+   <p style="min-height:1em;text-align:center;"><img style="border-width:0px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/2A8tXicCG8ymnc6oUs7icll9ICIxpibx66iaOojibtlvR98tibnHllnwpgddZDC3VO5vM2XKFwDnxOjA1eMtvy1ZeLuA/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="min-height:1em;"><span style="font-size:15px;"><br></span></p>
+   <p style="min-height:1em;"><span style="font-size:15px;">王仕军，爱折腾、爱分享的前端老司机：</span></p>
+   <p style="min-height:1em;"><span style="font-size:15px;"><br></span></p>
+   <ul class="list-paddingleft-2">
+    <li><p style="min-height:1em;"><span style="font-size:15px;">6 年以上前端开发经验，4 年大型互联网公司工作经验；</span></p></li>
+    <li><p style="min-height:1em;"><span style="font-size:15px;">前端周刊主笔，掘金专栏作者：</span><span style="color:rgb(87,107,149);font-size:15px;">王仕军</span><span style="font-size:15px;">；</span></p></li>
+    <li><p style="min-height:1em;"><span style="font-size:15px;">掘金小册作者：</span><span style="color:rgb(87,107,149);font-size:15px;">《使用 npm script 构建超溜的前端工作流》</span><span style="font-size:15px;">；</span></p></li>
+    <li><p style="min-height:1em;"><span style="font-size:15px;"><span>熟知（是的，到现在我还不敢说精通）&nbsp;</span><span style="font-family:monospace;">Javascript</span><span>、</span><span style="font-family:monospace;">Node.js</span><span>；</span></span></p></li>
+    <li><p style="min-height:1em;"><span style="font-size:15px;">入坑区块链 1 年，接触区块链开发半年，对区块链技术有广泛涉猎；</span></p></li>
+    <li><p style="min-height:1em;"><span style="font-size:15px;">对开发效率和软件质量有极致追求。</span></p></li>
+   </ul>
+   <p style="min-height:1em;text-align:left;"><span style="font-size:15px;"><span>目标是&nbsp;</span><span style="font-family:monospace;color:rgb(191,54,12);font-weight:bold;">Be a Power User of Everything</span><span>。</span></span></p>
+   <p style="min-height:1em;"><span style="color:rgb(0,150,136);font-size:15px;"><br></span></p>
+   <p style="min-height:1em;"><span style="color:rgb(0,150,136);font-size:15px;"></span></p>
+   <p><br></p>
+   <span style="width:0px;border-left:.6em solid rgb(71,193,168);border-top:.5em solid transparent;border-bottom:.5em solid transparent;"></span>
+   <span style="width:0px;border-left:.6em solid rgb(71,193,168);border-top:.5em solid transparent;border-bottom:.5em solid transparent;"></span>
+   <span style="width:0px;border-left:.6em solid rgb(71,193,168);border-top:.5em solid transparent;border-bottom:.5em solid transparent;"></span>
+   <p style="min-height:1em;"><strong>名人推荐</strong></p>
+   <p><strong style="color:rgb(71,193,168);font-size:15px;"></strong></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="min-height:1em;text-align:center;"><img style="border-width:0px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/hp6WA88JQ4RxqO5mubXMpMjD2u4ZagXooSgxI16IES8jpponut6t2sbYLaAoKDWBrMQL17SeTht5P2N28lbs3A/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="min-height:1em;text-align:center;"><img style="border-width:0px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/hp6WA88JQ4RxqO5mubXMpMjD2u4ZagXow5ONLn4XkgEVn04UdMTtrn7ibJgvqJ5x0PzQdlXibbjBWq68fpDlpx8A/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="min-height:1em;"><span style="color:rgb(0,150,136);font-size:15px;"><br></span></p>
+   <p style="min-height:1em;"><span style="color:rgb(0,150,136);font-size:15px;"></span></p>
+   <p><br></p>
+   <span style="width:0px;border-left:.6em solid rgb(71,193,168);border-top:.5em solid transparent;border-bottom:.5em solid transparent;"></span>
+   <span style="width:0px;border-left:.6em solid rgb(71,193,168);border-top:.5em solid transparent;border-bottom:.5em solid transparent;"></span>
+   <p style="min-height:1em;"><strong>你会得到什么？</strong></p>
+   <p><br></p>
+   <p style="min-height:1em;"><span style="font-size:15px;">在小册中，你将学会在自己熟悉的前端开发环境中组合使用 Ethereum、Solidity、JavaScript 编写、调试、测试、部署和管理自己的 DApp 的基本方法。具体包括：</span><br><span style="color:rgb(0,150,136);font-size:15px;"></span></p>
+   <ul class="list-paddingleft-2">
+    <li><p style="min-height:1em;"><span style="font-size:15px;">理解在以太坊上构建 DApp 需要掌握的关键概念，比如 Gas、Transaction；</span></p></li>
+    <li><p style="min-height:1em;"><span style="font-size:15px;">熟悉以太坊不同测试网络，以及测试网络提供工具的使用方法；</span></p></li>
+    <li><p style="min-height:1em;"><span style="font-size:15px;">熟悉 Solidity 语言，并用其开发真实的智能合约；</span></p></li>
+    <li><p style="min-height:1em;"><span style="font-size:15px;">熟悉以太坊智能合约调试工具 Remix 的基本用法；</span></p></li>
+    <li><p style="min-height:1em;"><span style="font-size:15px;">掌握设计、开发、测试、部署智能合约的工作流和最佳实践；</span></p></li>
+    <li><p style="min-height:1em;"><span style="font-size:15px;">熟悉以太坊智能合约工具库 web3 最新版的基本使用方法；</span></p></li>
+    <li><p style="min-height:1em;"><span style="font-size:15px;">熟悉 web3 和 next.js 结合使用的方方面面；</span></p></li>
+    <li><p style="min-height:1em;"><span style="font-size:15px;">构建并掌握完整的、能被重用的智能合约、DApp 应用架构和构建工具链条；</span></p></li>
+   </ul>
+   <p style="min-height:1em;"><span style="color:rgb(0,150,136);font-size:15px;"><br></span></p>
+   <p style="min-height:1em;"><span style="color:rgb(0,150,136);font-size:15px;"></span></p>
+   <p><br></p>
+   <span style="width:0px;border-left:.6em solid rgb(71,193,168);border-top:.5em solid transparent;border-bottom:.5em solid transparent;"></span>
+   <span style="width:0px;border-left:.6em solid rgb(71,193,168);border-top:.5em solid transparent;border-bottom:.5em solid transparent;"></span>
+   <p style="min-height:1em;"><strong>适合什么群体？</strong></p>
+   <p><br></p>
+   <ul class="list-paddingleft-2">
+    <li><p style="min-height:1em;"><span style="font-size:15px;">具备基本的 JavaScript 知识，最好是写过 Web 应用，熟悉 npm 使用的同学；</span></p></li>
+    <li><p style="min-height:1em;"><span style="font-size:15px;">对区块链、以太坊、智能合约技术感兴趣，想做深入了解的前端同学；</span></p></li>
+    <li><p style="min-height:1em;"><span style="font-size:15px;">期望使用区块链技术开发能实际落地的应用的前端同学；</span></p></li>
+    <li><p style="min-height:1em;"><span style="font-size:15px;">期望储备区块链开发技能，为跨界区块链做好准备的前端同学；</span></p></li>
+    <li><p style="min-height:1em;"><span style="font-size:15px;">期望从事区块链行业的计算机相关专业学生；</span></p></li>
+    <li><p style="min-height:1em;"><span style="font-size:15px;">想抓取区块链行业红利，靠技能赚更多钱的同学；</span></p></li>
+   </ul>
+   <p style="min-height:1em;"><br></p>
+   <p style="min-height:1em;"><span style="font-size:15px;"><span>最后如果你有兴趣，可以通过长按下方的二维码，以及复制好本公众号专属优惠码（xiaoceoffline）</span><span style="color:rgb(255,76,0);">享受5折优惠</span><span>购买。</span></span></p>
+   <p style="min-height:1em;"><span style="font-size:15px;"><span><br></span></span></p>
+   <p style="text-align:center;"><img style="width:225px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/btsCOHx9LAOlAlnq7uds6icTwS4MhsoylmZG8wS5DMhmuQoSU2gDiarEmZ6usoaVZaGdevO1OfAMra5Dib6ZtBK7Q/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="min-height:1em;text-align:center;"><span style="color:rgb(184,184,184);font-size:14px;">长按识别，并在优惠码中输入 xiaoceoffline</span></p>
+   <p style="min-height:1em;text-align:center;"><br></p>
+   <p style="min-height:1em;"><span style="color:rgb(0,122,170);font-size:14px;">点击</span><span style="font-size:14px;color:rgb(255,0,0);"><strong>【阅读原文】</strong></span><span style="color:rgb(0,122,170);font-size:14px;">也可以购买</span></p> 
+  </div> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/vM199zkg3Y7150u5/article/details/81117330,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/vM199zkg3Y7150u5/article/details/81117330,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

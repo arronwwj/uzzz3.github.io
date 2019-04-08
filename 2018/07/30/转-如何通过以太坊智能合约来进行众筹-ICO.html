@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>（转） 如何通过以太坊智能合约来进行众筹（ICO） | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="（转） 如何通过以太坊智能合约来进行众筹（ICO）" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="写在前面 本文所讲的代币是使用以太坊智能合约创建，阅读本文前，你应该对以太坊、智能合约有所了解，如果你还不了解，建议你先看以太坊是什么 众筹 先简单说下众筹的概念：一般是这样的，我一个非常好的想法，但是我没有钱来做这事，于是我把这个想法发给大家看，说：我做这件事需要5百万，大家有没有兴趣投些钱，如果大家在30天内投够了5百万我就开始做，到时大家都是原始股东，如果募资额不到5百万，大家投的钱就还给大家。 现在ICO众筹已经被各路大佬拿来割韭菜而被玩坏了（不管有无达标，都把钱卷走）。 其实区块链技术本事非常适合解决众筹的信任问题，借助于智能合约，可以实现当募资额完成时，募资款自动打到指定账户，当募资额未完成时，可退款。这个过程不需要看众筹大佬的人品，不用依靠第三方平台信用担保。 代币 传统的众筹在参与之后通常不容易交易（参与之后无法转给其他人），而通过用代币来参与众筹，则很容易进行交易，众筹的参与人可随时进行买卖，待众筹项目实施完成的时候，完全根据代币持有量进行回馈。 举个例子说明下，大家会更容易理解，有这一个众筹：A有技术做一个能监测健康的指环，为此向公众募资200百万，募资时100块对应一个代币，约定在指环上市之后，代币的持有人可以用一个代币来兑换一个指环。而指环的研发周期是一年，因此在指环还未上市的一年里，众筹的参与人可以随时交易所持有的代币。 众筹智能合约代码 接下来就看看如何实现一个众筹智能合约。 pragma solidity ^0.4.16;" />
+<meta property="og:description" content="写在前面 本文所讲的代币是使用以太坊智能合约创建，阅读本文前，你应该对以太坊、智能合约有所了解，如果你还不了解，建议你先看以太坊是什么 众筹 先简单说下众筹的概念：一般是这样的，我一个非常好的想法，但是我没有钱来做这事，于是我把这个想法发给大家看，说：我做这件事需要5百万，大家有没有兴趣投些钱，如果大家在30天内投够了5百万我就开始做，到时大家都是原始股东，如果募资额不到5百万，大家投的钱就还给大家。 现在ICO众筹已经被各路大佬拿来割韭菜而被玩坏了（不管有无达标，都把钱卷走）。 其实区块链技术本事非常适合解决众筹的信任问题，借助于智能合约，可以实现当募资额完成时，募资款自动打到指定账户，当募资额未完成时，可退款。这个过程不需要看众筹大佬的人品，不用依靠第三方平台信用担保。 代币 传统的众筹在参与之后通常不容易交易（参与之后无法转给其他人），而通过用代币来参与众筹，则很容易进行交易，众筹的参与人可随时进行买卖，待众筹项目实施完成的时候，完全根据代币持有量进行回馈。 举个例子说明下，大家会更容易理解，有这一个众筹：A有技术做一个能监测健康的指环，为此向公众募资200百万，募资时100块对应一个代币，约定在指环上市之后，代币的持有人可以用一个代币来兑换一个指环。而指环的研发周期是一年，因此在指环还未上市的一年里，众筹的参与人可以随时交易所持有的代币。 众筹智能合约代码 接下来就看看如何实现一个众筹智能合约。 pragma solidity ^0.4.16;" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/07/30/%E8%BD%AC-%E5%A6%82%E4%BD%95%E9%80%9A%E8%BF%87%E4%BB%A5%E5%A4%AA%E5%9D%8A%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E6%9D%A5%E8%BF%9B%E8%A1%8C%E4%BC%97%E7%AD%B9-ICO.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/07/30/%E8%BD%AC-%E5%A6%82%E4%BD%95%E9%80%9A%E8%BF%87%E4%BB%A5%E5%A4%AA%E5%9D%8A%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E6%9D%A5%E8%BF%9B%E8%A1%8C%E4%BC%97%E7%AD%B9-ICO.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-07-30T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"写在前面 本文所讲的代币是使用以太坊智能合约创建，阅读本文前，你应该对以太坊、智能合约有所了解，如果你还不了解，建议你先看以太坊是什么 众筹 先简单说下众筹的概念：一般是这样的，我一个非常好的想法，但是我没有钱来做这事，于是我把这个想法发给大家看，说：我做这件事需要5百万，大家有没有兴趣投些钱，如果大家在30天内投够了5百万我就开始做，到时大家都是原始股东，如果募资额不到5百万，大家投的钱就还给大家。 现在ICO众筹已经被各路大佬拿来割韭菜而被玩坏了（不管有无达标，都把钱卷走）。 其实区块链技术本事非常适合解决众筹的信任问题，借助于智能合约，可以实现当募资额完成时，募资款自动打到指定账户，当募资额未完成时，可退款。这个过程不需要看众筹大佬的人品，不用依靠第三方平台信用担保。 代币 传统的众筹在参与之后通常不容易交易（参与之后无法转给其他人），而通过用代币来参与众筹，则很容易进行交易，众筹的参与人可随时进行买卖，待众筹项目实施完成的时候，完全根据代币持有量进行回馈。 举个例子说明下，大家会更容易理解，有这一个众筹：A有技术做一个能监测健康的指环，为此向公众募资200百万，募资时100块对应一个代币，约定在指环上市之后，代币的持有人可以用一个代币来兑换一个指环。而指环的研发周期是一年，因此在指环还未上市的一年里，众筹的参与人可以随时交易所持有的代币。 众筹智能合约代码 接下来就看看如何实现一个众筹智能合约。 pragma solidity ^0.4.16;","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/07/30/%E8%BD%AC-%E5%A6%82%E4%BD%95%E9%80%9A%E8%BF%87%E4%BB%A5%E5%A4%AA%E5%9D%8A%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E6%9D%A5%E8%BF%9B%E8%A1%8C%E4%BC%97%E7%AD%B9-ICO.html","headline":"（转） 如何通过以太坊智能合约来进行众筹（ICO）","dateModified":"2018-07-30T00:00:00+08:00","datePublished":"2018-07-30T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/07/30/%E8%BD%AC-%E5%A6%82%E4%BD%95%E9%80%9A%E8%BF%87%E4%BB%A5%E5%A4%AA%E5%9D%8A%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E6%9D%A5%E8%BF%9B%E8%A1%8C%E4%BC%97%E7%AD%B9-ICO.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>（转） 如何通过以太坊智能合约来进行众筹（ICO）</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <h2 id="写在前面">写在前面</h2> 
+  <p>本文所讲的代币是使用以太坊智能合约创建，阅读本文前，你应该对以太坊、智能合约有所了解，如果你还不了解，建议你先看<a href="https://xiaozhuanlan.com/topic/5482379106" rel="nofollow">以太坊是什么</a></p> 
+  <h2 id="众筹">众筹</h2> 
+  <p>先简单说下众筹的概念：一般是这样的，我一个非常好的想法，但是我没有钱来做这事，于是我把这个想法发给大家看，说：我做这件事需要5百万，大家有没有兴趣投些钱，如果大家在30天内投够了5百万我就开始做，到时大家都是原始股东，如果募资额不到5百万，大家投的钱就还给大家。</p> 
+  <p>现在ICO众筹已经被各路大佬拿来割韭菜而被玩坏了（不管有无达标，都把钱卷走）。</p> 
+  <p>其实区块链技术本事非常适合解决众筹的信任问题，借助于智能合约，可以实现当募资额完成时，募资款自动打到指定账户，当募资额未完成时，可退款。这个过程不需要看众筹大佬的人品，不用依靠第三方平台信用担保。</p> 
+  <h2 id="代币">代币</h2> 
+  <p>传统的众筹在参与之后通常不容易交易（参与之后无法转给其他人），而通过用代币来参与众筹，则很容易进行交易，众筹的参与人可随时进行买卖，待众筹项目实施完成的时候，完全根据代币持有量进行回馈。</p> 
+  <p>举个例子说明下，大家会更容易理解，有这一个众筹：A有技术做一个能监测健康的指环，为此向公众募资200百万，募资时100块对应一个代币，约定在指环上市之后，代币的持有人可以用一个代币来兑换一个指环。而指环的研发周期是一年，因此在指环还未上市的一年里，众筹的参与人可以随时交易所持有的代币。</p> 
+  <h2 id="众筹智能合约代码">众筹智能合约代码</h2> 
+  <p>接下来就看看如何实现一个众筹智能合约。</p> 
+  <pre class="has">
+<code>
+pragma solidity ^0.4.16;
+
+interface token {
+    function transfer(address receiver, uint amount);
+}
+
+contract Crowdsale {
+    address public beneficiary;  // 募资成功后的收款方
+    uint public fundingGoal;   // 募资额度
+    uint public amountRaised;   // 参与数量
+    uint public deadline;      // 募资截止期
+
+    uint public price;    //  token 与以太坊的汇率 , token卖多少钱
+    token public tokenReward;   // 要卖的token
+
+    mapping(address =&gt; uint256) public balanceOf;
+
+    bool fundingGoalReached = false;  // 众筹是否达到目标
+    bool crowdsaleClosed = false;   //  众筹是否结束
+
+    /**
+    * 事件可以用来跟踪信息
+    **/
+    event GoalReached(address recipient, uint totalAmountRaised);
+    event FundTransfer(address backer, uint amount, bool isContribution);
+
+    /**
+     * 构造函数, 设置相关属性
+     */
+    function Crowdsale(
+        address ifSuccessfulSendTo,
+        uint fundingGoalInEthers,
+        uint durationInMinutes,
+        uint finneyCostOfEachToken,
+        address addressOfTokenUsedAsReward) {
+            beneficiary = ifSuccessfulSendTo;
+            fundingGoal = fundingGoalInEthers * 1 ether;
+            deadline = now + durationInMinutes * 1 minutes;
+            price = finneyCostOfEachToken * 1 finney;
+            tokenReward = token(addressOfTokenUsedAsReward);   // 传入已发布的 token 合约的地址来创建实例
+    }
+
+    /**
+     * 无函数名的Fallback函数，
+     * 在向合约转账时，这个函数会被调用
+     */
+    function () payable {
+        require(!crowdsaleClosed);
+        uint amount = msg.value;
+        balanceOf[msg.sender] += amount;
+        amountRaised += amount;
+        tokenReward.transfer(msg.sender, amount / price);
+        FundTransfer(msg.sender, amount, true);
+    }
+
+    /**
+    *  定义函数修改器modifier（作用和Python的装饰器很相似）
+    * 用于在函数执行前检查某种前置条件（判断通过之后才会继续执行该方法）
+    * _ 表示继续执行之后的代码
+    **/
+    modifier afterDeadline() { if (now &gt;= deadline) _; }
+
+    /**
+     * 判断众筹是否完成融资目标， 这个方法使用了afterDeadline函数修改器
+     *
+     */
+    function checkGoalReached() afterDeadline {
+        if (amountRaised &gt;= fundingGoal) {
+            fundingGoalReached = true;
+            GoalReached(beneficiary, amountRaised);
+        }
+        crowdsaleClosed = true;
+    }
+
+
+    /**
+     * 完成融资目标时，融资款发送到收款方
+     * 未完成融资目标时，执行退款
+     *
+     */
+    function safeWithdrawal() afterDeadline {
+        if (!fundingGoalReached) {
+            uint amount = balanceOf[msg.sender];
+            balanceOf[msg.sender] = 0;
+            if (amount &gt; 0) {
+                if (msg.sender.send(amount)) {
+                    FundTransfer(msg.sender, amount, false);
+                } else {
+                    balanceOf[msg.sender] = amount;
+                }
+            }
+        }
+
+        if (fundingGoalReached &amp;&amp; beneficiary == msg.sender) {
+            if (beneficiary.send(amountRaised)) {
+                FundTransfer(beneficiary, amountRaised, false);
+            } else {
+                //If we fail to send the funds to beneficiary, unlock funders balance
+                fundingGoalReached = false;
+            }
+        }
+    }
+}</code></pre> 
+  <h2 id="部署及说明">部署及说明</h2> 
+  <p>在部署这个合约之前，我们需要先部署一个代币合约，请参考<a href="https://xiaozhuanlan.com/topic/4759031268" rel="nofollow">一步步教你创建自己的数字货币</a>。</p> 
+  <ol>
+   <li>创建众筹合约我们需要提供一下几个参数： ifSuccessfulSendTo： 募资成功后的收款方（其实这里可以默认为合约创建者） fundingGoalInEthers： 募资额度， 为了方便我们仅募3个ether durationInMinutes： 募资时间 finneyCostOfEachToken 每个代币的价格, 这里为了方便使用了<a href="https://xiaozhuanlan.com/topic/2964810753" rel="nofollow">单位finney</a>及值为：1 （1 ether = 1000 finney） addressOfTokenUsedAsReward： 代币合约地址。 如：&nbsp;<img alt="" class="has" src="https://diycode.b0.upaiyun.com/photo/2018/cbfc0597d0ef3e5de9453bc75764c9fd.jpeg"></li> 
+  </ol>
+  <p>本文使用的参数为：</p> 
+  <pre class="has">
+<code>"0xc6f9ea59d424733e8e1902c7837ea75e20abfb49",3, 100, 1,"0xad8972e2b583f580fc52f737b98327eb65d08f8c"</code></pre> 
+  <ol>
+   <li> <p>参与人投资的时候实际购买众筹合约代币，所以需要先向合约预存代币，代币的数量为：募资额度 / 代币的价格 ， 这里为：3 * 1000/1 = 3000 （当能也可以大于3000）。<br> 向合约预存代币可以使用<a href="https://www.myetherwallet.com/#send-transaction" rel="nofollow">myetherwallet</a>钱包，或在remix中重新加载代币合约，执行代币合约tranfer()函数进行代币转账。如使用myetherwallet转账如图：<br><img alt="" class="has" src="https://diycode.b0.upaiyun.com/photo/2018/bf4e0e711750f0f5b9d8e5c997b89efe.jpeg"></p> </li> 
+   <li> <p>参与人投资就是向众筹合约转以太币，转账时，会执行Fallback回退函数（即无名函数）向其账户打回相应的代币。</p> </li> 
+   <li> <p>safeWithdrawl() 可以被参与人或收益人执行，如果融资不达标参与人可收回之前投资款，如果融资达标收益人可以拿到所有的融资款。</p> </li> 
+  </ol>
+  <h2 id="扩展">扩展</h2> 
+  <p>上面是一个很正规的募资合约。接下来讲两个募资合约的扩展，如何实现无限募资合约及割韭菜合约。</p> 
+  <h3 id="无限募资合约">无限募资合约</h3> 
+  <p>上面合约中，募资额度和相应的代币都是固定的，一旦达到募资目标后，就无法再继续投资。<br> 如果我们想实现一个可无限募资（指募资达标后，仍然可以继续募资，不是指可一直募资）的合约，步骤如下：</p> 
+  <ol>
+   <li> <p>先参考<a href="https://xiaozhuanlan.com/topic/4651027893" rel="nofollow">实现一个可管理、增发、兑换、冻结等高级功能的代币</a>，部署一个可增发代币合约</p> </li> 
+   <li> <p>更改Fallback函数：</p> <pre class="has">
+<code>tokenReward.transfer(msg.sender, amount / price);
+//修改为：
+tokenReward.mintToken(msg.sender, amount / price);</code></pre> </li> 
+   <li> <p>在无限募资合约部署之后，调用高级代币合约的transferOwnership，把无限募资合约设置为代币合约的Owner，以便合约能执行mintToken()函数。</p> </li> 
+  </ol>
+  <h3 id="割韭菜合约">割韭菜合约</h3> 
+  <p>在上面的合约中，如果募资未达标，参与人则能够取回自己的投资，这是想割韭菜的大佬们不愿看到的。<br> 他们会这样改合约：</p> 
+  <pre class="has">
+<code>function () payable {
+  require(!crowdsaleClosed);
+  uint amount = msg.value;
+  balanceOf[msg.sender] += amount;
+  amountRaised += amount;
+  tokenReward.transfer(msg.sender, amount / price);
+  FundTransfer(msg.sender, amount, true);
+
+    // 当有人付款直接取走资金
+  beneficiary.send(amount);
+
+}</code></pre> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/JAVA_HHHH/article/details/81289554,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/JAVA_HHHH/article/details/81289554,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

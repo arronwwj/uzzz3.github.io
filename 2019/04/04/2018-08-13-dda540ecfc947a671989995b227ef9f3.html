@@ -1,0 +1,39 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <p>当您调用新的Key（）时，您正在使用PRNG（伪随机数生成器）来生成您的私钥。在Windows上，它使用RNGCryptoServiceProvider，一个围绕Windows Crypto API的.NET封装。</p> 
+  <p>在Android上，使用SecureRandom类，实际上，您可以使用RandomUtils.Random来实现。</p> 
+  <p>在iOS上，你需要创建你自己的IRandom实现。</p> 
+  <p>对于一台电脑来说，来判断一系列数字是否随机很难。但最大的问题是，不可能知道一系列数字是否真的是随机的。</p> 
+  <p>如果恶意软件修改您的PRNG（并且可以预测您将生成的数字），那么当你发现的时候已经晚了。这意味着跨平台和天真的PRNG实现（如使用计算机时钟与CPU速度结合）是存在bug的。</p> 
+  <p>&nbsp;</p> 
+  <p>出于性能原因，大多数PRNG的工作原理是相同的：选择一个称为种子的随机数，然后每当您要求时，可预测的公式就会生成下一个数字。</p> 
+  <p>种子的随机性的量由我们称之为熵的度量来定义，但熵的量也取决于观察者。</p> 
+  <p>假设您从本地的时钟时间生成种子。我们想象一下你的时钟具有1ms的分辨率。 （现实更多~15ms。）如果你的攻击者知道你上周生成了密钥，那么你的种子就有了1000 * 60 * 60 * 24 * 7 = 604800000种可能性。</p> 
+  <p>对于这样的攻击者，熵是log2（604800000）= 29.17bit；</p> 
+  <p>在我的家用电脑上列举这样一个数字花费的时间不到2秒。我们称这种枚举为“暴力破解”。</p> 
+  <p>但是，假设您使用时钟时间+进程ID来生成种子。假设有1024个不同的进程ID。所以现在，攻击者需要枚举604800000 * 1024个可能性，大约需要2000秒。</p> 
+  <p>现在，让我们添加打开计算机的时间，假设攻击者知道我今天打开了它，它增加了86400000种可能性。现在攻击者需要枚举604800000 * 1024 * 86400000 = 5,35088E + 19种可能性。</p> 
+  <p>但是，请记住，如果攻击者渗透了我的电脑，他可以获得最后一条信息，并减少可能性的数量，从而减少熵。熵由log2（可能性）测量，因此log2（5,35088E + 19）= 65bit；</p> 
+  <p>够了吗？可能假设你的攻击者不知道有关用于生成种子的可能性领域的更多信息。但是由于公钥的哈希是20个字节（160bit），所以它小于地址的全部范围。你可能会做得更好。</p> 
+  <p>注意：添加熵线性更难，开裂熵指数级更难&nbsp;快速生成熵的一种有趣的方式是通过结合人为干预，如移动鼠标。如果你不完全相信平台PRNG（这不是太偏执），你可以将熵添加到NBitcoin使用的PRNG输出。</p> 
+  <blockquote> 
+   <p>RandomUtils.AddEntropy("hello");&nbsp;</p> 
+   <p>RandomUtils.AddEntropy(new&nbsp;byte[] {&nbsp;1,&nbsp;2,&nbsp;3&nbsp;});</p> 
+   <p>var&nbsp;nsaProofKey =&nbsp;new&nbsp;Key();</p> 
+  </blockquote> 
+  <p>当您调用AddEntropy（data）时，NBitcoin做了什么：</p> 
+  <blockquote> 
+   <p>additionalEntropy = SHA（SHA（data）^ additionalEntropy）</p> 
+  </blockquote> 
+  <p>然后当你生成一个新号码时：</p> 
+  <blockquote> 
+   <p>result = SHA(PRNG() ^ additionalEntropy)</p> 
+  </blockquote> 
+  <p>&nbsp;</p> 
+  <p>我们正在建立区块链技术社区，人数已经达到500+，如需加入请联系小编：csschan1120</p> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/willam1/article/details/81624473,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/willam1/article/details/81624473,&quot;}">阅读更多</a> 
+</div>

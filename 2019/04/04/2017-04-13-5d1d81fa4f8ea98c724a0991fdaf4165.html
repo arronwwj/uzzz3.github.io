@@ -1,0 +1,37 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div class="markdown_views"> 
+  <h2 id="乐扣老师讲解the-dao事件">乐扣老师讲解The DAO事件</h2> 
+  <pre><code>在区块链技术领域，The DAO事件可以算是一个以太坊的丑闻，当然也直接导致了硬分叉。在现实面前，面对黑客当着面利用漏洞源源不断从1.5亿美金的以太币池中拿走资金，而且还没办法。
+</code></pre> 
+  <p>本文面对这样的一个场景，主要是描述该场景中提到的攻击事件代码，围绕攻击的前因后果。项目进行的始末，最终通过剖析整个事件，达到历史经验借鉴，为未来利用智能合约时铭记安全意识的最终目的。</p> 
+  <p>项目背景：The DAO项目是区块链物联网公司Slock.it发起的一个众筹项目。原本该公司只想采用DAO（去中心化自治）来运作自己的系统Universal Sharing Network (USN)。后来发现这个机制也适合其他项目，因此决定创建The DAO，意为“DAO之母”。</p> 
+  <p>项目运作特点： <br> A）通过智能合约来主导以太币资金的分发利用。 <br> B）参与众筹人按照出资金额（比特币等），获得相应DAO代币，即内部token，具有审查及投票表决权利。 <br> C）投资议案由全体代币持有人投票，每个代币一票。 <br> D）项目收益按照一定规则回馈代币持有人。</p> 
+  <p>项目修复尝试和失败流程： <br> A）智能合约代码不严谨，导致交易资金出现很大的漏洞。 <br> B）后面为了解决修复智能合约，进行软分叉的尝试。最后失败的因素还是在一方面在于人们接受了去中心化理念后因为为了修复bug而导致变更不允许发生的变更，即理念冲突。第二方面在于，修复方案也和以太坊平台设计思路冲突，即该合约思路没问题但未收取gas。而通过软分叉升级可能会导致攻击者零成本利用软分叉来攻击整个体系。因而软分叉方案全部失败。 <br> C）最后采用了硬分叉。虽然已经导致了以太坊直接撕裂成了ETH和ETC（旧版），但最后还是没能解决问题，因为会存在重放攻击。新链上的交易广播到旧链上，交易依然能够成功，因而造成使用混乱。 <br> D）合约升级后依然还是存在漏洞，虽然封堵了withdrawalFor的漏洞，但是整个机制中依然存在问题。其原因还是在于检测员总是习惯一次检测一个功能，并假定调用安全子例程将会安全的如预期的操作。而很少系统性的测试并假定容易被攻击的可能性。</p> 
+  <p>项目总结及经验分享： <br> A）智能合约不合理，导致最后失败归根结底还是在于人们对新生事物的第一次尝试。并不是说如果合约代码没有技术漏洞后，就会一帆风顺。也有可能就算没有技术漏洞，也可能出现其他的落地时的漏洞。</p> 
+  <p>B）让人们看到了硬分叉后能给我们带来其他更多的问题，比如重放问题。交易混乱。</p> 
+  <p>C）同时也让人们看到了分布式自治组织目前的局限性。包括法律认可程度，技术不成熟度，金融资产和法律，道德上如何良好衔接，以及完全的自治是否能够实现，如何良好的导入必要时期的人工介入。比如The DAO事件发生后，能够应急的人工干预机制。</p> 
+  <p>D）无论是技术创新，还是商业模式创新，对于安全的考虑，永远是必要且不能忽略的。</p> 
+  <h2 id="附攻击源码分析">附攻击源码分析</h2> 
+  <p>完整代码可以<a href="https://github.com/TheDAO/DAO-1.0" rel="nofollow">点我</a>下载。 <br> 攻击者攻击的是唯一可以提取以太币的机制，及创建子DAO然后将以太币持续的转给指定账户部分。即splitDAO部分。</p> 
+  <p>首先明白在这个过程。 <br> 将会如下运行：</p> 
+  <ol> 
+   <li>提出一个split然后等待直达表决期限到期。（DAO.sol, createProposal）</li> 
+   <li>运行split。（DAO.sol, splitDAO）</li> 
+   <li>让DAO发送一份额的代币到新DAO(splitDAO -&gt; TokenCreation.sol, createTokenProxy)</li> 
+   <li>确保DAO在（3）之后在更新你的余额之前尝试发送给你收益。（splitDAO -&gt; <strong><em>withdrawRewardFor</em></strong> -&gt; ManagedAccount.sol, payOut）</li> 
+   <li>当DAO在步骤（4）时，以与（2）相同的参数再次运行splitDAO 。（payOut -&gt; _recipient.call.value -&gt; _recipient()）</li> 
+   <li>DAO将会发送给你更多的子代币，并在更新你的余额之前撤销对你的收益。（DAO.sol, splitDAO）</li> 
+   <li>返回（5）！</li> 
+   <li>让DAO更新你的余额。因为（7）返回到（5），所以这将不会发生。</li> 
+  </ol> 
+  <p>综合以上思路，攻击者想要达到两个目的，第一个目的就是能够持续运行这个合约。即迭代运行。 <br> 第二个就是能够利用漏洞，转钱到自己的账户，且不会因为交易费机制而终止交易。即交易成本要低于转账总额。</p> 
+  <p>整个过程中，问题就在withdrawRewardFor的判断条件中。 <br> <img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20170413112154143?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbHN0dG95/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述" title=""></p> 
+  <p>第一点，当0小于paidOut[_account]前面的条件中，余额balanceOf（_account）的条件变量_account为0的时候，会导致if（0小于paidOut[_account]）的判断。则会导致如果没有被支付，这将会一直被评估为错误且永远执行。</p> 
+  <p>第二点，用来判断智能合约是否用来支付给新建收益childDAO对应账户的条件if（amounttobepaid小于0)依然很容易通过参数攻击来实现，进而会让TheDAO的智能合约账户源源不断把钱给到childDAO而且通过第一点的方法来迭代执行。</p> 
+  <p>最终的结果就是源源不断的将钱打给伪造的childDAO而所有人毫无办法。</p> 
+ </div> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/markdown_views-ea0013b516.css"> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/lsttoy/article/details/70156527,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/lsttoy/article/details/70156527,&quot;}">阅读更多</a> 
+</div>

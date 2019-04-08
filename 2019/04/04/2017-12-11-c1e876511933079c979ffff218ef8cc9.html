@@ -1,0 +1,85 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div class="markdown_views"> 
+  <h1 id="杂乱-go墙内安装以及vscode调试-windows平台">[杂乱] go墙内安装以及vscode调试-windows平台</h1> 
+  <h2 id="下载">下载</h2> 
+  <ul> 
+   <li><a href="https://code.visualstudio.com/" rel="nofollow" target="_blank">vscode</a></li> 
+   <li><a href="https://golang.org/dl/" rel="nofollow" target="_blank">go外</a>不行就<a href="https://www.golangtc.com/download" rel="nofollow" target="_blank">go内</a></li> 
+   <li><a href="https://git-scm.com/download/" rel="nofollow" target="_blank">git</a></li> 
+   <li><a href="https://github.com/golang/tools" rel="nofollow" target="_blank">go/tools</a></li> 
+  </ul> 
+  <h2 id="配置">配置</h2> 
+  <p><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171211183626300?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGl5YW5neWFuZzA4/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述" title=""> <br> 以上 %GOPATH% 目录约定有三个子目录： <br> src 存放源代码（比如：.go .c .h .s等） <br> pkg 编译后生成的文件（比如：.a） <br> bin 编译后生成的可执行文件（为了方便，可以把此目录加入到 windows的PATH 变量中，在环境变量path后追加%GOPATH%\bin） <br> <img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171211183550644?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGl5YW5neWFuZzA4/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述" title=""></p> 
+  <h2 id="插件">插件</h2> 
+  <ul> 
+   <li>vs 添加go插件，之后重启vscode</li> 
+   <li>如果有可以访问外网执行下面的命令</li> 
+  </ul> 
+  <pre class="prettyprint"><code class=" hljs lasso">go get <span class="hljs-attribute">-u</span> <span class="hljs-attribute">-v</span> github<span class="hljs-built_in">.</span>com/nsf/gocode
+go get <span class="hljs-attribute">-u</span> <span class="hljs-attribute">-v</span> github<span class="hljs-built_in">.</span>com/rogpeppe/godef
+go get <span class="hljs-attribute">-u</span> <span class="hljs-attribute">-v</span> github<span class="hljs-built_in">.</span>com/golang/lint/golint
+go get <span class="hljs-attribute">-u</span> <span class="hljs-attribute">-v</span> github<span class="hljs-built_in">.</span>com/lukehoban/go<span class="hljs-attribute">-outline</span>
+go get <span class="hljs-attribute">-u</span> <span class="hljs-attribute">-v</span> sourcegraph<span class="hljs-built_in">.</span>com/sqs/goreturns
+go get <span class="hljs-attribute">-u</span> <span class="hljs-attribute">-v</span> golang<span class="hljs-built_in">.</span>org/x/tools/cmd/gorename
+go get <span class="hljs-attribute">-u</span> <span class="hljs-attribute">-v</span> github<span class="hljs-built_in">.</span>com/tpng/gopkgs
+go get <span class="hljs-attribute">-u</span> <span class="hljs-attribute">-v</span> github<span class="hljs-built_in">.</span>com/newhook/go<span class="hljs-attribute">-symbols</span>
+go get <span class="hljs-attribute">-u</span> <span class="hljs-attribute">-v</span> golang<span class="hljs-built_in">.</span>org/x/tools/cmd/guru</code></pre> 
+  <ul> 
+   <li>如果不可以直以直接下载我生成好的放在bin目录下 <br> <img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171211183646743?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGl5YW5neWFuZzA4/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述" title=""></li> 
+   <li>也可以自己下载安装</li> 
+   <li>你需要一个合适的gocode版本， 6g/8g/5g的go编译器，你需要</li> 
+  </ul> 
+  <pre class="prettyprint"><code class=" hljs cs">go <span class="hljs-keyword">get</span> -u github.com/nsf/gocode (-u flag <span class="hljs-keyword">for</span> “update”)</code></pre> 
+  <p>windows 用户需要</p> 
+  <pre class="prettyprint"><code class=" hljs lasso">go get <span class="hljs-attribute">-u</span> <span class="hljs-attribute">-ldflags</span> <span class="hljs-attribute">-H</span><span class="hljs-subst">=</span>windowsgui github<span class="hljs-built_in">.</span>com/nsf/gocode</code></pre> 
+  <ol> 
+   <li>插件可以用go install 和本地的文件进行安装(把下好的源码放在指定的文件夹下没有手动创建) 如</li> 
+  </ol> 
+  <pre class="prettyprint"><code class=" hljs go"><span class="hljs-keyword">go</span> install golang.org/x/tools/cmd/goimports
+
+<span class="hljs-keyword">go</span> install github.com/ramya-rao-a/<span class="hljs-keyword">go</span>-outline
+
+<span class="hljs-keyword">go</span> install github.com/acroca/<span class="hljs-keyword">go</span>-symbols 
+
+<span class="hljs-keyword">go</span> install golang.org/x/tools/cmd/guru 
+
+<span class="hljs-keyword">go</span> install golang.org/x/tools/cmd/gorename 
+
+<span class="hljs-keyword">go</span> install github.com/josharian/impl 
+
+<span class="hljs-keyword">go</span> install github.com/rogpeppe/godef 
+
+<span class="hljs-keyword">go</span> install github.com/sqs/goreturns 
+
+<span class="hljs-keyword">go</span> install github.com/golang/lint/golint 
+
+<span class="hljs-keyword">go</span> install github.com/cweill/gotests/gotests
+
+<span class="hljs-keyword">go</span> install github.com/derekparker/delve/cmd/dlv</code></pre> 
+  <ol> 
+   <li><strong>vscode 会自动安装（前提安装go插件，右下脚会有一个分析之后点安装）如果不成功可以用上面的方法手动安装，实在不行可以把的整理好的<a href="http://download.csdn.net/download/liyangyang08/10154344" rel="nofollow">下载下来</a>放进bin目录下。安装不行了再手动安装，新版的vscode与网上的教程不太一样，可以不用配置setting文件。</strong></li> 
+  </ol> 
+  <h2 id="测试">测试</h2> 
+  <ul> 
+   <li>新建一个hello.go文件添加如下代码</li> 
+  </ul> 
+  <pre class="prettyprint"><code class=" hljs go"><span class="hljs-keyword">package</span> main
+
+<span class="hljs-keyword">import</span> <span class="hljs-string">"fmt"</span>
+
+<span class="hljs-keyword">func</span> main() {
+    fmt.Printf(<span class="hljs-string">"你好，世界\n"</span>)
+}</code></pre> 
+  <ul> 
+   <li>添加断点f5调试如下图 <br> <img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171211183726867?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGl5YW5neWFuZzA4/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述" title=""> <br> 
+    <hr></li> 
+  </ul> 
+  <blockquote> 
+   <p>语言只是工具，原理才是王道。</p> 
+  </blockquote> 
+ </div> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/markdown_views-ea0013b516.css"> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/liyangyang08/article/details/78775519,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/liyangyang08/article/details/78775519,&quot;}">阅读更多</a> 
+</div>

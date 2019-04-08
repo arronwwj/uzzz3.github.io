@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>干货，史上杀伤力最大的溢出型漏洞到底是什么？看这一篇就够了 漏洞连载… | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="干货，史上杀伤力最大的溢出型漏洞到底是什么？看这一篇就够了 漏洞连载…" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="4月发生的BEC事件以及SMT事件已经沉淀一段时间了，具体的情况也被多方媒体所报道，相关的漏洞根源问题也有很多大神团队的分析和指正。 近日，有安全团队将各种已经发生或可能发生的类似溢出漏洞原理进行整理，再次将全方位的原理分析与大家分享，让大家对溢出型漏洞有全面的认识。 事件回顾 2018年4月22日，黑客对BEC智能合约发起攻击，凭空取出 57,896,044,618,658,100,000,000,000,000,000,000,000,000,000,000,000,000,000,000.792003956564819968&nbsp; 个BEC代币并在市场上进行抛售，BEC随即急剧贬值，价值几乎为0，该市场瞬间土崩瓦解。 2018年4月25日，SMT项目方发现其交易存在异常，黑客利用其函数漏洞创造了65,133,050,195,990,400,000,000,000,000,000,000,000,000,000,000,000,000,000,000 + 50,659,039,041,325,800,000,000,000,000,000,000,000,000,000,000,000,000,000,000 的SMT币，火币Pro随即暂停了所有币种的充值提取业务。 让我们一起以沉痛的心情缅怀以上一夜归零的代币。 仅仅在BEC事件过去后的12小时内，就有多达12个项目的智能合约存在类似的整数溢出类型的漏洞，黑客可以利用这一漏洞转账“无中生有”的巨大数量代币，也就是我们所说的“增发”。 代币增发为什么就会贬值 人们常说“物以稀为贵”，意思是事物因稀少而且有益，从而显得珍贵。 黄金被选为最早时期全世界公认的货币的原因就是因为它稀缺，地球上储量有限，易分割，属性稳定等特点。 中国人首先发明了“交子”，来代替不便交易的黄金。 所以就出现了金本位的概念，很多国家发行自己货币的时候都是按照其黄金储量来发行，并不是想发多少就发多少。 试想一下，如果凭空出现了一颗黄金做的大陨石，撞击地球后黄金撒了一地，黄金还会值钱吗？ &nbsp; 所以当一个代币的数量在有了额定发行总量之后，突然肆意的增加，必然会导致代币的贬值，甚至失去在市场上流通的意义。这就是“代币增发”的不良后果。 整数溢出漏洞分析 前面提到，黑客是利用整数溢出漏洞绕过了转账数额的相关规则，进而增发代币。 那什么是整数溢出呢？为什么能用整数溢出来实现增发来秀一波空手套白狼的操作？ 我来举个例子： 比如有一个国家的人不会复杂的数学运算，只会从0数到9，每次数到9之后又从0开始数，最后以数到的数作为结果。大家都这样平安无事的生活着，但有一天，有一个从别的国家来的小黑，他发现了这个问题，于是他去金库拿金锭，拿出来的个数超过了9个，于是金库管理员帮他数，数到9之后又从0开始了，最后结算发现他取出来的结果是0个金锭，但实际上他已经把金库里的金锭几乎都取完了。 黑客利用类似的机制凭空向一个账户中转账了超级大数额的代币，而合约中的逻辑只要求他花费很小的代价。 我们对过往代币增发事件漏洞类型进行整理，概括出整型溢出类型漏洞的全面分析。 以太坊虚拟机（EVM）为整数指定固定大小的数据类型。这意味着一个整型变量只能有一定范围的数字表示。例如，一个 uint8 ，只能存储在范围 [0,255] 的数字。试图存储 256 到一个 uint8 将变成 0。不加注意的话，只要没有检查用户输入又执行计算，导致数字超出存储它们的数据类型允许的范围，Solidity 中的变量就可以被用来组织攻击。 整数溢出的类型包括乘法溢出，加法溢出，减法溢出三种。 在对BEC事件进行分析后，发现可将其漏洞归类于乘法溢出，原理如下： 乘法溢出 •&nbsp; 案例(CVE-2018-10299) 上述合约代码中，存在漏洞的代码为： uint256 amount = uint256(cnt) * _value;， 计算转出总额度amount未使用SafeMath也未对溢出进行检查，直接将转账地址数量乘以转账额度，如果输入极大的_value，那么amount计算结果就可能产生溢出，导致代币增发。 在Remix-ide中测试如下： 1、部署合约； 2、调用batchTransfer函数,向batchTransfer函数传入地址数组 [&quot;0xb4D30Cac5124b46C2Df0CF3e3e1Be05f42119033&quot;,&quot;0x0e823fFE018727585EaF5Bc769Fa80472F76C3d7&quot;]， 以及 _value&quot;0x8000000000000000000000000000000000000000000000000000000000000000&quot; 即2*255， 使得amount=2\*255 * 2,超出uint256类型的范围[0,2**256-1]，溢出为0，发送者账户余额不减少，并且，本例中，发送者的代币可以为零，实现&quot;无中生有&quot;。 3、查看余额： 而针对SMT事件进行分析后，发现其漏洞属于加法溢出类型，其原理如下： 加法溢出 •&nbsp; &nbsp;案例 上述合约代码中，mintToken函数的功能是owner向指定账户增发mintedAmount数量的代币，但是在对balanceOf[target]与totalSupply进行加法操作未做溢出检查，导致其可能存在溢出，并且，通过溢出，恶意owner可以任意增减target账户的余额，或者增发实际远远超过totalSupply的代币。 在Remix-ide中测试如下： 1、部署合约； 2、向target预先转一部分代币，模拟目标账户中已有的代币：调用transfer函数，传入target地址： 0x14723a09acff6d2a60dcdf7aa4aff308fddc160c， 以及转账额度，比如： 2000000000000000000 （2 * 10**uint256(decimals)）; 3、如果owner想控制target的余额减半，那么，他只需要向target增发 2*256-balanceOf[target]+10\*18=0xfffffffffffffffffffffffffffffffffffffffffffffffff21f494c589c0000， 现在调用mintToken函数，向target地址转入上述数量的代币： 4、查询target余额： 另外还有减法溢出的操作，虽然未出现相关的漏洞攻击事件，我们也提供了相关的原理分析。 减法溢出 •&nbsp; &nbsp;案例 上述合约代码中，distribute函数的功能是从owner账户向指定的地址列表转入2000 * 10**8代币，但是在对balances[owner]的计算中未使用SafeMath，也未判断owner账户是否有足够的代币，当转出代币总量大于owner账户余额的时候，balances[owner]产生减法溢出，变成一个极大值。 在Remix-ide中测试如下： 1、部署合约 2、调用distribute函数，传入地址数组： [&quot;0x14723a09acff6d2a60dcdf7aa4aff308fddc160c&quot;,&quot;0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db&quot;] owner分别向这两个地址发送2000 * 10**8代币，超过owner余额，balances[owner]产生减法溢出； 3、查询owner账户余额，等于2**256-2000*10**8： 黑客虽然无孔不入，但链安科技团队对具有此类漏洞的合约进行综合性调研后，提出了“亡羊补牢”的修复措施： 漏洞修复 OpenZeppelin提供了一套很好的SafeMath库，使用SafeMath库函数能够有效避免溢出漏洞，SafeMath库源码如下： 子曰：吾日三省吾身 我们从这些惨痛的教训中能总结出： 1. 基于ERC20协议编写的这些智能合约给予开发者的权力过大了，这些溢出问题本应该放在底层检测。 2. 编写合约的开发者没有以严谨敬业的精神去遵守开发规范，使用SafeMath去做相关功能，或者进行溢出测试，在这里提出批评。 3. 没有严谨的逻辑，单单凭借创造力并不是都能出成果，还是要稳中求胜，能使用库就使用库。 所以,链安科技团队建议，为了避免程序结果中产生溢出，破坏智能合约执行逻辑，建议开发者在所有数学运算中都使用SafeMath（敲黑板）。 参考资料： [1]:&nbsp; http://bc.jrj.com.cn/2018/04/26132824455908.shtml&nbsp; [2]:&nbsp; https://zhuanlan.zhihu.com/p/36116810 [3]: https://baike.baidu.com/item/%E7%89%A9%E4%BB%A5%E7%A8%80%E4%B8%BA%E8%B4%B5 [4]:&nbsp; http://www.woshipm.com/blockchain/945232.html &nbsp; 杨霞&nbsp;&nbsp; 成都链安科技CEO，创始人。电子科技大学副教授，最早研究区块链形式化验证的专家。一直为航空航天、军事领域提供形式化验证服务。主持国家核高基、装发重大软件课题等近10项国家课题。CC国际安全标准成员、CCF区块链专委会委员。发表学术论文30多篇，申请20多项专利。 最新热文： 80%的人都不知道，ERC-223、ERC-621、ERC-721这些到底说了啥，还好意思说自己懂智能合约？建议收藏 全球近1/5的比特币已经永久丢失！三种方法让你找回丢失的比特币 北大之后又一高校团队区块链大赛夺冠，原来高校才是行业真扫地僧，怕了吗？ | 人物志 未来互联网再不需要中心化服务器了！因为Web3技术栈来了 扫码加入区块链大本营读者群，群满加微信 qk15732632926 入群 了解更多区块链技术及应用内容 敬请关注： 阅读更多" />
+<meta property="og:description" content="4月发生的BEC事件以及SMT事件已经沉淀一段时间了，具体的情况也被多方媒体所报道，相关的漏洞根源问题也有很多大神团队的分析和指正。 近日，有安全团队将各种已经发生或可能发生的类似溢出漏洞原理进行整理，再次将全方位的原理分析与大家分享，让大家对溢出型漏洞有全面的认识。 事件回顾 2018年4月22日，黑客对BEC智能合约发起攻击，凭空取出 57,896,044,618,658,100,000,000,000,000,000,000,000,000,000,000,000,000,000,000.792003956564819968&nbsp; 个BEC代币并在市场上进行抛售，BEC随即急剧贬值，价值几乎为0，该市场瞬间土崩瓦解。 2018年4月25日，SMT项目方发现其交易存在异常，黑客利用其函数漏洞创造了65,133,050,195,990,400,000,000,000,000,000,000,000,000,000,000,000,000,000,000 + 50,659,039,041,325,800,000,000,000,000,000,000,000,000,000,000,000,000,000,000 的SMT币，火币Pro随即暂停了所有币种的充值提取业务。 让我们一起以沉痛的心情缅怀以上一夜归零的代币。 仅仅在BEC事件过去后的12小时内，就有多达12个项目的智能合约存在类似的整数溢出类型的漏洞，黑客可以利用这一漏洞转账“无中生有”的巨大数量代币，也就是我们所说的“增发”。 代币增发为什么就会贬值 人们常说“物以稀为贵”，意思是事物因稀少而且有益，从而显得珍贵。 黄金被选为最早时期全世界公认的货币的原因就是因为它稀缺，地球上储量有限，易分割，属性稳定等特点。 中国人首先发明了“交子”，来代替不便交易的黄金。 所以就出现了金本位的概念，很多国家发行自己货币的时候都是按照其黄金储量来发行，并不是想发多少就发多少。 试想一下，如果凭空出现了一颗黄金做的大陨石，撞击地球后黄金撒了一地，黄金还会值钱吗？ &nbsp; 所以当一个代币的数量在有了额定发行总量之后，突然肆意的增加，必然会导致代币的贬值，甚至失去在市场上流通的意义。这就是“代币增发”的不良后果。 整数溢出漏洞分析 前面提到，黑客是利用整数溢出漏洞绕过了转账数额的相关规则，进而增发代币。 那什么是整数溢出呢？为什么能用整数溢出来实现增发来秀一波空手套白狼的操作？ 我来举个例子： 比如有一个国家的人不会复杂的数学运算，只会从0数到9，每次数到9之后又从0开始数，最后以数到的数作为结果。大家都这样平安无事的生活着，但有一天，有一个从别的国家来的小黑，他发现了这个问题，于是他去金库拿金锭，拿出来的个数超过了9个，于是金库管理员帮他数，数到9之后又从0开始了，最后结算发现他取出来的结果是0个金锭，但实际上他已经把金库里的金锭几乎都取完了。 黑客利用类似的机制凭空向一个账户中转账了超级大数额的代币，而合约中的逻辑只要求他花费很小的代价。 我们对过往代币增发事件漏洞类型进行整理，概括出整型溢出类型漏洞的全面分析。 以太坊虚拟机（EVM）为整数指定固定大小的数据类型。这意味着一个整型变量只能有一定范围的数字表示。例如，一个 uint8 ，只能存储在范围 [0,255] 的数字。试图存储 256 到一个 uint8 将变成 0。不加注意的话，只要没有检查用户输入又执行计算，导致数字超出存储它们的数据类型允许的范围，Solidity 中的变量就可以被用来组织攻击。 整数溢出的类型包括乘法溢出，加法溢出，减法溢出三种。 在对BEC事件进行分析后，发现可将其漏洞归类于乘法溢出，原理如下： 乘法溢出 •&nbsp; 案例(CVE-2018-10299) 上述合约代码中，存在漏洞的代码为： uint256 amount = uint256(cnt) * _value;， 计算转出总额度amount未使用SafeMath也未对溢出进行检查，直接将转账地址数量乘以转账额度，如果输入极大的_value，那么amount计算结果就可能产生溢出，导致代币增发。 在Remix-ide中测试如下： 1、部署合约； 2、调用batchTransfer函数,向batchTransfer函数传入地址数组 [&quot;0xb4D30Cac5124b46C2Df0CF3e3e1Be05f42119033&quot;,&quot;0x0e823fFE018727585EaF5Bc769Fa80472F76C3d7&quot;]， 以及 _value&quot;0x8000000000000000000000000000000000000000000000000000000000000000&quot; 即2*255， 使得amount=2\*255 * 2,超出uint256类型的范围[0,2**256-1]，溢出为0，发送者账户余额不减少，并且，本例中，发送者的代币可以为零，实现&quot;无中生有&quot;。 3、查看余额： 而针对SMT事件进行分析后，发现其漏洞属于加法溢出类型，其原理如下： 加法溢出 •&nbsp; &nbsp;案例 上述合约代码中，mintToken函数的功能是owner向指定账户增发mintedAmount数量的代币，但是在对balanceOf[target]与totalSupply进行加法操作未做溢出检查，导致其可能存在溢出，并且，通过溢出，恶意owner可以任意增减target账户的余额，或者增发实际远远超过totalSupply的代币。 在Remix-ide中测试如下： 1、部署合约； 2、向target预先转一部分代币，模拟目标账户中已有的代币：调用transfer函数，传入target地址： 0x14723a09acff6d2a60dcdf7aa4aff308fddc160c， 以及转账额度，比如： 2000000000000000000 （2 * 10**uint256(decimals)）; 3、如果owner想控制target的余额减半，那么，他只需要向target增发 2*256-balanceOf[target]+10\*18=0xfffffffffffffffffffffffffffffffffffffffffffffffff21f494c589c0000， 现在调用mintToken函数，向target地址转入上述数量的代币： 4、查询target余额： 另外还有减法溢出的操作，虽然未出现相关的漏洞攻击事件，我们也提供了相关的原理分析。 减法溢出 •&nbsp; &nbsp;案例 上述合约代码中，distribute函数的功能是从owner账户向指定的地址列表转入2000 * 10**8代币，但是在对balances[owner]的计算中未使用SafeMath，也未判断owner账户是否有足够的代币，当转出代币总量大于owner账户余额的时候，balances[owner]产生减法溢出，变成一个极大值。 在Remix-ide中测试如下： 1、部署合约 2、调用distribute函数，传入地址数组： [&quot;0x14723a09acff6d2a60dcdf7aa4aff308fddc160c&quot;,&quot;0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db&quot;] owner分别向这两个地址发送2000 * 10**8代币，超过owner余额，balances[owner]产生减法溢出； 3、查询owner账户余额，等于2**256-2000*10**8： 黑客虽然无孔不入，但链安科技团队对具有此类漏洞的合约进行综合性调研后，提出了“亡羊补牢”的修复措施： 漏洞修复 OpenZeppelin提供了一套很好的SafeMath库，使用SafeMath库函数能够有效避免溢出漏洞，SafeMath库源码如下： 子曰：吾日三省吾身 我们从这些惨痛的教训中能总结出： 1. 基于ERC20协议编写的这些智能合约给予开发者的权力过大了，这些溢出问题本应该放在底层检测。 2. 编写合约的开发者没有以严谨敬业的精神去遵守开发规范，使用SafeMath去做相关功能，或者进行溢出测试，在这里提出批评。 3. 没有严谨的逻辑，单单凭借创造力并不是都能出成果，还是要稳中求胜，能使用库就使用库。 所以,链安科技团队建议，为了避免程序结果中产生溢出，破坏智能合约执行逻辑，建议开发者在所有数学运算中都使用SafeMath（敲黑板）。 参考资料： [1]:&nbsp; http://bc.jrj.com.cn/2018/04/26132824455908.shtml&nbsp; [2]:&nbsp; https://zhuanlan.zhihu.com/p/36116810 [3]: https://baike.baidu.com/item/%E7%89%A9%E4%BB%A5%E7%A8%80%E4%B8%BA%E8%B4%B5 [4]:&nbsp; http://www.woshipm.com/blockchain/945232.html &nbsp; 杨霞&nbsp;&nbsp; 成都链安科技CEO，创始人。电子科技大学副教授，最早研究区块链形式化验证的专家。一直为航空航天、军事领域提供形式化验证服务。主持国家核高基、装发重大软件课题等近10项国家课题。CC国际安全标准成员、CCF区块链专委会委员。发表学术论文30多篇，申请20多项专利。 最新热文： 80%的人都不知道，ERC-223、ERC-621、ERC-721这些到底说了啥，还好意思说自己懂智能合约？建议收藏 全球近1/5的比特币已经永久丢失！三种方法让你找回丢失的比特币 北大之后又一高校团队区块链大赛夺冠，原来高校才是行业真扫地僧，怕了吗？ | 人物志 未来互联网再不需要中心化服务器了！因为Web3技术栈来了 扫码加入区块链大本营读者群，群满加微信 qk15732632926 入群 了解更多区块链技术及应用内容 敬请关注： 阅读更多" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/07/22/%E5%B9%B2%E8%B4%A7-%E5%8F%B2%E4%B8%8A%E6%9D%80%E4%BC%A4%E5%8A%9B%E6%9C%80%E5%A4%A7%E7%9A%84%E6%BA%A2%E5%87%BA%E5%9E%8B%E6%BC%8F%E6%B4%9E%E5%88%B0%E5%BA%95%E6%98%AF%E4%BB%80%E4%B9%88-%E7%9C%8B%E8%BF%99%E4%B8%80%E7%AF%87%E5%B0%B1%E5%A4%9F%E4%BA%86-%E6%BC%8F%E6%B4%9E%E8%BF%9E%E8%BD%BD/html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/07/22/%E5%B9%B2%E8%B4%A7-%E5%8F%B2%E4%B8%8A%E6%9D%80%E4%BC%A4%E5%8A%9B%E6%9C%80%E5%A4%A7%E7%9A%84%E6%BA%A2%E5%87%BA%E5%9E%8B%E6%BC%8F%E6%B4%9E%E5%88%B0%E5%BA%95%E6%98%AF%E4%BB%80%E4%B9%88-%E7%9C%8B%E8%BF%99%E4%B8%80%E7%AF%87%E5%B0%B1%E5%A4%9F%E4%BA%86-%E6%BC%8F%E6%B4%9E%E8%BF%9E%E8%BD%BD/html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-07-22T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"4月发生的BEC事件以及SMT事件已经沉淀一段时间了，具体的情况也被多方媒体所报道，相关的漏洞根源问题也有很多大神团队的分析和指正。 近日，有安全团队将各种已经发生或可能发生的类似溢出漏洞原理进行整理，再次将全方位的原理分析与大家分享，让大家对溢出型漏洞有全面的认识。 事件回顾 2018年4月22日，黑客对BEC智能合约发起攻击，凭空取出 57,896,044,618,658,100,000,000,000,000,000,000,000,000,000,000,000,000,000,000.792003956564819968&nbsp; 个BEC代币并在市场上进行抛售，BEC随即急剧贬值，价值几乎为0，该市场瞬间土崩瓦解。 2018年4月25日，SMT项目方发现其交易存在异常，黑客利用其函数漏洞创造了65,133,050,195,990,400,000,000,000,000,000,000,000,000,000,000,000,000,000,000 + 50,659,039,041,325,800,000,000,000,000,000,000,000,000,000,000,000,000,000,000 的SMT币，火币Pro随即暂停了所有币种的充值提取业务。 让我们一起以沉痛的心情缅怀以上一夜归零的代币。 仅仅在BEC事件过去后的12小时内，就有多达12个项目的智能合约存在类似的整数溢出类型的漏洞，黑客可以利用这一漏洞转账“无中生有”的巨大数量代币，也就是我们所说的“增发”。 代币增发为什么就会贬值 人们常说“物以稀为贵”，意思是事物因稀少而且有益，从而显得珍贵。 黄金被选为最早时期全世界公认的货币的原因就是因为它稀缺，地球上储量有限，易分割，属性稳定等特点。 中国人首先发明了“交子”，来代替不便交易的黄金。 所以就出现了金本位的概念，很多国家发行自己货币的时候都是按照其黄金储量来发行，并不是想发多少就发多少。 试想一下，如果凭空出现了一颗黄金做的大陨石，撞击地球后黄金撒了一地，黄金还会值钱吗？ &nbsp; 所以当一个代币的数量在有了额定发行总量之后，突然肆意的增加，必然会导致代币的贬值，甚至失去在市场上流通的意义。这就是“代币增发”的不良后果。 整数溢出漏洞分析 前面提到，黑客是利用整数溢出漏洞绕过了转账数额的相关规则，进而增发代币。 那什么是整数溢出呢？为什么能用整数溢出来实现增发来秀一波空手套白狼的操作？ 我来举个例子： 比如有一个国家的人不会复杂的数学运算，只会从0数到9，每次数到9之后又从0开始数，最后以数到的数作为结果。大家都这样平安无事的生活着，但有一天，有一个从别的国家来的小黑，他发现了这个问题，于是他去金库拿金锭，拿出来的个数超过了9个，于是金库管理员帮他数，数到9之后又从0开始了，最后结算发现他取出来的结果是0个金锭，但实际上他已经把金库里的金锭几乎都取完了。 黑客利用类似的机制凭空向一个账户中转账了超级大数额的代币，而合约中的逻辑只要求他花费很小的代价。 我们对过往代币增发事件漏洞类型进行整理，概括出整型溢出类型漏洞的全面分析。 以太坊虚拟机（EVM）为整数指定固定大小的数据类型。这意味着一个整型变量只能有一定范围的数字表示。例如，一个 uint8 ，只能存储在范围 [0,255] 的数字。试图存储 256 到一个 uint8 将变成 0。不加注意的话，只要没有检查用户输入又执行计算，导致数字超出存储它们的数据类型允许的范围，Solidity 中的变量就可以被用来组织攻击。 整数溢出的类型包括乘法溢出，加法溢出，减法溢出三种。 在对BEC事件进行分析后，发现可将其漏洞归类于乘法溢出，原理如下： 乘法溢出 •&nbsp; 案例(CVE-2018-10299) 上述合约代码中，存在漏洞的代码为： uint256 amount = uint256(cnt) * _value;， 计算转出总额度amount未使用SafeMath也未对溢出进行检查，直接将转账地址数量乘以转账额度，如果输入极大的_value，那么amount计算结果就可能产生溢出，导致代币增发。 在Remix-ide中测试如下： 1、部署合约； 2、调用batchTransfer函数,向batchTransfer函数传入地址数组 [&quot;0xb4D30Cac5124b46C2Df0CF3e3e1Be05f42119033&quot;,&quot;0x0e823fFE018727585EaF5Bc769Fa80472F76C3d7&quot;]， 以及 _value&quot;0x8000000000000000000000000000000000000000000000000000000000000000&quot; 即2*255， 使得amount=2\\*255 * 2,超出uint256类型的范围[0,2**256-1]，溢出为0，发送者账户余额不减少，并且，本例中，发送者的代币可以为零，实现&quot;无中生有&quot;。 3、查看余额： 而针对SMT事件进行分析后，发现其漏洞属于加法溢出类型，其原理如下： 加法溢出 •&nbsp; &nbsp;案例 上述合约代码中，mintToken函数的功能是owner向指定账户增发mintedAmount数量的代币，但是在对balanceOf[target]与totalSupply进行加法操作未做溢出检查，导致其可能存在溢出，并且，通过溢出，恶意owner可以任意增减target账户的余额，或者增发实际远远超过totalSupply的代币。 在Remix-ide中测试如下： 1、部署合约； 2、向target预先转一部分代币，模拟目标账户中已有的代币：调用transfer函数，传入target地址： 0x14723a09acff6d2a60dcdf7aa4aff308fddc160c， 以及转账额度，比如： 2000000000000000000 （2 * 10**uint256(decimals)）; 3、如果owner想控制target的余额减半，那么，他只需要向target增发 2*256-balanceOf[target]+10\\*18=0xfffffffffffffffffffffffffffffffffffffffffffffffff21f494c589c0000， 现在调用mintToken函数，向target地址转入上述数量的代币： 4、查询target余额： 另外还有减法溢出的操作，虽然未出现相关的漏洞攻击事件，我们也提供了相关的原理分析。 减法溢出 •&nbsp; &nbsp;案例 上述合约代码中，distribute函数的功能是从owner账户向指定的地址列表转入2000 * 10**8代币，但是在对balances[owner]的计算中未使用SafeMath，也未判断owner账户是否有足够的代币，当转出代币总量大于owner账户余额的时候，balances[owner]产生减法溢出，变成一个极大值。 在Remix-ide中测试如下： 1、部署合约 2、调用distribute函数，传入地址数组： [&quot;0x14723a09acff6d2a60dcdf7aa4aff308fddc160c&quot;,&quot;0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db&quot;] owner分别向这两个地址发送2000 * 10**8代币，超过owner余额，balances[owner]产生减法溢出； 3、查询owner账户余额，等于2**256-2000*10**8： 黑客虽然无孔不入，但链安科技团队对具有此类漏洞的合约进行综合性调研后，提出了“亡羊补牢”的修复措施： 漏洞修复 OpenZeppelin提供了一套很好的SafeMath库，使用SafeMath库函数能够有效避免溢出漏洞，SafeMath库源码如下： 子曰：吾日三省吾身 我们从这些惨痛的教训中能总结出： 1. 基于ERC20协议编写的这些智能合约给予开发者的权力过大了，这些溢出问题本应该放在底层检测。 2. 编写合约的开发者没有以严谨敬业的精神去遵守开发规范，使用SafeMath去做相关功能，或者进行溢出测试，在这里提出批评。 3. 没有严谨的逻辑，单单凭借创造力并不是都能出成果，还是要稳中求胜，能使用库就使用库。 所以,链安科技团队建议，为了避免程序结果中产生溢出，破坏智能合约执行逻辑，建议开发者在所有数学运算中都使用SafeMath（敲黑板）。 参考资料： [1]:&nbsp; http://bc.jrj.com.cn/2018/04/26132824455908.shtml&nbsp; [2]:&nbsp; https://zhuanlan.zhihu.com/p/36116810 [3]: https://baike.baidu.com/item/%E7%89%A9%E4%BB%A5%E7%A8%80%E4%B8%BA%E8%B4%B5 [4]:&nbsp; http://www.woshipm.com/blockchain/945232.html &nbsp; 杨霞&nbsp;&nbsp; 成都链安科技CEO，创始人。电子科技大学副教授，最早研究区块链形式化验证的专家。一直为航空航天、军事领域提供形式化验证服务。主持国家核高基、装发重大软件课题等近10项国家课题。CC国际安全标准成员、CCF区块链专委会委员。发表学术论文30多篇，申请20多项专利。 最新热文： 80%的人都不知道，ERC-223、ERC-621、ERC-721这些到底说了啥，还好意思说自己懂智能合约？建议收藏 全球近1/5的比特币已经永久丢失！三种方法让你找回丢失的比特币 北大之后又一高校团队区块链大赛夺冠，原来高校才是行业真扫地僧，怕了吗？ | 人物志 未来互联网再不需要中心化服务器了！因为Web3技术栈来了 扫码加入区块链大本营读者群，群满加微信 qk15732632926 入群 了解更多区块链技术及应用内容 敬请关注： 阅读更多","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/07/22/%E5%B9%B2%E8%B4%A7-%E5%8F%B2%E4%B8%8A%E6%9D%80%E4%BC%A4%E5%8A%9B%E6%9C%80%E5%A4%A7%E7%9A%84%E6%BA%A2%E5%87%BA%E5%9E%8B%E6%BC%8F%E6%B4%9E%E5%88%B0%E5%BA%95%E6%98%AF%E4%BB%80%E4%B9%88-%E7%9C%8B%E8%BF%99%E4%B8%80%E7%AF%87%E5%B0%B1%E5%A4%9F%E4%BA%86-%E6%BC%8F%E6%B4%9E%E8%BF%9E%E8%BD%BD/html","headline":"干货，史上杀伤力最大的溢出型漏洞到底是什么？看这一篇就够了 漏洞连载…","dateModified":"2018-07-22T00:00:00+08:00","datePublished":"2018-07-22T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/07/22/%E5%B9%B2%E8%B4%A7-%E5%8F%B2%E4%B8%8A%E6%9D%80%E4%BC%A4%E5%8A%9B%E6%9C%80%E5%A4%A7%E7%9A%84%E6%BA%A2%E5%87%BA%E5%9E%8B%E6%BC%8F%E6%B4%9E%E5%88%B0%E5%BA%95%E6%98%AF%E4%BB%80%E4%B9%88-%E7%9C%8B%E8%BF%99%E4%B8%80%E7%AF%87%E5%B0%B1%E5%A4%9F%E4%BA%86-%E6%BC%8F%E6%B4%9E%E8%BF%9E%E8%BD%BD/html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>干货，史上杀伤力最大的溢出型漏洞到底是什么？看这一篇就够了| 漏洞连载...</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <div class="rich_media_content" id="js_content"> 
+   <p style="text-align:center;"><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_jpg/trm5VMeFp9mibjNZkzTDnegSVicxic3E2gUgpbiaznP3EicuiaACiabCOTIAuOAibLMdXibMNkqvbJaU2JAW7fxDTAHFk0g/640?wx_fmt=jpeg" alt="640?wx_fmt=jpeg"></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;"></span></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">4月发生的BEC事件以及SMT事件已经沉淀一段时间了，具体的情况也被多方媒体所报道，相关的漏洞根源问题也有很多大神团队的分析和指正。</span></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">近日，有安全团队</span><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">将各种已经发生或可能发生的类似溢出漏洞原理进行整理</span></strong><span style="font-size:15px;letter-spacing:.5px;">，再次将全方位的原理分析与大家分享，</span><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">让大家对溢出型漏洞有全面的认识</span></strong><span style="font-size:15px;letter-spacing:.5px;">。</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:center;line-height:1.75em;"><span style="font-size:18px;"><strong><span style="letter-spacing:.5px;color:rgb(0,122,170);">事件回顾</span></strong></span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">2018年4月22日，黑客对BEC智能合约发起攻击，凭空取出</span></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">57,896,044,618,658,100,000,000,000,000,000,000,000,000,000,000,000,000,000,000.792003956564819968&nbsp;</span></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">个BEC代币并在市场上进行抛售，BEC随即急剧贬值，价值几乎为0，该市场瞬间土崩瓦解。</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">2018年4月25日，SMT项目方发现其交易存在异常，黑客利用其函数漏洞创造了65,133,050,195,990,400,000,000,000,000,000,000,000,000,000,000,000,000,000,000</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">+</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">50,659,039,041,325,800,000,000,000,000,000,000,000,000,000,000,000,000,000,000</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">的SMT币，火币Pro随即暂停了所有币种的充值提取业务。</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">让我们一起以沉痛的心情缅怀以上一夜归零的代币。</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:center;line-height:1.75em;"><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/7icia3gpsuCVCl2ib7lJjc4OKeANRD65m9sp8CTbeiavyiaE9B7En5trp6WqTj0YOMS3qd9qgxsOTGgfubrHH0Fwwnw/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">仅仅在BEC事件过去后的12小时内，就有多达12个项目的智能合约存在类似的整数溢出类型的漏洞，</span><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">黑客可以利用这一漏洞转账“无中生有”的巨大数量代币，也就是我们所说的“增发”。</span></strong></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:center;line-height:1.75em;"><span style="font-size:18px;"><strong><span style="letter-spacing:.5px;color:rgb(0,122,170);">代币增发为什么就会贬值</span></strong></span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">人们常说“物以稀为贵”，意思是事物因稀少而且有益，从而显得珍贵。</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">黄金被选为最早时期全世界公认的货币的原因就是因为它稀缺，地球上储量有限，易分割，属性稳定等特点。</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">中国人首先发明了“交子”，来代替不便交易的黄金。</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">所以就出现了金本位的概念，很多国家发行自己货币的时候都是按照其黄金储量来发行，并不是想发多少就发多少</span></strong><span style="font-size:15px;letter-spacing:.5px;">。</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">试想一下，</span><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">如果凭空出现了一颗黄金做的大陨石，撞击地球后黄金撒了一地，黄金还会值钱吗</span></strong><span style="font-size:15px;letter-spacing:.5px;">？</span></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">&nbsp;</span></p>
+   <p style="margin-left:8px;min-height:1em;text-align:center;line-height:1.75em;"><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_jpg/7icia3gpsuCVCl2ib7lJjc4OKeANRD65m9szUibNmRje9EcRxyV4dZJ70lMwIeQZRHWzUsTqnvRO208FZrxKuOb7rg/640?wx_fmt=jpeg" alt="640?wx_fmt=jpeg"></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">所以当一个代币的数量在有了额定发行总量之后，突然肆意的增加，必然会导致代币的贬值，甚至失去在市场上流通的意义。</span></strong><span style="font-size:15px;letter-spacing:.5px;">这就是“代币增发”的不良后果。</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:center;line-height:1.75em;"><span style="font-size:18px;"><strong><span style="letter-spacing:.5px;color:rgb(0,122,170);">整数溢出漏洞分析</span></strong></span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">前面提到，黑客是利用整数溢出漏洞绕过了转账数额的相关规则，进而增发代币。</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">那什么是整数溢出呢</span></strong><span style="font-size:15px;letter-spacing:.5px;">？</span><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">为什么能用整数溢出来实现增发来秀一波空手套白狼的操作？</span></strong></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">我来举个例子：</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:center;line-height:1.75em;"><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/7icia3gpsuCVCl2ib7lJjc4OKeANRD65m9seVze44c5rVN8NPEhfcykc7SaguCoYtutZ4Ift1Z84lAclS7Q7nFuyQ/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">比如有一个国家的人不会复杂的数学运算，只会从0数到9，每次数到9之后又从0开始数，最后以数到的数作为结果。大家都这样平安无事的生活着，但有一天，有一个从别的国家来的小黑，他发现了这个问题，于是他去金库拿金锭，拿出来的个数超过了9个，于是金库管理员帮他数，数到9之后又从0开始了，最后结算发现他取出来的结果是0个金锭，但实际上他已经把金库里的金锭几乎都取完了。</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">黑客利用类似的机制凭空向一个账户中转账了超级大数额的代币，而合约中的逻辑只要求他花费很小的代价。</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:center;line-height:1.75em;"><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/7icia3gpsuCVCl2ib7lJjc4OKeANRD65m9s68Kdynq6bZA9tibwJqWIZaLxSiba29KxAE0CkicUkNDkRdNialeYcnaMDQ/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">我们对过往代币增发事件漏洞类型进行整理，概括出整型溢出类型漏洞的全面分析。</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">以太坊虚拟机（EVM）为整数指定固定大小的数据类型。这意味着一个整型变量只能有一定范围的数字表示。例如，一个 uint8 ，只能存储在范围 [0,255] 的数字。试图存储 256 到一个 uint8 将变成 0。不加注意的话，只要没有检查用户输入又执行计算，导致数字超出存储它们的数据类型允许的范围，Solidity 中的变量就可以被用来组织攻击。</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">整数溢出的类型包括乘法溢出，加法溢出，减法溢出三种。</span></strong></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">在对BEC事件进行分析后，发现可将其漏洞归类于乘法溢出，原理如下：</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">乘法溢出</span></strong></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><strong><span style="font-size:15px;letter-spacing:.5px;">•&nbsp; 案例(CVE-2018-10299)</span></strong></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:center;line-height:1.75em;"><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/7icia3gpsuCVCl2ib7lJjc4OKeANRD65m9sKQ2AK7RF7icQyjU6YMjSULzjdMXmcBfsZfwqBQujP9bcFSlxsoVCWyQ/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">上述合约代码中，存在漏洞的代码为：</span></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">uint256 amount = uint256(cnt) * _value</span></strong><span style="font-size:15px;letter-spacing:.5px;">;，</span></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">计算转出总额度amount未使用SafeMath也未对溢出进行检查，直接将转账地址数量乘以转账额度，如果输入极大的_value，那么amount计算结果就可能产生溢出，导致代币增发。</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">在Remix-ide中测试如下：</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">1、部署合约；</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">2、调用batchTransfer函数,向batchTransfer函数传入地址数组</span></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">["0xb4D30Cac5124b46C2Df0CF3e3e1Be05f42119033","0x0e823fFE018727585EaF5Bc769Fa80472F76C3d7"]，</span></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">以及</span></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">_value"0x8000000000000000000000000000000000000000000000000000000000000000"</span></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">即2*255，</span></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">使得amount=2\*255 * 2,超出uint256类型的范围[0,2**256-1]，溢出为0，发送者账户余额不减少，并且，本例中，发送者的代币可以为零，实现"无中生有"。</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:center;line-height:1.75em;"><img style="width:558px;border-color:rgb(0,0,0);border-style:solid;border-width:1px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/7icia3gpsuCVCl2ib7lJjc4OKeANRD65m9suBsibaibRpicSWibZ9RcIpgXcTkKEYEgt0cG0t9ybTzYKoAq9o22uiaYQHg/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">3、查看余额：</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:center;line-height:1.75em;"><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/7icia3gpsuCVCl2ib7lJjc4OKeANRD65m9sANGkdjV7icrfmY2VfZicM3hSsnAj0W3ibMMjN2qArgaI54tf6WpibP8ZFw/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">而针对SMT事件进行分析后，发现其漏洞属于加法溢出类型，其原理如下：</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">加法溢出</span></strong></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><strong><span style="font-size:15px;letter-spacing:.5px;">•&nbsp; &nbsp;案例</span></strong></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:center;line-height:1.75em;"><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/7icia3gpsuCVCl2ib7lJjc4OKeANRD65m9s828e070UCHOTN8HCUNMhPaZ4nKSVA4ZAW1CkMiaZwOkjkxrZHc1p7DQ/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="margin-left:8px;min-height:1em;text-align:center;line-height:1.75em;"><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/7icia3gpsuCVCl2ib7lJjc4OKeANRD65m9sYpvicrehMc50EaO9MLibpqSybicaXHL1gXDIJZrCUEktghaue7GoB46AQ/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">上述合约代码中，mintToken函数的功能是owner向指定账户增发mintedAmount数量的代币，但是在对balanceOf[target]与totalSupply进行加法操作未做溢出检查，导致其可能存在溢出，并且，通过溢出，恶意owner可以任意增减target账户的余额，或者增发实际远远超过totalSupply的代币。</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="color:rgb(0,122,170);"><strong><span style="font-size:15px;letter-spacing:.5px;">在Remix-ide中测试如下：</span></strong></span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">1、部署合约；</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">2、向target预先转一部分代币，模拟目标账户中已有的代币：调用transfer函数，传入target地址：</span></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">0x14723a09acff6d2a60dcdf7aa4aff308fddc160c，</span></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">以及转账额度，比如：</span></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">2000000000000000000</span></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">（2 * 10**uint256(decimals)）;</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">3、如果owner想控制target的余额减半，那么，他只需要向target增发</span></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">2*256-balanceOf[target]+10\*18=0xfffffffffffffffffffffffffffffffffffffffffffffffff21f494c589c0000，</span></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">现在调用mintToken函数，向target地址转入上述数量的代币：</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:center;line-height:1.75em;"><img style="border-style:solid;border-width:1px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/7icia3gpsuCVCl2ib7lJjc4OKeANRD65m9s08cAKsicFUm3ZFxdH2bvd8cmXSpj4jIx3w5GAzgMEiaCg4FP1tibSAH0w/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">4、查询target余额：</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:center;line-height:1.75em;"><img style="border-style:solid;border-width:1px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/7icia3gpsuCVCl2ib7lJjc4OKeANRD65m9sqcC2TecthGoxzRMNpGjCUE8DzyReFIEokCPIkljNx8Fudicv0aoHbWA/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">另外还有减法溢出的操作，虽然未出现相关的漏洞攻击事件，我们也提供了相关的原理分析。</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">减法溢出</span></strong></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><strong><span style="font-size:15px;letter-spacing:.5px;">•&nbsp; &nbsp;案例</span></strong></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:center;line-height:1.75em;"><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/7icia3gpsuCVCl2ib7lJjc4OKeANRD65m9s9j2VXeSMztHefNdyWHdcicZNKNrQsGSiaZVsibP9x6ZvIvjQRgn8JNXeg/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="margin-left:8px;min-height:1em;text-align:center;line-height:1.75em;"><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/7icia3gpsuCVCl2ib7lJjc4OKeANRD65m9sRl6zWXwwSHdKVvaLLaJlFJ7sVzO9n7CYtbo3pAaicQ6yccWhEOIWfgQ/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">上述合约代码中，distribute函数的功能是从owner账户向指定的地址列表转入2000 * 10**8代币，但是在对balances[owner]的计算中未使用SafeMath，也未判断owner账户是否有足够的代币，当转出代币总量大于owner账户余额的时候，balances[owner]产生减法溢出，变成一个极大值。</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">在Remix-ide中测试如下：</span></strong></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">1、部署合约</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">2、调用distribute函数，传入地址数组：</span></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">["0x14723a09acff6d2a60dcdf7aa4aff308fddc160c","0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"]</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">owner分别向这两个地址发送2000 * 10**8代币，超过owner余额，balances[owner]产生减法溢出；</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">3、查询owner账户余额，等于2**256-2000*10**8：</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:center;line-height:1.75em;"><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/7icia3gpsuCVCl2ib7lJjc4OKeANRD65m9svH0icz1hCQ3JyMXex2Rg0OiadEll0NvRDAm2jmWYfRzyA7DUBVrxTEFg/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">黑客虽然无孔不入，但链安科技团队对具有此类漏洞的合约进行综合性调研后，提出了“亡羊补牢”的修复措施：</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:center;line-height:1.75em;"><span style="font-size:18px;"><strong><span style="letter-spacing:.5px;color:rgb(0,122,170);">漏洞修复</span></strong></span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">OpenZeppelin提供了一套很好的SafeMath库，使用SafeMath库函数能够有效避免溢出漏洞，SafeMath库源码如下：</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:center;line-height:1.75em;"><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/7icia3gpsuCVCl2ib7lJjc4OKeANRD65m9sTDRhoE1y3y9C3ZJ9x0YmHiaRWj1Coc7w0QaQriaCNmyPW1UHibsQUFDMQ/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="margin-left:8px;min-height:1em;text-align:center;line-height:1.75em;"><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/7icia3gpsuCVCl2ib7lJjc4OKeANRD65m9sAaT8b2NO2ZsqfmsuAl9Uv9HGhR9eVVYzib0ibyHsUOjL4xd6GnNCbx5g/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="margin-left:8px;min-height:1em;text-align:center;line-height:1.75em;"><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/7icia3gpsuCVCl2ib7lJjc4OKeANRD65m9sozNshWx5ia9gJJ92vdfyUfTCwrTr9VEu2YqWtZdDVJan7ibTzFbxVJuw/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="margin-left:8px;min-height:1em;text-align:center;line-height:1.75em;"><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/7icia3gpsuCVCl2ib7lJjc4OKeANRD65m9snrQCHBVhnSxsugsSpRNezXDnpBQfosIJ8NUgHLI3VW7TuUvaEwNFeA/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:center;line-height:1.75em;"><span style="font-size:18px;"><strong><span style="letter-spacing:.5px;color:rgb(0,122,170);">子曰：吾日三省吾身</span></strong></span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">我们从这些惨痛的教训中能总结出：</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">1. 基于ERC20协议编写的这些智能合约给予开发者的权力过大了，这些溢出问题本应该放在底层检测。</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">2. 编写合约的开发者没有以严谨敬业的精神去遵守开发规范，使用SafeMath去做相关功能，或者进行溢出测试，在这里提出批评。</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">3. 没有严谨的逻辑，单单凭借创造力并不是都能出成果，还是要稳中求胜，能使用库就使用库。</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">所以,链安科技团队建议，为了避免程序结果中产生溢出，破坏智能合约执行逻辑，建议开发者在所有数学运算中都使用SafeMath（敲黑板）。</span></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">参考资料：</span></strong></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">[1]:&nbsp;</span></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="text-decoration:underline;"><em><span style="text-decoration:underline;font-size:15px;letter-spacing:.5px;color:rgb(136,136,136);">http://bc.jrj.com.cn/2018/04/26132824455908.shtml&nbsp;</span></em></span></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">[2]:&nbsp;</span></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><em><span style="font-size:15px;letter-spacing:.5px;color:rgb(136,136,136);text-decoration:underline;">https://zhuanlan.zhihu.com/p/36116810</span></em></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">[3]: </span><span style="text-decoration:underline;"><em><span style="text-decoration:underline;font-size:15px;letter-spacing:.5px;color:rgb(136,136,136);">https://baike.baidu.com/item/%E7%89%A9%E4%BB%A5%E7%A8%80%E4%B8%BA%E8%B4%B5</span></em></span></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;">[4]:&nbsp;</span></p>
+   <p style="margin-left:8px;min-height:1em;text-align:justify;line-height:1.75em;"><em><span style="font-size:15px;letter-spacing:.5px;color:rgb(136,136,136);text-decoration:underline;">http://www.woshipm.com/blockchain/945232.html</span></em></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;color:rgb(51,51,51);"><br></p>
+   <p style="margin-left:8px;color:rgb(51,51,51);"><span style="font-size:15px;letter-spacing:.5px;">&nbsp;</span></p>
+   <blockquote style="color:rgb(51,51,51);">
+    <p style="margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;color:rgb(136,136,136);">杨霞&nbsp;&nbsp;</span></p>
+    <p style="margin-left:8px;line-height:1.75em;"><span style="font-size:15px;letter-spacing:.5px;color:rgb(136,136,136);">成都链安科技CEO，创始人。电子科技大学副教授，最早研究区块链形式化验证的专家。一直为航空航天、军事领域提供形式化验证服务。主持国家核高基、装发重大软件课题等近10项国家课题。CC国际安全标准成员、CCF区块链专委会委员。发表学术论文30多篇，申请20多项专利。</span></p>
+   </blockquote>
+   <p style="color:rgb(51,51,51);"><br></p>
+   <p style="min-height:1em;"><br></p>
+   <p style="margin-left:8px;min-height:1em;font-size:18px;line-height:1.75em;"><span style="letter-spacing:.5px;font-size:15px;"><strong>最新热文：</strong></span></p>
+   <ul class="list-paddingleft-2">
+    <li><p style="min-height:1em;line-height:1.75em;text-align:justify;"><a href="http://mp.weixin.qq.com/s?__biz=MzU2MTE1NDk2Mg==&amp;mid=2247487363&amp;idx=1&amp;sn=d43d011a7b488a63862dd43cabfab5d2&amp;chksm=fc7c517ecb0bd86810eb4f56ae4f5fe199fabca20eee13c1e3d4b9d459c28b0b9c99482dcee8&amp;scene=21#wechat_redirect" rel="nofollow" style="color:rgb(0,122,170);text-decoration:underline;font-size:15px;letter-spacing:.5px;"><strong>80%的人都不知道，ERC-223、ERC-621、ERC-721这些到底说了啥，还好意思说自己懂智能合约？建议收藏</strong></a><br></p></li>
+    <li><p style="min-height:1em;line-height:1.75em;text-align:justify;"><a href="http://mp.weixin.qq.com/s?__biz=MzU2MTE1NDk2Mg==&amp;mid=2247487353&amp;idx=1&amp;sn=bd381b6b532c48c71733ecea26b5759d&amp;chksm=fc7c5184cb0bd892e642c39ad09459e3a9b0355415450a6757e2665a007963dbc1e5c4c8185c&amp;scene=21#wechat_redirect" rel="nofollow" style="color:rgb(0,122,170);text-decoration:underline;font-size:15px;letter-spacing:.5px;"><strong>全球近1/5的比特币已经永久丢失！三种方法让你找回丢失的比特币</strong></a><br></p></li>
+    <li><p style="min-height:1em;line-height:1.75em;"><a href="http://mp.weixin.qq.com/s?__biz=MzU2MTE1NDk2Mg==&amp;mid=2247487335&amp;idx=1&amp;sn=222c8d9b3d0daa44e1195e307b7a0618&amp;chksm=fc7c519acb0bd88c9f676b89857bb5b0c22e2d6364a3e98ebd6e55a7c6853450e0826cb63a3f&amp;scene=21#wechat_redirect" rel="nofollow" style="color:rgb(0,122,170);text-decoration:underline;font-size:15px;letter-spacing:.5px;"><strong>北大之后又一高校团队区块链大赛夺冠，原来高校才是行业真扫地僧，怕了吗？ | 人物志</strong></a><br></p></li>
+    <li><p style="min-height:1em;text-align:justify;line-height:1.75em;"><strong style="color:rgb(0,122,170);text-decoration:underline;font-size:15px;letter-spacing:.5px;"><a href="http://mp.weixin.qq.com/s?__biz=MzU2MTE1NDk2Mg==&amp;mid=2247487304&amp;idx=1&amp;sn=6a6ba500acf9c37f7b9117e7f0e61fb0&amp;chksm=fc7c51b5cb0bd8a3441839366c692bb6574c7aecd2731bab77482a6e332805272cc70f65d804&amp;scene=21#wechat_redirect" rel="nofollow" style="color:rgb(0,122,170);text-decoration:underline;font-size:15px;letter-spacing:.5px;">未来互联网再不需要中心化服务器了！因为Web3技术栈来了</a></strong></p></li>
+   </ul>
+   <br>
+   <p style="margin-left:8px;min-height:1em;color:rgb(51,51,51);text-align:center;"><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/trm5VMeFp9lTVEcZP39FP7gZ0p50csZrm2bpIBetcJl6WZRnb4q1EDicNjp6ooCFib1gV469JX5BDNz1nb8RqG5g/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="margin-left:8px;min-height:1em;color:rgb(51,51,51);text-align:center;"><span style="color:rgb(63,63,63);letter-spacing:.5px;font-size:15px;"><strong>扫码加入区块链大本营读者群，群满加微信 qk15732632926 入群</strong></span></p>
+   <p style="min-height:1em;color:rgb(51,51,51);"><br></p>
+   <p style="min-height:1em;color:rgb(51,51,51);"><br></p>
+   <p style="margin-left:8px;min-height:1em;color:rgb(51,51,51);"><span style="letter-spacing:.5px;font-size:15px;"><strong><span style="color:rgb(0,122,170);"></span></strong></span></p>
+   <p style="min-height:1em;color:rgb(51,51,51);"><img class="__bg_gif" style="margin-left:auto;line-height:28px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_gif/trm5VMeFp9kuuGYcoeg06IYM4TSEE1eCF4aiadptTMnNFDia5JfEBLuUslraYtDcYbKr2b4takjM2MfqeZYcVqkQ/640?wx_fmt=gif" alt="640?wx_fmt=gif"></p>
+   <p style="min-height:1em;color:rgb(51,51,51);"><br></p>
+   <p style="min-height:1em;color:rgb(51,51,51);"><br></p>
+   <p style="margin-left:8px;min-height:1em;color:rgb(51,51,51);text-align:center;"><span style="letter-spacing:.5px;font-size:15px;"><strong><span style="color:rgb(0,122,170);">了解更多区块链技术及应用内容</span></strong></span></p>
+   <p style="margin-left:8px;min-height:1em;color:rgb(51,51,51);text-align:center;"><span style="letter-spacing:.5px;font-size:15px;"><strong><span style="color:rgb(0,122,170);">敬请关注：</span></strong></span></p>
+   <p style="margin-left:8px;min-height:1em;color:rgb(51,51,51);text-align:center;"><img class="__bg_gif" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_gif/trm5VMeFp9kegUbp0DLNf5dM2JbggFlThJvvibDiaEicHicPaTJV6oOMMWYZynQZcNupmQJIbPAdlVhT8PeicsKaFMQ/640?wx_fmt=gif" alt="640?wx_fmt=gif"></p> 
+  </div> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/Blockchain_lemon/article/details/81161450,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/Blockchain_lemon/article/details/81161450,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

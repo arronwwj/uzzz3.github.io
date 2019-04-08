@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>量化投资策略：常见的几种Python回测框架（库） | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="量化投资策略：常见的几种Python回测框架（库）" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="量化投资策略：常见的几种Python回测框架（库） 在实盘交易之前，必须对量化交易策略进行回测。在此，我们评价一下常用的Python回测框架（库）。评价的尺度包括用途范围（回测、虚盘交易、实盘交易），易用程度（结构良好、文档完整）和扩展性（速度快、用法简单、与其他框架库的兼容）。 Zipline: 事件驱动的回测框架。Quantopian&nbsp;正在使用它。 Zipline 拥有大型社区，文档完整，对著名经纪公司Interactive Broker (IB)有大力支持；整合了Pandas，语法清晰，易于学习掌握。 有大量例程examples。你若主要是为了交易美国证券，它是最好的选择。Quantopian 允许回测、分享并在其社区讨论交易策略。 不过，据我们的经验，Zipline&nbsp;速度极慢。这是它最大的短板。Quantopian 有些对策，如在云端作并行运行。若有兴趣，你可看看这篇博文&nbsp;。 Zipline 似乎很难使用本地数据文件和非美数据。 它很难用于不同种类的金融资产。 PyAlgoTrade: 也是事件驱动的回测框架，支持虚盘和实盘两种交易。文档完整，整合了TA-Lib(技术分析库)。在速度和灵活方面，它比Zipline&nbsp;强。不过，它的一大硬伤是不支持 Pandas 的模块和对象。 pybacktest: 它以处理向量数据的方式进行回测，非常简单轻便。2015年5月21日，这个项目有复活的迹象。 TradingWithPython: 这位Jev Kuznetsov 扩展&nbsp;pybacktest&nbsp;形成自己的回测程序。这个库似乎在2015年2月更新了。不过，相关的文档和课程售价 $395。 其他项目:&nbsp;ultra-finance &nbsp; Zipline PyAlgoTrade TradingWithPython pybacktest 类型 事件驱动 事件驱动 向量处理 向量处理 社区 较大 一般 无 无 云计算 Quantopian 无 无 无 支持 IB 是 否 否 否 数据源 Yahoo, Google, NinjaTrader Yahoo, Google, NinjaTrader, Xignite, Bitstamp 实时提供数据 &nbsp; &nbsp; 文档 完整 完整 $395 很少 事件可定制 是 是 &nbsp; &nbsp; 速度 慢 快 &nbsp; &nbsp; 支持Pandas 是 否 是 是 交易日历 是 否 否 否 支持TA-Lib 是 是 是 &nbsp; 适用于 仅用于美国证券交易 实盘交易虚盘交易 虚盘测试交易 虚盘测试交易 &nbsp; Zipline 与 PyAlgoTrade 的对比评分 &nbsp; Zipline PyAlgoTrade 说明 虚盘交易 ♦ ♦&nbsp;♦&nbsp;♦ Zipline 似乎不能用非美数据和本地数据工作，而 PyAlgoTrade 可以使用任何类型的数据 实盘交易 ♦ ♦ ♦ ♦ 二者都不错，但 Quantpian 的云计算编程很好 灵活性 ♦ ♦ ♦ ♦ ♦ PyAlgoTrade 支持各种高级定单，并有更多的业务事件。 Zipline 提供了简单的滑点模式 速度 ♦ ♦ ♦ ♦ Zipline 比 PyAlgoTrade 慢 易用性 ♦ ♦ ♦ ♦ ♦ PyAlgoTrade 不支持 pandas 阅读更多" />
+<meta property="og:description" content="量化投资策略：常见的几种Python回测框架（库） 在实盘交易之前，必须对量化交易策略进行回测。在此，我们评价一下常用的Python回测框架（库）。评价的尺度包括用途范围（回测、虚盘交易、实盘交易），易用程度（结构良好、文档完整）和扩展性（速度快、用法简单、与其他框架库的兼容）。 Zipline: 事件驱动的回测框架。Quantopian&nbsp;正在使用它。 Zipline 拥有大型社区，文档完整，对著名经纪公司Interactive Broker (IB)有大力支持；整合了Pandas，语法清晰，易于学习掌握。 有大量例程examples。你若主要是为了交易美国证券，它是最好的选择。Quantopian 允许回测、分享并在其社区讨论交易策略。 不过，据我们的经验，Zipline&nbsp;速度极慢。这是它最大的短板。Quantopian 有些对策，如在云端作并行运行。若有兴趣，你可看看这篇博文&nbsp;。 Zipline 似乎很难使用本地数据文件和非美数据。 它很难用于不同种类的金融资产。 PyAlgoTrade: 也是事件驱动的回测框架，支持虚盘和实盘两种交易。文档完整，整合了TA-Lib(技术分析库)。在速度和灵活方面，它比Zipline&nbsp;强。不过，它的一大硬伤是不支持 Pandas 的模块和对象。 pybacktest: 它以处理向量数据的方式进行回测，非常简单轻便。2015年5月21日，这个项目有复活的迹象。 TradingWithPython: 这位Jev Kuznetsov 扩展&nbsp;pybacktest&nbsp;形成自己的回测程序。这个库似乎在2015年2月更新了。不过，相关的文档和课程售价 $395。 其他项目:&nbsp;ultra-finance &nbsp; Zipline PyAlgoTrade TradingWithPython pybacktest 类型 事件驱动 事件驱动 向量处理 向量处理 社区 较大 一般 无 无 云计算 Quantopian 无 无 无 支持 IB 是 否 否 否 数据源 Yahoo, Google, NinjaTrader Yahoo, Google, NinjaTrader, Xignite, Bitstamp 实时提供数据 &nbsp; &nbsp; 文档 完整 完整 $395 很少 事件可定制 是 是 &nbsp; &nbsp; 速度 慢 快 &nbsp; &nbsp; 支持Pandas 是 否 是 是 交易日历 是 否 否 否 支持TA-Lib 是 是 是 &nbsp; 适用于 仅用于美国证券交易 实盘交易虚盘交易 虚盘测试交易 虚盘测试交易 &nbsp; Zipline 与 PyAlgoTrade 的对比评分 &nbsp; Zipline PyAlgoTrade 说明 虚盘交易 ♦ ♦&nbsp;♦&nbsp;♦ Zipline 似乎不能用非美数据和本地数据工作，而 PyAlgoTrade 可以使用任何类型的数据 实盘交易 ♦ ♦ ♦ ♦ 二者都不错，但 Quantpian 的云计算编程很好 灵活性 ♦ ♦ ♦ ♦ ♦ PyAlgoTrade 支持各种高级定单，并有更多的业务事件。 Zipline 提供了简单的滑点模式 速度 ♦ ♦ ♦ ♦ Zipline 比 PyAlgoTrade 慢 易用性 ♦ ♦ ♦ ♦ ♦ PyAlgoTrade 不支持 pandas 阅读更多" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/05/15/%E9%87%8F%E5%8C%96%E6%8A%95%E8%B5%84%E7%AD%96%E7%95%A5-%E5%B8%B8%E8%A7%81%E7%9A%84%E5%87%A0%E7%A7%8DPython%E5%9B%9E%E6%B5%8B%E6%A1%86%E6%9E%B6-%E5%BA%93.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/05/15/%E9%87%8F%E5%8C%96%E6%8A%95%E8%B5%84%E7%AD%96%E7%95%A5-%E5%B8%B8%E8%A7%81%E7%9A%84%E5%87%A0%E7%A7%8DPython%E5%9B%9E%E6%B5%8B%E6%A1%86%E6%9E%B6-%E5%BA%93.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-05-15T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"量化投资策略：常见的几种Python回测框架（库） 在实盘交易之前，必须对量化交易策略进行回测。在此，我们评价一下常用的Python回测框架（库）。评价的尺度包括用途范围（回测、虚盘交易、实盘交易），易用程度（结构良好、文档完整）和扩展性（速度快、用法简单、与其他框架库的兼容）。 Zipline: 事件驱动的回测框架。Quantopian&nbsp;正在使用它。 Zipline 拥有大型社区，文档完整，对著名经纪公司Interactive Broker (IB)有大力支持；整合了Pandas，语法清晰，易于学习掌握。 有大量例程examples。你若主要是为了交易美国证券，它是最好的选择。Quantopian 允许回测、分享并在其社区讨论交易策略。 不过，据我们的经验，Zipline&nbsp;速度极慢。这是它最大的短板。Quantopian 有些对策，如在云端作并行运行。若有兴趣，你可看看这篇博文&nbsp;。 Zipline 似乎很难使用本地数据文件和非美数据。 它很难用于不同种类的金融资产。 PyAlgoTrade: 也是事件驱动的回测框架，支持虚盘和实盘两种交易。文档完整，整合了TA-Lib(技术分析库)。在速度和灵活方面，它比Zipline&nbsp;强。不过，它的一大硬伤是不支持 Pandas 的模块和对象。 pybacktest: 它以处理向量数据的方式进行回测，非常简单轻便。2015年5月21日，这个项目有复活的迹象。 TradingWithPython: 这位Jev Kuznetsov 扩展&nbsp;pybacktest&nbsp;形成自己的回测程序。这个库似乎在2015年2月更新了。不过，相关的文档和课程售价 $395。 其他项目:&nbsp;ultra-finance &nbsp; Zipline PyAlgoTrade TradingWithPython pybacktest 类型 事件驱动 事件驱动 向量处理 向量处理 社区 较大 一般 无 无 云计算 Quantopian 无 无 无 支持 IB 是 否 否 否 数据源 Yahoo, Google, NinjaTrader Yahoo, Google, NinjaTrader, Xignite, Bitstamp 实时提供数据 &nbsp; &nbsp; 文档 完整 完整 $395 很少 事件可定制 是 是 &nbsp; &nbsp; 速度 慢 快 &nbsp; &nbsp; 支持Pandas 是 否 是 是 交易日历 是 否 否 否 支持TA-Lib 是 是 是 &nbsp; 适用于 仅用于美国证券交易 实盘交易虚盘交易 虚盘测试交易 虚盘测试交易 &nbsp; Zipline 与 PyAlgoTrade 的对比评分 &nbsp; Zipline PyAlgoTrade 说明 虚盘交易 ♦ ♦&nbsp;♦&nbsp;♦ Zipline 似乎不能用非美数据和本地数据工作，而 PyAlgoTrade 可以使用任何类型的数据 实盘交易 ♦ ♦ ♦ ♦ 二者都不错，但 Quantpian 的云计算编程很好 灵活性 ♦ ♦ ♦ ♦ ♦ PyAlgoTrade 支持各种高级定单，并有更多的业务事件。 Zipline 提供了简单的滑点模式 速度 ♦ ♦ ♦ ♦ Zipline 比 PyAlgoTrade 慢 易用性 ♦ ♦ ♦ ♦ ♦ PyAlgoTrade 不支持 pandas 阅读更多","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/05/15/%E9%87%8F%E5%8C%96%E6%8A%95%E8%B5%84%E7%AD%96%E7%95%A5-%E5%B8%B8%E8%A7%81%E7%9A%84%E5%87%A0%E7%A7%8DPython%E5%9B%9E%E6%B5%8B%E6%A1%86%E6%9E%B6-%E5%BA%93.html","headline":"量化投资策略：常见的几种Python回测框架（库）","dateModified":"2018-05-15T00:00:00+08:00","datePublished":"2018-05-15T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/05/15/%E9%87%8F%E5%8C%96%E6%8A%95%E8%B5%84%E7%AD%96%E7%95%A5-%E5%B8%B8%E8%A7%81%E7%9A%84%E5%87%A0%E7%A7%8DPython%E5%9B%9E%E6%B5%8B%E6%A1%86%E6%9E%B6-%E5%BA%93.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>量化投资策略：常见的几种Python回测框架（库）</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <h2 style="font-size:20px;color:rgb(34,34,34);line-height:23.24px;background-color:rgb(255,255,255);font-family:'Open Sans';">量化投资策略：常见的几种Python回测框架（库）</h2>
+  <p style="font-size:15px;color:rgb(102,102,102);line-height:1.66em;background-color:rgb(255,255,255);font-family:'Open Sans';">在实盘交易之前，必须对量化交易策略进行回测。在此，我们评价一下常用的Python回测框架（库）。评价的尺度包括用途范围（回测、虚盘交易、实盘交易），易用程度（结构良好、文档完整）和扩展性（速度快、用法简单、与其他框架库的兼容）。</p>
+  <ul style="list-style:none;font-size:14px;background-color:rgb(255,255,255);color:rgb(102,102,102);font-family:'Open Sans';line-height:23.24px;">
+   <li><a href="https://github.com/quantopian/zipline" rel="nofollow" style="color:rgb(0,149,214);"><span>Zipline</span></a>: 事件驱动的回测框架。<a href="https://www.quantopian.com/" rel="nofollow" style="color:rgb(0,149,214);">Quantopian</a>&nbsp;正在使用它。
+    <ul style="list-style:none;">
+     <li>Zipline 拥有大型社区，文档完整，对著名经纪公司Interactive Broker (IB)有大力支持；整合了Pandas，语法清晰，易于学习掌握。</li>
+     <li>有大量例程examples。你若主要是为了交易美国证券，它是最好的选择。Quantopian 允许回测、分享并在其社区讨论交易策略。</li>
+     <li>不过，据我们的经验，<a href="https://github.com/quantopian/zipline" rel="nofollow" style="color:rgb(0,149,214);"><span>Zipline</span></a>&nbsp;速度极慢。这是它最大的短板。Quantopian 有些对策，如在云端作并行运行。若有兴趣，你可看看<a href="http://blog.quantopian.com/zipline_in_the_cloud/" rel="nofollow" style="color:rgb(0,149,214);">这篇博文</a>&nbsp;。</li>
+     <li>Zipline 似乎很难使用本地数据文件和非美数据。</li>
+     <li>它很难用于不同种类的金融资产。</li>
+    </ul></li>
+  </ul>
+  <ul style="list-style:none;font-size:14px;background-color:rgb(255,255,255);color:rgb(102,102,102);font-family:'Open Sans';line-height:23.24px;">
+   <li><a href="http://gbeced.github.io/pyalgotrade/" rel="nofollow" style="color:rgb(0,149,214);"><span>PyAlgoTrade</span></a>: 也是事件驱动的回测框架，支持虚盘和实盘两种交易。文档完整，整合了TA-Lib(技术分析库)。在速度和灵活方面，它比<a href="https://github.com/quantopian/zipline" rel="nofollow" style="color:rgb(0,149,214);"><span>Zipline</span></a>&nbsp;强。不过，它的一大硬伤是不支持 Pandas 的模块和对象。</li>
+  </ul>
+  <ul style="list-style:none;font-size:14px;background-color:rgb(255,255,255);color:rgb(102,102,102);font-family:'Open Sans';line-height:23.24px;">
+   <li><a href="https://github.com/ematvey/pybacktest" rel="nofollow" style="color:rgb(0,149,214);"><span>pybacktest</span></a>: 它以处理向量数据的方式进行回测，非常简单轻便。2015年5月21日，这个项目有复活的迹象。</li>
+  </ul>
+  <ul style="list-style:none;font-size:14px;background-color:rgb(255,255,255);color:rgb(102,102,102);font-family:'Open Sans';line-height:23.24px;">
+   <li><a href="http://www.tradingwithpython.com/" rel="nofollow" style="color:rgb(0,149,214);"><span>TradingWithPython</span></a>: 这位Jev Kuznetsov 扩展&nbsp;<span><span>pybacktest</span></span>&nbsp;形成自己的回测程序。这个库似乎在2015年2月更新了。不过，相关的文档和课程售价 $395。</li>
+  </ul>
+  <ul style="list-style:none;font-size:14px;background-color:rgb(255,255,255);color:rgb(102,102,102);font-family:'Open Sans';line-height:23.24px;">
+   <li>其他项目:&nbsp;<a href="https://github.com/panpanpandas/ultrafinance" rel="nofollow" style="color:rgb(0,149,214);">ultra-finance</a></li>
+  </ul>
+  <table border="1" style="border-spacing:0px;font-size:14px;background-color:rgb(255,255,255);color:rgb(102,102,102);font-family:'Open Sans';line-height:23.24px;">
+   <tbody>
+    <tr>
+     <td>&nbsp;</td>
+     <td><span style="color:rgb(0,149,214);">Zipline</span></td>
+     <td><span style="color:rgb(0,149,214);">PyAlgoTrade</span></td>
+     <td><span style="color:rgb(0,149,214);">TradingWithPython</span></td>
+     <td><span style="color:rgb(0,149,214);">pybacktest</span></td>
+    </tr>
+    <tr>
+     <td><span style="color:rgb(0,149,214);">类型</span></td>
+     <td>事件驱动</td>
+     <td>事件驱动</td>
+     <td>向量处理</td>
+     <td>向量处理</td>
+    </tr>
+    <tr>
+     <td><span style="color:rgb(0,149,214);">社区<span></span></span></td>
+     <td>较大</td>
+     <td>一般</td>
+     <td>无</td>
+     <td>无</td>
+    </tr>
+    <tr>
+     <td><span style="color:rgb(0,149,214);">云计算</span></td>
+     <td>Quantopian</td>
+     <td>无</td>
+     <td>无</td>
+     <td>无</td>
+    </tr>
+    <tr>
+     <td><span style="color:rgb(0,149,214);">支持 IB</span></td>
+     <td>是</td>
+     <td>否</td>
+     <td>否</td>
+     <td>否</td>
+    </tr>
+    <tr>
+     <td><span style="color:rgb(0,149,214);">数据源</span></td>
+     <td>Yahoo, Google, NinjaTrader</td>
+     <td>Yahoo, Google, NinjaTrader, Xignite, Bitstamp 实时提供数据</td>
+     <td>&nbsp;</td>
+     <td>&nbsp;</td>
+    </tr>
+    <tr>
+     <td><span style="color:rgb(0,149,214);">文档</span></td>
+     <td>完整</td>
+     <td>完整</td>
+     <td>$395</td>
+     <td>很少</td>
+    </tr>
+    <tr>
+     <td><span style="color:rgb(0,149,214);">事件可定制</span></td>
+     <td>是</td>
+     <td>是</td>
+     <td>&nbsp;</td>
+     <td>&nbsp;</td>
+    </tr>
+    <tr>
+     <td><span style="color:rgb(0,149,214);">速度</span></td>
+     <td>慢</td>
+     <td>快</td>
+     <td>&nbsp;</td>
+     <td>&nbsp;</td>
+    </tr>
+    <tr>
+     <td><span style="color:rgb(0,149,214);">支持Pandas</span></td>
+     <td>是</td>
+     <td>否</td>
+     <td>是</td>
+     <td>是</td>
+    </tr>
+    <tr>
+     <td><span style="color:rgb(0,149,214);">交易日历</span></td>
+     <td>是</td>
+     <td><span style="color:rgb(102,102,102);line-height:23.24px;">否</span></td>
+     <td><span style="color:rgb(102,102,102);line-height:23.24px;">否</span></td>
+     <td><span style="color:rgb(102,102,102);line-height:23.24px;">否</span></td>
+    </tr>
+    <tr>
+     <td><span style="color:rgb(0,149,214);">支持TA-Lib</span></td>
+     <td>是</td>
+     <td>是</td>
+     <td>是</td>
+     <td>&nbsp;</td>
+    </tr>
+    <tr>
+     <td><span style="color:rgb(0,149,214);">适用于</span></td>
+     <td><p>仅用于美国证<span style="line-height:23.24px;">券交易</span></p></td>
+     <td>实盘交易<br>虚盘交易</td>
+     <td>虚盘测试交易</td>
+     <td><span style="line-height:23.24px;">虚盘测试交易</span></td>
+    </tr>
+   </tbody>
+  </table>
+  <p style="font-size:15px;color:rgb(102,102,102);line-height:1.66em;background-color:rgb(255,255,255);font-family:'Open Sans';">&nbsp;</p>
+  <p style="font-size:15px;color:rgb(102,102,102);line-height:1.66em;background-color:rgb(255,255,255);font-family:'Open Sans';"><span style="color:rgb(34,34,34);font-size:20px;line-height:23.24px;">Zipline 与 PyAlgoTrade 的对比评分</span></p>
+  <table border="1" style="border-spacing:0px;font-size:14px;background-color:rgb(255,255,255);color:rgb(102,102,102);font-family:'Open Sans';line-height:23.24px;">
+   <tbody>
+    <tr>
+     <td><span style="color:rgb(0,149,214);">&nbsp;</span></td>
+     <td><span style="color:rgb(0,149,214);">Zipline</span></td>
+     <td><span style="color:rgb(0,149,214);">PyAlgoTrade</span></td>
+     <td><span style="color:rgb(0,149,214);">说明</span></td>
+    </tr>
+    <tr>
+     <td><span style="color:rgb(0,149,214);">虚盘交易</span></td>
+     <td><p style="font-size:15px;line-height:1.66em;text-align:center;font-family:'Open Sans';">♦</p></td>
+     <td><p style="font-size:15px;line-height:1.66em;text-align:center;font-family:'Open Sans';">♦&nbsp;♦&nbsp;♦</p></td>
+     <td>Zipline 似乎不能用非美数据和本地数据工作，而 <span style="color:#ff0000;">PyAlgoTrade 可以使用任何类型的数据</span></td>
+    </tr>
+    <tr>
+     <td><span style="color:rgb(0,149,214);">实盘交易</span></td>
+     <td><p style="font-size:15px;line-height:1.66em;text-align:center;font-family:'Open Sans';">♦ ♦</p></td>
+     <td><p style="font-size:15px;line-height:1.66em;text-align:center;font-family:'Open Sans';">♦ ♦</p></td>
+     <td>二者都不错，但 Quantpian 的云计算编程很好</td>
+    </tr>
+    <tr>
+     <td><span style="color:rgb(0,149,214);">灵活性</span></td>
+     <td><p style="font-size:15px;line-height:1.66em;text-align:center;font-family:'Open Sans';">♦ ♦</p></td>
+     <td><p style="font-size:15px;line-height:1.66em;text-align:center;font-family:'Open Sans';">♦ ♦ ♦</p></td>
+     <td>PyAlgoTrade 支持各种高级定单，并有更多的业务事件。 Zipline 提供了简单的滑点模式</td>
+    </tr>
+    <tr>
+     <td><span style="color:rgb(0,149,214);">速度</span></td>
+     <td><p style="font-size:15px;line-height:1.66em;text-align:center;font-family:'Open Sans';">♦</p></td>
+     <td><p style="font-size:15px;line-height:1.66em;text-align:center;font-family:'Open Sans';">♦ ♦ ♦</p></td>
+     <td>Zipline 比 PyAlgoTrade 慢</td>
+    </tr>
+    <tr>
+     <td><span style="color:rgb(0,149,214);">易用性</span></td>
+     <td><p style="font-size:15px;line-height:1.66em;text-align:center;font-family:'Open Sans';">♦ ♦ ♦</p></td>
+     <td><p style="font-size:15px;line-height:1.66em;text-align:center;font-family:'Open Sans';">♦ ♦</p></td>
+     <td><span style="color:#ff0000;">PyAlgoTrade 不支持 pandas</span><br></td>
+    </tr>
+   </tbody>
+  </table> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/IAlexanderI/article/details/80324016,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/IAlexanderI/article/details/80324016,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

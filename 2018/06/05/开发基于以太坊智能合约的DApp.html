@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>开发基于以太坊智能合约的DApp | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="开发基于以太坊智能合约的DApp" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="最近要找个H5的前端写个简单的DApp，聊过几个H5的工程师，都被跟以太坊交互的部分吓住了。虽然网上有N多的教程，但是对于H5工程师来说，还是有些困难。分析其原因，在于不了解ganache-cli（原来叫testrpc）/web3/以太坊节点/metamask之间的架构关系。 梳理一下架构关系： web3.js与以太坊通信是通过rpc的方式实现的。 以太坊节点本来提供了rpc的访问方式，但是因为以太坊节点的地址不确定，并且DApp需要访问钱包，所以用web3.js直接访问以太坊节点的rpc服务是不现实的。 ganache-cli模拟了一个以太坊的测试节点并提供对外的rpc访问方式（就是例子里经常说的http://localhost:7545或者http://localhost:8545）。同时在其中内置了M个以太坊帐号，用于测试。 MetaMask是一个以太坊的网络钱包插件，它也提供了web3的访问方式。而且可以通过这个插件指定后面的以太坊节点是什么。因为MetaMask是个钱包插件，所以解决了DApp中的支付问题。所以现在的DApp都依赖它。 有一个以太坊教程，是在线学习的，大家可以去看看，如果自己本机上搞，开发DApp的基本过程都是一样的如下： 1、安装NodeJS 2、安装truffle:一个开发DApp的开发框架 nmp install -g truffle 3、安装Ganache（原来用testrpc）:在内存中模拟以太坊运行并对外提供rpc服务。 npm install -g ganache-cli 4、运行ganache-cli ganache-cli 5、生成一个DApp的项目 mkdir project1" />
+<meta property="og:description" content="最近要找个H5的前端写个简单的DApp，聊过几个H5的工程师，都被跟以太坊交互的部分吓住了。虽然网上有N多的教程，但是对于H5工程师来说，还是有些困难。分析其原因，在于不了解ganache-cli（原来叫testrpc）/web3/以太坊节点/metamask之间的架构关系。 梳理一下架构关系： web3.js与以太坊通信是通过rpc的方式实现的。 以太坊节点本来提供了rpc的访问方式，但是因为以太坊节点的地址不确定，并且DApp需要访问钱包，所以用web3.js直接访问以太坊节点的rpc服务是不现实的。 ganache-cli模拟了一个以太坊的测试节点并提供对外的rpc访问方式（就是例子里经常说的http://localhost:7545或者http://localhost:8545）。同时在其中内置了M个以太坊帐号，用于测试。 MetaMask是一个以太坊的网络钱包插件，它也提供了web3的访问方式。而且可以通过这个插件指定后面的以太坊节点是什么。因为MetaMask是个钱包插件，所以解决了DApp中的支付问题。所以现在的DApp都依赖它。 有一个以太坊教程，是在线学习的，大家可以去看看，如果自己本机上搞，开发DApp的基本过程都是一样的如下： 1、安装NodeJS 2、安装truffle:一个开发DApp的开发框架 nmp install -g truffle 3、安装Ganache（原来用testrpc）:在内存中模拟以太坊运行并对外提供rpc服务。 npm install -g ganache-cli 4、运行ganache-cli ganache-cli 5、生成一个DApp的项目 mkdir project1" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/06/05/%E5%BC%80%E5%8F%91%E5%9F%BA%E4%BA%8E%E4%BB%A5%E5%A4%AA%E5%9D%8A%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E7%9A%84DApp.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/06/05/%E5%BC%80%E5%8F%91%E5%9F%BA%E4%BA%8E%E4%BB%A5%E5%A4%AA%E5%9D%8A%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E7%9A%84DApp.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-06-05T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"最近要找个H5的前端写个简单的DApp，聊过几个H5的工程师，都被跟以太坊交互的部分吓住了。虽然网上有N多的教程，但是对于H5工程师来说，还是有些困难。分析其原因，在于不了解ganache-cli（原来叫testrpc）/web3/以太坊节点/metamask之间的架构关系。 梳理一下架构关系： web3.js与以太坊通信是通过rpc的方式实现的。 以太坊节点本来提供了rpc的访问方式，但是因为以太坊节点的地址不确定，并且DApp需要访问钱包，所以用web3.js直接访问以太坊节点的rpc服务是不现实的。 ganache-cli模拟了一个以太坊的测试节点并提供对外的rpc访问方式（就是例子里经常说的http://localhost:7545或者http://localhost:8545）。同时在其中内置了M个以太坊帐号，用于测试。 MetaMask是一个以太坊的网络钱包插件，它也提供了web3的访问方式。而且可以通过这个插件指定后面的以太坊节点是什么。因为MetaMask是个钱包插件，所以解决了DApp中的支付问题。所以现在的DApp都依赖它。 有一个以太坊教程，是在线学习的，大家可以去看看，如果自己本机上搞，开发DApp的基本过程都是一样的如下： 1、安装NodeJS 2、安装truffle:一个开发DApp的开发框架 nmp install -g truffle 3、安装Ganache（原来用testrpc）:在内存中模拟以太坊运行并对外提供rpc服务。 npm install -g ganache-cli 4、运行ganache-cli ganache-cli 5、生成一个DApp的项目 mkdir project1","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/06/05/%E5%BC%80%E5%8F%91%E5%9F%BA%E4%BA%8E%E4%BB%A5%E5%A4%AA%E5%9D%8A%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E7%9A%84DApp.html","headline":"开发基于以太坊智能合约的DApp","dateModified":"2018-06-05T00:00:00+08:00","datePublished":"2018-06-05T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/06/05/%E5%BC%80%E5%8F%91%E5%9F%BA%E4%BA%8E%E4%BB%A5%E5%A4%AA%E5%9D%8A%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E7%9A%84DApp.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>开发基于以太坊智能合约的DApp</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div class="markdown_views"> 
+  <p>最近要找个H5的前端写个简单的DApp，聊过几个H5的工程师，都被跟以太坊交互的部分吓住了。虽然网上有N多的教程，但是对于H5工程师来说，还是有些困难。分析其原因，在于不了解ganache-cli（原来叫testrpc）/web3/以太坊节点/metamask之间的架构关系。</p> 
+  <p>梳理一下架构关系：</p> 
+  <p>web3.js与以太坊通信是通过rpc的方式实现的。</p> 
+  <p>以太坊节点本来提供了rpc的访问方式，但是因为以太坊节点的地址不确定，并且DApp需要访问钱包，所以用web3.js直接访问以太坊节点的rpc服务是不现实的。</p> 
+  <p>ganache-cli模拟了一个以太坊的测试节点并提供对外的rpc访问方式（就是例子里经常说的<a href="http://localhost:7545" rel="nofollow">http://localhost:7545</a>或者<a href="http://localhost:8545" rel="nofollow">http://localhost:8545</a>）。同时在其中内置了M个以太坊帐号，用于测试。</p> 
+  <p>MetaMask是一个以太坊的网络钱包插件，它也提供了web3的访问方式。而且可以通过这个插件指定后面的以太坊节点是什么。因为MetaMask是个钱包插件，所以解决了DApp中的支付问题。所以现在的DApp都依赖它。</p> 
+  <p>有一个<a href="http://xc.hubwiz.com/course/5a952991adb3847553d205d1" rel="nofollow">以太坊教程</a>，是在线学习的，大家可以去看看，如果自己本机上搞，开发DApp的基本过程都是一样的如下：</p> 
+  <p>1、安装NodeJS</p> 
+  <p>2、安装truffle:一个开发DApp的开发框架</p> 
+  <pre class="prettyprint"><code class=" hljs cmake">nmp <span class="hljs-keyword">install</span> -g truffle</code></pre> 
+  <p>3、安装Ganache（原来用testrpc）:在内存中模拟以太坊运行并对外提供rpc服务。</p> 
+  <pre class="prettyprint"><code class=" hljs lasso">npm install <span class="hljs-attribute">-g</span> ganache<span class="hljs-attribute">-cli</span></code></pre> 
+  <p>4、运行ganache-cli</p> 
+  <pre class="prettyprint"><code class=" hljs avrasm">ganache-<span class="hljs-keyword">cli</span></code></pre> 
+  <p>5、生成一个DApp的项目</p> 
+  <pre class="prettyprint"><code class=" hljs perl"><span class="hljs-keyword">mkdir</span> project1
+
+truffle init</code></pre> 
+  <p>如果想用truffle中的某个例子，可以用</p> 
+  <pre class="prettyprint"><code class=" hljs lasso">truffle unbox pet<span class="hljs-attribute">-shop</span></code></pre> 
+  <p>“pet-shop”是例子名称</p> 
+  <p>6、编写智能合约</p> 
+  <p>具体如何用solidity编写智能合约可参考各种文章，这里不再重复。</p> 
+  <p>编写好的智能合约的Project1.sol文件放到contracts目录下</p> 
+  <p>7、编译和部署智能合约</p> 
+  <p>在migrations目录下创建文件2_deploy_contracts.js：</p> 
+  <pre class="prettyprint"><code class=" hljs lua">var Project1 = artifacts.<span class="hljs-built_in">require</span>(<span class="hljs-string">"Project1"</span>);
+
+<span class="hljs-built_in">module</span>.exports = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(deployer)</span></span> {
+  deployer.deploy(Project1);
+};</code></pre> 
+  <p>之后执行：</p> 
+  <pre class="prettyprint"><code class=" hljs ">truffle compile
+
+truffle migrate</code></pre> 
+  <p>如果你的智能合约没有问题的话，现在你的<a href="http://xc.hubwiz.com/course/5a952991adb3847553d205d1" rel="nofollow">以太坊智能合约</a>应该已经部署到你用来测试的ganache中去了。</p> 
+  <p>这里可能遇到的问题是：默认的truffle生成的项目，测试用的ganache的地址和端口会被设置成<a href="http://localhost:7545" rel="nofollow">http://localhost:7545</a>，而实际上执行ganache-cli之后的服务端口是<a href="http://localhost:8545" rel="nofollow">http://localhost:8545</a>，需要在truffle.js中修改一下：</p> 
+  <pre class="prettyprint"><code class=" hljs avrasm">module<span class="hljs-preprocessor">.exports</span> = {
+// See &lt;http://truffleframework<span class="hljs-preprocessor">.com</span>/docs/advanced/configuration&gt;
+// for more about customizing your Truffle configuration!
+<span class="hljs-label">networks:</span> {
+<span class="hljs-label">development:</span> {
+<span class="hljs-label">host:</span> “<span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>”,
+<span class="hljs-label">port:</span> <span class="hljs-number">7545</span>,   //改成<span class="hljs-number">8545</span>
+<span class="hljs-label">network_id:</span> “*” // Match any network id
+}
+}
+}<span class="hljs-comment">;</span></code></pre> 
+  <p>8、编写前端的js代码跟以太坊交互</p> 
+  <p>通常需要如下的辅助js库:</p> 
+  <pre class="prettyprint"><code class=" hljs xml"><span class="hljs-tag">&lt;<span class="hljs-title">!–</span> <span class="hljs-attribute">jQuery</span> (<span class="hljs-attribute">necessary</span> <span class="hljs-attribute">for</span> <span class="hljs-attribute">Bootstrap</span>’<span class="hljs-attribute">s</span> <span class="hljs-attribute">JavaScript</span> <span class="hljs-attribute">plugins</span>) –&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">script</span> <span class="hljs-attribute">src</span>=<span class="hljs-value">”js</span>/<span class="hljs-attribute">jquery.min.js</span>”&gt;</span><span class="javascript"></span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">!–</span> <span class="hljs-attribute">Include</span> <span class="hljs-attribute">all</span> <span class="hljs-attribute">compiled</span> <span class="hljs-attribute">plugins</span> (<span class="hljs-attribute">below</span>), <span class="hljs-attribute">or</span> <span class="hljs-attribute">include</span> <span class="hljs-attribute">individual</span> <span class="hljs-attribute">files</span> <span class="hljs-attribute">as</span> <span class="hljs-attribute">needed</span> –&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">script</span> <span class="hljs-attribute">src</span>=<span class="hljs-value">”js</span>/<span class="hljs-attribute">bootstrap.min.js</span>”&gt;</span><span class="javascript"></span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">script</span> <span class="hljs-attribute">src</span>=<span class="hljs-value">”js</span>/<span class="hljs-attribute">web3.min.js</span>”&gt;</span><span class="javascript"></span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">script</span> <span class="hljs-attribute">src</span>=<span class="hljs-value">”js</span>/<span class="hljs-attribute">truffle-contract.js</span>”&gt;</span><span class="javascript"></span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span></code></pre> 
+  <p>在此基础上，编辑你自己业务逻辑的js，通常命名为app.js，app.js的框架如下：</p> 
+  <pre class="prettyprint"><code class=" hljs javascript">App = {
+web3Provider: <span class="hljs-literal">null</span>,
+contracts: {},
+
+init: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+
+<span class="hljs-comment">//初始化你自己的页面、变量等</span>
+
+<span class="hljs-keyword">return</span> App.initWeb3();
+},
+
+initWeb3: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+<span class="hljs-comment">/* * 初始化web3： */</span>
+<span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> web3 !== ‘<span class="hljs-literal">undefined</span>’){
+
+<span class="hljs-comment">//如果你的浏览器安装了MetaMask的钱包插件，那么插件会赋值web3.currentProvider</span>
+App.web3Provider = web3.currentProvider;
+}
+<span class="hljs-keyword">else</span>
+{
+
+<span class="hljs-comment">//如果没装插件，那么创建一个基于Http的provider，这里用到的就是用ganache-cli启动所提供的rpc服务，因为ganache-cli启动的时候绑定的是localhost，所以测试所使用的浏览器也要在本机。（如何让ganache-cli绑定其他地址我还没找到）</span>
+App.web3Provider = <span class="hljs-keyword">new</span> Web3.providers.HttpProvider(‘http:<span class="hljs-comment">//localhost:8545’);</span>
+
+}
+web3 = <span class="hljs-keyword">new</span> Web3(App.web3Provider);
+
+<span class="hljs-keyword">return</span> App.initContract();
+},
+
+initContract: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+<span class="hljs-comment">/* * 初始化智能合约，实际上就是为你的智能合约创建一个对应的js对象，方便后续调用 */</span>
+
+<span class="hljs-comment">//通常的做法是使用你的智能合约编译之后生成的abi的json文件，该文件在用truffle compile之后，生成在build/contracts/目录下，因为我用了一个Division.sol，所以用Division.json，你可以根据你的实际情况来写。</span>
+$.getJSON(‘Division.json‘, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(data)</span> {</span>
+<span class="hljs-keyword">var</span> DivisionArtifact = data;
+App.contracts.Division = TruffleContract(DivisionArtifact);
+App.contracts.Division.setProvider(App.web3Provider);
+<span class="hljs-comment">//用智能合约中的信息来更新你的web应用，App.refreshPlots()是我例子中获取智能合约中信息并更新UI的函数</span>
+
+<span class="hljs-keyword">return</span> App.refreshPlots();
+});
+
+<span class="hljs-keyword">return</span> App.bindEvents();
+},
+
+bindEvents: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+
+<span class="hljs-comment">/* * 事件绑定，这个可以根据你的UI来设置，例子中就是绑定一个button的点击操作 */</span>
+
+$(document).on(‘click’, ‘.btn-adopt’, App.handlePlot);
+},
+
+refreshPlots: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(plots, account)</span> {</span>
+<span class="hljs-comment">/* * 这个函数就是上面initContract中调用的用智能合约更新页面 */</span>
+
+        <span class="hljs-comment">//继续使用division这个智能合约做例子</span>
+         <span class="hljs-keyword">var</span> divisionInstance;
+         App.contracts.Division.deployed().then(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(instance)</span>{</span>
+                 divisionInstance = instance;
+                 <span class="hljs-comment">//getGenPlots是Division的这个智能合约的一个查询函数（不需要gas)，需要3个参数</span>
+                 <span class="hljs-keyword">return</span> divisionInstance.getGenPlots(<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">2</span>);
+         }).then(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(results)</span>{</span>
+                 <span class="hljs-comment">//注意：这个地方有点意思，我原先理解也有问题，后来打印输出才搞明白</span>
+                 <span class="hljs-comment">//智能合约返回的多个结果变量在这里就是一个results数组</span>
+                 <span class="hljs-comment">//数组的每个成员就是智能合约返回的每个结果变量</span>
+                 <span class="hljs-comment">//以getGenPlots为例,Division.json中定义如下：</span>
+                 <span class="hljs-comment">/*"name": "getGenPlots", "outputs": [ { "name": "", "type": "uint64[]" }, { "name": "", "type": "address[]" }, { "name": "", "type": "uint256[]" }, { "name": "", "type": "uint8[]" } ], "payable": false, "stateMutability": "view", "type": "function" */</span>
+                  <span class="hljs-comment">//那么：results[0]是uint64[]</span>
+                  <span class="hljs-comment">// results[1]是address[]...</span>
+
+                 console.log(results[<span class="hljs-number">0</span>].length);
+         }).catch(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err)</span>{</span>
+                 console.log(err.message);
+         });
+ },
+handlePlot: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(event)</span> {</span>
+
+<span class="hljs-comment">/* * 这个函数就是上面bindEvents中调用的响应函数,演示要花eth的函数调用 */</span>
+    event.preventDefault();
+    <span class="hljs-comment">//从event中获取参数，这是jquery的东西，跟web3无关</span>
+    <span class="hljs-keyword">var</span> plotId = <span class="hljs-built_in">parseInt</span>($(event.target).data(<span class="hljs-string">'id'</span>));
+
+    <span class="hljs-keyword">var</span> divisionInstance;
+     <span class="hljs-comment">//获取以太坊帐号信息</span>
+     web3.eth.getAccounts(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(error,accounts)</span>{</span>
+         <span class="hljs-keyword">if</span>(error)
+         {
+             console.log(error);
+         }
+         <span class="hljs-comment">//我随便取帐号列表里的第3个帐号。</span>
+         <span class="hljs-comment">//因为我们连的是ganache-cli的rpc模拟服务，</span>
+         <span class="hljs-comment">//其中给我们预制了几个有eth的帐号</span>
+         <span class="hljs-comment">//如果安装了MetaMask插件，应该获得的就是MetaMask里的帐号</span>
+         <span class="hljs-keyword">var</span> account = accounts[<span class="hljs-number">2</span>];
+         App.contracts.Division.deployed().then(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(instance)</span>{</span>
+             divisionInstance = instance;
+             <span class="hljs-comment">//调用智能合约的buyPlot函数，该函数需要2个参数，</span>
+             <span class="hljs-comment">//后面的{}中的内容跟发起以太坊交易的时候所带的默认值。</span>
+             <span class="hljs-comment">//from: 使用哪个以太坊帐号</span>
+             <span class="hljs-comment">//value: 要使用的eth数量，以wei为单位（1eth=10^18wei)</span>
+             <span class="hljs-comment">//gas: 矿工费，以wei为单位</span>
+             <span class="hljs-keyword">return</span> divisionInstance.buyPlot(plotId, <span class="hljs-number">3</span>, {from: account, value: <span class="hljs-number">100000000000000000</span>, gas:<span class="hljs-number">6000000</span>});
+        }).then(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(result)</span>{</span>
+            <span class="hljs-comment">//返回结果后重新更新UI</span>
+            <span class="hljs-keyword">return</span> App.refreshPlots();
+        }).catch(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(error)</span>{</span>
+            console.log(error.message);
+        });
+     });
+ }
+
+};</code></pre> 
+  <p>测试你的基于Web的DApp是否正常，可以使用nodejs里面提供的lite-server模块来当简单的webserver来用。</p> 
+  <p>安装lite-server，在你的truffle项目目录下，执行：</p> 
+  <pre class="prettyprint"><code class=" hljs axapta">npm install lite-<span class="hljs-keyword">server</span></code></pre> 
+  <p>安装完之后会在项目目录下声称node_modules目录，lite-server以及依赖的模块都在该目录下了。</p> 
+  <p>要运行lite-server，还需要编写项目目录下的package.json文件：</p> 
+  <pre class="prettyprint"><code class=" hljs json">{
+     "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"项目名称"</span></span>,
+     "<span class="hljs-attribute">version</span>": <span class="hljs-value"><span class="hljs-string">"1.0.0"</span></span>,
+     "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">""</span></span>,
+     "<span class="hljs-attribute">main</span>": <span class="hljs-value"><span class="hljs-string">"truffle.js"</span></span>,
+     "<span class="hljs-attribute">directories</span>": <span class="hljs-value">{ "<span class="hljs-attribute">test</span>": <span class="hljs-value"><span class="hljs-string">"test"</span> </span>}</span>,
+     "<span class="hljs-attribute">scripts</span>": <span class="hljs-value">{ "<span class="hljs-attribute">dev</span>": <span class="hljs-value"><span class="hljs-string">"lite-server"</span></span>, "<span class="hljs-attribute">test</span>": <span class="hljs-value"><span class="hljs-string">"echo \"Error: no test specified\" &amp;&amp; exit 1"</span> </span>}</span>,
+     "<span class="hljs-attribute">author</span>": <span class="hljs-value"><span class="hljs-string">""</span></span>,
+     "<span class="hljs-attribute">license</span>": <span class="hljs-value"><span class="hljs-string">"ISC"</span></span>,
+     "<span class="hljs-attribute">devDependencies</span>": <span class="hljs-value">{ "<span class="hljs-attribute">lite-server</span>": <span class="hljs-value"><span class="hljs-string">"^2.3.0"</span> </span>}</span>,
+     "<span class="hljs-attribute">dependencies</span>": <span class="hljs-value">{ "<span class="hljs-attribute">liteserver</span>": <span class="hljs-value"><span class="hljs-string">"^0.3.0"</span> </span>} </span>}</code></pre> 
+  <p>还需要编写bs-config.json来配置一下lite-server</p> 
+  <pre class="prettyprint"><code class=" hljs json">{
+ "<span class="hljs-attribute">server</span>": <span class="hljs-value">{ "<span class="hljs-attribute">baseDir</span>": <span class="hljs-value">[<span class="hljs-string">"./src"</span>, <span class="hljs-string">"./build/contracts"</span>] </span>} </span>}</code></pre> 
+  <p>baseDir是用来设置lite-server所提供的web服务的文件路径的。这个设置表明你可以把你上面写的app.js，依赖的各种js放到./src目录下，然后写index.html，把app.js等集成进去，就大功告成了。</p> 
+  <p>启动lite-server,执行：</p> 
+  <pre class="prettyprint"><code class=" hljs coffeescript"><span class="hljs-built_in">npm</span> run dev</code></pre> 
+  <p>不仅启动了lite-server，而且会启动一个浏览器去打开页面。</p> 
+  <p>本文的目的是为了澄清一下写DApp的各项工具之间的架构关系，帮助技术人员更快的理解和实现自己的项目。</p> 
+  <p>具体的例子网上多如牛毛，就不去写业务的具体代码了。</p> 
+  <p>原文发表在 fastkernel.com/?p=72</p> 
+ </div> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/markdown_views-ea0013b516.css"> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/mongo_node/article/details/80578165,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/mongo_node/article/details/80578165,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

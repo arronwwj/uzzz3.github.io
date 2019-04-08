@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>Java Web集成支付宝电脑支付 沙箱环境测试 | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="Java Web集成支付宝电脑支付 沙箱环境测试" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="&nbsp; 配置沙箱环境 一 首先进入支付宝官网开放平台，点击首页“开发接入”，找到开发服务里面的沙箱； 二 打开新页面，里面介绍了沙箱的应用环境以及如何配置，这里沙箱环境默认给了一个APPID，需要自己配置RSA2(SHA256)的应用公钥，需要先下载支付宝生成秘钥的工具，如果是RSA2签名格式的话，记住要生成2048位的，生成之后，进入沙箱应用，上传刚刚生成的应用公钥，上传成功后会生成支付宝公钥，应用私钥以及支付宝公钥会在代码配置中用到。如需要更改秘钥，使用下载的工具重新生成再上传即可！上传应用公钥并获取支付宝公钥。 &nbsp; 导入demo 一 在沙箱支持产品中，找到电脑支付，点击查看产品接入说明： 进入电脑网站支付接入介绍页面，点击左侧SDK&amp;Demo，下载demo； 二 解压下载下来的demo，导入到eclipse，修改AlipayConfig.java文件，注意，应用私钥即商户私钥。 这里一定要注意，要修改支付宝网关为沙箱环境(alipaydev),return_url是指付款成功之后返回给用户查看的界面，notify_url是支付包与服务器交互的页面，用户看不到，支付成功以notify_url返回的参数或者查询订单返回的参数为准。电脑网站支付快速接入。 三 修改成功之后运行项目，我修改项目之后出现了java.lang.UnsupportedClassVersionError错误， 此错误，为：不支持类版本错误。 也就是说，不同的 JDK 版本编译出的 class 文件也可能有差异，有的高版本 JDK 能够兼容低版本的 JDK自然没问题，此时只要修改下版本就可以了。 用支付宝支付时候的账号看开发者中心--》研发服务--》沙箱账号里的账号，我傻乎乎的用自己的支付宝测试了好久，，， 参考链接：https://blog.csdn.net/Amo_lt/article/details/77435545；谢谢小姐姐的悉心指导！ &nbsp; &nbsp; 阅读更多" />
+<meta property="og:description" content="&nbsp; 配置沙箱环境 一 首先进入支付宝官网开放平台，点击首页“开发接入”，找到开发服务里面的沙箱； 二 打开新页面，里面介绍了沙箱的应用环境以及如何配置，这里沙箱环境默认给了一个APPID，需要自己配置RSA2(SHA256)的应用公钥，需要先下载支付宝生成秘钥的工具，如果是RSA2签名格式的话，记住要生成2048位的，生成之后，进入沙箱应用，上传刚刚生成的应用公钥，上传成功后会生成支付宝公钥，应用私钥以及支付宝公钥会在代码配置中用到。如需要更改秘钥，使用下载的工具重新生成再上传即可！上传应用公钥并获取支付宝公钥。 &nbsp; 导入demo 一 在沙箱支持产品中，找到电脑支付，点击查看产品接入说明： 进入电脑网站支付接入介绍页面，点击左侧SDK&amp;Demo，下载demo； 二 解压下载下来的demo，导入到eclipse，修改AlipayConfig.java文件，注意，应用私钥即商户私钥。 这里一定要注意，要修改支付宝网关为沙箱环境(alipaydev),return_url是指付款成功之后返回给用户查看的界面，notify_url是支付包与服务器交互的页面，用户看不到，支付成功以notify_url返回的参数或者查询订单返回的参数为准。电脑网站支付快速接入。 三 修改成功之后运行项目，我修改项目之后出现了java.lang.UnsupportedClassVersionError错误， 此错误，为：不支持类版本错误。 也就是说，不同的 JDK 版本编译出的 class 文件也可能有差异，有的高版本 JDK 能够兼容低版本的 JDK自然没问题，此时只要修改下版本就可以了。 用支付宝支付时候的账号看开发者中心--》研发服务--》沙箱账号里的账号，我傻乎乎的用自己的支付宝测试了好久，，， 参考链接：https://blog.csdn.net/Amo_lt/article/details/77435545；谢谢小姐姐的悉心指导！ &nbsp; &nbsp; 阅读更多" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/07/30/Java-Web%E9%9B%86%E6%88%90%E6%94%AF%E4%BB%98%E5%AE%9D%E7%94%B5%E8%84%91%E6%94%AF%E4%BB%98-%E6%B2%99%E7%AE%B1%E7%8E%AF%E5%A2%83%E6%B5%8B%E8%AF%95.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/07/30/Java-Web%E9%9B%86%E6%88%90%E6%94%AF%E4%BB%98%E5%AE%9D%E7%94%B5%E8%84%91%E6%94%AF%E4%BB%98-%E6%B2%99%E7%AE%B1%E7%8E%AF%E5%A2%83%E6%B5%8B%E8%AF%95.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-07-30T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"&nbsp; 配置沙箱环境 一 首先进入支付宝官网开放平台，点击首页“开发接入”，找到开发服务里面的沙箱； 二 打开新页面，里面介绍了沙箱的应用环境以及如何配置，这里沙箱环境默认给了一个APPID，需要自己配置RSA2(SHA256)的应用公钥，需要先下载支付宝生成秘钥的工具，如果是RSA2签名格式的话，记住要生成2048位的，生成之后，进入沙箱应用，上传刚刚生成的应用公钥，上传成功后会生成支付宝公钥，应用私钥以及支付宝公钥会在代码配置中用到。如需要更改秘钥，使用下载的工具重新生成再上传即可！上传应用公钥并获取支付宝公钥。 &nbsp; 导入demo 一 在沙箱支持产品中，找到电脑支付，点击查看产品接入说明： 进入电脑网站支付接入介绍页面，点击左侧SDK&amp;Demo，下载demo； 二 解压下载下来的demo，导入到eclipse，修改AlipayConfig.java文件，注意，应用私钥即商户私钥。 这里一定要注意，要修改支付宝网关为沙箱环境(alipaydev),return_url是指付款成功之后返回给用户查看的界面，notify_url是支付包与服务器交互的页面，用户看不到，支付成功以notify_url返回的参数或者查询订单返回的参数为准。电脑网站支付快速接入。 三 修改成功之后运行项目，我修改项目之后出现了java.lang.UnsupportedClassVersionError错误， 此错误，为：不支持类版本错误。 也就是说，不同的 JDK 版本编译出的 class 文件也可能有差异，有的高版本 JDK 能够兼容低版本的 JDK自然没问题，此时只要修改下版本就可以了。 用支付宝支付时候的账号看开发者中心--》研发服务--》沙箱账号里的账号，我傻乎乎的用自己的支付宝测试了好久，，， 参考链接：https://blog.csdn.net/Amo_lt/article/details/77435545；谢谢小姐姐的悉心指导！ &nbsp; &nbsp; 阅读更多","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/07/30/Java-Web%E9%9B%86%E6%88%90%E6%94%AF%E4%BB%98%E5%AE%9D%E7%94%B5%E8%84%91%E6%94%AF%E4%BB%98-%E6%B2%99%E7%AE%B1%E7%8E%AF%E5%A2%83%E6%B5%8B%E8%AF%95.html","headline":"Java Web集成支付宝电脑支付 沙箱环境测试","dateModified":"2018-07-30T00:00:00+08:00","datePublished":"2018-07-30T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/07/30/Java-Web%E9%9B%86%E6%88%90%E6%94%AF%E4%BB%98%E5%AE%9D%E7%94%B5%E8%84%91%E6%94%AF%E4%BB%98-%E6%B2%99%E7%AE%B1%E7%8E%AF%E5%A2%83%E6%B5%8B%E8%AF%95.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>Java Web集成支付宝电脑支付 沙箱环境测试</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <p>&nbsp;</p> 
+  <h2 id="配置沙箱环境">配置沙箱环境</h2> 
+  <p>一 首先进入<a href="https://open.alipay.com/developmentAccess/developmentAccess.htm" rel="nofollow">支付宝官网开放平台</a>，点击首页“开发接入”，找到开发服务里面的沙箱；</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180730155635645?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMzNTAzMDI1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>二 打开新页面，里面介绍了<a href="https://docs.open.alipay.com/200/105311" rel="nofollow">沙箱的应用环境以及如何配置</a>，这里沙箱环境默认给了一个APPID，需要自己<a href="https://docs.open.alipay.com/291/105971" rel="nofollow">配置RSA2(SHA256)的应用公钥</a>，需要先下载支付宝生成秘钥的工具，如果是RSA2签名格式的话，记住要生成2048位的，生成之后，进入<a href="https://openhome.alipay.com/platform/appDaily.htm" rel="nofollow">沙箱应用</a>，上传刚刚生成的应用公钥，上传成功后会生成支付宝公钥，应用私钥以及支付宝公钥会在代码配置中用到。如需要更改秘钥，使用下载的工具重新生成再上传即可！<a href="https://docs.open.alipay.com/291/105972/" rel="nofollow">上传应用公钥并获取支付宝公钥</a>。</p> 
+  <p>&nbsp;</p> 
+  <h2 id="%E5%AF%BC%E5%85%A5demo">导入demo</h2> 
+  <p>一 在沙箱支持产品中，找到电脑支付，点击查看产品接入说明：</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180730155821733?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMzNTAzMDI1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>进入<a href="https://docs.open.alipay.com/270/105898" rel="nofollow">电脑网站支付接入介绍页面</a>，点击左侧<a href="https://docs.open.alipay.com/270/106291/" rel="nofollow">SDK&amp;Demo</a>，下载demo；</p> 
+  <p>二 解压下载下来的demo，导入到eclipse，修改AlipayConfig.java文件，注意，应用私钥即商户私钥。</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180730160822629?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMzNTAzMDI1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>这里一定要注意，要修改支付宝网关为沙箱环境(alipaydev),return_url是指付款成功之后返回给用户查看的界面，notify_url是支付包与服务器交互的页面，用户看不到，支付成功以notify_url返回的参数或者查询订单返回的参数为准。<a href="https://doc.open.alipay.com/docs/doc.htm?spm=a219a.7629140.0.0.2cvkfS&amp;treeId=270&amp;articleId=105899&amp;docType=1" rel="nofollow">电脑网站支付快速接入</a>。</p> 
+  <p>三 修改成功之后运行项目，我修改项目之后出现了java.lang.UnsupportedClassVersionError错误，</p> 
+  <p>此错误，为：<strong>不支持类版本错误。</strong></p> 
+  <p>也就是说，不同的 JDK 版本编译出的 class 文件也可能有差异，有的高版本 JDK 能够兼容低版本的 JDK自然没问题，此时只要修改下版本就可以了。</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180730162503735?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMzNTAzMDI1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>用支付宝支付时候的账号看开发者中心--》研发服务--》沙箱账号里的账号，我傻乎乎的用自己的支付宝测试了好久，，，</p> 
+  <p>参考链接：<a href="https://blog.csdn.net/Amo_lt/article/details/77435545" rel="nofollow">https://blog.csdn.net/Amo_lt/article/details/77435545</a>；谢谢小姐姐的悉心指导！</p> 
+  <p>&nbsp;</p> 
+  <p>&nbsp;</p> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/qq_33503025/article/details/81286489,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/qq_33503025/article/details/81286489,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

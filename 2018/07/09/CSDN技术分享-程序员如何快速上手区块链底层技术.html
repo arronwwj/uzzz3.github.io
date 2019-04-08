@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>CSDN技术分享——程序员如何快速上手区块链底层技术？ | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="CSDN技术分享——程序员如何快速上手区块链底层技术？" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="区块链，应该是这两年来最火的话题。相比去年年末到今年年初，其火热程度虽有所降低，但依旧会有很多人想了解，想探寻其中的奥秘。 令人尴尬的是，真正火起来的不是区块链技术本身，而是数字资产和相关炒作。你跟&nbsp;“区块链投资者”聊什么POW、智能合约、零知识证明等等话题，感兴趣且能听懂的人寥寥无几。反倒是一些内部消息、庄家入场、币圈内幕、杠杆爆仓让人更感兴趣。 此情此景对于区块链技术而言，不得不说是一种遗憾。马云说过，区块链不是一个金矿，而是数据时代解决隐私、安全、信用等问题的一种解决方案。然而人们却被暴涨暴跌遮蔽了双眼，对区块链技术缺乏足够的关注。虽然区块链技术还在襁褓阶段，还有太多方面需要完善，需要更大的提升性能、加速应用落地。 提升效率、降低成本是企业级应用必走的方向 最近看到这样一个技术团队，项目名字叫做NULS，他们用工业生产中的定制化、模块化思想来设计区块链底层系统，把区块链系统中的所有元素例如账户、共识、存储、网络、智能合约等等，分别做成标准化的模块；而且还定义了一套区块链开发标准，包含但不限于模块标准、服务标准、数据/协议标准、进程/线程标准、完备事件驱动模型开发标准……这样，一套类似于乐高积木的高集成模块化区块链系统开发方式就出现了。 我们来回想一下PC电脑的发展史：以前IBM生产的个人电脑，很贵很高端，但后来部件标准化了，兼容机遍地开花，各种硬件成本大大降低，各种兼容机品牌崛起。个人电脑走入寻常百姓家……把上面这段话里的PC电脑换成区块链技术一样适用。 当NULS项目投入使用，会发生什么呢？某企业想拥有自己的链，企业的研发工程师无需特别深入学习区块链完整技术体系，直接选择适合自己需求的模块，按照已经定义好的协议和标准组装即可。高效率低成本，这就是区块链走向定制化和模块化的优势所在。 &nbsp; 是真的务实还是为了炒币 模块化单从技术上讲，仅仅是一种非常流行的基础技术。它本身没法带来什么特别的竞争力。如果NULS只有这一个值得炫耀的技术，那肯定就是找了一些小白不懂的技术术语，忽悠大家上车！所以，我们来看看&nbsp;NULS 另外三个主要模块：POC、多链并行、智能合约。 POC是 NULS 自己提出的共识机制，这个部分不展开，由大家自己评判。 智能合约，目前算得上区块链2.0的标配，是为 DApp 提供支撑的必要条件之一。&nbsp; NULS 整个生态体系目前是基于 Java ，也就是 JVM 体系开发的。我认为，这带来两方面的优势： 针对企业级应用，很多公司使用&nbsp;Java 技术栈。这对降低企业学习与维护成本，有很大的优势。企业是非常关心成本与技术迁移难度的。区块链技术本身就以入门难度大著称，能够降低采用者的学习使用门槛，对生态而言是有利的。 企业级需求是千变万化的，即使有模块化这种便利的基础设施技术存在，也要有符合企业应用要求的模块存在才行。那么问题来了，谁来开发企业想要的模块？商业业务逻辑肯定属于企业核心资产，企业定会根据自己的实际需求，做一些定制化，差异化开发。用以满足，支撑自己的商业活动。选择&nbsp;JVM 体系语言如 Java开发，提高了开发效率（Java 大规模用于企业级开发的主要原因就是降低开发成本）。 最后一个多链并行，这也许就是重中之重。 通过互联网查询了一下，评价区块链网络性能可用&nbsp;TPS（系统吞吐量，系统每一秒钟能处理的交易量）指标来衡量。比特币的 TPS 约等于7，以太坊大约在30到40之间。Visa 组织宣称他们的 TPS 为24K，实际情况是1700笔交易每秒，以太坊的TPS 还是远远低于1700的要求。目前困扰区块链技术迅速应用落地的一个重要原因，就是 TPS 过低。 多链并行，单从字面意思来理解就是多条网络同时运行。看似很合理很科学。单条链太慢，咱多条链来凑。那么，事实真是如此么？ NULS 最近的测试网，2M 区块大小，出块间隔10秒，测出的 TPS 是800。区块大小为5M 时，TPS 达到2000。这，还仅仅存在于单链的情况下。这是一个务实的团队，没有通过漂亮的词汇标榜未来，即使在单链上的性能提升也是显而易见的。 当多链并行推出后，除了能够提升性能外，企业级应用中，同集团的不同业务，可以按具体业务线划分子网，并行化运行多条子链。这从根源上，进一步提高了系统吞吐性能，不再是所有业务全跑在一条主网上，一网走天下。 大事即将发生？ 我们认为NULS的模块化还真不是那帮程序员们的神来之笔，而是基于对区块链技术的的理解,是蓄谋已久、瓜熟蒂落、水到渠成的产物。他们还号召全球的技术开发者们加入NULS社区，开发更多的模块，以满足海量不同应用场景的需要。 这还真不是实验室里一群程序员的概念化产品，它就要来到我们面前——NULS项目将于7月12日14:00—18:00，在北京东城区美术馆后街77号的77文化创意产业园召开主网上线发布会，并推出全球战略升级计划，这会不会是一个重新定义区块链底层、未来生产关系的事物？或者是“The next big thing”呢？对模块化、可定制化的区块链底层系统感兴趣的朋友不妨去看看。 －了解更多－ CSDN专属福利，请签收： CSDN争取到50张NULS发布会参会门票（含签到礼——NULS限量创意T恤衫，领完即止）。点击阅读原文即刻报名，抢有限名额！ 在本文文末留言，获赞数前3名，每人将获得NULS主网发布会VIP贵宾票一张（非卖品，含私密露台晚宴&amp;签到礼。）4-8名，每人将获得NULS限量创意T恤衫一件。统计截止时间：7月10日下午6点 阅读更多" />
+<meta property="og:description" content="区块链，应该是这两年来最火的话题。相比去年年末到今年年初，其火热程度虽有所降低，但依旧会有很多人想了解，想探寻其中的奥秘。 令人尴尬的是，真正火起来的不是区块链技术本身，而是数字资产和相关炒作。你跟&nbsp;“区块链投资者”聊什么POW、智能合约、零知识证明等等话题，感兴趣且能听懂的人寥寥无几。反倒是一些内部消息、庄家入场、币圈内幕、杠杆爆仓让人更感兴趣。 此情此景对于区块链技术而言，不得不说是一种遗憾。马云说过，区块链不是一个金矿，而是数据时代解决隐私、安全、信用等问题的一种解决方案。然而人们却被暴涨暴跌遮蔽了双眼，对区块链技术缺乏足够的关注。虽然区块链技术还在襁褓阶段，还有太多方面需要完善，需要更大的提升性能、加速应用落地。 提升效率、降低成本是企业级应用必走的方向 最近看到这样一个技术团队，项目名字叫做NULS，他们用工业生产中的定制化、模块化思想来设计区块链底层系统，把区块链系统中的所有元素例如账户、共识、存储、网络、智能合约等等，分别做成标准化的模块；而且还定义了一套区块链开发标准，包含但不限于模块标准、服务标准、数据/协议标准、进程/线程标准、完备事件驱动模型开发标准……这样，一套类似于乐高积木的高集成模块化区块链系统开发方式就出现了。 我们来回想一下PC电脑的发展史：以前IBM生产的个人电脑，很贵很高端，但后来部件标准化了，兼容机遍地开花，各种硬件成本大大降低，各种兼容机品牌崛起。个人电脑走入寻常百姓家……把上面这段话里的PC电脑换成区块链技术一样适用。 当NULS项目投入使用，会发生什么呢？某企业想拥有自己的链，企业的研发工程师无需特别深入学习区块链完整技术体系，直接选择适合自己需求的模块，按照已经定义好的协议和标准组装即可。高效率低成本，这就是区块链走向定制化和模块化的优势所在。 &nbsp; 是真的务实还是为了炒币 模块化单从技术上讲，仅仅是一种非常流行的基础技术。它本身没法带来什么特别的竞争力。如果NULS只有这一个值得炫耀的技术，那肯定就是找了一些小白不懂的技术术语，忽悠大家上车！所以，我们来看看&nbsp;NULS 另外三个主要模块：POC、多链并行、智能合约。 POC是 NULS 自己提出的共识机制，这个部分不展开，由大家自己评判。 智能合约，目前算得上区块链2.0的标配，是为 DApp 提供支撑的必要条件之一。&nbsp; NULS 整个生态体系目前是基于 Java ，也就是 JVM 体系开发的。我认为，这带来两方面的优势： 针对企业级应用，很多公司使用&nbsp;Java 技术栈。这对降低企业学习与维护成本，有很大的优势。企业是非常关心成本与技术迁移难度的。区块链技术本身就以入门难度大著称，能够降低采用者的学习使用门槛，对生态而言是有利的。 企业级需求是千变万化的，即使有模块化这种便利的基础设施技术存在，也要有符合企业应用要求的模块存在才行。那么问题来了，谁来开发企业想要的模块？商业业务逻辑肯定属于企业核心资产，企业定会根据自己的实际需求，做一些定制化，差异化开发。用以满足，支撑自己的商业活动。选择&nbsp;JVM 体系语言如 Java开发，提高了开发效率（Java 大规模用于企业级开发的主要原因就是降低开发成本）。 最后一个多链并行，这也许就是重中之重。 通过互联网查询了一下，评价区块链网络性能可用&nbsp;TPS（系统吞吐量，系统每一秒钟能处理的交易量）指标来衡量。比特币的 TPS 约等于7，以太坊大约在30到40之间。Visa 组织宣称他们的 TPS 为24K，实际情况是1700笔交易每秒，以太坊的TPS 还是远远低于1700的要求。目前困扰区块链技术迅速应用落地的一个重要原因，就是 TPS 过低。 多链并行，单从字面意思来理解就是多条网络同时运行。看似很合理很科学。单条链太慢，咱多条链来凑。那么，事实真是如此么？ NULS 最近的测试网，2M 区块大小，出块间隔10秒，测出的 TPS 是800。区块大小为5M 时，TPS 达到2000。这，还仅仅存在于单链的情况下。这是一个务实的团队，没有通过漂亮的词汇标榜未来，即使在单链上的性能提升也是显而易见的。 当多链并行推出后，除了能够提升性能外，企业级应用中，同集团的不同业务，可以按具体业务线划分子网，并行化运行多条子链。这从根源上，进一步提高了系统吞吐性能，不再是所有业务全跑在一条主网上，一网走天下。 大事即将发生？ 我们认为NULS的模块化还真不是那帮程序员们的神来之笔，而是基于对区块链技术的的理解,是蓄谋已久、瓜熟蒂落、水到渠成的产物。他们还号召全球的技术开发者们加入NULS社区，开发更多的模块，以满足海量不同应用场景的需要。 这还真不是实验室里一群程序员的概念化产品，它就要来到我们面前——NULS项目将于7月12日14:00—18:00，在北京东城区美术馆后街77号的77文化创意产业园召开主网上线发布会，并推出全球战略升级计划，这会不会是一个重新定义区块链底层、未来生产关系的事物？或者是“The next big thing”呢？对模块化、可定制化的区块链底层系统感兴趣的朋友不妨去看看。 －了解更多－ CSDN专属福利，请签收： CSDN争取到50张NULS发布会参会门票（含签到礼——NULS限量创意T恤衫，领完即止）。点击阅读原文即刻报名，抢有限名额！ 在本文文末留言，获赞数前3名，每人将获得NULS主网发布会VIP贵宾票一张（非卖品，含私密露台晚宴&amp;签到礼。）4-8名，每人将获得NULS限量创意T恤衫一件。统计截止时间：7月10日下午6点 阅读更多" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/07/09/CSDN%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB-%E7%A8%8B%E5%BA%8F%E5%91%98%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E5%8C%BA%E5%9D%97%E9%93%BE%E5%BA%95%E5%B1%82%E6%8A%80%E6%9C%AF.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/07/09/CSDN%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB-%E7%A8%8B%E5%BA%8F%E5%91%98%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E5%8C%BA%E5%9D%97%E9%93%BE%E5%BA%95%E5%B1%82%E6%8A%80%E6%9C%AF.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-07-09T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"区块链，应该是这两年来最火的话题。相比去年年末到今年年初，其火热程度虽有所降低，但依旧会有很多人想了解，想探寻其中的奥秘。 令人尴尬的是，真正火起来的不是区块链技术本身，而是数字资产和相关炒作。你跟&nbsp;“区块链投资者”聊什么POW、智能合约、零知识证明等等话题，感兴趣且能听懂的人寥寥无几。反倒是一些内部消息、庄家入场、币圈内幕、杠杆爆仓让人更感兴趣。 此情此景对于区块链技术而言，不得不说是一种遗憾。马云说过，区块链不是一个金矿，而是数据时代解决隐私、安全、信用等问题的一种解决方案。然而人们却被暴涨暴跌遮蔽了双眼，对区块链技术缺乏足够的关注。虽然区块链技术还在襁褓阶段，还有太多方面需要完善，需要更大的提升性能、加速应用落地。 提升效率、降低成本是企业级应用必走的方向 最近看到这样一个技术团队，项目名字叫做NULS，他们用工业生产中的定制化、模块化思想来设计区块链底层系统，把区块链系统中的所有元素例如账户、共识、存储、网络、智能合约等等，分别做成标准化的模块；而且还定义了一套区块链开发标准，包含但不限于模块标准、服务标准、数据/协议标准、进程/线程标准、完备事件驱动模型开发标准……这样，一套类似于乐高积木的高集成模块化区块链系统开发方式就出现了。 我们来回想一下PC电脑的发展史：以前IBM生产的个人电脑，很贵很高端，但后来部件标准化了，兼容机遍地开花，各种硬件成本大大降低，各种兼容机品牌崛起。个人电脑走入寻常百姓家……把上面这段话里的PC电脑换成区块链技术一样适用。 当NULS项目投入使用，会发生什么呢？某企业想拥有自己的链，企业的研发工程师无需特别深入学习区块链完整技术体系，直接选择适合自己需求的模块，按照已经定义好的协议和标准组装即可。高效率低成本，这就是区块链走向定制化和模块化的优势所在。 &nbsp; 是真的务实还是为了炒币 模块化单从技术上讲，仅仅是一种非常流行的基础技术。它本身没法带来什么特别的竞争力。如果NULS只有这一个值得炫耀的技术，那肯定就是找了一些小白不懂的技术术语，忽悠大家上车！所以，我们来看看&nbsp;NULS 另外三个主要模块：POC、多链并行、智能合约。 POC是 NULS 自己提出的共识机制，这个部分不展开，由大家自己评判。 智能合约，目前算得上区块链2.0的标配，是为 DApp 提供支撑的必要条件之一。&nbsp; NULS 整个生态体系目前是基于 Java ，也就是 JVM 体系开发的。我认为，这带来两方面的优势： 针对企业级应用，很多公司使用&nbsp;Java 技术栈。这对降低企业学习与维护成本，有很大的优势。企业是非常关心成本与技术迁移难度的。区块链技术本身就以入门难度大著称，能够降低采用者的学习使用门槛，对生态而言是有利的。 企业级需求是千变万化的，即使有模块化这种便利的基础设施技术存在，也要有符合企业应用要求的模块存在才行。那么问题来了，谁来开发企业想要的模块？商业业务逻辑肯定属于企业核心资产，企业定会根据自己的实际需求，做一些定制化，差异化开发。用以满足，支撑自己的商业活动。选择&nbsp;JVM 体系语言如 Java开发，提高了开发效率（Java 大规模用于企业级开发的主要原因就是降低开发成本）。 最后一个多链并行，这也许就是重中之重。 通过互联网查询了一下，评价区块链网络性能可用&nbsp;TPS（系统吞吐量，系统每一秒钟能处理的交易量）指标来衡量。比特币的 TPS 约等于7，以太坊大约在30到40之间。Visa 组织宣称他们的 TPS 为24K，实际情况是1700笔交易每秒，以太坊的TPS 还是远远低于1700的要求。目前困扰区块链技术迅速应用落地的一个重要原因，就是 TPS 过低。 多链并行，单从字面意思来理解就是多条网络同时运行。看似很合理很科学。单条链太慢，咱多条链来凑。那么，事实真是如此么？ NULS 最近的测试网，2M 区块大小，出块间隔10秒，测出的 TPS 是800。区块大小为5M 时，TPS 达到2000。这，还仅仅存在于单链的情况下。这是一个务实的团队，没有通过漂亮的词汇标榜未来，即使在单链上的性能提升也是显而易见的。 当多链并行推出后，除了能够提升性能外，企业级应用中，同集团的不同业务，可以按具体业务线划分子网，并行化运行多条子链。这从根源上，进一步提高了系统吞吐性能，不再是所有业务全跑在一条主网上，一网走天下。 大事即将发生？ 我们认为NULS的模块化还真不是那帮程序员们的神来之笔，而是基于对区块链技术的的理解,是蓄谋已久、瓜熟蒂落、水到渠成的产物。他们还号召全球的技术开发者们加入NULS社区，开发更多的模块，以满足海量不同应用场景的需要。 这还真不是实验室里一群程序员的概念化产品，它就要来到我们面前——NULS项目将于7月12日14:00—18:00，在北京东城区美术馆后街77号的77文化创意产业园召开主网上线发布会，并推出全球战略升级计划，这会不会是一个重新定义区块链底层、未来生产关系的事物？或者是“The next big thing”呢？对模块化、可定制化的区块链底层系统感兴趣的朋友不妨去看看。 －了解更多－ CSDN专属福利，请签收： CSDN争取到50张NULS发布会参会门票（含签到礼——NULS限量创意T恤衫，领完即止）。点击阅读原文即刻报名，抢有限名额！ 在本文文末留言，获赞数前3名，每人将获得NULS主网发布会VIP贵宾票一张（非卖品，含私密露台晚宴&amp;签到礼。）4-8名，每人将获得NULS限量创意T恤衫一件。统计截止时间：7月10日下午6点 阅读更多","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/07/09/CSDN%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB-%E7%A8%8B%E5%BA%8F%E5%91%98%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E5%8C%BA%E5%9D%97%E9%93%BE%E5%BA%95%E5%B1%82%E6%8A%80%E6%9C%AF.html","headline":"CSDN技术分享——程序员如何快速上手区块链底层技术？","dateModified":"2018-07-09T00:00:00+08:00","datePublished":"2018-07-09T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/07/09/CSDN%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB-%E7%A8%8B%E5%BA%8F%E5%91%98%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E5%8C%BA%E5%9D%97%E9%93%BE%E5%BA%95%E5%B1%82%E6%8A%80%E6%9C%AF.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>CSDN技术分享——程序员如何快速上手区块链底层技术？</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <div class="rich_media_content" id="js_content"> 
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;letter-spacing:1px;"><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/15I9UlaV5vl2Dfk1cHxUFfDWIZBVATj44LNRddHGAZTNs7n67aj6tDPZ9icHXAbZ71f1aOLCZMufq7uaxDLzQzA/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;letter-spacing:1px;"><span style="font-size:15px;">区块链，应该是这两年来最火的话题。相比去年年末到今年年初，其火热程度虽有所降低，但依旧会有很多人想了解，想探寻其中的奥秘。</span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;letter-spacing:1px;"><span style="font-size:15px;">令人尴尬的是，真正火起来的不是区块链技术本身，而是数字资产和相关炒作。你跟&nbsp;“区块链投资者”聊什么POW、智能合约、零知识证明等等话题，感兴趣且能听懂的人寥寥无几。反倒是一些内部消息、庄家入场、币圈内幕、杠杆爆仓让人更感兴趣。</span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;letter-spacing:1px;"><span style="font-size:15px;">此情此景对于区块链技术而言，不得不说是一种遗憾。马云说过，区块链不是一个金矿，而是数据时代解决隐私、安全、信用等问题的一种解决方案。然而人们却被暴涨暴跌遮蔽了双眼，对区块链技术缺乏足够的关注。虽然区块链技术还在襁褓阶段，还有太多方面需要完善，需要更大的提升性能、加速应用落地。</span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;letter-spacing:1px;"><span style="font-size:15px;"></span></p>
+   <p style="text-align:center;"><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/Pn4Sm0RsAuhzGbHK1kg8LtrlfLZaLaRRFCpuC4UboJhcO9Bm3KFt3picbagjYNXpaxq2vnToD3rIl68L6mVrQpQ/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="text-align:center;margin-left:8px;line-height:1.75em;letter-spacing:1px;"><span style="font-size:18px;"><strong>提升效率、降低成本是企业级应用必走的方向</strong></span><br><span style="font-size:15px;"></span></p>
+   <p><br></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;letter-spacing:1px;"><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_jpg/15I9UlaV5vnjLoG9KrYUh2XQ4gbolVnHdkuNKGHMKbVRRXAZ8SCszutOZiaNjMWiaibf7XUKtB64VlonhYUWdULfQ/640?wx_fmt=jpeg" alt="640?wx_fmt=jpeg"></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;letter-spacing:1px;"><span style="font-size:15px;">最近看到这样一个技术团队，项目名字叫做NULS，他们用工业生产中的定制化、模块化思想来设计区块链底层系统，把区块链系统中的所有元素例如账户、共识、存储、网络、智能合约等等，分别做成标准化的模块；而且还定义了一套区块链开发标准，包含但不限于模块标准、服务标准、数据/协议标准、进程/线程标准、完备事件驱动模型开发标准……这样，一套类似于乐高积木的高集成模块化区块链系统开发方式就出现了。</span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;letter-spacing:1px;"><span style="font-size:15px;">我们来回想一下PC电脑的发展史：以前IBM生产的个人电脑，很贵很高端，但后来部件标准化了，兼容机遍地开花，各种硬件成本大大降低，各种兼容机品牌崛起。个人电脑走入寻常百姓家……把上面这段话里的PC电脑换成区块链技术一样适用。</span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;letter-spacing:1px;"><span style="font-size:15px;">当NULS项目投入使用，会发生什么呢？某企业想拥有自己的链，企业的研发工程师无需特别深入学习区块链完整技术体系，直接选择适合自己需求的模块，按照已经定义好的协议和标准组装即可。高效率低成本，这就是区块链走向定制化和模块化的优势所在。</span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;letter-spacing:1px;"><span style="font-size:15px;"></span></p>
+   <p style="text-align:center;"><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/Pn4Sm0RsAuhzGbHK1kg8LtrlfLZaLaRRSwIGDrNvhDVRTQOXpZibAW5eIkDB1Ug3E1wxtRj0mxD3DlRV8TXx6Iw/640?wx_fmt=png" alt="640?wx_fmt=png"><span style="letter-spacing:1px;text-align:justify;font-size:18px;">&nbsp;</span></p>
+   <p style="text-align:center;margin-left:8px;line-height:1.75em;letter-spacing:1px;"><strong><span style="font-size:18px;">是真的务实还是为了炒币</span></strong></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;letter-spacing:1px;"><span style="font-size:15px;">模块化单从技术上讲，仅仅是一种非常流行的基础技术。它本身没法带来什么特别的竞争力。如果NULS只有这一个值得炫耀的技术，那肯定就是找了一些小白不懂的技术术语，忽悠大家上车！所以，我们来看看&nbsp;NULS 另外三个主要模块：POC、多链并行、智能合约。</span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;letter-spacing:1px;"><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_jpg/15I9UlaV5vnjLoG9KrYUh2XQ4gbolVnHicImXyORz5EXfCdYCqtASPcObgI072sGpyDRxSjGgW0KEhUQ44HIG4g/640?wx_fmt=jpeg" alt="640?wx_fmt=jpeg"></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;letter-spacing:1px;"><span style="font-size:15px;">POC是 NULS 自己提出的共识机制，这个部分不展开，由大家自己评判。</span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;letter-spacing:1px;"><span style="font-size:15px;">智能合约，目前算得上区块链2.0的标配，是为 DApp 提供支撑的必要条件之一。&nbsp;</span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;letter-spacing:1px;"><span style="font-size:15px;">NULS 整个生态体系目前是基于 Java ，也就是 JVM 体系开发的。我认为，这带来两方面的优势：</span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;letter-spacing:1px;"><span style="font-size:15px;">针对企业级应用，很多公司使用&nbsp;Java 技术栈。这对降低企业学习与维护成本，有很大的优势。企业是非常关心成本与技术迁移难度的。区块链技术本身就以入门难度大著称，能够降低采用者的学习使用门槛，对生态而言是有利的。</span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;letter-spacing:1px;"><span style="font-size:15px;">企业级需求是千变万化的，即使有模块化这种便利的基础设施技术存在，也要有符合企业应用要求的模块存在才行。那么问题来了，谁来开发企业想要的模块？商业业务逻辑肯定属于企业核心资产，企业定会根据自己的实际需求，做一些定制化，差异化开发。用以满足，支撑自己的商业活动。选择&nbsp;JVM 体系语言如 Java开发，提高了开发效率（Java 大规模用于企业级开发的主要原因就是降低开发成本）。</span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;letter-spacing:1px;"><span style="font-size:15px;"></span></p>
+   <p style="text-align:center;"><span style="font-size:18px;"><strong><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/Pn4Sm0RsAuhzGbHK1kg8LtrlfLZaLaRR1egUapOLlzTibNHKa2HtxQgl0MHiblDkJlCqaPN3NVMIxkjV2U2ouELw/640?wx_fmt=png" alt="640?wx_fmt=png"></strong></span></p>
+   <p style="text-align:center;margin-left:8px;line-height:1.75em;letter-spacing:1px;"><span style="font-size:18px;"><strong>最后一个多链并行，这也许就是重中之重。</strong></span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;letter-spacing:1px;"><span style="font-size:15px;">通过互联网查询了一下，评价区块链网络性能可用&nbsp;TPS（系统吞吐量，系统每一秒钟能处理的交易量）指标来衡量。比特币的 TPS 约等于7，以太坊大约在30到40之间。Visa 组织宣称他们的 TPS 为24K，实际情况是1700笔交易每秒，以太坊的TPS 还是远远低于1700的要求。目前困扰区块链技术迅速应用落地的一个重要原因，就是 TPS 过低。</span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;letter-spacing:1px;"><span style="font-size:15px;">多链并行，单从字面意思来理解就是多条网络同时运行。看似很合理很科学。单条链太慢，咱多条链来凑。那么，事实真是如此么？</span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;letter-spacing:1px;"><span style="font-size:15px;">NULS 最近的测试网，2M 区块大小，出块间隔10秒，测出的 TPS 是800。区块大小为5M 时，TPS 达到2000。这，还仅仅存在于单链的情况下。这是一个务实的团队，没有通过漂亮的词汇标榜未来，即使在单链上的性能提升也是显而易见的。</span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;letter-spacing:1px;"><img style="color:rgb(62,62,62);" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/15I9UlaV5vmEIFNLwrgBaEbmkicZJ1tCOMoI4Ppetc3SfCbszcBZCp9tAPl4zliaPZddxcLPHpsLgs2eCvDWLe1Q/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;letter-spacing:1px;"><span style="font-size:15px;">当多链并行推出后，除了能够提升性能外，企业级应用中，同集团的不同业务，可以按具体业务线划分子网，并行化运行多条子链。这从根源上，进一步提高了系统吞吐性能，不再是所有业务全跑在一条主网上，一网走天下。</span></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;letter-spacing:1px;"><span style="font-size:15px;"></span></p>
+   <p style="text-align:center;"><strong><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/Pn4Sm0RsAuhzGbHK1kg8LtrlfLZaLaRR8bhmP5Dic6Efy9l8sy3ZgXndXQWKss4lqSSib0b7ks1COcZibTJlfKbFQ/640?wx_fmt=png" alt="640?wx_fmt=png"></strong></p>
+   <p style="text-align:center;margin-left:8px;line-height:1.75em;letter-spacing:1px;"><strong><span style="font-size:18px;">大事即将发生？</span></strong><br></p>
+   <p style="text-align:justify;margin-left:8px;line-height:1.75em;letter-spacing:1px;"><span style="font-size:15px;">我们认为NULS的模块化还真不是那帮程序员们的神来之笔，而是基于对区块链技术的的理解,是蓄谋已久、瓜熟蒂落、水到渠成的产物。他们还号召全球的技术开发者们加入NULS社区，开发更多的模块，以满足海量不同应用场景的需要。</span></p>
+   <p style="text-align:justify;letter-spacing:1px;margin-left:8px;line-height:1.75em;"><span style="font-size:15px;">这还真不是实验室里一群程序员的概念化产品，它就要来到我们面前——</span><span style="font-size:15px;color:rgb(171,25,66);"><strong>NULS项目将于7月12日14:00—18:00，在北京东城区美术馆后街77号的77文化创意产业园召开主网上线发布会，</strong></span><span style="font-size:15px;">并推出全球战略升级计划，这会不会是一个重新定义区块链底层、未来生产关系的事物？或者是“The next big thing”呢？对模块化、可定制化的区块链底层系统感兴趣的朋友不妨去看看。</span></p>
+   <img style="vertical-align:middle;width:90.5382px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/15I9UlaV5vnjLoG9KrYUh2XQ4gbolVnHuXJicg4L577vtL4X1tjBhS4JUMYj0Q5wgeG34XNIpQVQALC2nHHjqXQ/640?wx_fmt=png" alt="640?wx_fmt=png">
+   <img style="vertical-align:middle;width:289.757px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_jpg/15I9UlaV5vnjLoG9KrYUh2XQ4gbolVnHt0DVo4f59HBibtqoEUfgNRB0PcDiaSRSDXF5kVRyRRclFmFaoUojia73g/640?wx_fmt=jpeg" alt="640?wx_fmt=jpeg">
+   <p style="min-height:1em;"><span style="font-size:12px;">－了解更多－</span></p>
+   <p><br></p>
+   <strong>CSDN专属福利，请签收：</strong>
+   <p><br></p>
+   <ul class="list-paddingleft-2" style="margin-left:8px;">
+    <li><p style="min-height:1em;line-height:1.75em;"><span style="letter-spacing:.544px;font-size:15px;">CSDN争取到50张NULS发布会参会门票（含签到礼——NULS限量创意T恤衫，领完即止）。</span></p><p style="min-height:1em;line-height:1.75em;"><span style="font-size:15px;"><span style="font-size:15px;letter-spacing:.544px;">点击</span><strong><span style="font-size:15px;color:rgb(171,25,66);letter-spacing:.544px;">阅读原文</span></strong><strong><span style="font-size:15px;letter-spacing:.544px;">即刻</span></strong><strong><span style="font-size:15px;letter-spacing:.544px;">报名，抢有限名额！</span></strong></span></p></li>
+    <li><p style="min-height:1em;line-height:1.75em;"><span style="letter-spacing:.544px;font-size:15px;">在本文文末留言，获赞数前3名，每人将获得NULS主网发布会VIP贵宾票一张（非卖品，含私密露台晚宴&amp;签到礼。）4-8名，每人将获得NULS限量创意T恤衫一件。</span></p><p style="min-height:1em;line-height:1.75em;"><span style="font-size:15px;">统计截止时间：7月10日下午6点</span></p></li>
+   </ul>
+   <br>
+  </div> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/csdnnews/article/details/80976048,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/csdnnews/article/details/80976048,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

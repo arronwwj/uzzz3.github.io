@@ -1,0 +1,85 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <p style="background-color:rgb(255,255,255);"></p>
+  <h3>因项目需要，需要重新编译go。</h3>
+  <h3>本文记录使用go编译go自身的流程，方便后面继续修改编译：</h3>
+  <h4>如直接自己编译自己，会出现下面的错误：</h4>
+  <pre><code class="language-html">$ cd /c/go/src  
+$ ./make.bat  
+Building Go cmd/dist using C:\Go  
+go tool: no such tool "compile"  
+go tool: no such tool "compile"  
+go tool: no such tool "compile"  
+go tool: no such tool "compile"  
+go tool: no such tool "compile"  
+go tool: no such tool "compile"  
+go tool: no such tool "compile"  
+go tool: no such tool "compile" </code></pre>
+  <br>
+  <h4>查看go env发现也没任何错误：</h4>
+  <p><br></p>
+  <pre><code class="language-html">$ go env  
+set GOARCH=amd64  
+set GOBIN=  
+set GOCACHE=C:\Users\Mike\AppData\Local\go-build  
+set GOEXE=.exe  
+set GOHOSTARCH=amd64  
+set GOHOSTOS=windows  
+set GOOS=windows  
+set GOPATH=E:\dev\golang  
+set GORACE=  
+set GOROOT=c:\go  
+set GOTMPDIR=  
+set GOTOOLDIR=c:\go\pkg\tool\windows_amd64  
+set GCCGO=gccgo  
+set CC=gcc  
+set CXX=g++  
+set CGO_ENABLED=1  
+set CGO_CFLAGS=-g -O2  
+set CGO_CPPFLAGS=  
+set CGO_CXXFLAGS=-g -O2  
+set CGO_FFLAGS=-g -O2  
+set CGO_LDFLAGS=-g -O2  
+set PKG_CONFIG=pkg-config  
+set GOGCCFLAGS=-m64 -mthreads -fmessage-length=0 -fdebug-prefix-map=C:\Users\Mike\AppData\Local\Temp\go-build976029818=/tmp/go-build -gno-record-gcc-switches  </code></pre>
+  <br>
+  <h4>怀疑是其他地方的问题。折腾了半天，后来发现</h4>
+  <strong>GOTOOLDIR 为空<br></strong>
+  <h4>使用bootstrap源码编译工具链</h4>参考这里的
+  <span style="font-weight:700;background-color:rgb(255,255,255);"><a href="http://docs.studygolang.com/doc/install/source" rel="nofollow">说明</a></span>，先下载 go1.4-bootstrap-20171003.tar.gz，使用已经下载的go编译，日志如下：
+  <br>
+  <p><br></p>
+  <pre><code class="language-html">$ GOOS=windows GOARCH=amd64 ./make.bat  
+# Building C bootstrap tool.  
+cmd/dist  
+  
+# Building compilers and Go bootstrap tool.  
+E:\go\src\lib9\fmt\fltfmt.c: In function '__efgfmt':  
+E:\go\src\lib9\fmt\fltfmt.c:437:5: warning: this statement may fall through [-Wi                        mplicit-fallthrough=]  
+   if(ndigits &gt; prec) {  
+     ^  
+E:\go\src\lib9\fmt\fltfmt.c:451:2: note: here                 
+
+省略大部分日志 
+
+---  
+Installed Go for windows/amd64 in E:\go  
+Installed commands in E:\go\bin</code></pre>
+  <p>可以看到，编译时间已经更新：</p>
+  <p><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/2018060709162164" alt=""><br></p>
+  <p>123</p>
+  <p>修改GOROOT_BOOTSTRAP，设置为E:\go，重新编译</p>
+  <pre><code class="language-html">$ GOOS=windows GOARCH=amd64 ./make.bat
+# Building C bootstrap tool.</code></pre>
+  <p>可以看到，编译时间已经更新：</p>
+  <p><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180607091629959" alt=""><br></p>
+  <p><br></p>
+  <div>
+   <br>
+  </div> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/zanget/article/details/80604018,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/zanget/article/details/80604018,&quot;}">阅读更多</a> 
+</div>

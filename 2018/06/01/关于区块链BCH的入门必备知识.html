@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>关于区块链BCH的入门必备知识 | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="关于区块链BCH的入门必备知识" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="2018-6-1号，盖茨实验室筹备的全国BCH极客大赛在杭州举办，作为盖茨实验室的技术负责人为了给参加比赛的参赛选手（刚学习区块链的）一个技术支撑和指导，降低没有区块链开发的技术难度。专门写了一篇这次比赛的基础技术指导文档，此文档不光是对参加比赛的选手有用，对刚进入区块链想学习的朋友都适用。 &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;《BCH GEEK极客大赛技术建议指导》 一.极客大赛主题和背景：区块链无疑是当前最为热门的技术领域之一，近年来，区块链技术逐渐得到世界级金融机构和商业机构的关注，也得到了不少政府组织的关注和扶持，不少大型银行和机构都开展了对区块链技术的研究。区块链上的数据具有不可篡改，永久保存的特性，能够让不同的合作伙伴建立起分布式的信任机制。 BTC是区块链的鼻祖，是区块链在金融行业的首次创新应用。但随着技术的演进和社会的需求，又新出现了不少区块链的应用，比如BCH（比特币现金）是当前各大区块链社区（币圈）最耀眼的新星，BCH在BTC的基础上进行了一些优化，最大的改进是除开算法优化效率外，还提升了区块的大小（目前BTC在这方面遇到了些瓶颈）。特别是在2018年5月份的升级中，BCH把OP_RETURN元数据从80字节提升到220字节，可以存储更多的信息（虽然目前各个机构对这个数据的扩大有争议，但确确实实世界的领跑者永远属于大胆创新者）。由于OP_RETURN的扩大，为比特币的二层协议开发带来新的生机。 我们先看看在比特币的OP_RETURN上，大家都干了些啥？有表白、求婚的。这里比特币就见证了一场成功的求婚：https://blockchain.info/tx/b17a027a8f7ae0db4ddbaa58927d0f254e97fce63b7e57e8e50957d3dad2e66ehttps://blockchain.info/tx/e89e09ac184e1a175ce748775b3e63686cb1e5fe948365236aac3b3aef3fedd0 2014-09-07Tetsu向其女朋友Yuki求婚，而其女友很爽快的答应了。真是虐狗虐到了比特币上！还有许愿望的，有写家谱的。写到链上后永远不会变。 这些是利用OP_RETURN的简单应用（通过钱包就可以实现），如果要实现更多的功能，就需要利用api或者sdk定制开发更高级的应用。 基于BCH的OP_RETURN创新开发的部分应用程序： * “Memo”基于比特币现金（BCH）区块链平台的社交应用于今年4月15日正式上线。在Memo中用户基于自己的钱包地址创建自己的账号，然后利用BCH平台的OP_RETURN操作码存储各种数据和交易。 * “币赞”基于微博平台的BCH（Bitcoin Cash）打赏机器人。 * “yours”基于BCH的内容创作者的社交媒体平台。 * “JoyStream”一个赚BCH的BT下载软件 以上的项目给大家是一个参考，对于竞赛开发的主题方向，除开基于OP_RETURN的应用开发外，参赛团队还可以根据兴趣选择更多的主题，比如：1.BCH的开发工具；2.BCH协议；3.基于BCH的大数据分析等。本次举办BCH极客大赛的目的，是通过竞赛的形式，将BCH社区的开发者链接起来，能够产生更多基于BCH的应用，提供更多的优秀解决方案。 很多开发者在学习区块链的时候就蒙圈了，所涉及的知识面很广，包括分布式数据存储、挖矿和共识算法、加密算法、点对点传输网络等。但开发创新团队没有必要把底层核心全部了解后才去做开发，掌握一些最少必要知识后就能够开发一个系统出来。这就比如用C++语言编程，开发一个应用只需掌握怎么使用C++就行了，没有必要去把C++的底层实现原理全部研究透。 如果创新团队有创新想法，但对区块链的知识不熟悉，也没关系，可以短时间内掌握区块链的最少必要知识，同时BCH极客大赛主办方会提供技术支撑。以下是为参赛选手整理的基础知识，建议在参加比赛前就安装好基础环境。 二.开发环境搭建：1.BCH的源代码可以作为ZIP存档下载，也可以从GitHub克隆权威的源代码库。 在GitHub比特币页面GitHub bitcoin-abc page上，选择“下载ZIP”。 或者，使用git命令行在系统上创建源代码的本地副本。 2.下载完毕后，打开DOC文档目录，里面有各个操作系统（支持MAC、Windows、Openbsd、Netbsd）的安装方法。安装方法按照文档（build-xxx.md）的指导步骤就行了，如果遇到失败多数都是库或则工具没有装好，可以百度搜索解决。 3.BCH支持三种运行环境， 在主网上实施:节点配置时间比较久，下载数据量大，需要购买币才能进行; 在测试网络（Testnet）上实施:节点配置时间久，下载数据量大; 在本地区块链（Regtest）上实施：不用同步数据。 参赛选手根据自己的需求选择运行环境，本次比赛3天开发的应用不成熟，不应该立马放到主网上。比赛主要考察参数选手的项目创新能力，为了简化环境和节省开发时间，建议在Regtest上运行。 自建Regtest的指导参考如下链接： https://www.felix021.com/blog/read.php?2183 https://blog.csdn.net/chenjaulin/article/details/52449039 三.写入OP_RETURN的方法：写入OP_RETURN可以使用createrawtransaction命令行接口或则JSON-RPC接口调用。写入方法参考如下指导： http://www.8btc.com/yonghengzhilian[url=https://bitcoin.org/en/developer-examples#simple-spendingAPI]https://bitcoin.org/en/developer-examples#simple-spendingAPI[/url]接口列表参考：https://en.bitcoin.it/wiki/Original_Bitcoin_client/API_calls_list 四.SDK库（仅供参考）：bitcore-lib:(JavaScript库):&nbsp;https://github.com/bitpay/bitcore-lib python-bitcoinlib(python SDk库):&nbsp;https://github.com/petertodd/python-bitcoinlib btc.com比特大陆提供的接口(go SDk库):&nbsp;https://github.com/cryptostu/bchapi php-bitcoinrpc(php SDk库):&nbsp;https://github.com/denpamusic/php-bitcoinrpc bcash(node.js SDk库):&nbsp;https://github.com/bcoin-org/bcash nakasendo(C++/Java SDk库):&nbsp;https://github.com/nakasendo/nakasendo 调用JSON-RPC的各种语言SDK库参考:&nbsp;https://en.bitcoin.it/wiki/API_reference_(JSON-RPC) 五.其他资料：精通比特币第二版:http://forum.gaici.com/forum.php?mod=viewthread&amp;tid=218&amp;extra= develop.cash为BCH开发者提供的文档服务:https://develop.cash/wiki/index.php/中文首页 六.工具：十六进制和字符串转换：https://tool.lu/hexstr/ 阅读更多" />
+<meta property="og:description" content="2018-6-1号，盖茨实验室筹备的全国BCH极客大赛在杭州举办，作为盖茨实验室的技术负责人为了给参加比赛的参赛选手（刚学习区块链的）一个技术支撑和指导，降低没有区块链开发的技术难度。专门写了一篇这次比赛的基础技术指导文档，此文档不光是对参加比赛的选手有用，对刚进入区块链想学习的朋友都适用。 &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;《BCH GEEK极客大赛技术建议指导》 一.极客大赛主题和背景：区块链无疑是当前最为热门的技术领域之一，近年来，区块链技术逐渐得到世界级金融机构和商业机构的关注，也得到了不少政府组织的关注和扶持，不少大型银行和机构都开展了对区块链技术的研究。区块链上的数据具有不可篡改，永久保存的特性，能够让不同的合作伙伴建立起分布式的信任机制。 BTC是区块链的鼻祖，是区块链在金融行业的首次创新应用。但随着技术的演进和社会的需求，又新出现了不少区块链的应用，比如BCH（比特币现金）是当前各大区块链社区（币圈）最耀眼的新星，BCH在BTC的基础上进行了一些优化，最大的改进是除开算法优化效率外，还提升了区块的大小（目前BTC在这方面遇到了些瓶颈）。特别是在2018年5月份的升级中，BCH把OP_RETURN元数据从80字节提升到220字节，可以存储更多的信息（虽然目前各个机构对这个数据的扩大有争议，但确确实实世界的领跑者永远属于大胆创新者）。由于OP_RETURN的扩大，为比特币的二层协议开发带来新的生机。 我们先看看在比特币的OP_RETURN上，大家都干了些啥？有表白、求婚的。这里比特币就见证了一场成功的求婚：https://blockchain.info/tx/b17a027a8f7ae0db4ddbaa58927d0f254e97fce63b7e57e8e50957d3dad2e66ehttps://blockchain.info/tx/e89e09ac184e1a175ce748775b3e63686cb1e5fe948365236aac3b3aef3fedd0 2014-09-07Tetsu向其女朋友Yuki求婚，而其女友很爽快的答应了。真是虐狗虐到了比特币上！还有许愿望的，有写家谱的。写到链上后永远不会变。 这些是利用OP_RETURN的简单应用（通过钱包就可以实现），如果要实现更多的功能，就需要利用api或者sdk定制开发更高级的应用。 基于BCH的OP_RETURN创新开发的部分应用程序： * “Memo”基于比特币现金（BCH）区块链平台的社交应用于今年4月15日正式上线。在Memo中用户基于自己的钱包地址创建自己的账号，然后利用BCH平台的OP_RETURN操作码存储各种数据和交易。 * “币赞”基于微博平台的BCH（Bitcoin Cash）打赏机器人。 * “yours”基于BCH的内容创作者的社交媒体平台。 * “JoyStream”一个赚BCH的BT下载软件 以上的项目给大家是一个参考，对于竞赛开发的主题方向，除开基于OP_RETURN的应用开发外，参赛团队还可以根据兴趣选择更多的主题，比如：1.BCH的开发工具；2.BCH协议；3.基于BCH的大数据分析等。本次举办BCH极客大赛的目的，是通过竞赛的形式，将BCH社区的开发者链接起来，能够产生更多基于BCH的应用，提供更多的优秀解决方案。 很多开发者在学习区块链的时候就蒙圈了，所涉及的知识面很广，包括分布式数据存储、挖矿和共识算法、加密算法、点对点传输网络等。但开发创新团队没有必要把底层核心全部了解后才去做开发，掌握一些最少必要知识后就能够开发一个系统出来。这就比如用C++语言编程，开发一个应用只需掌握怎么使用C++就行了，没有必要去把C++的底层实现原理全部研究透。 如果创新团队有创新想法，但对区块链的知识不熟悉，也没关系，可以短时间内掌握区块链的最少必要知识，同时BCH极客大赛主办方会提供技术支撑。以下是为参赛选手整理的基础知识，建议在参加比赛前就安装好基础环境。 二.开发环境搭建：1.BCH的源代码可以作为ZIP存档下载，也可以从GitHub克隆权威的源代码库。 在GitHub比特币页面GitHub bitcoin-abc page上，选择“下载ZIP”。 或者，使用git命令行在系统上创建源代码的本地副本。 2.下载完毕后，打开DOC文档目录，里面有各个操作系统（支持MAC、Windows、Openbsd、Netbsd）的安装方法。安装方法按照文档（build-xxx.md）的指导步骤就行了，如果遇到失败多数都是库或则工具没有装好，可以百度搜索解决。 3.BCH支持三种运行环境， 在主网上实施:节点配置时间比较久，下载数据量大，需要购买币才能进行; 在测试网络（Testnet）上实施:节点配置时间久，下载数据量大; 在本地区块链（Regtest）上实施：不用同步数据。 参赛选手根据自己的需求选择运行环境，本次比赛3天开发的应用不成熟，不应该立马放到主网上。比赛主要考察参数选手的项目创新能力，为了简化环境和节省开发时间，建议在Regtest上运行。 自建Regtest的指导参考如下链接： https://www.felix021.com/blog/read.php?2183 https://blog.csdn.net/chenjaulin/article/details/52449039 三.写入OP_RETURN的方法：写入OP_RETURN可以使用createrawtransaction命令行接口或则JSON-RPC接口调用。写入方法参考如下指导： http://www.8btc.com/yonghengzhilian[url=https://bitcoin.org/en/developer-examples#simple-spendingAPI]https://bitcoin.org/en/developer-examples#simple-spendingAPI[/url]接口列表参考：https://en.bitcoin.it/wiki/Original_Bitcoin_client/API_calls_list 四.SDK库（仅供参考）：bitcore-lib:(JavaScript库):&nbsp;https://github.com/bitpay/bitcore-lib python-bitcoinlib(python SDk库):&nbsp;https://github.com/petertodd/python-bitcoinlib btc.com比特大陆提供的接口(go SDk库):&nbsp;https://github.com/cryptostu/bchapi php-bitcoinrpc(php SDk库):&nbsp;https://github.com/denpamusic/php-bitcoinrpc bcash(node.js SDk库):&nbsp;https://github.com/bcoin-org/bcash nakasendo(C++/Java SDk库):&nbsp;https://github.com/nakasendo/nakasendo 调用JSON-RPC的各种语言SDK库参考:&nbsp;https://en.bitcoin.it/wiki/API_reference_(JSON-RPC) 五.其他资料：精通比特币第二版:http://forum.gaici.com/forum.php?mod=viewthread&amp;tid=218&amp;extra= develop.cash为BCH开发者提供的文档服务:https://develop.cash/wiki/index.php/中文首页 六.工具：十六进制和字符串转换：https://tool.lu/hexstr/ 阅读更多" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/06/01/%E5%85%B3%E4%BA%8E%E5%8C%BA%E5%9D%97%E9%93%BEBCH%E7%9A%84%E5%85%A5%E9%97%A8%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/06/01/%E5%85%B3%E4%BA%8E%E5%8C%BA%E5%9D%97%E9%93%BEBCH%E7%9A%84%E5%85%A5%E9%97%A8%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-06-01T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"2018-6-1号，盖茨实验室筹备的全国BCH极客大赛在杭州举办，作为盖茨实验室的技术负责人为了给参加比赛的参赛选手（刚学习区块链的）一个技术支撑和指导，降低没有区块链开发的技术难度。专门写了一篇这次比赛的基础技术指导文档，此文档不光是对参加比赛的选手有用，对刚进入区块链想学习的朋友都适用。 &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;《BCH GEEK极客大赛技术建议指导》 一.极客大赛主题和背景：区块链无疑是当前最为热门的技术领域之一，近年来，区块链技术逐渐得到世界级金融机构和商业机构的关注，也得到了不少政府组织的关注和扶持，不少大型银行和机构都开展了对区块链技术的研究。区块链上的数据具有不可篡改，永久保存的特性，能够让不同的合作伙伴建立起分布式的信任机制。 BTC是区块链的鼻祖，是区块链在金融行业的首次创新应用。但随着技术的演进和社会的需求，又新出现了不少区块链的应用，比如BCH（比特币现金）是当前各大区块链社区（币圈）最耀眼的新星，BCH在BTC的基础上进行了一些优化，最大的改进是除开算法优化效率外，还提升了区块的大小（目前BTC在这方面遇到了些瓶颈）。特别是在2018年5月份的升级中，BCH把OP_RETURN元数据从80字节提升到220字节，可以存储更多的信息（虽然目前各个机构对这个数据的扩大有争议，但确确实实世界的领跑者永远属于大胆创新者）。由于OP_RETURN的扩大，为比特币的二层协议开发带来新的生机。 我们先看看在比特币的OP_RETURN上，大家都干了些啥？有表白、求婚的。这里比特币就见证了一场成功的求婚：https://blockchain.info/tx/b17a027a8f7ae0db4ddbaa58927d0f254e97fce63b7e57e8e50957d3dad2e66ehttps://blockchain.info/tx/e89e09ac184e1a175ce748775b3e63686cb1e5fe948365236aac3b3aef3fedd0 2014-09-07Tetsu向其女朋友Yuki求婚，而其女友很爽快的答应了。真是虐狗虐到了比特币上！还有许愿望的，有写家谱的。写到链上后永远不会变。 这些是利用OP_RETURN的简单应用（通过钱包就可以实现），如果要实现更多的功能，就需要利用api或者sdk定制开发更高级的应用。 基于BCH的OP_RETURN创新开发的部分应用程序： * “Memo”基于比特币现金（BCH）区块链平台的社交应用于今年4月15日正式上线。在Memo中用户基于自己的钱包地址创建自己的账号，然后利用BCH平台的OP_RETURN操作码存储各种数据和交易。 * “币赞”基于微博平台的BCH（Bitcoin Cash）打赏机器人。 * “yours”基于BCH的内容创作者的社交媒体平台。 * “JoyStream”一个赚BCH的BT下载软件 以上的项目给大家是一个参考，对于竞赛开发的主题方向，除开基于OP_RETURN的应用开发外，参赛团队还可以根据兴趣选择更多的主题，比如：1.BCH的开发工具；2.BCH协议；3.基于BCH的大数据分析等。本次举办BCH极客大赛的目的，是通过竞赛的形式，将BCH社区的开发者链接起来，能够产生更多基于BCH的应用，提供更多的优秀解决方案。 很多开发者在学习区块链的时候就蒙圈了，所涉及的知识面很广，包括分布式数据存储、挖矿和共识算法、加密算法、点对点传输网络等。但开发创新团队没有必要把底层核心全部了解后才去做开发，掌握一些最少必要知识后就能够开发一个系统出来。这就比如用C++语言编程，开发一个应用只需掌握怎么使用C++就行了，没有必要去把C++的底层实现原理全部研究透。 如果创新团队有创新想法，但对区块链的知识不熟悉，也没关系，可以短时间内掌握区块链的最少必要知识，同时BCH极客大赛主办方会提供技术支撑。以下是为参赛选手整理的基础知识，建议在参加比赛前就安装好基础环境。 二.开发环境搭建：1.BCH的源代码可以作为ZIP存档下载，也可以从GitHub克隆权威的源代码库。 在GitHub比特币页面GitHub bitcoin-abc page上，选择“下载ZIP”。 或者，使用git命令行在系统上创建源代码的本地副本。 2.下载完毕后，打开DOC文档目录，里面有各个操作系统（支持MAC、Windows、Openbsd、Netbsd）的安装方法。安装方法按照文档（build-xxx.md）的指导步骤就行了，如果遇到失败多数都是库或则工具没有装好，可以百度搜索解决。 3.BCH支持三种运行环境， 在主网上实施:节点配置时间比较久，下载数据量大，需要购买币才能进行; 在测试网络（Testnet）上实施:节点配置时间久，下载数据量大; 在本地区块链（Regtest）上实施：不用同步数据。 参赛选手根据自己的需求选择运行环境，本次比赛3天开发的应用不成熟，不应该立马放到主网上。比赛主要考察参数选手的项目创新能力，为了简化环境和节省开发时间，建议在Regtest上运行。 自建Regtest的指导参考如下链接： https://www.felix021.com/blog/read.php?2183 https://blog.csdn.net/chenjaulin/article/details/52449039 三.写入OP_RETURN的方法：写入OP_RETURN可以使用createrawtransaction命令行接口或则JSON-RPC接口调用。写入方法参考如下指导： http://www.8btc.com/yonghengzhilian[url=https://bitcoin.org/en/developer-examples#simple-spendingAPI]https://bitcoin.org/en/developer-examples#simple-spendingAPI[/url]接口列表参考：https://en.bitcoin.it/wiki/Original_Bitcoin_client/API_calls_list 四.SDK库（仅供参考）：bitcore-lib:(JavaScript库):&nbsp;https://github.com/bitpay/bitcore-lib python-bitcoinlib(python SDk库):&nbsp;https://github.com/petertodd/python-bitcoinlib btc.com比特大陆提供的接口(go SDk库):&nbsp;https://github.com/cryptostu/bchapi php-bitcoinrpc(php SDk库):&nbsp;https://github.com/denpamusic/php-bitcoinrpc bcash(node.js SDk库):&nbsp;https://github.com/bcoin-org/bcash nakasendo(C++/Java SDk库):&nbsp;https://github.com/nakasendo/nakasendo 调用JSON-RPC的各种语言SDK库参考:&nbsp;https://en.bitcoin.it/wiki/API_reference_(JSON-RPC) 五.其他资料：精通比特币第二版:http://forum.gaici.com/forum.php?mod=viewthread&amp;tid=218&amp;extra= develop.cash为BCH开发者提供的文档服务:https://develop.cash/wiki/index.php/中文首页 六.工具：十六进制和字符串转换：https://tool.lu/hexstr/ 阅读更多","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/06/01/%E5%85%B3%E4%BA%8E%E5%8C%BA%E5%9D%97%E9%93%BEBCH%E7%9A%84%E5%85%A5%E9%97%A8%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86.html","headline":"关于区块链BCH的入门必备知识","dateModified":"2018-06-01T00:00:00+08:00","datePublished":"2018-06-01T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/06/01/%E5%85%B3%E4%BA%8E%E5%8C%BA%E5%9D%97%E9%93%BEBCH%E7%9A%84%E5%85%A5%E9%97%A8%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>关于区块链BCH的入门必备知识</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <span style="color:rgb(68,68,68);background-color:rgb(255,255,255);font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;">2018-6-1号，<a href="http://www.gaici.com/" rel="nofollow" class="gj_safe_a" style="color:rgb(51,102,153);text-decoration:underline;">盖茨实验室</a>筹备的全国BCH极客大赛在杭州举办，作为<a href="http://www.gaici.com/" rel="nofollow" class="gj_safe_a" style="color:rgb(51,102,153);text-decoration:underline;">盖茨实验室</a>的技术负责人为了给参加比赛的参赛选手（刚学习区块链的）一个技术支撑和指导，降低没有区块链开发的技术难度。专门写了一篇这次比赛的基础技术指导文档，此文档不光是对参加比赛的选手有用，对刚进入区块链想学习的朋友都适用。</span></span>
+  <span style="color:rgb(68,68,68);background-color:rgb(255,255,255);font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;"><br><br><span style="font-weight:700;">&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;《BCH GEEK极客大赛技术建议指导》</span></span></span>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <span style="color:rgb(68,68,68);background-color:rgb(255,255,255);font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;"><span style="font-weight:700;">一.极客大赛主题和背景：</span>区块链无疑是当前最为热门的技术领域之一，近年来，区块链技术逐渐得到世界级金融机构和商业机构的关注，也得到了不少政府组织的关注和扶持，不少大型银行和机构都开展了对区块链技术的研究。区块链上的数据具有不可篡改，永久保存的特性，能够让不同的合作伙伴建立起分布式的信任机制。</span></span>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <span style="color:rgb(68,68,68);background-color:rgb(255,255,255);font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;"><br>BTC是区块链的鼻祖，是区块链在金融行业的首次创新应用。但随着技术的演进和社会的需求，又新出现了不少区块链的应用，比如BCH（比特币现金）是当前各大区块链社区（币圈）最耀眼的新星，BCH在BTC的基础上进行了一些优化，最大的改进是除开算法优化效率外，还提升了区块的大小（目前BTC在这方面遇到了些瓶颈）。特别是在2018年5月份的升级中，BCH把OP_RETURN元数据从80字节提升到220字节，可以存储更多的信息（虽然目前各个机构对这个数据的扩大有争议，但确确实实世界的领跑者永远属于大胆创新者）。由于OP_RETURN的扩大，为比特币的二层协议开发带来新的生机。</span></span>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <span style="color:rgb(68,68,68);background-color:rgb(255,255,255);font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;"><br></span></span>
+  <blockquote style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+   <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;">我们先看看在比特币的OP_RETURN上，大家都干了些啥？有表白、求婚的。这里比特币就见证了一场成功的求婚：<br><a href="https://blockchain.info/tx/b17a027a8f7ae0db4ddbaa58927d0f254e97fce63b7e57e8e50957d3dad2e66e" rel="nofollow" class="gj_safe_a" style="color:rgb(51,102,153);text-decoration:underline;">https://blockchain.info/tx/b17a027a8f7ae0db4ddbaa58927d0f254e97fce63b7e57e8e50957d3dad2e66e</a><br><a href="https://blockchain.info/tx/e89e09ac184e1a175ce748775b3e63686cb1e5fe948365236aac3b3aef3fedd0" rel="nofollow" class="gj_safe_a" style="color:rgb(51,102,153);text-decoration:underline;">https://blockchain.info/tx/e89e09ac184e1a175ce748775b3e63686cb1e5fe948365236aac3b3aef3fedd0</a><br><br></span></span>
+  </blockquote>
+  <blockquote style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+   <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;">2014-09-07Tetsu向其女朋友Yuki求婚，而其女友很爽快的答应了。真是虐狗虐到了比特币上！还有许愿望的，有写家谱的。写到链上后永远不会变。<br></span></span>
+  </blockquote>
+  <blockquote style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+   <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;"><br></span></span>
+  </blockquote>
+  <span style="color:rgb(68,68,68);background-color:rgb(255,255,255);font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;">这些是利用OP_RETURN的简单应用（通过钱包就可以实现），如果要实现更多的功能，就需要利用api或者sdk定制开发更高级的应用。</span></span>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <span style="color:rgb(68,68,68);background-color:rgb(255,255,255);font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;"><br></span></span>
+  <blockquote style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+   <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;">基于BCH的OP_RETURN创新开发的部分应用程序：</span></span>
+  </blockquote>
+  <blockquote style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+   <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;"><br>* “Memo”基于比特币现金（BCH）区块链平台的社交应用于今年4月15日正式上线。在Memo中用户基于自己的钱包地址创建自己的账号，然后利用BCH平台的OP_RETURN操作码存储各种数据和交易。</span></span>
+  </blockquote>
+  <blockquote style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+   <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;"><br>* “币赞”基于微博平台的BCH（Bitcoin Cash）打赏机器人。</span></span>
+  </blockquote>
+  <blockquote style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+   <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;"><br>* “yours”基于BCH的内容创作者的社交媒体平台。</span></span>
+  </blockquote>
+  <blockquote style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+   <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;"><br>* “JoyStream”一个赚BCH的BT下载软件<br></span></span>
+  </blockquote>
+  <blockquote style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+   <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;"><br></span></span>
+  </blockquote>
+  <span style="color:rgb(68,68,68);background-color:rgb(255,255,255);font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;">以上的项目给大家是一个参考，对于竞赛开发的主题方向，除开基于OP_RETURN的应用开发外，参赛团队还可以根据兴趣选择更多的主题，比如：1.BCH的开发工具；2.BCH协议；3.基于BCH的大数据分析等。本次举办BCH极客大赛的目的，是通过竞赛的形式，将BCH社区的开发者链接起来，<span style="font-weight:700;">能够产生更多基于BCH的应用，提供更多的优秀解决方案</span>。</span></span>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <span style="color:rgb(68,68,68);background-color:rgb(255,255,255);font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;"><br>很多开发者在学习区块链的时候就蒙圈了，所涉及的知识面很广，包括分布式数据存储、挖矿和共识算法、加密算法、点对点传输网络等。但开发创新团队没有必要把底层核心全部了解后才去做开发，掌握一些最少必要知识后就能够开发一个系统出来。这就比如用C++语言编程，开发一个应用只需掌握怎么使用C++就行了，没有必要去把C++的底层实现原理全部研究透。</span></span>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <span style="color:rgb(68,68,68);background-color:rgb(255,255,255);font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;"><br>如果创新团队有创新想法，但对区块链的知识不熟悉，也没关系，可以短时间内掌握区块链的最少必要知识，同时BCH极客大赛主办方会提供技术支撑。以下是为参赛选手整理的基础知识，建议在参加比赛前就安装好基础环境。</span></span>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <span style="color:rgb(68,68,68);background-color:rgb(255,255,255);font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;"><br><span style="font-weight:700;">二.开发环境搭建：</span>1.BCH的源代码可以作为ZIP存档下载，也可以从GitHub克隆权威的源代码库。 在GitHub比特币页面<a href="https://github.com/Bitcoin-ABC/bitcoin-abc" rel="nofollow" class="gj_safe_a" style="color:rgb(51,102,153);text-decoration:underline;">GitHub bitcoin-abc page</a>上，选择“下载ZIP”。 或者，使用git命令行在系统上创建源代码的本地副本。</span></span>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <span style="color:rgb(68,68,68);background-color:rgb(255,255,255);font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;"><br>2.下载完毕后，打开DOC文档目录，里面有各个操作系统（支持MAC、Windows、Openbsd、Netbsd）的安装方法。安装方法按照文档（build-xxx.md）的指导步骤就行了，如果遇到失败多数都是库或则工具没有装好，可以百度搜索解决。</span></span>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <span style="color:rgb(68,68,68);background-color:rgb(255,255,255);font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;"><br>3.BCH支持三种运行环境，</span></span>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <span style="color:rgb(68,68,68);background-color:rgb(255,255,255);font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;"><br></span></span>
+  <blockquote style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+   <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;"><span style="font-weight:700;">在主网上实施:</span>节点配置时间比较久，下载数据量大，需要购买币才能进行;</span></span>
+  </blockquote>
+  <blockquote style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+   <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;"><br><span style="font-weight:700;">在测试网络（Testnet）上实施:</span>节点配置时间久，下载数据量大;</span></span>
+  </blockquote>
+  <blockquote style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+   <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;"><br><span style="font-weight:700;">在本地区块链（Regtest）上实施：</span>不用同步数据。<br></span></span>
+  </blockquote>
+  <blockquote style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+   <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;"><br></span></span>
+  </blockquote>
+  <span style="color:rgb(68,68,68);background-color:rgb(255,255,255);font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;">参赛选手根据自己的需求选择运行环境，本次比赛3天开发的应用不成熟，不应该立马放到主网上。比赛主要考察参数选手的项目创新能力，为了简化环境和节省开发时间，建议在Regtest上运行。</span></span>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <span style="color:rgb(68,68,68);background-color:rgb(255,255,255);font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;"><br>自建Regtest的指导参考如下链接：</span></span>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <span style="color:rgb(68,68,68);background-color:rgb(255,255,255);font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;"><br><a href="https://www.felix021.com/blog/read.php?2183" rel="nofollow" class="gj_safe_a" style="color:rgb(51,102,153);text-decoration:underline;">https://www.felix021.com/blog/read.php?2183</a></span></span>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <span style="color:rgb(68,68,68);background-color:rgb(255,255,255);font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;"><br><a href="https://blog.csdn.net/chenjaulin/article/details/52449039" rel="nofollow" class="gj_safe_a" style="color:rgb(51,102,153);text-decoration:underline;">https://blog.csdn.net/chenjaulin/article/details/52449039</a></span></span>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <span style="color:rgb(68,68,68);background-color:rgb(255,255,255);font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;"><br><span style="font-weight:700;">三.写入OP_RETURN的方法：</span>写入OP_RETURN可以使用createrawtransaction命令行接口或则JSON-RPC接口调用。写入方法参考如下指导：</span></span>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <span style="color:rgb(68,68,68);background-color:rgb(255,255,255);font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;"><br></span></span>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <span style="color:rgb(68,68,68);background-color:rgb(255,255,255);font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;"><a href="http://www.8btc.com/yonghengzhilian" rel="nofollow" class="gj_safe_a" style="color:rgb(51,102,153);text-decoration:underline;">http://www.8btc.com/yonghengzhilian[url=https://bitcoin.org/en/developer-examples#simple-spendingAPI]https://bitcoin.org/en/developer-examples#simple-spendingAPI</a>[/url]接口列表参考：<a href="https://en.bitcoin.it/wiki/Original_Bitcoin_client/API_calls_list" rel="nofollow" class="gj_safe_a" style="color:rgb(51,102,153);text-decoration:underline;">https://en.bitcoin.it/wiki/Original_Bitcoin_client/API_calls_list</a><br></span></span>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <span style="color:rgb(68,68,68);background-color:rgb(255,255,255);font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;"><span style="font-weight:700;">四.SDK库（仅供参考）：</span>bitcore-lib:(JavaScript库):&nbsp;<a href="https://github.com/bitpay/bitcore-lib" rel="nofollow" class="gj_safe_a" style="color:rgb(51,102,153);text-decoration:underline;">https://github.com/bitpay/bitcore-lib</a><br><br></span></span>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <span style="color:rgb(68,68,68);background-color:rgb(255,255,255);font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;">python-bitcoinlib(python SDk库):&nbsp;<a href="https://github.com/petertodd/python-bitcoinlib" rel="nofollow" class="gj_safe_a" style="color:rgb(51,102,153);text-decoration:underline;">https://github.com/petertodd/python-bitcoinlib</a><br><br></span></span>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <span style="color:rgb(68,68,68);background-color:rgb(255,255,255);font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;">btc.com比特大陆提供的接口(go SDk库):&nbsp;<a href="https://github.com/cryptostu/bchapi" rel="nofollow" class="gj_safe_a" style="color:rgb(51,102,153);text-decoration:underline;">https://github.com/cryptostu/bchapi</a><br><br></span></span>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <span style="color:rgb(68,68,68);background-color:rgb(255,255,255);font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;">php-bitcoinrpc(php SDk库):&nbsp;<a href="https://github.com/denpamusic/php-bitcoinrpc" rel="nofollow" class="gj_safe_a" style="color:rgb(51,102,153);text-decoration:underline;">https://github.com/denpamusic/php-bitcoinrpc</a><br><br></span></span>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <span style="color:rgb(68,68,68);background-color:rgb(255,255,255);font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;">bcash(node.js SDk库):&nbsp;<a href="https://github.com/bcoin-org/bcash" rel="nofollow" class="gj_safe_a" style="color:rgb(51,102,153);text-decoration:underline;">https://github.com/bcoin-org/bcash</a><br><br></span></span>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <span style="color:rgb(68,68,68);background-color:rgb(255,255,255);font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;">nakasendo(C++/Java SDk库):&nbsp;<a href="https://github.com/nakasendo/nakasendo" rel="nofollow" class="gj_safe_a" style="color:rgb(51,102,153);text-decoration:underline;">https://github.com/nakasendo/nakasendo</a><br><br></span></span>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <span style="color:rgb(68,68,68);background-color:rgb(255,255,255);font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;">调用JSON-RPC的各种语言SDK库参考:&nbsp;<a href="https://en.bitcoin.it/wiki/API_reference_(JSON-RPC)" rel="nofollow" class="gj_safe_a" style="color:rgb(51,102,153);text-decoration:underline;">https://en.bitcoin.it/wiki/API_reference_(JSON-RPC)</a><br></span></span>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <span style="color:rgb(68,68,68);background-color:rgb(255,255,255);font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;"><span style="font-weight:700;">五.其他资料：</span>精通比特币第二版:<a href="http://forum.gaici.com/forum.php?mod=viewthread&amp;tid=218&amp;extra=" rel="nofollow" class="gj_safe_a" style="color:rgb(51,102,153);text-decoration:underline;">http://forum.gaici.com/forum.php?mod=viewthread&amp;tid=218&amp;extra=</a><br><br></span></span>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <span style="color:rgb(68,68,68);background-color:rgb(255,255,255);font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;">develop.cash为BCH开发者提供的文档服务:<a href="https://develop.cash/wiki/index.php/%E4%B8%AD%E6%96%87%E9%A6%96%E9%A1%B5" rel="nofollow" class="gj_safe_a" style="color:rgb(51,102,153);text-decoration:underline;">https://develop.cash/wiki/index.php/中文首页</a><br></span></span>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <span style="color:rgb(68,68,68);background-color:rgb(255,255,255);font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:14px;line-height:30px;"><span style="font-weight:700;">六.工具：</span>十六进制和字符串转换：<a href="https://tool.lu/hexstr/" rel="nofollow" class="gj_safe_a" style="color:rgb(51,102,153);text-decoration:underline;">https://tool.lu/hexstr/</a><br><br></span></span> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/qq_30634311/article/details/80534365,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/qq_30634311/article/details/80534365,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

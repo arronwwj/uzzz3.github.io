@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>【以太坊开发】ETH本地钱包环境创建 | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="【以太坊开发】ETH本地钱包环境创建" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="需要用到的工具： Ethereum Wallet&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;钱包创建工具 geth&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;节点同步命令行工具 两个工具都可以群里下载 也可以去官网：https://www.ethereum.org/ 下载工具： 下载完的压缩包 解压 创建本地钱包 首先使用Ethereum-Wallet-win64-0-9-0&nbsp; 创建钱包 打开Ethereum Wallet 等待&nbsp; 下图 密码一定要记住&nbsp; 在交易的时候会用到你的密码 点确定 到这里&nbsp; 关闭当前的窗口 在重新打开 这个是在同步更新节点 点击 LAUNCH APPLICATION&nbsp; 进入主界面 备份keys&nbsp; 这步一定要做&nbsp; 否则如果硬盘坏掉或则出现意外情况&nbsp; 没办法找回你的资产 进keystore 文件夹 将这个文件&nbsp; 保存到你认为最安全的地方&nbsp; 比如U 盘&nbsp; 移动硬盘&nbsp; 或则其他地方&nbsp; 多拷贝几个地方 到这里钱包就创建完成了 还需要同步节点&nbsp; 如果不同步节点&nbsp; 别人给你转账时你的钱包是看不到金额的 你可以选择&nbsp; 使用Ethereum Wallet 这个钱包工具&nbsp;( 就是刚才用他创建钱包的)&nbsp; 来同步节点 也可以使用命令行工具&nbsp;geth&nbsp; 来同步节点 我使用的是geth 来同步节点&nbsp; 因为这个比较稳定 安装 GETH 运行 关闭后&nbsp; 去刚刚设置的路径去找到GET 运行 &nbsp;geth.exe 已经开始同步了！ blocks&nbsp; 同步了几个块 elapsed&nbsp; 同步这个块的耗时&nbsp; 我的网络不太好&nbsp; 时间有点长&nbsp; 呵呵&nbsp; 正常在几秒或几十秒 number&nbsp; 块的高度&nbsp; 我会在下面给出一个区块查询网址&nbsp; 这个高度如果达到了网站的高度同步基本接近最新了 hash&nbsp; 块的哈希值 其他的不太需要了！ 如果你用geth 同步节点&nbsp; 就不需要开着Ethereum Wallet&nbsp; 这个钱包工具了 相同&nbsp; 如果使用Ethereum Wallet.exe&nbsp; 钱包工具来同步&nbsp; 就不需要geth 这个界面就已经开始同步了&nbsp; 也可以进入主界面 这里是同步节点的情况 阅读更多" />
+<meta property="og:description" content="需要用到的工具： Ethereum Wallet&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;钱包创建工具 geth&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;节点同步命令行工具 两个工具都可以群里下载 也可以去官网：https://www.ethereum.org/ 下载工具： 下载完的压缩包 解压 创建本地钱包 首先使用Ethereum-Wallet-win64-0-9-0&nbsp; 创建钱包 打开Ethereum Wallet 等待&nbsp; 下图 密码一定要记住&nbsp; 在交易的时候会用到你的密码 点确定 到这里&nbsp; 关闭当前的窗口 在重新打开 这个是在同步更新节点 点击 LAUNCH APPLICATION&nbsp; 进入主界面 备份keys&nbsp; 这步一定要做&nbsp; 否则如果硬盘坏掉或则出现意外情况&nbsp; 没办法找回你的资产 进keystore 文件夹 将这个文件&nbsp; 保存到你认为最安全的地方&nbsp; 比如U 盘&nbsp; 移动硬盘&nbsp; 或则其他地方&nbsp; 多拷贝几个地方 到这里钱包就创建完成了 还需要同步节点&nbsp; 如果不同步节点&nbsp; 别人给你转账时你的钱包是看不到金额的 你可以选择&nbsp; 使用Ethereum Wallet 这个钱包工具&nbsp;( 就是刚才用他创建钱包的)&nbsp; 来同步节点 也可以使用命令行工具&nbsp;geth&nbsp; 来同步节点 我使用的是geth 来同步节点&nbsp; 因为这个比较稳定 安装 GETH 运行 关闭后&nbsp; 去刚刚设置的路径去找到GET 运行 &nbsp;geth.exe 已经开始同步了！ blocks&nbsp; 同步了几个块 elapsed&nbsp; 同步这个块的耗时&nbsp; 我的网络不太好&nbsp; 时间有点长&nbsp; 呵呵&nbsp; 正常在几秒或几十秒 number&nbsp; 块的高度&nbsp; 我会在下面给出一个区块查询网址&nbsp; 这个高度如果达到了网站的高度同步基本接近最新了 hash&nbsp; 块的哈希值 其他的不太需要了！ 如果你用geth 同步节点&nbsp; 就不需要开着Ethereum Wallet&nbsp; 这个钱包工具了 相同&nbsp; 如果使用Ethereum Wallet.exe&nbsp; 钱包工具来同步&nbsp; 就不需要geth 这个界面就已经开始同步了&nbsp; 也可以进入主界面 这里是同步节点的情况 阅读更多" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/04/27/%E4%BB%A5%E5%A4%AA%E5%9D%8A%E5%BC%80%E5%8F%91-ETH%E6%9C%AC%E5%9C%B0%E9%92%B1%E5%8C%85%E7%8E%AF%E5%A2%83%E5%88%9B%E5%BB%BA.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/04/27/%E4%BB%A5%E5%A4%AA%E5%9D%8A%E5%BC%80%E5%8F%91-ETH%E6%9C%AC%E5%9C%B0%E9%92%B1%E5%8C%85%E7%8E%AF%E5%A2%83%E5%88%9B%E5%BB%BA.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-04-27T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"需要用到的工具： Ethereum Wallet&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;钱包创建工具 geth&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;节点同步命令行工具 两个工具都可以群里下载 也可以去官网：https://www.ethereum.org/ 下载工具： 下载完的压缩包 解压 创建本地钱包 首先使用Ethereum-Wallet-win64-0-9-0&nbsp; 创建钱包 打开Ethereum Wallet 等待&nbsp; 下图 密码一定要记住&nbsp; 在交易的时候会用到你的密码 点确定 到这里&nbsp; 关闭当前的窗口 在重新打开 这个是在同步更新节点 点击 LAUNCH APPLICATION&nbsp; 进入主界面 备份keys&nbsp; 这步一定要做&nbsp; 否则如果硬盘坏掉或则出现意外情况&nbsp; 没办法找回你的资产 进keystore 文件夹 将这个文件&nbsp; 保存到你认为最安全的地方&nbsp; 比如U 盘&nbsp; 移动硬盘&nbsp; 或则其他地方&nbsp; 多拷贝几个地方 到这里钱包就创建完成了 还需要同步节点&nbsp; 如果不同步节点&nbsp; 别人给你转账时你的钱包是看不到金额的 你可以选择&nbsp; 使用Ethereum Wallet 这个钱包工具&nbsp;( 就是刚才用他创建钱包的)&nbsp; 来同步节点 也可以使用命令行工具&nbsp;geth&nbsp; 来同步节点 我使用的是geth 来同步节点&nbsp; 因为这个比较稳定 安装 GETH 运行 关闭后&nbsp; 去刚刚设置的路径去找到GET 运行 &nbsp;geth.exe 已经开始同步了！ blocks&nbsp; 同步了几个块 elapsed&nbsp; 同步这个块的耗时&nbsp; 我的网络不太好&nbsp; 时间有点长&nbsp; 呵呵&nbsp; 正常在几秒或几十秒 number&nbsp; 块的高度&nbsp; 我会在下面给出一个区块查询网址&nbsp; 这个高度如果达到了网站的高度同步基本接近最新了 hash&nbsp; 块的哈希值 其他的不太需要了！ 如果你用geth 同步节点&nbsp; 就不需要开着Ethereum Wallet&nbsp; 这个钱包工具了 相同&nbsp; 如果使用Ethereum Wallet.exe&nbsp; 钱包工具来同步&nbsp; 就不需要geth 这个界面就已经开始同步了&nbsp; 也可以进入主界面 这里是同步节点的情况 阅读更多","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/04/27/%E4%BB%A5%E5%A4%AA%E5%9D%8A%E5%BC%80%E5%8F%91-ETH%E6%9C%AC%E5%9C%B0%E9%92%B1%E5%8C%85%E7%8E%AF%E5%A2%83%E5%88%9B%E5%BB%BA.html","headline":"【以太坊开发】ETH本地钱包环境创建","dateModified":"2018-04-27T00:00:00+08:00","datePublished":"2018-04-27T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/04/27/%E4%BB%A5%E5%A4%AA%E5%9D%8A%E5%BC%80%E5%8F%91-ETH%E6%9C%AC%E5%9C%B0%E9%92%B1%E5%8C%85%E7%8E%AF%E5%A2%83%E5%88%9B%E5%BB%BA.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>【以太坊开发】ETH本地钱包环境创建</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <div align="center" style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+   <br>
+  </div>
+  <div align="left" style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+   需要用到的工具：
+  </div>
+  <div align="left" style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+   Ethereum Wallet&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;钱包创建工具
+  </div>
+  <div align="left" style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+   geth&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;节点同步命令行工具
+  </div>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <div align="left" style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+   两个工具都可以群里下载
+  </div>
+  <div align="left" style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+   也可以去官网：https://www.ethereum.org/
+  </div>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <div align="left" style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+   <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;font-size:15pt;">下载工具：</span>
+  </div>
+  <div align="left" style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+   <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;font-size:15pt;"></span>
+  </div>
+  <div align="left" style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+   下载完的压缩包
+  </div>
+  <div align="left" style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+   <div class="mbn">
+    <img alt="【原创】ETH本地钱包创建 节点同步 使用教程" src="http://8btc.com/data/attachment/forum/201711/10/162332auwoc1gmwwth8p3l.gif" class="zoom" style="vertical-align:top;">
+   </div>
+   <br>
+  </div>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <div align="left" style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+   <div align="left">
+    <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">解压</span></span>
+   </div>
+   <div align="left">
+    <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;"><br></span></span>
+   </div>
+   <div align="left">
+    <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;"></span></span>
+    <div class="mbn">
+     <img alt="【原创】ETH本地钱包创建 节点同步 使用教程" src="http://8btc.com/data/attachment/forum/201711/10/162737xnathgel9yizcgz6.gif" class="zoom" style="vertical-align:top;">
+    </div>
+    <br>
+   </div>
+   <div align="left">
+    <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;"><br></span></span>
+   </div>
+   <div align="left">
+    <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:15pt;line-height:30px;">创建本地钱包</span></span>
+   </div>
+   <div align="left">
+    <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:15pt;line-height:30px;"><br></span></span>
+   </div>
+   <div align="left">
+    <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">首先使用</span></span>Ethereum-Wallet-win64-0-9-0&nbsp;
+    <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">创建钱包</span></span>
+   </div>
+   <div align="left">
+    <div class="mbn">
+     <img alt="【原创】ETH本地钱包创建 节点同步 使用教程" src="http://8btc.com/data/attachment/forum/201711/10/162737jux33p2yjcu7pfx7.gif" class="zoom" style="vertical-align:top;">
+    </div>
+    <br>
+   </div>
+  </div>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <div align="left" style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+   <div align="left">
+    <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">打开</span></span>Ethereum Wallet
+   </div>
+   <div align="left">
+    <div class="mbn">
+     <img alt="【原创】ETH本地钱包创建 节点同步 使用教程" src="http://8btc.com/data/attachment/forum/201711/10/162737qbhb8ygb5kgp2h5f.gif" class="zoom" style="vertical-align:top;">
+    </div>
+    <br>
+   </div>
+  </div>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <div align="left" style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+   <div align="left">
+    <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">等待</span></span>&nbsp;
+    <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">下图</span></span>
+   </div>
+  </div>
+  <div align="left" style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+   <div class="mbn">
+    <img alt="【原创】ETH本地钱包创建 节点同步 使用教程" src="http://8btc.com/data/attachment/forum/201711/10/162738to7628f4qqvn00d8.gif" class="zoom" style="vertical-align:top;">
+   </div>
+   <br>
+  </div>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <div align="left" style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+   <div class="mbn">
+    <img alt="【原创】ETH本地钱包创建 节点同步 使用教程" src="http://8btc.com/data/attachment/forum/201711/10/163522d38roe78wdh878oj.gif" class="zoom" style="vertical-align:top;">
+   </div>
+   <br>
+  </div>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <div align="left" style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+   <div align="left">
+    <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">密码一定要记住</span></span>&nbsp;
+    <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">在交易的时候会用到你的密码</span></span>
+   </div>
+   <div align="left">
+    <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;"></span></span>
+    <div class="mbn">
+     <img alt="【原创】ETH本地钱包创建 节点同步 使用教程" src="http://8btc.com/data/attachment/forum/201711/10/162738scf3c5gsx3f3i5mz.gif" class="zoom" style="vertical-align:top;">
+    </div>
+    <br>
+   </div>
+  </div>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <div align="left" style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+   <div class="mbn">
+    <img alt="【原创】ETH本地钱包创建 节点同步 使用教程" src="http://8btc.com/data/attachment/forum/201711/10/162738h9b682c2br2ss8l2.gif" class="zoom" style="vertical-align:top;">
+   </div>
+   <br>
+  </div>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <div align="left" style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+   <div align="left">
+    <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">点确定</span></span>
+   </div>
+   <div align="left">
+    <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;"><br></span></span>
+   </div>
+   <div align="left">
+    <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;"></span></span>
+    <div class="mbn">
+     <img alt="【原创】ETH本地钱包创建 节点同步 使用教程" src="http://8btc.com/data/attachment/forum/201711/10/162739sagp2ezmg9yzcec2.gif" class="zoom" style="vertical-align:top;">
+    </div>
+    <br>
+   </div>
+  </div>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <div align="left" style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+   <div class="mbn">
+    <img alt="【原创】ETH本地钱包创建 节点同步 使用教程" src="http://8btc.com/data/attachment/forum/201711/10/162739r6e4x5leww9znk5x.gif" class="zoom" style="vertical-align:top;">
+   </div>
+   <br>
+  </div>
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <br style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+  <div align="left" style="color:rgb(68,68,68);font-family:'Microsoft Yahei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+   <div align="left">
+    <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">到这里</span></span>&nbsp;
+    <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">关闭当前的窗口</span></span>
+   </div>
+   <div align="left">
+    <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;"><br></span></span>
+   </div>
+   <div align="left">
+    <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">在重新打开</span></span>
+   </div>
+   <div align="left">
+    <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;"><br></span></span>
+   </div>
+   <div align="left">
+    <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;"></span></span>
+    <div class="mbn">
+     <img alt="【原创】ETH本地钱包创建 节点同步 使用教程" src="http://8btc.com/data/attachment/forum/201711/10/163845bxsiwlj8vuqxtq3u.gif" class="zoom" style="vertical-align:top;">
+    </div>
+    <br>
+   </div>
+   <div align="left">
+    <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;"><br></span></span>
+   </div>
+   <div align="left">
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">这个是在同步更新节点</span></span>
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;">点击 LAUNCH APPLICATION&nbsp;</span>
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">进入主界面</span></span>
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;"><br></span></span>
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;"></span></span>
+     <div class="mbn">
+      <img alt="【原创】ETH本地钱包创建 节点同步 使用教程" src="http://8btc.com/data/attachment/forum/201711/10/163845qh3hjhjjaxlzxoza.gif" class="zoom" style="vertical-align:top;">
+     </div>
+     <br>
+    </div>
+   </div>
+   <div align="left">
+    <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;"><br></span></span>
+   </div>
+   <div align="left">
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">备份</span></span>keys&nbsp;
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">这步一定要做</span></span>&nbsp;
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">否则如果硬盘坏掉或则出现意外情况</span></span>&nbsp;
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">没办法找回你的资产</span></span>
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;"><br></span></span>
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;"></span></span>
+     <div class="mbn">
+      <img alt="【原创】ETH本地钱包创建 节点同步 使用教程" src="http://8btc.com/data/attachment/forum/201711/10/163845rao2o9g2g2oiggr4.gif" class="zoom" style="vertical-align:top;">
+     </div>
+     <br>
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;"><br></span></span>
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;"></span></span>
+     <div class="mbn">
+      <img alt="【原创】ETH本地钱包创建 节点同步 使用教程" src="http://8btc.com/data/attachment/forum/201711/10/163845n4zzmej84c1r7rhj.gif" class="zoom" style="vertical-align:top;">
+     </div>
+     <br>
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">进</span></span>keystore
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">文件夹</span></span>
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;"></span></span>
+     <div class="mbn">
+      <img alt="【原创】ETH本地钱包创建 节点同步 使用教程" src="http://8btc.com/data/attachment/forum/201711/10/164408yd19e1zz9dd34rzu.gif" class="zoom" style="vertical-align:top;">
+     </div>
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;">将这个文件</span>&nbsp;
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;">保存到你认为最安全的地方</span>&nbsp;
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;">比如</span>U
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;">盘</span>&nbsp;
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;">移动硬盘</span>&nbsp;
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;">或则其他地方</span>&nbsp;
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;">多拷贝几个地方</span>
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;"></span></span>
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">到这里钱包就创建完成了</span></span>
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">还需要同步节点</span></span>&nbsp;
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">如果不同步节点</span></span>&nbsp;
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">别人给你转账时你的钱包是看不到金额的</span></span>
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;"></span></span>
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">你可以选择</span></span>&nbsp;
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">使用</span></span>Ethereum Wallet
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">这个钱包工具</span></span>&nbsp;(
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">就是刚才用他创建钱包的</span></span>)&nbsp;
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">来同步节点</span></span>
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">也可以使用命令行工具</span></span>&nbsp;geth&nbsp;
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">来同步节点</span></span>
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;"></span></span>
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">我使用的是</span></span>geth
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">来同步节点</span></span>&nbsp;
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">因为这个比较稳定</span></span>
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;"></span></span>
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:16pt;line-height:30px;">安装</span></span>
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:16pt;line-height:30px;">GETH</span></span>
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:16pt;line-height:30px;"></span></span>
+     <div class="mbn">
+      <img alt="【原创】ETH本地钱包创建 节点同步 使用教程" src="http://8btc.com/data/attachment/forum/201711/10/164447oj248dbq0d0wh341.gif" class="zoom" style="vertical-align:top;">
+     </div>运行
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:16pt;line-height:30px;"></span></span>
+     <div class="mbn">
+      <img alt="【原创】ETH本地钱包创建 节点同步 使用教程" src="http://8btc.com/data/attachment/forum/201711/10/164526vf1rry151zrf8bd1.gif" class="zoom" style="vertical-align:top;">
+     </div>
+     <br>
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:16pt;line-height:30px;"></span></span>
+     <div class="mbn">
+      <img alt="【原创】ETH本地钱包创建 节点同步 使用教程" src="http://8btc.com/data/attachment/forum/201711/10/164526h9andyuwwzxfr9z3.gif" class="zoom" style="vertical-align:top;">
+     </div>
+     <br>
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:16pt;line-height:30px;"></span></span>
+     <div class="mbn">
+      <img alt="【原创】ETH本地钱包创建 节点同步 使用教程" src="http://8btc.com/data/attachment/forum/201711/10/164526bgxj5jv116io5qxq.gif" class="zoom" style="vertical-align:top;">
+     </div>
+     <br>
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:16pt;line-height:30px;"></span></span>
+     <div class="mbn">
+      <img alt="【原创】ETH本地钱包创建 节点同步 使用教程" src="http://8btc.com/data/attachment/forum/201711/10/164639uegito3eggoejebg.gif" class="zoom" style="vertical-align:top;">
+     </div>
+     <br>
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:16pt;line-height:30px;"><br></span></span>
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">关闭后</span></span>&nbsp;
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">去刚刚设置的路径去找到</span></span>GET
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:16pt;line-height:30px;"><br></span></span>
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:16pt;line-height:30px;"></span></span>
+     <div class="mbn">
+      <img alt="【原创】ETH本地钱包创建 节点同步 使用教程" src="http://8btc.com/data/attachment/forum/201711/10/165005rdu8y7zqrosd7xyp.gif" class="zoom" style="vertical-align:top;">
+     </div>
+     <br>
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">运行</span></span>
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">&nbsp;geth.exe</span></span>
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;"><br></span></span>
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;"></span></span>
+     <div class="mbn">
+      <img alt="【原创】ETH本地钱包创建 节点同步 使用教程" src="http://8btc.com/data/attachment/forum/201711/10/165005fbbk7hiph9vhkaak.gif" class="zoom" style="vertical-align:top;">
+     </div>
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">已经开始同步了！</span></span>
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;"><br></span></span>
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;"></span></span>
+     <div class="mbn">
+      <img alt="【原创】ETH本地钱包创建 节点同步 使用教程" src="http://8btc.com/data/attachment/forum/201711/10/165005muzjuyupj4jvdpnx.gif" class="zoom" style="vertical-align:top;">
+     </div>
+     <br>
+    </div>
+    <div align="left">
+     <div align="left">
+      blocks&nbsp;
+      <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">同步了几个块</span></span>
+     </div>
+     <div align="left">
+      elapsed&nbsp;
+      <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">同步这个块的耗时</span></span>&nbsp;
+      <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">我的网络不太好</span></span>&nbsp;
+      <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">时间有点长</span></span>&nbsp;
+      <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">呵呵</span></span>&nbsp;
+      <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">正常在几秒或几十秒</span></span>
+     </div>
+     <div align="left">
+      number&nbsp;
+      <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">块的高度</span></span>&nbsp;
+      <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">我会在下面给出一个区块查询网址</span></span>&nbsp;
+      <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">这个高度如果达到了网站的高度同步基本接近最新了</span></span>
+     </div>
+     <div align="left">
+      hash&nbsp;
+      <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">块的哈希值</span></span>
+     </div>
+     <div align="left">
+      <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">其他的不太需要了！</span></span>
+     </div>
+     <div align="left">
+      <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;"></span></span>
+     </div>
+     <div align="left">
+      <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">如果你用</span></span>geth
+      <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">同步节点</span></span>&nbsp;
+      <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">就不需要开着</span></span>Ethereum Wallet&nbsp;
+      <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">这个钱包工具了</span></span>
+     </div>
+     <div align="left">
+      <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">相同</span></span>&nbsp;
+      <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">如果使用</span></span>Ethereum Wallet.exe&nbsp;
+      <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">钱包工具来同步</span></span>&nbsp;
+      <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">就不需要</span></span>geth
+     </div>
+     <br>
+     <div align="left">
+      <div class="mbn">
+       <img alt="【原创】ETH本地钱包创建 节点同步 使用教程" src="http://8btc.com/data/attachment/forum/201711/10/165111f3iih4lii6t66uzt.gif" class="zoom" style="vertical-align:top;">
+      </div>
+      <br>
+     </div>
+    </div>
+    <div align="left">
+     <div align="left">
+      <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">这个界面就已经开始同步了</span></span>&nbsp;
+      <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">也可以进入主界面</span></span>
+     </div>
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:16pt;line-height:30px;"></span></span>
+     <div class="mbn">
+      <img alt="【原创】ETH本地钱包创建 节点同步 使用教程" src="http://8btc.com/data/attachment/forum/201711/10/165111hn32rnf4njz4qiyb.gif" class="zoom" style="vertical-align:top;">
+     </div>
+     <br>
+    </div>
+    <div align="left">
+     <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:16pt;line-height:30px;"><br></span></span>
+    </div>
+    <div align="left">
+     <div align="left">
+      <span style="font-family:'Microsoft YaHei', SimHei, Verdana, Arial, sans-serif;line-height:30px;"><span style="font-size:10.5pt;line-height:30px;">这里是同步节点的情况</span></span>
+     </div>
+    </div>
+   </div>
+  </div> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/harwey_it/article/details/80106170,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/harwey_it/article/details/80106170,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

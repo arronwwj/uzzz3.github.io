@@ -1,0 +1,89 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div class="article-copyright">
+   版权声明：本文为博主原创文章，未经博主允许不得转载。 https://blog.csdn.net/m0_37324740/article/details/86498711 
+ </div> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-f57960eb32.css"> 
+ <div class="htmledit_views" id="content_views"> 
+  <p>&nbsp; &nbsp; 本篇博客对 <span style="color:#7c79e5;"><strong>yield</strong></span> 不求甚解，用简短通俗的语言说明其功能及优势。</p> 
+  <h1>1 用法</h1> 
+  <p>&nbsp; &nbsp;&nbsp;对于函数返回&nbsp;<span style="color:#7c79e5;"><strong>yield</strong></span> 的通俗理解就是返回了一个存储函数的地址，在某个空间有这个暂时用不到的函数，而这个函数本来是要返回一个<span style="color:#7c79e5;"><strong>容器</strong></span>，比方 <span style="color:#7c79e5;"><strong>list</strong></span> 。</p> 
+  <p>&nbsp; &nbsp; 下面具体说明：</p> 
+  <p>&nbsp; &nbsp; 在谈<span style="color:#7c79e5;"><strong> yield</strong></span> 之前，先说说 <span style="color:#7c79e5;"><strong>list</strong></span> 。</p> 
+  <p>&nbsp; &nbsp; <strong><span style="color:#7c79e5;">list</span> </strong>数据是一种<span style="color:#7c79e5;"><strong>容器</strong></span>，包含其他元素，<span style="color:#e579b6;"><strong>可以迭代的从众逐个获取元素</strong></span>，举个栗子：</p> 
+  <pre class="has">
+<code class="language-python">def func1():
+    return [1,2]
+
+a = func1()
+
+for i in a:
+    print(i)</code></pre> 
+  <p>&nbsp; &nbsp; 输出：</p> 
+  <pre class="has">
+<code class="language-python">1
+2
+</code></pre> 
+  <p>&nbsp; &nbsp; 下面谈谈 <span style="color:#7c79e5;"><strong>yield</strong></span> 。</p> 
+  <p>&nbsp; &nbsp; 包含 <span style="color:#7c79e5;"><strong>yield</strong></span> 的函数为<span style="color:#7c79e5;"><strong>生成器函数</strong></span>。这种函数被调用后，函数内部的代码不会立刻执行，而是返回一个<span style="color:#7c79e5;"><strong>生成器</strong></span>。</p> 
+  <p>&nbsp; &nbsp; <span style="color:#7c79e5;"><strong>生成器</strong></span>是特殊的<span style="color:#7c79e5;"><strong>迭代器</strong></span>，迭代器是一种对象（啥是对象，emmmmm.......），抽象理解是一种数据流。</p> 
+  <p>&nbsp; &nbsp; 举个栗子：</p> 
+  <pre class="has">
+<code class="language-python">def func2():
+    yield [1,2]
+
+b = func2()
+print(b)</code></pre> 
+  <p>&nbsp; &nbsp; 输出：</p> 
+  <pre class="has">
+<code class="language-python">&lt;generator object func2 at 0x000000001812F8E0&gt;</code></pre> 
+  <p>&nbsp; &nbsp; <span style="color:#e579b6;"><strong>只有当生成器调用成员方法时，生成器中的代码才会执行</strong></span>。</p> 
+  <p>&nbsp; &nbsp; 举个栗子：</p> 
+  <pre class="has">
+<code class="language-python">def func3():
+    for x in range(2):
+        yield x ** 2
+
+c = func3()
+
+for x in c:
+    print(x)</code></pre> 
+  <p>&nbsp; &nbsp; 输出：</p> 
+  <pre class="has">
+<code class="language-python">0
+1</code></pre> 
+  <h1>&nbsp; 2 好处</h1> 
+  <p>&nbsp; &nbsp; 很多时候我们是逐个访问容器中的元素，而不是一下子获得所有的元素。</p> 
+  <p>&nbsp; &nbsp; 举个栗子：</p> 
+  <p>&nbsp; &nbsp; 对于 [1, 2, 3, 4]，我们想依次获得列表里面的前两个数字，有以下两种方法：</p> 
+  <p>1. 获得所有元素，然后取出前2个；</p> 
+  <p>2. 从头逐个迭代，到第二个元素后终止。</p> 
+  <p>&nbsp; &nbsp; 显然，第二种方法节省时间空间开销。</p> 
+  <h1>3 实际应用</h1> 
+  <p>&nbsp; &nbsp; 当我们从样本中批量获得数据输入模型的时候，我们就可以用 yield 表达式。</p> 
+  <p>&nbsp; &nbsp; 举个栗子：</p> 
+  <pre class="has">
+<code class="language-python">def minibatches(inputs_data=None, labels=None, batch_size=None, shuffle=False):
+
+    '''
+    inputs_data 为 numpy array 数据
+    '''
+
+    assert len(inputs_data) == len(labels)
+    if shuffle:
+        indices = np.arange(len(inputs_data))
+        np.random.shuffle(indices)
+    for start_idx in range(0, len(inputs_data) - batch_size + 1, batch_size):
+        if shuffle:
+            excerpt = indices[start_idx:start_idx + batch_size]
+        else:
+            excerpt = slice(start_idx, start_idx + batch_size)
+        yield inputs_data[excerpt], labels[excerpt]
+
+
+for x_train, y_train in minibatches(x_train, y_train, batch_size, shuffle=True):
+    model(x_train, y_train)  </code></pre> 
+  <p>&nbsp;</p> 
+  <p>&nbsp;</p> 
+  <p>更加详细内容可以参考这篇博客：<a href="https://liam.page/2017/06/30/understanding-yield-in-python/" rel="nofollow">https://liam.page/2017/06/30/understanding-yield-in-python/</a></p> 
+ </div> 
+</div>

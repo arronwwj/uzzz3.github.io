@@ -1,0 +1,64 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <h1>原文翻译</h1> 
+  <h3>12. Conclusion</h3> 
+  <p>We have proposed a system for electronic transactions without relying on trust. We started with the usual framework of coins made from digital signatures, which provides strong control of ownership, but is incomplete without a way to prevent double-spending. To solve this, we proposed a peer-to-peer network using proof-of-work to record a public history of transactions that quickly becomes computationally impractical for an attacker to change if honest nodes control a majority of CPU power. The network is robust in its unstructured simplicity. Nodes work all at once with little coordination. They do not need to be identified, since messages are not routed to any particular place and only need to be delivered on a best effort basis. Nodes can leave and rejoin the network at will, accepting the proof-of-work chain as proof of what happened while they were gone. They vote with their CPU power, expressing their acceptance of valid blocks by working on extending them and rejecting invalid blocks by refusing to work on them. Any needed rules and incentives can be enforced with this consensus mechanism.</p> 
+  <h3>12.结论</h3> 
+  <p>我们提出了一种不依赖信任的电子交易系统。我们从常规的通过<strong>数字签名</strong>[1]的货币框架开始，它提供了强有力的所有权控制，但如果没有办法防止<strong>双重支出</strong>[2]，这将是不完整的。为了解决这个问题我们提出了一种用<strong>工作量证明</strong>[3]来记录公开的历史交易记录的<strong>点对点</strong>[4]网络。如果诚实的节点控制大部分CPU算力，从计算的角度上讲让攻击者改变数据很快就会变得不切实际。这个网络虽然结构简单却非常健壮。节点一起工作却几乎不需要协调。因为消息不会路由到任何特定的地方，只需要<strong>尽力而为</strong>[5]，所以它们不需要身份认证，节点可以自由的加入或离开网络，以工作量证明链作为它们离开时产生的交易历史的证明。它们通过CPU算力投票，通过扩展它们来表达他们对有效块的接受，并通过拒绝对它们进行处理来拒绝无效块。任何所需的规则和激励措施都可以通过这种<strong>共识机制</strong>[6]来实施。</p> 
+  <p>&nbsp;</p> 
+  <h1>细节解读</h1> 
+  <h2>[1]什么是数字签名</h2> 
+  <p>请参考我的另一篇博文《比特币与区块链基本原理学习笔记03(关于数字签名)》</p> 
+  <p><a href="https://blog.csdn.net/qq_27467365/article/details/80009839" rel="nofollow">https://blog.csdn.net/qq_27467365/article/details/80009839</a></p> 
+  <h2>[1]What is 'Digital signatures'</h2> 
+  <p>Please refer to my other blog post《Study notes of Bitcoin and blockchain basic principles 03(about&nbsp;Digital signatures )》&nbsp;</p> 
+  <p><a href="https://blog.csdn.net/qq_27467365/article/details/80009839" rel="nofollow">https://blog.csdn.net/qq_27467365/article/details/80009839</a></p> 
+  <hr>
+  <h2>[2]什么是双重支出问题</h2> 
+  <p>双重支出是数字现金计划的失败模式，当有可能两次使用单个数字代币时。 因为，与诸如硬币之类的物理令牌货币不同，电子文件可以被复制，因此花费数字硬币的行为不会从原始持有者的所有权中移除其数据，因此需要一些其他手段来防止双重花费。</p> 
+  <p>更多信息，请参考我的另一篇博文《比特币创世论文《Bitcoin: A Peer-to-Peer Electronic Cash System》研读之一：摘要》</p> 
+  <p><a href="https://blog.csdn.net/qq_27467365/article/details/81569962" rel="nofollow">https://blog.csdn.net/qq_27467365/article/details/81569962</a></p> 
+  <h2>[2]What is 'double-spending'</h2> 
+  <p>Double-spending&nbsp;is&nbsp;a&nbsp;failure&nbsp;mode&nbsp;of&nbsp;digital&nbsp;cash&nbsp;schemes&nbsp;when&nbsp;it&nbsp;is possible&nbsp;to&nbsp;spend&nbsp;a&nbsp;single&nbsp;digital&nbsp;token&nbsp;twice.&nbsp;Since,&nbsp;unlike&nbsp;physical&nbsp;token-money&nbsp;such&nbsp;as&nbsp;coins,&nbsp;electronic&nbsp;files&nbsp;can&nbsp;be&nbsp;duplicated,&nbsp;and&nbsp;hence&nbsp;the&nbsp;act of&nbsp;spending&nbsp;a&nbsp;digital&nbsp;coin&nbsp;does&nbsp;not&nbsp;remove&nbsp;its&nbsp;data&nbsp;from&nbsp;the&nbsp;ownership&nbsp;of&nbsp;the original&nbsp;holder,&nbsp;some&nbsp;other&nbsp;means&nbsp;are&nbsp;needed&nbsp;to&nbsp;prevent&nbsp;double-spending.</p> 
+  <p>For more information, Please refer to my other blog post《study of 《Bitcoin: A Peer-to-Peer Electronic Cash System》1》</p> 
+  <p><a href="https://blog.csdn.net/qq_27467365/article/details/81569962" rel="nofollow">https://blog.csdn.net/qq_27467365/article/details/81569962</a></p> 
+  <hr>
+  <h2><strong>[3]&nbsp;</strong>什么是 <strong>工作量证明</strong></h2> 
+  <p>请参考我的另一篇博文《比特币创世论文《Bitcoin: A Peer-to-Peer Electronic Cash System》研读之一：摘要》</p> 
+  <p><a href="https://blog.csdn.net/qq_27467365/article/details/81569962" rel="nofollow">https://blog.csdn.net/qq_27467365/article/details/81569962</a></p> 
+  <h2>[3]What is 'proof-of-work'</h2> 
+  <p>Please refer to my other blog post《study of 《Bitcoin: A Peer-to-Peer Electronic Cash System》1》</p> 
+  <p><a href="https://blog.csdn.net/qq_27467365/article/details/81569962" rel="nofollow">https://blog.csdn.net/qq_27467365/article/details/81569962</a></p> 
+  <hr>
+  <h2>[4]什么是点对点</h2> 
+  <p>对等（P2P）计算或网络是分布式应用程序体系结构，用于在对等体之间分配任务或工作负载。 同行在申请中享有同等优势，等同参与者。 它们形成了节点的点对点网络。</p> 
+  <p>更多信息，请参考我的另一篇博文《比特币创世论文《Bitcoin: A Peer-to-Peer Electronic Cash System》研读之一：摘要》</p> 
+  <p><a href="https://blog.csdn.net/qq_27467365/article/details/81569962" rel="nofollow">https://blog.csdn.net/qq_27467365/article/details/81569962</a></p> 
+  <h2>[4]What is 'peer-to-peer'</h2> 
+  <p>Peer-to-peer&nbsp;(P2P)&nbsp;computing&nbsp;or&nbsp;networking&nbsp;is&nbsp;a&nbsp;distributed&nbsp;application&nbsp;architecture that&nbsp;partitions&nbsp;tasks&nbsp;or&nbsp;workloads&nbsp;between&nbsp;peers.&nbsp;Peers&nbsp;are&nbsp;equally&nbsp;privileged,&nbsp;equipotent&nbsp;participants&nbsp;in&nbsp;the&nbsp;application.&nbsp;They&nbsp;are&nbsp;said&nbsp;to&nbsp;form&nbsp;a&nbsp;peer-to-peer network&nbsp;of&nbsp;nodes.</p> 
+  <p>For more information, Please refer to my other blog post《study of 《Bitcoin: A Peer-to-Peer Electronic Cash System》1》</p> 
+  <p><a href="https://blog.csdn.net/qq_27467365/article/details/81569962" rel="nofollow">https://blog.csdn.net/qq_27467365/article/details/81569962</a></p> 
+  <hr>
+  <h2>[5]什么是“尽力而为（也作“尽力服务”）”</h2> 
+  <p>尽力而为的交付描述了一种网络服务，其中网络不提供数据交付或交付满足任何服务质量的任何保证。 在尽力而为的网络中，所有用户都获得尽力服务，这意味着他们获得未指定的可变比特率和延迟以及丢包，具体取决于当前的流量负载。 这可以与可靠的传递形成对比，可靠的传递可以建立在尽力而为的传递之上（可能没有延迟和吞吐量保证），或者与维持定义的，连续的服务质量的电路交换方案。</p> 
+  <p>Best Efforts的维基百科地址：<a href="https://en.wikipedia.org/wiki/Best-effort_delivery" rel="nofollow">https://en.wikipedia.org/wiki/Best-effort_delivery</a></p> 
+  <h2>[5]What is 'Best Efforts'</h2> 
+  <p><strong>Best-effort delivery</strong>&nbsp;describes a network service in which the&nbsp;<a href="https://en.wiktionary.org/wiki/Network" rel="nofollow">network</a>&nbsp;does not provide any guarantee that data is delivered or that delivery meets any&nbsp;<a href="https://en.wikipedia.org/wiki/Quality_of_service" rel="nofollow">quality of service</a>. In a&nbsp;<strong>best-effort network</strong>, all users obtain best-effort service, meaning that they obtain unspecified variable bit rate and latency and&nbsp;<a href="https://en.wikipedia.org/wiki/Packet_loss" rel="nofollow">packet loss</a>, depending on the current traffic load. This can be contrasted with&nbsp;<a href="https://en.wikipedia.org/wiki/Reliable_delivery" rel="nofollow">reliable delivery</a>, which can be built on top of best-effort delivery (possibly without latency and throughput guarantees), or with&nbsp;<a href="https://en.wikipedia.org/wiki/Circuit_switching" rel="nofollow">circuit switching</a>&nbsp;schemes which maintain a defined, continuous quality of service.</p> 
+  <hr>
+  <h2><strong>[6]什么是“共识机制”</strong></h2> 
+  <p>&nbsp;</p> 
+  <h2><strong>[6]What is "</strong>consensus mechanism<strong>"</strong></h2> 
+  <p><strong>​​​​​​​</strong></p> 
+  <hr>
+  <p>《Bitcoin: A Peer-to-Peer Electronic Cash System》论文原文地址如下：<a href="https://bitcoin.org/bitcoin.pdf" rel="nofollow">https://bitcoin.org/bitcoin.pdf</a></p> 
+  <hr>
+  <p>版权所有声明</p> 
+  <p>版权所有归属作者，未经允许不得转载、复制或用作它途。否则作者将具有追究法律责任的权利。</p> 
+  <p>Copyright Clarify</p> 
+  <p>Copyright ownership belongs to the author, shall not be reproduced, copied, or used in other ways without permission. Otherwise, the author will have the right to pursue legal responsibilities.</p> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/qq_27467365/article/details/81775859,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/qq_27467365/article/details/81775859,&quot;}">阅读更多</a> 
+</div>

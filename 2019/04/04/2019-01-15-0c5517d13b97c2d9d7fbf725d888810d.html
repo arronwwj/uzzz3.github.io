@@ -1,0 +1,129 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div class="article-copyright">
+   版权声明：版权所有--小宋是呢 https://blog.csdn.net/xiaosongshine/article/details/86498959 
+ </div> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-f57960eb32.css"> 
+ <div class="htmledit_views" id="content_views"> 
+  <h3>[MXNet逐梦之旅]练习三·使用MXNetFashionMNIST数据集分类手动实现</h3> 
+  <ul>
+   <li>code</li> 
+  </ul>
+  <pre class="has">
+<code class="language-python">#%%
+import sys
+import time
+from mxnet import gluon as gl
+import mxnet as mx
+from matplotlib import pyplot as plt
+from mxnet import autograd, nd
+import numpy as np
+
+mnist_train = gl.data.vision.FashionMNIST(root="fashion-mnist/",train=True)
+mnist_test = gl.data.vision.FashionMNIST(root="fashion-mnist/",train=False)
+print(len(mnist_train), len(mnist_test))
+
+"""我也遇到这个问题，想用之前下载好的数据集直接使用。但是由于MXNet的MNIST数据集读取的机制会去验证数据集的正确性，所以我使用的用keras下载的数据集放到相关位置，MXNet还是还是会去下载。
+解决方法，我用MXNet下载了好了fashion-mnist数据集，上传了，大家可以直接下载到相应位置解压即可。
+也可以从采用自定义位置的方式 ：_mnist_train = gl.data.vision.FashionMNIST(root="fashion-mnist/",train=True)_
+只需放到编写代码处解压即可。。"""
+
+#%%
+
+batch_size = 100
+transformer = gl.data.vision.transforms.ToTensor()
+if sys.platform.startswith('win'):
+    num_workers = 0  # 0表示不用额外的进程来加速读取数据
+else:
+    num_workers = 4
+
+
+train_iter = gl.data.DataLoader(mnist_train.transform_first(transformer),
+                              batch_size, shuffle=True,
+                              num_workers=num_workers)
+test_iter = gl.data.DataLoader(mnist_test.transform_first(transformer),
+                             1000, shuffle=False,
+                             num_workers=num_workers)
+
+
+
+def get_fashion_mnist_labels(labels):
+    text_labels = ['t-shirt', 'trouser', 'pullover', 'dress', 'coat',
+                   'sandal', 'shirt', 'sneaker', 'bag', 'ankle boot']
+    return([text_labels[int(i.asnumpy())] for i in labels])
+
+def show_img(x,y):
+    plt.figure("Image") # 图像窗口名称
+    plt.imshow(x.asnumpy()*255)
+    plt.title(get_fashion_mnist_labels(y)) # 图像题目
+    plt.show()
+
+
+"""start = time.time()
+for X, y in train_iter:
+    break
+print('%.2f sec' % (time.time() - start))"""
+
+num_inputs, num_outputs, num_hiddens = 784, 10, 256
+
+W1 = nd.random.normal(scale=0.01, shape=(num_inputs, num_hiddens))
+b1 = nd.zeros(num_hiddens)
+W2 = nd.random.normal(scale=0.01, shape=(num_hiddens, num_outputs))
+b2 = nd.zeros(num_outputs)
+params = [W1, b1, W2, b2]
+
+for param in params:
+    param.attach_grad()
+
+def sgd(params, lr, batch_size):  # 本函数已保存在d2lzh包中方便以后使用
+    for param in params:
+        param[:] = param - lr * param.grad / batch_size
+
+
+def relu(X):
+    return nd.maximum(X, 0)
+
+def model(X):
+    X = X.reshape((-1, num_inputs))
+    H = relu(nd.dot(X, W1) + b1)
+    return nd.dot(H, W2) + b2
+
+loss = gl.loss.SoftmaxCrossEntropyLoss()
+
+def accuracy(y_hat, y):
+    return (y_hat.argmax(axis=1) == y.astype('float32')).mean().asscalar()
+
+lr = 0.1
+num_epochs = 10
+for epoch in range(1, num_epochs + 1):
+    losses = []
+    for X, y in train_iter:
+        with autograd.record():
+            l = loss(model(X), y)
+            losses.append(l.asnumpy())
+        l.backward()
+        sgd(params,lr,batch_size)
+
+    loss_sum = np.mean(losses)
+    for Xt, yt in test_iter:
+        accy = accuracy(model(Xt),yt)
+        break
+
+    print('epoch %d, loss: %f, accy: %f' % (epoch,loss_sum,accy))</code></pre> 
+  <ul>
+   <li>out</li> 
+  </ul>
+  <pre class="has">
+<code class="language-bash">60000 10000
+epoch 1, loss: 0.776444, accy: 0.827000
+epoch 2, loss: 0.490361, accy: 0.855000
+epoch 3, loss: 0.433773, accy: 0.855000
+epoch 4, loss: 0.404391, accy: 0.833000
+epoch 5, loss: 0.380910, accy: 0.856000
+epoch 6, loss: 0.363898, accy: 0.873000
+epoch 7, loss: 0.351115, accy: 0.873000
+epoch 8, loss: 0.340445, accy: 0.875000
+epoch 9, loss: 0.328219, accy: 0.876000
+epoch 10, loss: 0.318909, accy: 0.872000</code></pre> 
+  <p>&nbsp;</p> 
+ </div> 
+</div>

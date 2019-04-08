@@ -1,0 +1,30 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div class="markdown_views"> 
+  <p>我们知道，目前在量化研究（主要指回测，快速验证，而非交易或生产阶段）阶段，行业主流的工具语言是Python,Matlab,R,Julia等偏动态语言（Julia动静均有）,其次就是C++,Java,C#….等静态语言。</p> 
+  <p>Rust是Mozilla开发的注重安全、性能和并发性的编程语言，也是一门近年来倍受关注、颇俱现代气质、颇俱创新、颇俱务实的系统级编程语言。基于对Rust的诸多特性的初步理解，我个人认为，Rust可能很适合用在量化的交易或生产阶段，因为可以很好降低交易代码中潜在的BUG，也容易进行生产调试。当然，其挑战是，是否能得到行业上认可。比如，绝大部分的交易的接口在未来的很长时间还会以C++方式显现。</p> 
+  <p>今天，主要探讨一下，Rust是否适合量化研究，即好用，而不管行业是否认可。</p> 
+  <p>我最简单的想法是，如果用Rust重写Julia研究框架，两者在策略开发效率和策略运行速度上有什么不同？如果有性价比上提升，那就是说明适合的，反之则不适合。</p> 
+  <p>Rust资源库可以参考：</p> 
+  <pre class="prettyprint"><code class=" hljs avrasm"><span class="hljs-label">https:</span>//github<span class="hljs-preprocessor">.com</span>/kud1ing/awesome-rust</code></pre> 
+  <p>一、基础探讨</p> 
+  <p>1、数据组织模块 <br> （1）大部分是从第三方的CSV文件 =&gt; 统一成标准化源数据格式（CSV）。 <br> （2）标准化的源数据格式(CSV) =&gt; MySQL， Sqlite3或SQLServer等,或HDF5 等策略基础数据。 <br> （3）策略基础数据 =&gt; 策略的Bar/Tick格式。 <br> （4）相关数据更新程序。</p> 
+  <p>Rust 基本上具备以上相关的库，具体如下： <br> BurntSushi/rust-csv =&gt;csv。 <br> Chrono 0.2.25 =&gt;Date,Time <br> aldanor/hdf5-rs =&gt;HDF5 <br> blackbeam/rust-mysql-simple =&gt;MySQL <br> linuxfood/rustsqlite — Sqlite3 =&gt;Sqlite <br> serde =&gt;serialize, deserialize</p> 
+  <p>综合评价： Rust的可行指数：4星。 <br> Python: 5星 <br> Julia :4星</p> 
+  <p>2、策略组织模块 <br> （1）数据组织表达力。 <br> （2）IDE。 =&gt; 策略组织编写是否便利。 <br> （3）相关基础统计工具包。 =&gt; 报表输出</p> 
+  <p>Julia有Dict结构、Array,而Rust有 HashMap、Vec. 两者有泛型。Rust和Julia,Python等在数据组织的表达力肯定没有问题的。</p> 
+  <p>IDE。Rust和Julia都可以用Atom，至少我是这样。但使用上，Julia占优。而Rust,我目前还结合着Atom和Shell在用，虽然没有Julia方便，但基础上影响不大。</p> 
+  <p>Julia的统计工具包，虽然比Matlab,Python，R差了一个数量级，但比Rust还有很有优势的。Rust的相关统计包非常少，功能也非常有限。估计轮子大部得重新造。要么只有等了。不过相信，很快就有新的包出来。总之，Rust在这个方面生态缺限会对报表输出模块产生较大的影响。</p> 
+  <p>综合评价： Rust的可行指数：2星。 <br> Julia: 4星 <br> Python:5星</p> 
+  <p>3、策略输出模块 <br> （1）相关画图工具包。 =&gt; 交易结果展示 <br> （2）IO。 =&gt;流水输出到CSV或Excel，便于查找和比对流水是否正确。</p> 
+  <p>Rust画图有gnuplot，也可以考虑matplotlib（实际上是matplotlib-rs）。但是和Julia的Gadfly、PyPlot、Plots、Winston相比，Rust的画图库还比较初级，选择余地也很小。</p> 
+  <p>在画图上，R、Python还是要大赞一下，值得各语言学习，精品多，选择余地大。 </p> 
+  <p>综合评价： Rust的可行指数：1星。 <br> 而R、Python: 5星。Julia :3星。</p> 
+  <p>二、实践比较</p> 
+  <p>4、策略实现效率 <br> （1）同一个CTA策略，我用Julia写，策略需要用1000行，那么Rust代码量会是多少？ <br> （2）同一策略实现，不同语言所花的时间。比如用Julia实现，从写到输出正确的结果，所用半小时，Rust是多少？</p> 
+  <p>5、策略运行效率 <br> （1）比如，同一个CTA策略，Julia运行下来需要10秒，Rust需要多少秒？ <br> （2）在不同的数据量级（100万、1000万级或1亿级别Bar/Tick），这个会差多少?</p> 
+ </div> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/markdown_views-ea0013b516.css"> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/wowotuo/article/details/52502547,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/wowotuo/article/details/52502547,&quot;}">阅读更多</a> 
+</div>

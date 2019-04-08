@@ -1,0 +1,314 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views">
+   1. 安装go 1.9
+  <br>&nbsp; 1.1 下载&nbsp;
+  <br>&nbsp; &nbsp; https://golang.org/doc/install?download=go1.9.4.linux-amd64.tar.gz
+  <br>&nbsp; 1.2 解压缩到目录 /home/bri/usr/go-1.9
+  <br>&nbsp; &nbsp; tar -C /home/bri/usr/go-1.9 &nbsp;-xzf go1.9.4.linux-amd64.tar.gz
+  <br>&nbsp; 1.3 修改/etc/profile增加环境变量
+  <br>---------------------
+  <br>#for go
+  <br>#gopath is woring directory
+  <br>export GOPATH=/home/bri/workspace/go
+  <br>#goroot is go install directory
+  <br>export GOROOT=/home/bri/usr/go-1.9/go
+  <br>export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+  <br>---------------------
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>&nbsp; 1.4 在liteide编译一个helloworld.go以验证安装无误
+  <br>&nbsp; 1.5 go version 检查版本为1.9
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>2.tendermint源码分析
+  <br>&nbsp; 2.1 获取源码
+  <br>&nbsp; &nbsp; git clone -b v0.15.0 https://github.com/tendermint/tendermint.git
+  <br>&nbsp; 2.2 tendermint官网
+  <br>&nbsp; &nbsp; https://www.tendermint.com/
+  <br>&nbsp; 2.3 tendermint文档
+  <br>&nbsp; &nbsp; https://tendermint.readthedocs.io/en/master/
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>3. tendermint文档要点
+  <br>&nbsp; 3.1 tendermint分量部分：共识引擎; 应用接口。共识引擎，又叫tendermint core。应用接口，又叫 ABCI，Application BlockChain Interface。tendermint的共识引擎可以单独部署，非go语言开发的应用也可以使用。
+  <br>&nbsp; 3.2 bft最多运行1/3的节点坏掉，这个坏掉是指任意的攻击诈骗行为。
+  <br>&nbsp; 3.3 早期，tendermint是内建的共识引擎，是pos的。现在，tendermint已经变成了通用的区块链共识引擎，支持各种应用，可拔插式的。
+  <br>&nbsp; 3.4 cosmos是一个基于tendermint的加密数字货币。https://cosmos.network/&nbsp;
+  <br>&nbsp; 3.5 ABCI，让多种语言可以写BFT共识应用。它的实现是TSP(tendermint socket protocal)
+  <br>&nbsp; 3.6 tendermint把共识引擎和p2p网络这两个东东解耦出来了，比特币是整体设计。解耦更好。
+  <br>&nbsp; 3.7 如果开发一个类似比特币的东东，ABCI和app分别解决不同的问题。ABCI需要解决的是：在节点间共享区块和交易事务; 用区块链建立不可变的事务次序。app需要解决的问题是：维护UTXO数据库; 验证交易事务的加密签名; 防范双花; 让客户端可以查询UTXO数据库。
+  <br>&nbsp; 3.8 ABCI有三种消息类型：DeliverTx; CheckTx; Commit。
+  <br>&nbsp; &nbsp; 3.8.1 DeliverTx 区块链上的每一个交易事务都是有DeliverTx消息发送的，app需要验证从DeliverTx收到的每个事务的当前状态，协议，加密验证等等。交易事务被验证后，app更新状态，把交易事务存入数据库，比如UTXO。
+  <br>&nbsp; &nbsp; 3.8.2 CheckTx 跟DeliverTx相似，但仅用于验证交易事务。
+  <br>&nbsp; &nbsp; 3.8.3 Commit 计算一个加密的提交给当前app的状态，这个提交将放在下一个区块的头部。
+  <br>&nbsp; 3.9 一个app可以创建多个ABCI socket连接，每个连接处理一类消息。这个一个流程https://tendermint.readthedocs.io/en/master/_images/abci.png&nbsp;
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>3. tendermint 二进制 安装
+  <br>&nbsp; 3.1 下载Linux 64的版本 https://github.com/tendermint/tendermint/releases 解压缩到~/usr/tendermint
+  <br>&nbsp; 3.2 运行
+  <br>&nbsp; &nbsp; 初始化 &nbsp;tendermint init
+  <br>&nbsp; &nbsp; 运行 &nbsp;tendermint node --proxy_app=dummy
+  <br>&nbsp; 3.3 tendermint配置分析
+  <br>&nbsp; &nbsp; 在~/.tendermint目录下，有三个json文件，有一个config.toml文件。
+  <br>&nbsp; &nbsp; addrbook.json是记录各节点的地址。
+  <br>&nbsp; &nbsp; priv_validator.json是私钥文件。&nbsp;
+  <br>&nbsp; &nbsp; genesis.json是公钥文件。
+  <br>&nbsp; &nbsp; config.toml是配置信息，包括proxy, 数据库，rpc, p2p等各参数。
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>4. tendermint源码结构
+  <br>&nbsp; 4.1 README.md 介绍性资料
+  <br>&nbsp; 4.2 Makefile &nbsp;go语言使用Makefile
+  <br>&nbsp; &nbsp; 4.2.1 编译tendermint需要安装gox(https://github.com/mitchellh/gox): go get github.com/mitchellh/gox &nbsp;&nbsp;
+  <br>&nbsp; &nbsp; 4.2.2 需要ghr https://github.com/tcnksm/ghr#install，安装 go get -u github.com/tcnksm/ghr
+  <br>&nbsp; &nbsp; 4.2.3 需要gometalinter.v2，安装 go get -u gopkg.in/alecthomas/gometalinter.v2
+  <br>&nbsp; &nbsp; 4.2.4 类似，大部分需要的库都以go get的形式安装即可，如果有些包找不到，就到github上搜，搜到后用go get安装
+  <br>&nbsp; 4.3 cobra库是一个命令行操作库，在https://github.com/spf13/cobra这里把demo运行一次就可以理解了，很简单。
+  <br>&nbsp;
+  <br>5 tendermint运行dummy分析
+  <br>&nbsp;5.1 运行tendermint node --proxy_app=dummy，出现如下提示
+  <br>&nbsp; &nbsp; I[02-13|04:57:32.545] Executed block &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; module=state height=95 validTxs=0 invalidTxs=0
+  <br>&nbsp; &nbsp; I[02-13|04:57:32.548] Committed state &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;module=state height=95 txs=0 appHash=
+  <br>&nbsp; &nbsp; I[02-13|04:57:33.603] Executed block &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; module=state height=96 validTxs=0 invalidTxs=0
+  <br>&nbsp; &nbsp; 由此，找到提示所在的代码，是
+  <br>&nbsp; &nbsp; state/execution.go:229:
+  <span> </span>logger.Info("Executed block", "height", block.Height, "validTxs", validTxs, "invalidTxs", invalidTxs)
+  <br>&nbsp; &nbsp; 这里对应的函数是execBlockOnProxyApp，这个函数，是先向abci提交block，然后再执行block，再跟投票节点更新validator。
+  <br>&nbsp; 5.2 execBlockOnProxyApp在state/execution.go:409被执行，此处函数名ExecCommitBlock，它做5.1的执行动作，然后向 链 提交block。
+  <br>&nbsp; 5.3 ExecCommitBlock在consensus/replay.go:344被执行，此处函数名replayBlocks。
+  <br>&nbsp; 5.4 replayBlocks又被同名首字母大写ReplayBlocks函数调用
+  <br>&nbsp; 5.5 ReplayBlocks被Handshake函数调用，
+  <br>&nbsp; 5.6 Handshake被proxy/multi_app_conn.go:108被调用，在接口里实现了multiAppConn的OnStart函数。NewMultiAppConn创建一组链接。
+  <br>&nbsp; 5.7 NewMultiAppConn被NewAppConns调用
+  <br>&nbsp; 5.8 NewAppConns被node/node.go:164 调用，也就是NewNode函数
+  <br>&nbsp; 5.9 NewNode函数被node/node.go:78调用，也就是DefaultNewNode
+  <br>&nbsp; 5.10 DefaultNewNode在cmd/tendermint/main.go:35调用
+  <br>&nbsp; 5.11 在main函数，cobra有一个NewRunNodeCmd操作DefaultNewNode，主要是为了创建新节点。
+  <br>&nbsp; 5.12 如果是本地运行，node init已经执行，然后运行 tendermint node --proxy_app=dummy，则进入AddNodeFlags函数设置参数，proxy_app对应config.ProxyApp，ProxyApp的默认值是"tcp://127.0.0.1:46658",
+  <br>&nbsp; 5.13&nbsp;
+  <br>
+  <br>
+  <br>6. 调试 dummy app的运行过程
+  <br>&nbsp; node --proxy_app=dummy
+  <br>&nbsp; 运行到run_node.go的n, err := nodeProvider(config, logger)就开始输出commit state信息了。nodeProvider就是 nm.NodeProvider
+  <br>&nbsp; 再到 node.go的NewNode
+  <br>&nbsp; 再到 blockStoreDB, err := dbProvider(&amp;DBContext{"blockstore", config})
+  <br>&nbsp; 再到 DefaultDBProvider
+  <br>&nbsp; 再到 proxyApp.Start()，开始启动服务，出现committed state
+  <br>&nbsp; 再到NewNode完成各种行为，
+  <br>&nbsp; NewNode函数最重要。
+  <br>
+  <br>
+  <br>7. tendermint node --proxy_app=dummy运行机制
+  <br>&nbsp; 7.1 这个过程，首先会启动一个进程内的dummy app，这个dummy app是一个client，每一秒向tendermint的共识引擎发送一次请求。client的代码在tendermint/abci/client.go和proxy/client.go里。
+  <br>&nbsp; 7.2 proxy/client.go:67，NewLocalClientCreator，调用NewDummyApplication
+  <br>&nbsp; 7.3 NewDummyApplication 在abci/example/dummy/dummy.go，这里根据abci接口定义了四个函数。
+  <br>&nbsp; 7.4 这个dummy讲发起各种任务给共识引擎。
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>8. tendermint文档
+  <br>&nbsp; 8.1 abci-cli.rst abci客户端教程，可以启动counter和dummy两个应用。
+  <br>&nbsp; &nbsp; 8.1.1 check_tx验证一个事务是不是正确。
+  <br>&nbsp; &nbsp; 8.1.2 commit 提交一个应用的状态，并返回默克尔树的hash
+  <br>&nbsp; &nbsp; 8.1.3 deliver_tx 向应用提交新的事务
+  <br>&nbsp; &nbsp; 8.1.4 info 让应用显示基础信息
+  <br>&nbsp; &nbsp; 8.1.5 query 查询应用状态
+  <br>&nbsp; &nbsp; 8.1.6 dummy使用过程
+  <br>&nbsp; &nbsp; &nbsp; 8.1.6.1 首先编译安装abci-cli
+  <br>&nbsp; &nbsp; &nbsp; 8.1.6.2 在一个窗口执行abci-cli dummy开启服务端。写一个server的范例在tendermint/abci/tree/master/server，这是go语言的。注意，这个服务端是不保存数据的，只要dummy关掉了，数据就消失了。
+  <br>&nbsp; &nbsp; &nbsp; 8.1.6.3 在另一个窗口执行abci-cli echo hello，这是dummy客户端命令。
+  <br>&nbsp; 8.1.7 counter使用过程
+  <br>&nbsp; &nbsp; 8.1.7.1 在一个窗口开启abci-cli counter
+  <br>&nbsp; &nbsp; 8.1.7.2 在另一个窗口开启abci-cli console
+  <br>&nbsp; &nbsp; 8.1.7.3 在cousole执行各种命令
+  <br>&nbsp; &nbsp; &nbsp; set_option serial on
+  <br>&nbsp; &nbsp; 8.1.7.4 一个js版本的counter https://github.com/tendermint/js-abci/tree/master/example
+  <br>&nbsp; 8.1.8 tendermint生态系统诸多开源项目 https://tendermint.com/ecosystem
+  <br>
+  <br>
+  <br>&nbsp; 8.2 app-architecture.rst
+  <br>&nbsp; &nbsp; 8.2.1 一个区块链应用涉及诸多方面，比abci示例演示的共识引擎和事务逻辑多得多，同时，也可能有移动、桌面、web能多种客户端。
+  <br>&nbsp; &nbsp; 8.2.2 安全：abci应用和tendermint core之间的连接，要高度保护，validator。app和core要在同一个机器里运行，如果app也是go语言写的，最好将app和core打包成一个二进制可执行代码，如果不是，那么要让core绑定只使用127.0.0.1的连接进来。如果这个做不到，使用ssh，注意保护validator机的权限，关闭一切非ssh服务，也不要让别人轻易接触这个机器。
+  <br>&nbsp; &nbsp; 8.2.3 tendermint core rpc: abci app跟外界做了充分隔离，只用一些有限的充分测试的接口给tendmint core进行通信。
+  <br>&nbsp; &nbsp; 8.2.4 自定义abci server: 示例项目https://github.com/wolfposd/TMChat。自定义服务器，支持rest或者websocket或者json-rpc等接口，由移动app使用，同时具有abci app和data store功能，可以处理复杂的时间。
+  <br>&nbsp; &nbsp; 8.2.5 扩展性：使用非验证节点，以便提升读和查询速度，除非validator节点数据太多了，以至于非验证节点无法及时更新。
+  <br>
+  <br>
+  <br>&nbsp; 8.3 app-development.rst
+  <br>&nbsp; &nbsp; 8.3.1 abci提供一个简洁的接口：单节点上的状态转换机，多节点上的状态转化机的复制。前者叫应用逻辑，后者叫共识机制。前者验证事务并执行事务，事务可能会修改状态机。共识引擎确保所有的事务在每个节点上都按照同样的顺序执行。共识引擎的每一个节点，叫做 validator。
+  <br>
+  <br>
+  <br>&nbsp; &nbsp; 8.3.2 abci提供的组件
+  <br>&nbsp; &nbsp; 8.3.3 abci server
+  <br>&nbsp; &nbsp; 8.3.4 abci client https://github.com/tendermint/abci/tree/master/client这里是一个范例。持久化dummy在https://github.com/tendermint/abci/blob/master/example/dummy/persistent_dummy.go，提供了区块链的开始，区块链结束，区块链初始化等动作。
+  <br>&nbsp; &nbsp; 8.3.5 区块链协议 &nbsp;在abci，一个事务就是一个简单的任意长度的字节数组，如何解释这个字节数组是应用app的事情。事务有两种运行阶段。第一阶段，validator从client接收到一个事务，它把事务放到内存池或者事务池，这里意味着checkTx。第二阶段，事务已经成功提交给三分之二的validator，称之为deliverTx。前一个阶段只做检查，不实际执行事务，后一个阶段会执行事务且由此改变状态机。
+  <br>&nbsp; &nbsp; 8.3.6 mempool连接 &nbsp;mempool连接只用于checktx请求。validator按照接收次序checktx运行事务。如果checktx返回ok，那么这些事务就会保存在内存里，然后以同样的次序转发给其他validtor。如果checktx返回错误，相关事务就会被抛弃。checktx同时也会并发运行区块处理，主区块链会实时更新维护最长区块，每个validator都有一份主区块的复制，checktx在这个复制链上执行事务。当一个区块被提交后，应用会主动更新复制链，然后tendermint core会根据最新的复制链，对mempoll里的事务进行过滤，去掉那些已经被最新区块打包的事务，以免出现重复，并且，会在post-commit阶段重新运行过滤后的事务。
+  <br>&nbsp; &nbsp; 8.3.7 共识连接 只在一个新块被提交时使用，这个块有一系列请求 beginblock delivertx,..., endblock, commit。tendermint以异步有序的方式转发delivertx请求确保app以同样的次序接收，block header可以存储一些信息，目前还没有做。
+  <br>&nbsp; &nbsp; &nbsp; commit，当一个块的所有处理都完成了，tendermint会发送commit请求和这个块，然后等到response，此时，mempool会上锁直到commit动作完成，所以应用不要在这个时候对mempool做任何阻塞通信，做了就死锁。commit完成后，应用会返回一个字节数组，这个字节数组是一个类似hash的用于验证区块有效性的东西，放在下一个区块。
+  <br>&nbsp; &nbsp; &nbsp; beginblock, 它可以运行每个区块的头部的代码，也可以让tendermint在发送事务之前发送当前区块的hash和头部给应用。建议应用保存最新的height和header，以便加快某些处理。
+  <br>&nbsp; &nbsp; &nbsp; endblock, 它运行每个区块的尾部的代码。此外，endblock的response也包含一系列的validator，以便更新validator set，所以如果要增加或者减少validator，只要把它们加在endblock的validator就行了，注意，修改的validator必须要少于三分之一，否则会导致无法形成共识。
+  <br>&nbsp; &nbsp; &nbsp; query连接，查询应用，不设计共识引擎。它在tendermint core rpc暴露，因此比较安全。tenddermint cor可以根据ip和公钥过滤节点。
+  <br>&nbsp; &nbsp; &nbsp; handshake，当app和tendermint重启，它们需要同步到同一个height，先建立abci连接，然后tendermint在query连接上调用infobinging，response包含lastblockheight和lastblockapphash，跟着这两个信息，tendermint判断如何做转发，以及如何做同步。
+  <br>&nbsp; &nbsp; &nbsp; genesis，创世，initchain在创世阶段执行一次，参数包括初始validator集，以及共识参数。
+  <br>&nbsp;&nbsp;
+  <br>&nbsp; 8.4 getting-started.rst 这个是使用两种demo的文档，演示用法。
+  <br>&nbsp; &nbsp; 8.4.1 Basecoin是一个更严谨的数字货币的例子。
+  <br>&nbsp; &nbsp; &nbsp; https://github.com/cosmos/cosmos-sdk
+  <br>&nbsp; &nbsp; &nbsp; http://cosmos-sdk.readthedocs.io/en/latest/basecoin-basics.html
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>&nbsp; 8.5 using-tendermint.rst &nbsp;这是一篇详细文档
+  <br>&nbsp; &nbsp; 根目录 ~/.tendermint
+  <br>&nbsp; &nbsp; init &nbsp; tendermint init
+  <br>&nbsp; &nbsp; run &nbsp; &nbsp;tendermint noe
+  <br>&nbsp; &nbsp; 事务 &nbsp; &nbsp;可以用curl发送事务
+  <br>&nbsp; &nbsp; reset &nbsp; 重置区块链
+  <br>&nbsp; &nbsp; 配置 &nbsp; &nbsp;config.toml用作配置，
+  <br>&nbsp; &nbsp; 不允许空区块 是可配置的
+  <br>&nbsp; &nbsp; 广播api &nbsp;早期，用broadcast_tx_commit广播事务，一个事务发送给tendermint节点，节点先做checktx，事务如果能通过checktx，则被加入到这个节点的mempoll，然后被转发给其他节点，然后最终打包到区块链。因为有多个阶段，因此有多个广播命令。
+  <br>&nbsp; &nbsp; Tendermint网络 &nbsp;创世文件包含多个公钥，这些公钥是参与共识投票的，也有权重。
+  <br>&nbsp; &nbsp; peers &nbsp; &nbsp;p2p网络，在启动的时候可以配置种子节点。可以增加非validator节点，也可以增加validator节点。
+  <br>&nbsp; &nbsp; 本地网络 &nbsp;测试用
+  <br>&nbsp; &nbsp; 升级 &nbsp; &nbsp; 这是一个很复杂的问题，要很小心，各版本差异比较大。
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>&nbsp;&nbsp;
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>&nbsp;
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>&nbsp;&nbsp;
+  <br>&nbsp; &nbsp;&nbsp;
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>9.https://github.com/hyperledger/burrow
+  <br>这是一个使用tendermint的类似以太坊的项目
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>10.py-tendermint项目 https://github.com/davebryson/py-tendermint
+  <br>
+  <br>
+  <br>11. py-abci项目 https://github.com/davebryson/py-abci
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>&nbsp;&nbsp;
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>&nbsp; &nbsp; &nbsp;&nbsp;
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>&nbsp; &nbsp;&nbsp;
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/lizhe_dashuju/article/details/79337544,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/lizhe_dashuju/article/details/79337544,&quot;}">阅读更多</a> 
+</div>

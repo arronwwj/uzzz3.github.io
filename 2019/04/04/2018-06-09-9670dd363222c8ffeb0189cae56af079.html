@@ -1,0 +1,129 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <div class="article-title-box" style="color:rgb(51,51,51);font-family:'SF Pro Display', Roboto, Noto, Arial, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;font-size:14px;">
+   <h1 class="title-article" style="font-size:24px;">Ubuntu下配置和编译cpp-ethereum客户端启动GPU加速交易</h1>
+  </div>
+  <div class="article_content clearfix csdn-tracking-statistics">
+   <div class="markdown_views" style="font-family:'-apple-system', 'SF UI Text', Arial, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'WenQuanYi Micro Hei', sans-serif, SimHei, SimSun;">
+    <p>Ethereum，中文翻译是“以太坊”，是一个公有区块链的开源项目。因为以太坊是基于P2P网络所以没有中心节点，所以用户仅安装Ethereum客户端即可连入Ethereum公共网络或者在自己的testnet下运行Ethereum。</p>
+    <p>以太坊客户端有很多语言的版本。&nbsp;<br><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180201090540968?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvamFtYmVhdQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述" title="">&nbsp;<br>本文选用的是C++版本。配置过程如下：&nbsp;<br>参考：<a href="http://ethdocs.org/en/latest/ethereum-clients/cpp-ethereum/index.html#installing-and-building" rel="nofollow">http://ethdocs.org/en/latest/ethereum-clients/cpp-ethereum/index.html#installing-and-building</a>&nbsp;<br>环境：Ubuntu16.04 x64&nbsp;<br>1.安装“eth”命令行工具</p>
+    <pre class="prettyprint" style="font-size:14px;line-height:22px;"><code class="hljs lasso has-numbering">sudo add<span class="hljs-attribute">-apt</span><span class="hljs-attribute">-repository</span> ppa:ethereum/ethereum<span class="hljs-attribute">-qt</span>
+sudo add<span class="hljs-attribute">-apt</span><span class="hljs-attribute">-repository</span> ppa:ethereum/ethereum
+sudo apt<span class="hljs-attribute">-get</span> update
+sudo apt<span class="hljs-attribute">-get</span> install cpp<span class="hljs-attribute">-ethereum</span></code></pre>
+    <ul class="pre-numbering">
+     <li style="color:rgb(153,153,153);">1</li>
+     <li style="color:rgb(153,153,153);">2</li>
+     <li style="color:rgb(153,153,153);">3</li>
+     <li style="color:rgb(153,153,153);">4</li>
+    </ul>
+    <p>2.安装Mix IDE(可选)</p>
+    <pre class="prettyprint" style="font-size:14px;line-height:22px;"><code class="hljs lasso has-numbering">sudo apt<span class="hljs-attribute">-get</span> install mix<span class="hljs-attribute">-ide</span>
+mix<span class="hljs-attribute">-ide</span></code></pre>
+    <ul class="pre-numbering">
+     <li style="color:rgb(153,153,153);">1</li>
+     <li style="color:rgb(153,153,153);">2</li>
+    </ul>
+    <p>3.获取源码</p>
+    <pre class="prettyprint" style="font-size:14px;line-height:22px;"><code class="hljs php has-numbering">git <span class="hljs-keyword">clone</span> --recursive https:<span class="hljs-comment">//github.com/ethereum/webthree-umbrella.git</span></code></pre>
+    <ul class="pre-numbering">
+     <li style="color:rgb(153,153,153);">1</li>
+    </ul>
+    <p>这个工程中可能会因为网络原因模块下载出错。一种比较笨的办法是删除下载webthree-umbrella目录，重新运行上面git clone命令&nbsp;<br>4. 配置编译环境</p>
+    <pre class="prettyprint" style="font-size:14px;line-height:22px;"><code class="hljs lasso has-numbering">sudo apt<span class="hljs-attribute">-get</span> <span class="hljs-attribute">-y</span> update
+sudo apt<span class="hljs-attribute">-get</span> <span class="hljs-attribute">-y</span> install language<span class="hljs-attribute">-pack</span><span class="hljs-attribute">-en</span><span class="hljs-attribute">-base</span>
+sudo dpkg<span class="hljs-attribute">-reconfigure</span> locales
+sudo apt<span class="hljs-attribute">-get</span> <span class="hljs-attribute">-y</span> install software<span class="hljs-attribute">-properties</span><span class="hljs-attribute">-common</span></code></pre>
+    <ul class="pre-numbering">
+     <li style="color:rgb(153,153,153);">1</li>
+     <li style="color:rgb(153,153,153);">2</li>
+     <li style="color:rgb(153,153,153);">3</li>
+     <li style="color:rgb(153,153,153);">4</li>
+    </ul>
+    <pre class="prettyprint" style="font-size:14px;line-height:22px;"><code class="hljs lasso has-numbering">sudo add<span class="hljs-attribute">-apt</span><span class="hljs-attribute">-repository</span> <span class="hljs-string">"deb http://llvm.org/apt/wily/ llvm-toolchain-wily-3.7 main"</span>
+wget <span class="hljs-attribute">-O</span> <span class="hljs-subst">-</span> http:<span class="hljs-comment">//llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -</span>
+sudo apt<span class="hljs-attribute">-get</span> <span class="hljs-attribute">-y</span> update
+sudo apt<span class="hljs-attribute">-get</span> <span class="hljs-attribute">-y</span> install llvm<span class="hljs-subst">-</span><span class="hljs-number">3.7</span><span class="hljs-attribute">-dev</span></code></pre>
+    <ul class="pre-numbering">
+     <li style="color:rgb(153,153,153);">1</li>
+     <li style="color:rgb(153,153,153);">2</li>
+     <li style="color:rgb(153,153,153);">3</li>
+     <li style="color:rgb(153,153,153);">4</li>
+    </ul>
+    <pre class="prettyprint" style="font-size:14px;line-height:22px;"><code class="hljs lasso has-numbering">sudo add<span class="hljs-attribute">-apt</span><span class="hljs-attribute">-repository</span> <span class="hljs-attribute">-y</span> ppa:ethereum/ethereum<span class="hljs-attribute">-qt</span>
+sudo add<span class="hljs-attribute">-apt</span><span class="hljs-attribute">-repository</span> <span class="hljs-attribute">-y</span> ppa:ethereum/ethereum
+sudo add<span class="hljs-attribute">-apt</span><span class="hljs-attribute">-repository</span> <span class="hljs-attribute">-y</span> ppa:ethereum/ethereum<span class="hljs-attribute">-dev</span>
+sudo apt<span class="hljs-attribute">-get</span> <span class="hljs-attribute">-y</span> update
+<span class="hljs-comment">//sudo apt-get -y upgrade //官方教程中这一步会更新系统，去掉此命令</span></code></pre>
+    <ul class="pre-numbering">
+     <li style="color:rgb(153,153,153);">1</li>
+     <li style="color:rgb(153,153,153);">2</li>
+     <li style="color:rgb(153,153,153);">3</li>
+     <li style="color:rgb(153,153,153);">4</li>
+     <li style="color:rgb(153,153,153);">5</li>
+    </ul>
+    <pre class="prettyprint" style="font-size:14px;line-height:22px;"><code class="hljs lasso has-numbering">sudo apt<span class="hljs-attribute">-get</span> <span class="hljs-attribute">-y</span> install build<span class="hljs-attribute">-essential</span> git cmake libboost<span class="hljs-attribute">-all</span><span class="hljs-attribute">-dev</span> libgmp<span class="hljs-attribute">-dev</span> <span class="hljs-subst">\</span>
+    libleveldb<span class="hljs-attribute">-dev</span> libminiupnpc<span class="hljs-attribute">-dev</span> libreadline<span class="hljs-attribute">-dev</span> libncurses5<span class="hljs-attribute">-dev</span> <span class="hljs-subst">\</span>
+    libcurl4<span class="hljs-attribute">-openssl</span><span class="hljs-attribute">-dev</span> libcryptopp<span class="hljs-attribute">-dev</span> libmicrohttpd<span class="hljs-attribute">-dev</span> libjsoncpp<span class="hljs-attribute">-dev</span> <span class="hljs-subst">\</span>
+    libargtable2<span class="hljs-attribute">-dev</span> libedit<span class="hljs-attribute">-dev</span> mesa<span class="hljs-attribute">-common</span><span class="hljs-attribute">-dev</span> ocl<span class="hljs-attribute">-icd</span><span class="hljs-attribute">-libopencl1</span> opencl<span class="hljs-attribute">-headers</span> <span class="hljs-subst">\</span>
+    libgoogle<span class="hljs-attribute">-perftools</span><span class="hljs-attribute">-dev</span> qtbase5<span class="hljs-attribute">-dev</span> qt5<span class="hljs-attribute">-default</span> qtdeclarative5<span class="hljs-attribute">-dev</span> <span class="hljs-subst">\</span>
+    libqt5webkit5<span class="hljs-attribute">-dev</span> libqt5webengine5<span class="hljs-attribute">-dev</span> ocl<span class="hljs-attribute">-icd</span><span class="hljs-attribute">-dev</span> libv8<span class="hljs-attribute">-dev</span> libz<span class="hljs-attribute">-dev</span>
+
+sudo apt<span class="hljs-attribute">-get</span> <span class="hljs-attribute">-y</span> install libjsonrpccpp<span class="hljs-attribute">-dev</span>
+sudo apt<span class="hljs-attribute">-get</span> <span class="hljs-attribute">-y</span> install qml<span class="hljs-attribute">-module</span><span class="hljs-attribute">-qtquick</span><span class="hljs-attribute">-controls</span> qml<span class="hljs-attribute">-module</span><span class="hljs-attribute">-qtwebengine</span></code></pre>
+    <ul class="pre-numbering">
+     <li style="color:rgb(153,153,153);">1</li>
+     <li style="color:rgb(153,153,153);">2</li>
+     <li style="color:rgb(153,153,153);">3</li>
+     <li style="color:rgb(153,153,153);">4</li>
+     <li style="color:rgb(153,153,153);">5</li>
+     <li style="color:rgb(153,153,153);">6</li>
+     <li style="color:rgb(153,153,153);">7</li>
+     <li style="color:rgb(153,153,153);">8</li>
+     <li style="color:rgb(153,153,153);">9</li>
+    </ul>
+    <p>5.编译</p>
+    <pre class="prettyprint" style="font-size:14px;line-height:22px;"><code class="hljs ruby has-numbering">mkdir build
+cd build
+cmake ..
+make
+(<span class="hljs-keyword">or</span>)
+make -j &lt;number&gt; <span class="hljs-regexp">//</span><span class="hljs-constant">Execute</span> makefile with multiple cores <span class="hljs-keyword">in</span> parallel</code></pre>
+    <ul class="pre-numbering">
+     <li style="color:rgb(153,153,153);">1</li>
+     <li style="color:rgb(153,153,153);">2</li>
+     <li style="color:rgb(153,153,153);">3</li>
+     <li style="color:rgb(153,153,153);">4</li>
+     <li style="color:rgb(153,153,153);">5</li>
+     <li style="color:rgb(153,153,153);">6</li>
+    </ul>
+    <p>6.测试&nbsp;<br>在终端运行eth命令就会开始启动cpp-ethereum客户端</p>
+    <pre class="prettyprint" style="font-size:14px;line-height:22px;"><code class="hljs ruby has-numbering">namenode<span class="hljs-variable">@namenodeIn1035</span><span class="hljs-symbol">:~/Code/ethereum</span><span class="hljs-variable">$ </span>eth</code></pre>
+    <ul class="pre-numbering">
+     <li style="color:rgb(153,153,153);">1</li>
+    </ul>
+    <p>7.之前在我的区块链开发（一）文章中将讲过如何安装geth客户端，现在就不讲如何安装geth客户端了，有兴趣的朋友查看我之前的文章。这里我们讲一下 配合使用ethminer和geth 实现GPU挖矿，目的是有些建立的私链，由于交易量增多，geth客户端的挖矿，只适合CPU，速率很低，我们为了提高交易速度，选择GPU提高交易速度。</p>
+    <p>7.1.启动geth客户端</p>
+    <pre class="prettyprint" style="font-size:14px;line-height:22px;"><code class="hljs brainfuck has-numbering">&gt;<span class="hljs-comment">geth</span> <span class="hljs-literal">-</span><span class="hljs-literal">-</span><span class="hljs-comment">datadir</span> <span class="hljs-comment">"</span><span class="hljs-string">.</span><span class="hljs-comment">/"</span> <span class="hljs-literal">-</span><span class="hljs-literal">-</span><span class="hljs-comment">rpcport</span> <span class="hljs-comment">8545</span> <span class="hljs-literal">-</span><span class="hljs-literal">-</span><span class="hljs-comment">rpcaddr</span> <span class="hljs-comment">"127</span><span class="hljs-string">.</span><span class="hljs-comment">0</span><span class="hljs-string">.</span><span class="hljs-comment">0</span><span class="hljs-string">.</span><span class="hljs-comment">1"</span> <span class="hljs-comment">console</span> <span class="hljs-comment">2</span>&gt;<span class="hljs-comment">geth</span><span class="hljs-string">.</span><span class="hljs-comment">log</span></code></pre>
+    <ul class="pre-numbering">
+     <li style="color:rgb(153,153,153);">1</li>
+    </ul>
+    <p>7.2启动ethminer使用GPU挖矿</p>
+    <pre class="prettyprint" style="font-size:14px;line-height:22px;"><code class="hljs bash has-numbering">ethminer -G // -G <span class="hljs-keyword">for</span> GPU, -M <span class="hljs-keyword">for</span> benchmark</code></pre>
+    <ul class="pre-numbering">
+     <li style="color:rgb(153,153,153);">1</li>
+    </ul>
+    <p>7.3.查看log文件</p>
+    <pre class="prettyprint" style="font-size:14px;line-height:22px;"><code class="hljs lasso has-numbering"><span class="hljs-subst">&gt;</span>tail <span class="hljs-attribute">-f</span> geth<span class="hljs-built_in">.</span><span class="hljs-keyword">log</span></code></pre>
+    <ul class="pre-numbering">
+     <li style="color:rgb(153,153,153);">1</li>
+    </ul>
+    <p>2018年2月1日整理。</p>
+   </div>
+  </div> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/starzhou/article/details/80631655,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/starzhou/article/details/80631655,&quot;}">阅读更多</a> 
+</div>

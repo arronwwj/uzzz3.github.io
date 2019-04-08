@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>区块链技术对比和实战项目选型 | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="区块链技术对比和实战项目选型" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="CTO区块链 链接CTO，做区块链布道的前行者 正文共：4551&nbsp;字&nbsp;17&nbsp;图 预计阅读时间：&nbsp;12&nbsp;分钟 讲到区块链技术对比和实战项目选型这个话题，我把这个内容分为三个部分。第一个部分：四大区块链项目的介绍，第二个部分：区块链技术对比，第三个部分：实战项目解析即选择用什么区块链技术。 第一部分讲到比特币，以太坊，EOS，和Linux下面的HyperLedger fabric联盟链。 &nbsp;&nbsp;第一个区块链技术是1.0，区块链技术的第一个应用。 以太坊被誉为区块链2.0，是因为它在比特币的基础上引入智能合约，让我们能够更自由的在区块链上进行编程。 第三个是被誉为区块链3.0的EOS，因为比特币和以太坊的TPS都比较低，EOS让链可以承受企业级并发。 第四个Fabric主要是联盟链类型的。 我们从比特币出发，首先为大家介绍一下，现在区块链典型链为形状的数据结构。 第一层是数据层，是以区块为单位的链状数据块结构。 第二层网络层，包括P2P网络、传播机制、验证机制。 第三层是共识层，就是我们平常说的POW，POS，DPOS这样的共识算法。 这三个是区块链技术的核心，所有的区块链技术一定会包含这三层。 再上面一层是激励层，也就是我们如何给矿工发那些奖励，在公链里面这一层是一定会有的，但是在与一些私链里面它可能并不需要去对他的矿工做一些奖励，那么也是可能没有的。 再上面一层是合约层，因为比特币出现的比较早，所以它的这一层是没有的，在以太坊上面，这一个会做的比较好一点。 最上层是应用层，是我们什么转账啊，或者做一些区块链应用这样一层结构。 这是我们区块链整体的一个架构。 比特币是最早也是全球最广泛使用和真正意义的去中心化区块链技术，但是不可否认的是它的pow算法是比较低效的，并且也比较耗能耗电，所以它在整个技术上是不够成熟的，但是不可否认的是它也是现在最大的一个链，毕竟最贵，因此它的开源技术体系非常值得参考。 以太坊是可编程的区块链，也就是引入了我们所说的智能合约。 它第一个是有一个EVM虚拟机，第二个是指定Solidity这种编程语言。以太坊官方支持Solidity，LLL和Serpent三种语言，但是在我们平时的开发中，大家最喜欢也最常用的还是Solidity语言。 第二个以太坊是使用了内存需求较高的哈希函数。 第三个是引入了一个叔块(Uncle Block)的激励机制，简单介绍一下叔块就是我们在挖矿的时候有可能会出现分叉，上面的部分会变成孤儿区块，那这个矿机之前所做的努力全部白费了，他也不会得到任何奖励。 在以太坊中，如图，高度三的最后这一块，可以将这个黄色方块的数据包含进去，那在这个黄色区块对于它来说就是叫做叔块。这一块对这个叔块可以获得这样一个奖励。 以太坊之所以要引入这样一个机制，主要是因为它的块的生成时间比比特币要快很多，所以也更容易出现这种情况，为了让这个问题得到更好的解决，于是引入了叔块机制。 第四就是挖矿的难度也会有一定的调整。 第五个是以太坊里的gas在以太坊上面运用智能合约是需要消耗gas的，引入这个是而为了避免循环攻击。也就是说你写一些智能合约难免会出现死循环的情况，可是在区块链上又不像平时的应用直接重启就可以。所以需要使用gas避免这种循环的情况，当gas用完了这个程序就不能继续下去了，可以避免这种循环攻击。 第六个是记录当前状态的哈希树的根哈希值到区块来实现轻量级客户端。 下面还写了一个就是最新的区块率，现在以太坊上大概有20.9%的叔块，括号里是可以查看以太坊状态的网站（www.etherchain.org/）可以查到实时资料。 下面介绍一下EOS，现在EOS公链公网都还没有上线，但是即将上线了。 它第一个是引入了DPOS 共识算法和石墨烯底层工具组，能够满足每秒上万次，甚至每秒上百万次交易请求的企业级应用需求。因为以太坊的并发太小了，很多项目都不能跑起来。 第二个EOS上转账交易与运行智能合约并不需要消耗系统代币，这个是和以太坊不太相同的一点，那么EOS上的代币是用来干什么的呢？就是用来获取系统资源的，就是我占有所少的代币，那么我就可以获取多少的系统资源。这样我们的系统资源在别的项目出现比如泵块的情况就不会影响到我，比如以太坊上面并发过大会导致全网瘫痪之类的。 第三个是EOS上面提出了“宪/法”这个概念，主要就是制定了一些大家需要共同遵守的一些约定还有就是出现一些错误的时候用于区分此错误是否确实为 bug，并判断社区的修复举措是否得当。 第四个是EOS 上也算是有设置以太虚拟机（EVM），能够支持现有在以太坊运行的智能合约。现存在于以太坊的区块链应用，通过添加少量适配，就能够在 EOS 系统上运行。但是因为效率问题，官方还是推荐C++进行智能合约的编写，他们认为C++是效率最高的。 第五点是 EOS 新增了官方的 WebAssembly 解释器，用来解释执行 WebAssembly 智能合约，加上之前的编译执行，EOS 智能合约有了两种执行方式。 前面公链项目介绍完之后我们来介绍一下HyperLedger fabric这个项目。fabric是一个带有可插入各种功能模块架构的区块链实施方案，他的目标是打造成一个由全社会来共同维护的一个超级账本。 主要核心逻辑分为三个部分。 1.Membership Services：就是权限控制啊之类的用来管理节点身份、隐私、保密性、可审计性。在fabric升级到1.0之后Membership Services也改名为Fabric-ca，现在也作为了一个单独的项目，大家也可以在网上看到。 2.Blockchain services：也就是平时说的区块链的那一部分，采取可插拔的方式来根据具体需求来设置共识协议选择共识算法，比如PBFT，Raft，PoW和PoS等等，IBM首选PBFT算法。 3.Chaincode services：提供一种安全且轻量级的沙盒运行模式，来在VP节点上执行chaincode逻辑，类似以太坊的EVM虚拟机及其他上面运行的智能合约。 Fabric是支持java,go和Nodejs语言的一个Chaincode。 介绍完四个项目后还要给大家介绍两个重要的技术。 一个是闪电网络&amp;雷电网络。其实这个就是为了解决比特币区块链的瓶颈处理能力而生的。 好像就是说我给你转一笔钱，但是之前我们都需要去银行排半天队，还要花很多的手续费，我们才能进行这样一个转账的操作，那么当我的转账金额比较小或者是频率较高的时候非常不划算，这样我排队的时间也非常长，我交的手续费也非常的多，那么在这个时候就出现了一个闪电网络，我们也可以把它理解长支付宝。相当于我先花了一部分钱放到支付宝里，那么我就可以用这一笔钱在支付宝内和你进行很多次的交易很多次操作。最后只有我在需要把这一笔钱提出来的时候我才需要再去银行也就是比特币上面排一次队，做一次记录操作。 我们可以简单地这样来理解这两个网络的作用。其中的两个核心概念一个是RSMC（Recoverable Sequence Maturity Contract）相当于一个保证金和 HTLC（Hashed Timelock Contract）。 前者解决了链下交易的确认问题，后者解决了支付通道的问题。这就是闪电网络。 而雷电网络就可以理解为一种脱机缩放解决方案，用于在Ethereum块链中执行符合ERC20标准的令牌传输。 它是Ethereum的Bitcoin闪电网络版本，可实现近即时，低费用，可扩展和隐私保护的付款。 不同点是雷电网络除了可以支持以太币以外也可以支持所有ERC20标准的令牌传输。 下面一个是0x协议。 0x协议，全称OxProject。0x是一个点对点交易的开源协议，以促进以太坊区块链中ERC20代币的交易。 该协议旨在作为开放标准和通用构建模块，推动包括交易所功能的去中心化应用（DApps）之间的互操作性。 0x是基于以太坊区块链的去中心化交易所开源协议。这个协议是通过以太坊的智能合约来创建的，它可以让任何人都能开设和运行去中心化交易所。 0x是基于以太坊区块链的p2p的ERC20代币交易所协议。它有标准的开源协议、通用的创建区块，在分布式应用中实现交易功能的互操作性。基于0x协议的去中心化应用可以进入公开的流动池，或创建自己的流动池，并收取一定的手续费。 介绍完这些项目和技术的基本情况，下面这个图就是一整个的对比。 第一个是账户设计，比特币的账户设计是UTXO，是以余额，就像是我的钱包里有120块钱，你这个东西10块钱，那么我就拿10块钱出来买就好了。其他的基于账户的就像微信支付这样的，要支付首先我要看是否有这个账户，并且这个账户是否有足够的余额，在这两者都满足的情况下，我才能完成这一笔交易。 下面很大一个区别就是他们每一个的共识算法都是不一样的，比特币是工作量证明机制，我只要满足了我的工作量，谁第一个算出来谁就获得这个计量群。 以太坊现在还是用的工作量证明机制，在未来的话他会用到POS，也就是说我的账户上如果有以太坊的币的话，是根据我的币的数量和和我存放币的时间，那么我可以获得一个相应比例的降低难度。如果我的币多，拥有的时间长，那么我这一次算的难度就会减小，就可以更快的算出这个东西，就可以更快的获得我的区块。 EOS的DPOS就是委托权益证明机制，就是我可能会先投出21个节点，后面所有的记账的任务都由这21个节点来做，那么他们之间就是一个合作的关系，而不像前面两个都是竞争的关系。 最后一个PBFT是一个拜占庭容错算法，这个的问题是它需要两两之间都可以互相通信，所以不适合在公网上使用，因为会增加网络成本。 最后面的智能合约C++/JAVA等语言对于程序员会更加友好，因为他们的功能更加完善，而Solidity则是需要自己完善很多的功能。 那在介绍完前面的内容之后，我们以两个例子为例，来分析洗一下如何在实际的开发过程中，怎么去选择我们的区块链。 第一个例子是： 我们可能在保险公司买了保险，那么在面对保险公司的怀疑时，因为我们把数据放在了区块链上，保证了数据的真实性，很多的问题因为这个被实时共享的信息而被解决，也不用担心数据的有效性问题和安全性问题。这个时候很重要的一点是数据上链时候的真实性，就是我们要保证这个数据是真实的，此时每一个上链节点的身份是都是需要保证是真实的我们知道的。所以在这种情况下我们需要知道网络成员和上链人员的身份。同时我作为病人，数据的选择公开性也是需要考虑的，这个时候更适合的是选用联盟链即Fabric里面的Membership Services可以帮助我们解决很多在身份认证上面的一些问题。 第二个例子是： 我们经常会看到很多筹集资金的项目，那么在这些项目中，资金的去向，我们资金总数的真实性也是很重要的，把数据放在区块链上，可以保证我们的资金的去向，可以保证公益项目的成功开展。 这样的话可能就会选择以太坊，一是因为有智能合约，可以保证我们的一开始输入的金额的锁定，以及后续的一些功能，我们都可以用智能合约的编写来实现。第二个是以太坊的价值是被公众普遍认可的，最后是所有数据公开透明，所有的交易都可以在以太坊上面查到。所以在这样的情况下，我们更倾向于使用以太坊的官网来事先这样一个公益众筹平台项目。 那我今天所有的内容就结束了，谢谢大家。 ↓↓↓ 点击&quot;阅读原文&quot; 【查看视频回放】&nbsp;&nbsp; 阅读更多" />
+<meta property="og:description" content="CTO区块链 链接CTO，做区块链布道的前行者 正文共：4551&nbsp;字&nbsp;17&nbsp;图 预计阅读时间：&nbsp;12&nbsp;分钟 讲到区块链技术对比和实战项目选型这个话题，我把这个内容分为三个部分。第一个部分：四大区块链项目的介绍，第二个部分：区块链技术对比，第三个部分：实战项目解析即选择用什么区块链技术。 第一部分讲到比特币，以太坊，EOS，和Linux下面的HyperLedger fabric联盟链。 &nbsp;&nbsp;第一个区块链技术是1.0，区块链技术的第一个应用。 以太坊被誉为区块链2.0，是因为它在比特币的基础上引入智能合约，让我们能够更自由的在区块链上进行编程。 第三个是被誉为区块链3.0的EOS，因为比特币和以太坊的TPS都比较低，EOS让链可以承受企业级并发。 第四个Fabric主要是联盟链类型的。 我们从比特币出发，首先为大家介绍一下，现在区块链典型链为形状的数据结构。 第一层是数据层，是以区块为单位的链状数据块结构。 第二层网络层，包括P2P网络、传播机制、验证机制。 第三层是共识层，就是我们平常说的POW，POS，DPOS这样的共识算法。 这三个是区块链技术的核心，所有的区块链技术一定会包含这三层。 再上面一层是激励层，也就是我们如何给矿工发那些奖励，在公链里面这一层是一定会有的，但是在与一些私链里面它可能并不需要去对他的矿工做一些奖励，那么也是可能没有的。 再上面一层是合约层，因为比特币出现的比较早，所以它的这一层是没有的，在以太坊上面，这一个会做的比较好一点。 最上层是应用层，是我们什么转账啊，或者做一些区块链应用这样一层结构。 这是我们区块链整体的一个架构。 比特币是最早也是全球最广泛使用和真正意义的去中心化区块链技术，但是不可否认的是它的pow算法是比较低效的，并且也比较耗能耗电，所以它在整个技术上是不够成熟的，但是不可否认的是它也是现在最大的一个链，毕竟最贵，因此它的开源技术体系非常值得参考。 以太坊是可编程的区块链，也就是引入了我们所说的智能合约。 它第一个是有一个EVM虚拟机，第二个是指定Solidity这种编程语言。以太坊官方支持Solidity，LLL和Serpent三种语言，但是在我们平时的开发中，大家最喜欢也最常用的还是Solidity语言。 第二个以太坊是使用了内存需求较高的哈希函数。 第三个是引入了一个叔块(Uncle Block)的激励机制，简单介绍一下叔块就是我们在挖矿的时候有可能会出现分叉，上面的部分会变成孤儿区块，那这个矿机之前所做的努力全部白费了，他也不会得到任何奖励。 在以太坊中，如图，高度三的最后这一块，可以将这个黄色方块的数据包含进去，那在这个黄色区块对于它来说就是叫做叔块。这一块对这个叔块可以获得这样一个奖励。 以太坊之所以要引入这样一个机制，主要是因为它的块的生成时间比比特币要快很多，所以也更容易出现这种情况，为了让这个问题得到更好的解决，于是引入了叔块机制。 第四就是挖矿的难度也会有一定的调整。 第五个是以太坊里的gas在以太坊上面运用智能合约是需要消耗gas的，引入这个是而为了避免循环攻击。也就是说你写一些智能合约难免会出现死循环的情况，可是在区块链上又不像平时的应用直接重启就可以。所以需要使用gas避免这种循环的情况，当gas用完了这个程序就不能继续下去了，可以避免这种循环攻击。 第六个是记录当前状态的哈希树的根哈希值到区块来实现轻量级客户端。 下面还写了一个就是最新的区块率，现在以太坊上大概有20.9%的叔块，括号里是可以查看以太坊状态的网站（www.etherchain.org/）可以查到实时资料。 下面介绍一下EOS，现在EOS公链公网都还没有上线，但是即将上线了。 它第一个是引入了DPOS 共识算法和石墨烯底层工具组，能够满足每秒上万次，甚至每秒上百万次交易请求的企业级应用需求。因为以太坊的并发太小了，很多项目都不能跑起来。 第二个EOS上转账交易与运行智能合约并不需要消耗系统代币，这个是和以太坊不太相同的一点，那么EOS上的代币是用来干什么的呢？就是用来获取系统资源的，就是我占有所少的代币，那么我就可以获取多少的系统资源。这样我们的系统资源在别的项目出现比如泵块的情况就不会影响到我，比如以太坊上面并发过大会导致全网瘫痪之类的。 第三个是EOS上面提出了“宪/法”这个概念，主要就是制定了一些大家需要共同遵守的一些约定还有就是出现一些错误的时候用于区分此错误是否确实为 bug，并判断社区的修复举措是否得当。 第四个是EOS 上也算是有设置以太虚拟机（EVM），能够支持现有在以太坊运行的智能合约。现存在于以太坊的区块链应用，通过添加少量适配，就能够在 EOS 系统上运行。但是因为效率问题，官方还是推荐C++进行智能合约的编写，他们认为C++是效率最高的。 第五点是 EOS 新增了官方的 WebAssembly 解释器，用来解释执行 WebAssembly 智能合约，加上之前的编译执行，EOS 智能合约有了两种执行方式。 前面公链项目介绍完之后我们来介绍一下HyperLedger fabric这个项目。fabric是一个带有可插入各种功能模块架构的区块链实施方案，他的目标是打造成一个由全社会来共同维护的一个超级账本。 主要核心逻辑分为三个部分。 1.Membership Services：就是权限控制啊之类的用来管理节点身份、隐私、保密性、可审计性。在fabric升级到1.0之后Membership Services也改名为Fabric-ca，现在也作为了一个单独的项目，大家也可以在网上看到。 2.Blockchain services：也就是平时说的区块链的那一部分，采取可插拔的方式来根据具体需求来设置共识协议选择共识算法，比如PBFT，Raft，PoW和PoS等等，IBM首选PBFT算法。 3.Chaincode services：提供一种安全且轻量级的沙盒运行模式，来在VP节点上执行chaincode逻辑，类似以太坊的EVM虚拟机及其他上面运行的智能合约。 Fabric是支持java,go和Nodejs语言的一个Chaincode。 介绍完四个项目后还要给大家介绍两个重要的技术。 一个是闪电网络&amp;雷电网络。其实这个就是为了解决比特币区块链的瓶颈处理能力而生的。 好像就是说我给你转一笔钱，但是之前我们都需要去银行排半天队，还要花很多的手续费，我们才能进行这样一个转账的操作，那么当我的转账金额比较小或者是频率较高的时候非常不划算，这样我排队的时间也非常长，我交的手续费也非常的多，那么在这个时候就出现了一个闪电网络，我们也可以把它理解长支付宝。相当于我先花了一部分钱放到支付宝里，那么我就可以用这一笔钱在支付宝内和你进行很多次的交易很多次操作。最后只有我在需要把这一笔钱提出来的时候我才需要再去银行也就是比特币上面排一次队，做一次记录操作。 我们可以简单地这样来理解这两个网络的作用。其中的两个核心概念一个是RSMC（Recoverable Sequence Maturity Contract）相当于一个保证金和 HTLC（Hashed Timelock Contract）。 前者解决了链下交易的确认问题，后者解决了支付通道的问题。这就是闪电网络。 而雷电网络就可以理解为一种脱机缩放解决方案，用于在Ethereum块链中执行符合ERC20标准的令牌传输。 它是Ethereum的Bitcoin闪电网络版本，可实现近即时，低费用，可扩展和隐私保护的付款。 不同点是雷电网络除了可以支持以太币以外也可以支持所有ERC20标准的令牌传输。 下面一个是0x协议。 0x协议，全称OxProject。0x是一个点对点交易的开源协议，以促进以太坊区块链中ERC20代币的交易。 该协议旨在作为开放标准和通用构建模块，推动包括交易所功能的去中心化应用（DApps）之间的互操作性。 0x是基于以太坊区块链的去中心化交易所开源协议。这个协议是通过以太坊的智能合约来创建的，它可以让任何人都能开设和运行去中心化交易所。 0x是基于以太坊区块链的p2p的ERC20代币交易所协议。它有标准的开源协议、通用的创建区块，在分布式应用中实现交易功能的互操作性。基于0x协议的去中心化应用可以进入公开的流动池，或创建自己的流动池，并收取一定的手续费。 介绍完这些项目和技术的基本情况，下面这个图就是一整个的对比。 第一个是账户设计，比特币的账户设计是UTXO，是以余额，就像是我的钱包里有120块钱，你这个东西10块钱，那么我就拿10块钱出来买就好了。其他的基于账户的就像微信支付这样的，要支付首先我要看是否有这个账户，并且这个账户是否有足够的余额，在这两者都满足的情况下，我才能完成这一笔交易。 下面很大一个区别就是他们每一个的共识算法都是不一样的，比特币是工作量证明机制，我只要满足了我的工作量，谁第一个算出来谁就获得这个计量群。 以太坊现在还是用的工作量证明机制，在未来的话他会用到POS，也就是说我的账户上如果有以太坊的币的话，是根据我的币的数量和和我存放币的时间，那么我可以获得一个相应比例的降低难度。如果我的币多，拥有的时间长，那么我这一次算的难度就会减小，就可以更快的算出这个东西，就可以更快的获得我的区块。 EOS的DPOS就是委托权益证明机制，就是我可能会先投出21个节点，后面所有的记账的任务都由这21个节点来做，那么他们之间就是一个合作的关系，而不像前面两个都是竞争的关系。 最后一个PBFT是一个拜占庭容错算法，这个的问题是它需要两两之间都可以互相通信，所以不适合在公网上使用，因为会增加网络成本。 最后面的智能合约C++/JAVA等语言对于程序员会更加友好，因为他们的功能更加完善，而Solidity则是需要自己完善很多的功能。 那在介绍完前面的内容之后，我们以两个例子为例，来分析洗一下如何在实际的开发过程中，怎么去选择我们的区块链。 第一个例子是： 我们可能在保险公司买了保险，那么在面对保险公司的怀疑时，因为我们把数据放在了区块链上，保证了数据的真实性，很多的问题因为这个被实时共享的信息而被解决，也不用担心数据的有效性问题和安全性问题。这个时候很重要的一点是数据上链时候的真实性，就是我们要保证这个数据是真实的，此时每一个上链节点的身份是都是需要保证是真实的我们知道的。所以在这种情况下我们需要知道网络成员和上链人员的身份。同时我作为病人，数据的选择公开性也是需要考虑的，这个时候更适合的是选用联盟链即Fabric里面的Membership Services可以帮助我们解决很多在身份认证上面的一些问题。 第二个例子是： 我们经常会看到很多筹集资金的项目，那么在这些项目中，资金的去向，我们资金总数的真实性也是很重要的，把数据放在区块链上，可以保证我们的资金的去向，可以保证公益项目的成功开展。 这样的话可能就会选择以太坊，一是因为有智能合约，可以保证我们的一开始输入的金额的锁定，以及后续的一些功能，我们都可以用智能合约的编写来实现。第二个是以太坊的价值是被公众普遍认可的，最后是所有数据公开透明，所有的交易都可以在以太坊上面查到。所以在这样的情况下，我们更倾向于使用以太坊的官网来事先这样一个公益众筹平台项目。 那我今天所有的内容就结束了，谢谢大家。 ↓↓↓ 点击&quot;阅读原文&quot; 【查看视频回放】&nbsp;&nbsp; 阅读更多" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/04/24/%E5%8C%BA%E5%9D%97%E9%93%BE%E6%8A%80%E6%9C%AF%E5%AF%B9%E6%AF%94%E5%92%8C%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE%E9%80%89%E5%9E%8B.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/04/24/%E5%8C%BA%E5%9D%97%E9%93%BE%E6%8A%80%E6%9C%AF%E5%AF%B9%E6%AF%94%E5%92%8C%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE%E9%80%89%E5%9E%8B.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-04-24T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"CTO区块链 链接CTO，做区块链布道的前行者 正文共：4551&nbsp;字&nbsp;17&nbsp;图 预计阅读时间：&nbsp;12&nbsp;分钟 讲到区块链技术对比和实战项目选型这个话题，我把这个内容分为三个部分。第一个部分：四大区块链项目的介绍，第二个部分：区块链技术对比，第三个部分：实战项目解析即选择用什么区块链技术。 第一部分讲到比特币，以太坊，EOS，和Linux下面的HyperLedger fabric联盟链。 &nbsp;&nbsp;第一个区块链技术是1.0，区块链技术的第一个应用。 以太坊被誉为区块链2.0，是因为它在比特币的基础上引入智能合约，让我们能够更自由的在区块链上进行编程。 第三个是被誉为区块链3.0的EOS，因为比特币和以太坊的TPS都比较低，EOS让链可以承受企业级并发。 第四个Fabric主要是联盟链类型的。 我们从比特币出发，首先为大家介绍一下，现在区块链典型链为形状的数据结构。 第一层是数据层，是以区块为单位的链状数据块结构。 第二层网络层，包括P2P网络、传播机制、验证机制。 第三层是共识层，就是我们平常说的POW，POS，DPOS这样的共识算法。 这三个是区块链技术的核心，所有的区块链技术一定会包含这三层。 再上面一层是激励层，也就是我们如何给矿工发那些奖励，在公链里面这一层是一定会有的，但是在与一些私链里面它可能并不需要去对他的矿工做一些奖励，那么也是可能没有的。 再上面一层是合约层，因为比特币出现的比较早，所以它的这一层是没有的，在以太坊上面，这一个会做的比较好一点。 最上层是应用层，是我们什么转账啊，或者做一些区块链应用这样一层结构。 这是我们区块链整体的一个架构。 比特币是最早也是全球最广泛使用和真正意义的去中心化区块链技术，但是不可否认的是它的pow算法是比较低效的，并且也比较耗能耗电，所以它在整个技术上是不够成熟的，但是不可否认的是它也是现在最大的一个链，毕竟最贵，因此它的开源技术体系非常值得参考。 以太坊是可编程的区块链，也就是引入了我们所说的智能合约。 它第一个是有一个EVM虚拟机，第二个是指定Solidity这种编程语言。以太坊官方支持Solidity，LLL和Serpent三种语言，但是在我们平时的开发中，大家最喜欢也最常用的还是Solidity语言。 第二个以太坊是使用了内存需求较高的哈希函数。 第三个是引入了一个叔块(Uncle Block)的激励机制，简单介绍一下叔块就是我们在挖矿的时候有可能会出现分叉，上面的部分会变成孤儿区块，那这个矿机之前所做的努力全部白费了，他也不会得到任何奖励。 在以太坊中，如图，高度三的最后这一块，可以将这个黄色方块的数据包含进去，那在这个黄色区块对于它来说就是叫做叔块。这一块对这个叔块可以获得这样一个奖励。 以太坊之所以要引入这样一个机制，主要是因为它的块的生成时间比比特币要快很多，所以也更容易出现这种情况，为了让这个问题得到更好的解决，于是引入了叔块机制。 第四就是挖矿的难度也会有一定的调整。 第五个是以太坊里的gas在以太坊上面运用智能合约是需要消耗gas的，引入这个是而为了避免循环攻击。也就是说你写一些智能合约难免会出现死循环的情况，可是在区块链上又不像平时的应用直接重启就可以。所以需要使用gas避免这种循环的情况，当gas用完了这个程序就不能继续下去了，可以避免这种循环攻击。 第六个是记录当前状态的哈希树的根哈希值到区块来实现轻量级客户端。 下面还写了一个就是最新的区块率，现在以太坊上大概有20.9%的叔块，括号里是可以查看以太坊状态的网站（www.etherchain.org/）可以查到实时资料。 下面介绍一下EOS，现在EOS公链公网都还没有上线，但是即将上线了。 它第一个是引入了DPOS 共识算法和石墨烯底层工具组，能够满足每秒上万次，甚至每秒上百万次交易请求的企业级应用需求。因为以太坊的并发太小了，很多项目都不能跑起来。 第二个EOS上转账交易与运行智能合约并不需要消耗系统代币，这个是和以太坊不太相同的一点，那么EOS上的代币是用来干什么的呢？就是用来获取系统资源的，就是我占有所少的代币，那么我就可以获取多少的系统资源。这样我们的系统资源在别的项目出现比如泵块的情况就不会影响到我，比如以太坊上面并发过大会导致全网瘫痪之类的。 第三个是EOS上面提出了“宪/法”这个概念，主要就是制定了一些大家需要共同遵守的一些约定还有就是出现一些错误的时候用于区分此错误是否确实为 bug，并判断社区的修复举措是否得当。 第四个是EOS 上也算是有设置以太虚拟机（EVM），能够支持现有在以太坊运行的智能合约。现存在于以太坊的区块链应用，通过添加少量适配，就能够在 EOS 系统上运行。但是因为效率问题，官方还是推荐C++进行智能合约的编写，他们认为C++是效率最高的。 第五点是 EOS 新增了官方的 WebAssembly 解释器，用来解释执行 WebAssembly 智能合约，加上之前的编译执行，EOS 智能合约有了两种执行方式。 前面公链项目介绍完之后我们来介绍一下HyperLedger fabric这个项目。fabric是一个带有可插入各种功能模块架构的区块链实施方案，他的目标是打造成一个由全社会来共同维护的一个超级账本。 主要核心逻辑分为三个部分。 1.Membership Services：就是权限控制啊之类的用来管理节点身份、隐私、保密性、可审计性。在fabric升级到1.0之后Membership Services也改名为Fabric-ca，现在也作为了一个单独的项目，大家也可以在网上看到。 2.Blockchain services：也就是平时说的区块链的那一部分，采取可插拔的方式来根据具体需求来设置共识协议选择共识算法，比如PBFT，Raft，PoW和PoS等等，IBM首选PBFT算法。 3.Chaincode services：提供一种安全且轻量级的沙盒运行模式，来在VP节点上执行chaincode逻辑，类似以太坊的EVM虚拟机及其他上面运行的智能合约。 Fabric是支持java,go和Nodejs语言的一个Chaincode。 介绍完四个项目后还要给大家介绍两个重要的技术。 一个是闪电网络&amp;雷电网络。其实这个就是为了解决比特币区块链的瓶颈处理能力而生的。 好像就是说我给你转一笔钱，但是之前我们都需要去银行排半天队，还要花很多的手续费，我们才能进行这样一个转账的操作，那么当我的转账金额比较小或者是频率较高的时候非常不划算，这样我排队的时间也非常长，我交的手续费也非常的多，那么在这个时候就出现了一个闪电网络，我们也可以把它理解长支付宝。相当于我先花了一部分钱放到支付宝里，那么我就可以用这一笔钱在支付宝内和你进行很多次的交易很多次操作。最后只有我在需要把这一笔钱提出来的时候我才需要再去银行也就是比特币上面排一次队，做一次记录操作。 我们可以简单地这样来理解这两个网络的作用。其中的两个核心概念一个是RSMC（Recoverable Sequence Maturity Contract）相当于一个保证金和 HTLC（Hashed Timelock Contract）。 前者解决了链下交易的确认问题，后者解决了支付通道的问题。这就是闪电网络。 而雷电网络就可以理解为一种脱机缩放解决方案，用于在Ethereum块链中执行符合ERC20标准的令牌传输。 它是Ethereum的Bitcoin闪电网络版本，可实现近即时，低费用，可扩展和隐私保护的付款。 不同点是雷电网络除了可以支持以太币以外也可以支持所有ERC20标准的令牌传输。 下面一个是0x协议。 0x协议，全称OxProject。0x是一个点对点交易的开源协议，以促进以太坊区块链中ERC20代币的交易。 该协议旨在作为开放标准和通用构建模块，推动包括交易所功能的去中心化应用（DApps）之间的互操作性。 0x是基于以太坊区块链的去中心化交易所开源协议。这个协议是通过以太坊的智能合约来创建的，它可以让任何人都能开设和运行去中心化交易所。 0x是基于以太坊区块链的p2p的ERC20代币交易所协议。它有标准的开源协议、通用的创建区块，在分布式应用中实现交易功能的互操作性。基于0x协议的去中心化应用可以进入公开的流动池，或创建自己的流动池，并收取一定的手续费。 介绍完这些项目和技术的基本情况，下面这个图就是一整个的对比。 第一个是账户设计，比特币的账户设计是UTXO，是以余额，就像是我的钱包里有120块钱，你这个东西10块钱，那么我就拿10块钱出来买就好了。其他的基于账户的就像微信支付这样的，要支付首先我要看是否有这个账户，并且这个账户是否有足够的余额，在这两者都满足的情况下，我才能完成这一笔交易。 下面很大一个区别就是他们每一个的共识算法都是不一样的，比特币是工作量证明机制，我只要满足了我的工作量，谁第一个算出来谁就获得这个计量群。 以太坊现在还是用的工作量证明机制，在未来的话他会用到POS，也就是说我的账户上如果有以太坊的币的话，是根据我的币的数量和和我存放币的时间，那么我可以获得一个相应比例的降低难度。如果我的币多，拥有的时间长，那么我这一次算的难度就会减小，就可以更快的算出这个东西，就可以更快的获得我的区块。 EOS的DPOS就是委托权益证明机制，就是我可能会先投出21个节点，后面所有的记账的任务都由这21个节点来做，那么他们之间就是一个合作的关系，而不像前面两个都是竞争的关系。 最后一个PBFT是一个拜占庭容错算法，这个的问题是它需要两两之间都可以互相通信，所以不适合在公网上使用，因为会增加网络成本。 最后面的智能合约C++/JAVA等语言对于程序员会更加友好，因为他们的功能更加完善，而Solidity则是需要自己完善很多的功能。 那在介绍完前面的内容之后，我们以两个例子为例，来分析洗一下如何在实际的开发过程中，怎么去选择我们的区块链。 第一个例子是： 我们可能在保险公司买了保险，那么在面对保险公司的怀疑时，因为我们把数据放在了区块链上，保证了数据的真实性，很多的问题因为这个被实时共享的信息而被解决，也不用担心数据的有效性问题和安全性问题。这个时候很重要的一点是数据上链时候的真实性，就是我们要保证这个数据是真实的，此时每一个上链节点的身份是都是需要保证是真实的我们知道的。所以在这种情况下我们需要知道网络成员和上链人员的身份。同时我作为病人，数据的选择公开性也是需要考虑的，这个时候更适合的是选用联盟链即Fabric里面的Membership Services可以帮助我们解决很多在身份认证上面的一些问题。 第二个例子是： 我们经常会看到很多筹集资金的项目，那么在这些项目中，资金的去向，我们资金总数的真实性也是很重要的，把数据放在区块链上，可以保证我们的资金的去向，可以保证公益项目的成功开展。 这样的话可能就会选择以太坊，一是因为有智能合约，可以保证我们的一开始输入的金额的锁定，以及后续的一些功能，我们都可以用智能合约的编写来实现。第二个是以太坊的价值是被公众普遍认可的，最后是所有数据公开透明，所有的交易都可以在以太坊上面查到。所以在这样的情况下，我们更倾向于使用以太坊的官网来事先这样一个公益众筹平台项目。 那我今天所有的内容就结束了，谢谢大家。 ↓↓↓ 点击&quot;阅读原文&quot; 【查看视频回放】&nbsp;&nbsp; 阅读更多","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/04/24/%E5%8C%BA%E5%9D%97%E9%93%BE%E6%8A%80%E6%9C%AF%E5%AF%B9%E6%AF%94%E5%92%8C%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE%E9%80%89%E5%9E%8B.html","headline":"区块链技术对比和实战项目选型","dateModified":"2018-04-24T00:00:00+08:00","datePublished":"2018-04-24T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/04/24/%E5%8C%BA%E5%9D%97%E9%93%BE%E6%8A%80%E6%9C%AF%E5%AF%B9%E6%AF%94%E5%92%8C%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE%E9%80%89%E5%9E%8B.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>区块链技术对比和实战项目选型</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <div class="rich_media_content"> 
+   <p style="min-height:1em;text-align:center;"><img class="img_loadederror" style="width:75px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/hoTeaVxVFRgpONWictO7ia4O8f9gR4GntOocaTjE4Yo1mXHBQUEBAWmgXMoT0BnibEUs6sCqicpzVPpE4Db9t4yrCg/640?wx_fmt=png" alt="640?wx_fmt=png"></p>CTO区块链
+   <span style="color:rgb(165,165,165);">链接CTO，做区块链布道的前行者</span>
+   <img class="img_loadederror" style="border:0px;width:55px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_jpg/hoTeaVxVFRiaORcmv6LIrOHZBOOrVXf86RWozs1AJ2wmvYUpQhV0685PaeAV6mEDibGrFE8VCpaNNOc9Pb6hXMnA/640?wx_fmt=jpeg" alt="640?wx_fmt=jpeg">
+   <p style="color:rgb(30,30,30);"><span style="color:rgb(178,178,178);">正文共：4551&nbsp;字&nbsp;17&nbsp;图</span></p>
+   <p style="color:rgb(30,30,30);"><span style="color:rgb(178,178,178);">预计阅读时间：&nbsp;12&nbsp;分钟</span></p>
+   <p style="min-height:1em;text-align:center;line-height:1.5em;"><br></p>
+   <p style="text-align:center;letter-spacing:1px;"><img class="img_loadederror" style="width:475px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/hoTeaVxVFRhcaIDCc5YAKQ81icgiacNcMR854BBAWjW4icSkXqccVzBdglcDfhFP138WJyzBdjhKnnmWWvv3EAsBQ/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"></span><br></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">讲到区块链技术对比和实战项目选型这个话题，我把这个内容分为三个部分。<strong>第一个部分：四大区块链项目的介绍，第二个部分：区块链技术对比，第三个部分：实战项目解析即选择用什么区块链技术。</strong></span></p>
+   <p><br></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">第一部分讲到<strong>比特币</strong><strong>，以太坊，EOS，和Linux下面的HyperLedger fabric联盟链</strong>。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"></span></p>
+   <p><br></p>
+   <p>&nbsp;&nbsp;<span style="font-size:15px;letter-spacing:1px;color:rgb(0,0,0);">第一个区块链技术是1.0，区块链技术的第一个应用。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;color:rgb(0,0,0);">以太坊被誉为区块链2.0，是因为它在比特币的基础上引入智能合约，让我们能够更自由的在区块链上进行编程。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;color:rgb(0,0,0);">第三个是被誉为区块链3.0的EOS，因为比特币和以太坊的TPS都比较低，EOS让链可以承受企业级并发。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;color:rgb(0,0,0);">第四个Fabric主要是联盟链类型的。</span></p>
+   <p><br></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><br></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"></span></p>
+   <p style="text-align:center;"><img class="img_loading" style="width:670px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/hoTeaVxVFRhcaIDCc5YAKQ81icgiacNcMRicD5Y5oCAk9icAvgQkw3H3XlIrI1oedSa8F5tMGMoiara0QGYa6MsWmwg/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"></span><br></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">我们从比特币出发，首先为大家介绍一下，现在区块链典型链为形状的数据结构。</span></p>
+   <p style="text-align:center;line-height:1.75em;letter-spacing:1px;"><img class="img_loading" style="width:235px;vertical-align:text-bottom;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/hoTeaVxVFRhcaIDCc5YAKQ81icgiacNcMRzmJWLVTgu9k44NshfZ3L0xkneGjh25DBNdpOyPwwthW7cAGaD3Gk8Q/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="text-align:center;line-height:1.75em;letter-spacing:1px;"><br></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"></span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">第一层是数据层，是以区块为单位的链状数据块结构。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">第二层网络层，包括P2P网络、传播机制、验证机制。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">第三层是共识层，就是我们平常说的POW，POS，DPOS这样的共识算法。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><br></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">这三个是区块链技术的核心，所有的区块链技术一定会包含这三层。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"></span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">再上面一层是<strong>激励层</strong>，也就是我们如何给矿工发那些奖励，在公链里面这一层是一定会有的，但是在与一些私链里面它可能并不需要去对他的矿工做一些奖励，那么也是可能没有的。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">再上面一层是<strong>合约层</strong>，因为比特币出现的比较早，所以它的这一层是没有的，在以太坊上面，这一个会做的比较好一点。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">最上层是<strong>应用层</strong>，是我们什么转账啊，或者做一些区块链应用这样一层结构。</span></p>
+   <p><br></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><br><span style="font-size:15px;"></span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">这是我们区块链整体的一个架构。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"><br></span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">比特币是最早也是全球最广泛使用和真正意义的去中心化区块链技术，但是不可否认的是它的pow算法是比较低效的，并且也比较耗能耗电，所以它在整个技术上是不够成熟的，但是不可否认的是它也是现在最大的一个链，毕竟最贵，因此它的开源技术体系非常值得参考。</span></p>
+   <p class="p1"><br></p>
+   <p style="text-align:justify;line-height:1.75em;letter-spacing:1px;"><span style="font-size:15px;">以太坊是可编程的区块链，也就是引入了我们所说的智能合约。</span></p>
+   <p><br></p>
+   <blockquote style="border-left-width:5px;border-left-style:solid;border-left-color:rgb(157,180,194);line-height:25px;color:rgb(102,102,102);">
+    <p style="text-align:justify;line-height:1.75em;letter-spacing:1px;"><span style="font-size:15px;">它第一个是有一个EVM虚拟机，第二个是指定Solidity这种编程语言。</span><span style="font-size:15px;">以太坊官方支持Solidity，LLL和</span><span style="font-size:15px;">Serpent三种语言，但是在我们平时的开发中，大家最喜欢也最常用的还是</span><span style="font-size:15px;">Solidity语言。</span></p>
+    <p style="text-align:justify;line-height:1.75em;letter-spacing:1px;"><span style="font-size:15px;"><br></span></p>
+    <p style="text-align:justify;line-height:1.75em;letter-spacing:1px;"><span style="font-size:15px;">第二个以太坊是使用了内存需求较高的哈希函数。</span></p>
+    <p style="text-align:justify;line-height:1.75em;letter-spacing:1px;"><span style="font-size:15px;"><br></span></p>
+    <p style="text-align:justify;line-height:1.75em;letter-spacing:1px;"><span style="font-size:15px;">第三个是引入了一个叔块(Uncle Block)的激励机制，</span>简单介绍一下<span style="font-size:15px;">叔块就是我们在挖矿的时候有可能会出现分叉，上面的部分会变成孤儿区块，那这个矿机之前所做的努力全部白费了，他也不会得到任何奖励。</span></p>
+   </blockquote>
+   <p style="text-align:justify;line-height:1.75em;letter-spacing:1px;"><span style="font-size:15px;"><br></span></p>
+   <p style="text-align:justify;line-height:1.75em;letter-spacing:1px;"><span style="font-size:15px;">在以太坊中，如图，高度三的最后这一块，可以将这个黄色方块的数据包含进去，那在这个黄色区块对于它来说就是叫做叔块。这一块对这个叔块可以获得这样一个奖励。</span><br><span style="font-size:15px;"></span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"><img class="img_loading" style="letter-spacing:1px;text-align:justify;width:550.671875px;vertical-align:text-bottom;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/hoTeaVxVFRhcaIDCc5YAKQ81icgiacNcMRagMJXlpR7MBsUqWcBNLicm1NvWF1tZ10RkotWXrWICdVaXVoN6zibOcA/640?wx_fmt=png" alt="640?wx_fmt=png"></span></p>
+   <p class="p1"><br></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">以太坊之所以要引入这样一个机制，主要是因为它的块的生成时间比比特币要快很多，所以也更容易出现这种情况，为了让这个问题得到更好的解决，于是引入了叔块机制。</span></p>
+   <p><br></p>
+   <blockquote style="border-left-width:5px;border-left-style:solid;border-left-color:rgb(157,180,194);line-height:25px;color:rgb(102,102,102);">
+    <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">第四就是挖矿的难度也会有一定的调整。</span></p>
+    <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"><br></span></p>
+    <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">第五个是以太坊里的gas在以太坊上面运用智能合约是需要消耗gas的，引入这个是而为了避免循环攻击。也就是说你写一些智能合约难免会出现死循环的情况，可是在区块链上又不像平时的应用直接重启就可以。所以需要使用gas避免这种循环的情况，当gas用完了这个程序就不能继续下去了，可以避免这种循环攻击。</span></p>
+    <p><span style="font-size:15px;"><br></span></p>
+    <p><span style="font-size:15px;"><span style="font-size:15px;letter-spacing:1px;text-align:justify;">第六个是记录当前状态的哈希树的根哈希值到区块来实现轻量级客户端。</span></span></p>
+   </blockquote>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="color:rgb(102,102,102);font-size:15px;letter-spacing:1px;text-align:justify;"><br></span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="color:rgb(102,102,102);font-size:15px;letter-spacing:1px;text-align:justify;">下面还写了一个就是最新的区块率，现在以太坊上大概有20.9%的叔块，括号里是可以查看以太坊状态的网站（www.etherchain.org/）可以查到实时资料。</span></p>
+   <p style="text-align:center;line-height:1.75em;letter-spacing:1px;"><img class="img_loading" style="width:133.78125px;vertical-align:text-bottom;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/hoTeaVxVFRhcaIDCc5YAKQ81icgiacNcMRCE4LFSgbvbqhuV7C5WLkqFeHIkL3FibLPlMQOXvWHSJga1sQ6iaUsSdg/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="text-align:center;line-height:1.75em;letter-spacing:1px;"><br></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">下面介绍一下<strong>EOS</strong>，现在EOS公链公网都还没有上线，但是即将上线了。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"></span></p>
+   <p><br></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">它第一个是引入了DPOS 共识算法和石墨烯底层工具组，能够满足每秒上万次，甚至每秒上百万次交易请求的企业级应用需求。因为以太坊的并发太小了，很多项目都不能跑起来。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"><br></span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">第二个EOS上转账交易与运行智能合约并不需要消耗系统代币，这个是和以太坊不太相同的一点，那么EOS上的代币是用来干什么的呢？就是用来获取系统资源的，就是我占有所少的代币，那么我就可以获取多少的系统资源。</span><span style="font-size:15px;">这样我们的系统资源在别的项目出现比如泵块的情况就不会影响到我，比如以太坊上面并发过大会导致全网瘫痪之类的。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"><br></span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">第三个是EOS上面提出了“宪/法”这个概念，主要就是制定了一些大家需要共同遵守的一些约定还有就是出现一些错误的时候用于区分此错误是否确实为 bug，并判断社区的修复举措是否得当。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"><br></span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">第四个是EOS 上也算是有设置以太虚拟机（EVM），能够支持现有在以太坊运行的智能合约。现存在于以太坊的区块链应用，通过添加少量适配，就能够在 EOS 系统上运行。但是因为效率问题，官方还是推荐C++进行智能合约的编写，他们认为C++是效率最高的。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"><br></span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">第五点是 EOS 新增了官方的 WebAssembly 解释器，用来解释执行 WebAssembly 智能合约，加上之前的编译执行，EOS 智能合约有了两种执行方式。</span></p>
+   <p><br></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><br></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">前面公链项目介绍完之后我们来介绍一下<strong>HyperLedger fabric</strong>这个项目。fabric是一个带有可插入各种功能模块架构的区块链实施方案，他的目标是打造成一个由全社会来共同维护的一个超级账本。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"><br></span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">主要核心逻辑分为三个部分。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"></span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"></span></p>
+   <p><br></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">1.Membership Services：就是权限控制啊之类的用来管理节点身份、隐私、保密性、可审计性。在fabric升级到1.0之后Membership Services也改名为Fabric-ca，现在也作为了一个单独的项目，大家也可以在网上看到。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"><br></span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">2.Blockchain services：也就是平时说的区块链的那一部分，采取可插拔的方式来根据具体需求来设置共识协议选择共识算法，比如PBFT，Raft，PoW和PoS等等，IBM首选PBFT算法。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"><br></span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">3.Chaincode services：提供一种安全且轻量级的沙盒运行模式，来在VP节点上执行chaincode逻辑，类似以太坊的EVM虚拟机及其他上面运行的智能合约。</span></p>
+   <p><br></p>
+   <p class="p3"><br></p>
+   <p style="text-align:center;line-height:1.75em;letter-spacing:1px;"><img class="img_loading" style="width:488.328125px;vertical-align:text-bottom;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/hoTeaVxVFRhcaIDCc5YAKQ81icgiacNcMRdIXVCIvInN7IaUO7QAhJdBfbVsxeSf9fuDg0sicvnYPghuicx0sHfDWw/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p class="p3"><br></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">Fabric是支持java,go和Nodejs语言的一个Chaincode。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"><br></span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">介绍完四个项目后还要给大家介绍两个重要的技术。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"><br></span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><strong><span style="font-size:15px;">一个是闪电网络&amp;雷电网络。</span></strong><span style="font-size:15px;">其实这个就是为了解决比特币区块链的瓶颈处理能力而生的。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"><br></span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"></span></p>
+   <p><span style="font-size:15px;letter-spacing:1px;text-align:justify;">好像就是说我给你转一笔钱，但是之前我们都需要去银行排半天队，还要花很多的手续费，我们才能进行这样一个转账的操作，那么当我的转账金额比较小或者是频率较高的时候非常不划算，这样我排队的时间也非常长，我交的手续费也非常的多，那么在这个时候就出现了一个闪电网络，我们也可以把它理解长支付宝。相当于我先花了一部分钱放到支付宝里，那么我就可以用这一笔钱在支付宝内和你进行很多次的交易很多次操作。<span style="font-size:15px;letter-spacing:1px;text-align:justify;">最后只有我在需要把这一笔钱提出来的时候我才需要再去银行也就是比特币上面排一次队，做一次记录操作。</span></span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"></span><br></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">我们可以简单地这样来理解这两个网络的作用。其中的两个核心概念一个是RSMC（Recoverable Sequence Maturity Contract）相当于一个保证金和 HTLC（Hashed Timelock Contract）。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"><br></span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">前者解决了链下交易的确认问题，后者解决了支付通道的问题。这就是闪电网络。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"><br></span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">而<strong>雷电网络</strong>就可以理解为一种脱机缩放解决方案，用于在Ethereum块链中执行符合ERC20标准的令牌传输。 它是Ethereum的Bitcoin闪电网络版本，可实现近即时，低费用，可扩展和隐私保护的付款。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"><br></span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">不同点是雷电网络除了可以支持以太币以外也可以支持所有ERC20标准的令牌传输。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"><br></span></p>
+   <p style="text-align:center;line-height:1.75em;letter-spacing:1px;"><img class="img_loading" style="width:272.125px;vertical-align:text-bottom;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/hoTeaVxVFRhcaIDCc5YAKQ81icgiacNcMRiciaqODrDfwvdbO0ju4Zo0HKmGxANFfcI4tdahEuEJicUVH5JI0TwbsLg/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p class="p3"><br></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><strong><span style="font-size:15px;">下面一个是0x协议。</span></strong></p>
+   <p class="p3"><br></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">0x协议，全称OxProject。0x是一个点对点交易的开源协议，以促进以太坊区块链中ERC20代币的交易。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"><br></span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">该协议旨在作为开放标准和通用构建模块，推动包括交易所功能的去中心化应用（DApps）之间的互操作性。</span></p>
+   <p class="p3"><br></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">0x是基于以太坊区块链的去中心化交易所开源协议。这个协议是通过以太坊的智能合约来创建的，它可以让任何人都能开设和运行去中心化交易所。</span></p>
+   <p class="p3"><br></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">0x是基于以太坊区块链的p2p的ERC20代币交易所协议。它有标准的开源协议、通用的创建区块，在分布式应用中实现交易功能的互操作性。基于0x协议的去中心化应用可以进入公开的流动池，或创建自己的流动池，并收取一定的手续费。</span></p>
+   <p class="p3"><br></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">介绍完这些项目和技术的基本情况，下面这个图就是一整个的对比。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"><br></span></p>
+   <p><img class="img_loading" style="width:670px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/hoTeaVxVFRhcaIDCc5YAKQ81icgiacNcMRQGIf6HpquuVicDrLpC9sapJn51y4otpCnlNBnIibQmaPG3mckuVjiaOtw/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p><br></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">第一个是账户设计，比特币的账户设计是UTXO，是以余额，就像是我的钱包里有120块钱，你这个东西10块钱，那么我就拿10块钱出来买就好了。其他的基于账户的就像微信支付这样的，要支付首先我要看是否有这个账户，并且这个账户是否有足够的余额，在这两者都满足的情况下，我才能完成这一笔交易。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"><br></span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">下面很大一个区别就是他们每一个的共识算法都是不一样的，比特币是工作量证明机制，我只要满足了我的工作量，谁第一个算出来谁就获得这个计量群。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"><br></span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">以太坊现在还是用的工作量证明机制，在未来的话他会用到POS，也就是说我的账户上如果有以太坊的币的话，是根据我的币的数量和和我存放币的时间，那么我可以获得一个相应比例的降低难度。如果我的币多，拥有的时间长，那么我这一次算的难度就会减小，就可以更快的算出这个东西，就可以更快的获得我的区块。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"><br></span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">EOS的DPOS就是委托权益证明机制，就是我可能会先投出21个节点，后面所有的记账的任务都由这21个节点来做，那么他们之间就是一个合作的关系，而不像前面两个都是竞争的关系。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"><br></span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">最后一个PBFT是一个拜占庭容错算法，这个的问题是它需要两两之间都可以互相通信，所以不适合在公网上使用，因为会增加网络成本。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"><br></span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">最后面的智能合约C++/JAVA等语言对于程序员会更加友好，因为他们的功能更加完善，而Solidity则是需要自己完善很多的功能。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"><br></span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">那在介绍完前面的内容之后，我们以两个例子为例，来分析洗一下如何在实际的开发过程中，怎么去选择我们的区块链。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"><br></span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">第一个例子是：</span></p>
+   <p style="text-align:center;line-height:1.75em;letter-spacing:1px;"><img class="img_loading" style="width:553.125px;vertical-align:text-bottom;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/hoTeaVxVFRhcaIDCc5YAKQ81icgiacNcMRL8LP3liadTCibpbpQUmDcgead55FJSqyth5k2aLjzticAs3qFZj25BvXA/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"></span></p>
+   <p><span style="font-size:15px;letter-spacing:1px;text-align:justify;">我们可能在保险公司买了保险，那么在面对保险公司的怀疑时，因为我们把数据放在了区块链上，保证了数据的真实性，很多的问题因为这个被实时共享的信息而被解决，也不用担心数据的有效性问题和安全性问题。这个时候很重要的一点是数据上链时候的真实性，就是我们要保证这个数据是真实的，此时每一个上链节点的身份是都是需要保证是真实的我们知道的。所以在这种情况下我们需要知道网络成员和上链人员的身份。同时我作为病人，数据的选择公开性也是需要考虑的，这个时候更适合的是选用联盟链即Fabric里面的Membership Services可以帮助我们解决很多在身份认证上面的一些问题。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"></span><br></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><br></p>
+   <p style="text-align:center;line-height:1.75em;letter-spacing:1px;"><img class="img_loading" style="width:553.3125px;vertical-align:text-bottom;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/hoTeaVxVFRhcaIDCc5YAKQ81icgiacNcMR8aN0eKs8g2PDw231AGYXnG1iaoy4966zLXHsTptDicfXic129eFUSOrRw/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p class="p3"><br></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">第二个例子是：</span></p>
+   <p style="text-align:justify;line-height:1.75em;letter-spacing:1px;"><img class="img_loading" style="width:553.6875px;vertical-align:text-bottom;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/hoTeaVxVFRhcaIDCc5YAKQ81icgiacNcMRc8g8kV0dbygeKUTQb3BCphtDk3ibZKHyqNda8gETFgVJTRfFyAbicgeg/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"></span></p>
+   <p><span style="font-size:15px;letter-spacing:1px;text-align:justify;">我们经常会看到很多筹集资金的项目，那么在这些项目中，资金的去向，我们资金总数的真实性也是很重要的，把数据放在区块链上，可以保证我们的资金的去向，可以保证公益项目的成功开展。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"></span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"><br></span></p>
+   <p style="text-align:justify;line-height:1.75em;letter-spacing:1px;"><img class="img_loading" style="width:553.453125px;vertical-align:text-bottom;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/hoTeaVxVFRhcaIDCc5YAKQ81icgiacNcMRlX6HOak9icCmQPNt3anaxaXQFgY8KJj7b9Cf9Ia6ykIlGcQU2fZ4v8A/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"><br></span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">这样的话可能就会选择以太坊，一是因为有智能合约，可以保证我们的一开始输入的金额的锁定，以及后续的一些功能，我们都可以用智能合约的编写来实现。第二个是以太坊的价值是被公众普遍认可的，最后是所有数据公开透明，所有的交易都可以在以太坊上面查到。所以在这样的情况下，我们更倾向于使用以太坊的官网来事先这样一个公益众筹平台项目。</span></p>
+   <p class="p3"><br></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;">那我今天所有的内容就结束了，谢谢大家。</span></p>
+   <p style="line-height:1.75em;text-align:justify;letter-spacing:1px;"><span style="font-size:15px;"><br></span></p>
+   <p class="p3"><img class="img_loading" style="color:rgb(178,178,178);width:652px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_jpg/8zGb2W5DJWsavpibwNXSIsKicDynqkelafRZDl9nicUL9r7v4jw90CmDzT8fS3Z3dsLniaJYpz5gmqgM3ibdxEspAuQ/640?wx_fmt=jpeg" alt="640?wx_fmt=jpeg"></p>
+   <p style="min-height:1em;color:rgb(62,62,62);"><br></p>
+   <p style="min-height:1em;color:rgb(62,62,62);"><span style="color:rgb(178,178,178);font-size:14px;text-align:right;"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzY4MDQwNg==&amp;mid=2247483967&amp;idx=1&amp;sn=a513581eaccc79c8111a9396eca2f281&amp;chksm=fb06f0c6cc7179d0e3db1de92659e82c72ea5253b202287c6e17015e62a370f30e0f23ea2844&amp;scene=21#wechat_redirect" rel="nofollow" style="color:rgb(87,107,149);text-decoration:underline;"><img class="img_loading" style="border:0px;width:652px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/3xsFRgx4kHroUjZT1j6QlVglwGZb42gdZ2wOljmHRanI7ibuliah6Vb779rx4icKFiasmd69a2iaEzZB23V8RbRgxng/640?wx_fmt=png" alt="640?wx_fmt=png"></a></span></p>
+   <p><img class="img_loading" style="width:670px;" src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/hoTeaVxVFRiahgAGic63joYIgjFQJXibVg0hPzppjHThD9icZ2nKsvnXmXoM6gES5XUjkiaCa7koOCoicDsDSiahWLHYg/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p style="background-color:rgb(131,147,209);color:rgb(254,254,254);font-size:15.5556px;line-height:2em;min-height:1.5em;text-align:center;">↓↓↓ 点击"阅读原文" 【查看视频回放】&nbsp;&nbsp;</p>
+  </div> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/k6T9Q8XKs6iIkZPPIFq/article/details/80060191,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/k6T9Q8XKs6iIkZPPIFq/article/details/80060191,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

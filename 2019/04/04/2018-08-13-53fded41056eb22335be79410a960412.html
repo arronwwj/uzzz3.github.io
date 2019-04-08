@@ -1,0 +1,103 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div class="markdown_views"> 
+  <h1 id="相关文章">相关文章</h1> 
+  <ul> 
+   <li><a href="https://cloud.tencent.com/developer/article/1161345" rel="nofollow">给数据科学家的十条数据安全建议</a></li> 
+   <li><a href="https://cloud.tencent.com/developer/article/1161341" rel="nofollow">SSH 尝试攻击是什么样子的</a></li> 
+   <li><a href="https://cloud.tencent.com/developer/article/1165213" rel="nofollow">量子跃迁：量子计算对加密技术来说意味着什么？</a></li> 
+  </ul> 
+  <hr> 
+  <h1 id="版权相关">版权相关</h1> 
+  <p>翻译人：<strong>StoneDemo</strong>，该成员来自<a href="https://cloud.tencent.com/developer/translation" rel="nofollow">云+社区翻译社</a> <br> 原文链接：<a href="https://medium.com/threat-intel/quantum-computing-encryption-d0bf133cc63d" rel="nofollow">Quantum leap: What will quantum computing mean for encryption?</a> <br> 原文作者：<a href="https://medium.com/@John_Paul_Power?source=post_header_lockup" rel="nofollow">John-Paul Power</a></p> 
+  <hr> 
+  <h1 id="quantum-leap-what-will-quantum-computing-mean-for-encryption">Quantum leap: What will quantum computing mean for encryption?</h1> 
+  <p>题目：<strong>（量子跃迁：量子计算对加密技术来说意味着什么？）</strong></p> 
+  <p><img src="https://ask.qcloudimg.com/draft/1206219/5wmwhcotu4.jpeg?imageView2/2/w/1620" alt="这里写图片描述" title=""></p> 
+  <blockquote> 
+   <p>What do IBM, Google, Lockheed Martin, the National Security Agency, Microsoft, AT&amp;T, Airbus, and Fujitsu have in common? They all want a piece of the quantum cake. All those companies, plus an ever-growing list of others, are delving into the fascinating world of quantum computing because they know that this strange, exciting, and often counter-intuitive field is set to change the world. From unraveling the complexities of molecular and chemical interactions to improving artificial intelligence, the possibilities are endless. We’re still some time away from creating quantum computers powerful enough to change the world, but it’s worth thinking about what impact they will eventually have on certain fields, such as cyber security, and, something as ubiquitous and important as encryption.</p> 
+  </blockquote> 
+  <p>IBM，谷歌，洛克希德马丁（美国航空航天公司），美国国家安全局，微软，AT＆T，空客和富士通，它们之间有什么共同之处？他们都想从量子领域中分得一块蛋糕。所有这些公司，加上正在不断增长的其它公司，它们都钻研到量子计算这一迷人世界中去了，因为他们知道这个奇怪的、令人兴奋的，以及常常反直觉的领域将会改变世界。从解开分子和化学相互作用的复杂性之谜，直至提升人工智能的能力，它的可能性是无穷无尽的。我们距离创建足以改变世界的量子计算机还有一段时间，但思考思考它们最终会对哪些领域（例如网络安全，以及诸如加密这样无处不在又非常重要的东西）产生何种影响，这是值得的。</p> 
+  <h2 id="what-is-quantum-computing">What is quantum computing?</h2> 
+  <p>（量子计算是什么？）</p> 
+  <p>（<a href="https://www.youtube.com/embed/WVv5OAR4Nik" rel="nofollow">点击此处观看相关视频</a>）</p> 
+  <blockquote> 
+   <p>The computers we use every day deal with bits, basic units of information that have two possible states: 1 or 0. Quantum computers, on the other hand, deal with qubits (also known as a quantum bits), and this is where things get a little crazy. Thanks to the mind-blowing world of quantum mechanics, qubits can be 1, 0, or both 1 and 0 at the same time (this is also known as quantum superposition). Multiple qubits also allow for the creation of what is known as entangled states. Wired’s Abigail Beall makes this a little easier to understand:</p> 
+   <p>“A qubit can be thought of like an imaginary sphere. Whereas a classical bit can be in two states — at either of the two poles of the sphere — a qubit can be any point on the sphere. This means a computer using these bits can store a huge amount more information using less energy than a classical computer.”</p> 
+  </blockquote> 
+  <p>我们日常使用的计算机处理的是比特（bit，或称为位），这是具有两种可能状态（0 或 1）的基本信息单元。而另一方面，量子计算机处理量子比特（qubit，也称为量子位），而这个量子比特，让事情变得令人着迷。多亏了令人兴奋的量子力学世界，量子比特可以是 1，可以是 0，也可以同时为 0 和 1（这种情况也称为<a href="https://en.wikipedia.org/wiki/Quantum_superposition" rel="nofollow">量子叠加，Quantum superposition</a>）。多个量子比特还允许创建所谓的纠缠态（Entangled states）。《连线》杂志的 Abigail Beall 的解释让这个概念<a href="http://yehe.isd.com/column/A%20qubit%20can%20be%20thought%20of%20like%20an%20imaginary%20sphere.%20Whereas%20a%20classical%20bit%20can%20be%20in%20two%20states%20-%20at%20either%20of%20the%20two%20poles%20of%20the%20sphere%20-%20a%20qubit%20can%20be%20any%20point%20on%20the%20sphere.%20This%20means%20a%20computer%20using%20these%20bits%20can%20store%20a%20huge%20amount%20more%20information%20using%20less%20energy%20than%20a%20classical%20computer." rel="nofollow">更加容易理解</a>：</p> 
+  <p>“量子比特可以被认为是一个想象中的球体。经典比特可以处于两种状态 —— 在球体的两个极点中的任何一个 —— 而量子位可以是球体上的任何点。这就意味着使用这些量子位的计算机可以使用比传统计算机更少的能量来存储更多的信息。“</p> 
+  <blockquote> 
+   <p>There is also a difference in the way quantum computers perform computations. A useful analogy for this would be looking for a specific grain of sand on a beach. A classical computer will look at every grain of sand individually, albeit very quickly, in order to find the specific grain. Whereas a quantum computer will look at all grains simultaneously to find the one it’s looking for immediately.</p> 
+  </blockquote> 
+  <p>量子计算机执行计算的方式也有所不同。一个有用的类比就是，在沙滩上寻找特定的沙粒。为了找到特定的沙粒，经典计算机将单独观察（尽管它很快）每一粒沙子。而量子计算机将同时查看所有沙子以找到它正在寻找的沙粒。</p> 
+  <h2 id="what-is-quantum-supremacy">What is quantum supremacy?</h2> 
+  <p>（量子霸权是何意义？）</p> 
+  <blockquote> 
+   <p>So quantum computers can, in theory, perform computations exponentially faster than today’s computers. But there’s a catch. For a quantum computer to be useful it needs to have many qubits, and it’s notoriously difficult to build a quantum computer with enough qubits to outperform classical computers.</p> 
+  </blockquote> 
+  <p>理论上讲，量子计算机的计算速度比现在的计算机快得多。但是有一个问题。一个有用的量子计算机，它需要具有很多量子比特，而且要建立一个具有足够量子比特，足以超越经典计算机的量子计算机是非常困难的。</p> 
+  <blockquote> 
+   <p>The current record for the number of qubits in a quantum computer is 20 but the estimated number needed to supersede classical computers is roughly 50 qubits (D-Wave Systems has a 2,000 qubit computer but it uses something called quantum annealing, which limits the type of computations that the computer can be used for).</p> 
+  </blockquote> 
+  <p>目前量子计算机中最高的量子比特数记录是 20，但根据估算，取代传统计算机所需的数量约为 50 个量子比特（D-Wave Systems <a href="https://techcrunch.com/2017/01/24/d-wave-ups-its-quantum-annealing-game-to-2000-qubits/" rel="nofollow">有一个 2000 比特的计算机</a>，但它使用的是量子退火技术，这使得对该计算机的使用被限制在特定的计算中）。</p> 
+  <blockquote> 
+   <p>This 50 qubit milestone is known as quantum supremacy and, once it is reached, it is set to have grave implications for encryption.</p> 
+  </blockquote> 
+  <p>这个 50 量子比特的里程碑被称为量子霸权，一旦达到这个数量，量子计算机就会对加密技术产生严重的影响。</p> 
+  <h2 id="how-will-quantum-computing-affect-encryption">How will quantum computing affect encryption?</h2> 
+  <p>（量子计算将如何对加密技术产生影响？）</p> 
+  <blockquote> 
+   <p>Asymmetric, or public key, encryption works by creating two mathematically related keys, one that is publicly available and one that is confidential to its respective owners. Messages can be encrypted with the public key by anyone but those messages can only be decrypted by the person with the corresponding private key. Because of the way the keys are calculated, deducing the private key from the public key is unfeasible, even for today’s most powerful supercomputers. However, it would be a trivial task for a quantum computer that has reached quantum supremacy to break this encryption by cracking the mathematical problems used to calculate the keys.</p> 
+  </blockquote> 
+  <p>非对称密钥（Asymmetric key）或公钥，它们的加密是通过创建两个数学上相关的密钥来进行的，一个是公开、可获取的密钥，另一个则对其各自所有者保密。任何人都可以使用公钥对消息进行加密，但这些消息只能由具有相应私钥的人解密。由于密钥的计算方式，即便是用上当今最强大的超级计算机，从公钥中推导私钥都是不可行的。然而，量子计算机通过破解用于计算密钥的数学问题来破解这种加密，这对于达到量子霸权的量子计算机来说是一项轻松的任务。</p> 
+  <blockquote> 
+   <p>Asymmetric encryption is used for everything from social media and messaging apps like WhatsApp to online payment systems and digital signatures. Once quantum supremacy is achieved security breaches will no longer be incidents that affect a few hundred thousand or even a million people, we will all be at risk. But don’t worry, it’s not all doom and gloom.</p> 
+  </blockquote> 
+  <p>从社交媒体和即时通讯应用程序，如 WhatsApp，到在线支付系统和数字签名，非对称加密技术被广泛应用。一旦达到量子霸权，安全漏洞将不再只是影响几十万甚至一百万人的事件，我们所有人都将面临风险。但不要担心，它带来的并不全是厄运和沮丧。</p> 
+  <p><img src="https://ask.qcloudimg.com/draft/1206219/08p4hm5xsw.jpeg?imageView2/2/w/1620" alt="这里写图片描述" title=""></p> 
+  <blockquote> 
+   <p>It’s estimated that quantum supremacy is anywhere from five to 10 years away but, even when it does occur, 50-plus qubit machines will cost millions of dollars. Powerful quantum computers will be out of the price range of most criminals for quite some time and it will likely be 20 to 30 years before you can buy one at PC World. Nevertheless, that’s not to say that criminals aren’t thinking ahead.</p> 
+  </blockquote> 
+  <p>据估计，达到量子霸权还需要五到十年的时间，但即使这确实发生了，具有 50 多个量子比特的机器将需要花费数百万美元。强大的量子计算机将在很长一段时间内超出大多数犯罪分子所能承受的价格范围，而且可能需要再过 20 到 30 年才能在 PC World 中买到。然而，这并不是说犯罪分子没有提前进行考虑。</p> 
+  <blockquote> 
+   <p>There are some experts that believe forward-thinking criminals are carrying out ‘harvest and decrypt’ schemes. This involves criminals gathering up encrypted data, by way of breaches for example, and hoarding it until a time when sufficiently powerful quantum computers are affordable. At that time, they will be able to decrypt the data, which could contain valuable information such as Social Security numbers, healthcare data, or government secrets. However, other experts believe that by the time quantum computers are obtainable by criminal data hoarders any information they have, at least in terms of government secrets, will be obsolete.</p> 
+  </blockquote> 
+  <p>有些专家认为具有前瞻性思维的犯罪分子正在实施 “收获与解密” 计划。这涉及到犯罪分子通过违规行为收集加密数据，并将其囤积到足够强大的量子计算机普及的时候。到那时，他们将能够解密数据，这些数据可能包含有价值的信息，如社会保障号码（Social Security numbers）、医疗数据，或者政府机密。然而，另外一些专家认为，当量子计算机能被数据囤积的犯罪者获得时，他们拥有的任何信息（至少在政府机密方面）都会是过时的。</p> 
+  <h2 id="are-we-all-doomed">Are we all doomed?</h2> 
+  <p>（我们都在劫难逃？）</p> 
+  <blockquote> 
+   <p>Ironically, the very thing that is set to threaten encryption is also capable of providing a solution. Quantum key distribution has been referred to as an ‘unhackable’ communication method. This method involves sending a shared encryption key embedded in quantum entangled particles of light. Because they are entangled, if one particle is intercepted by someone attempting to eavesdrop on the communication, the key will be altered in both particles, making it useless. Yet another weird and wonderful quirk of quantum mechanics.</p> 
+  </blockquote> 
+  <p>具有讽刺意味的是，被设定为对加密造成威胁的东西也能够提供解决方案。量子密钥分发（Quantum key distribution）被称为 “不可破解” 的通信方法。该方法涉及发送一个嵌入到<a href="https://en.wikipedia.org/wiki/Quantum_entanglement" rel="nofollow">量子纠缠态</a>的光粒子中的共享加密密钥。由于它们是纠缠在一起的，如果一个粒子被试图窃听通信的人截获，那么密钥将在两个粒子中被改变，使其变得无用。这是量子力学的又一个不可思议且令人惊奇的神秘力量。</p> 
+  <blockquote> 
+   <p>China has made huge advancements in this field, and recently successfully sent quantum encoded data more than 1,200km via a satellite relay. To date, this is the longest distance over which quantum key distribution has been performed. Previous efforts using fiber optics managed just over 300km. While quantum key distribution is set to revolutionize everyday encryption, it is not a silver bullet. End users and their devices will still be vulnerable to attackers who can swipe the decrypted data directly from the endpoint.</p> 
+  </blockquote> 
+  <p>中国在这一领域取得了巨大进步，最近他们通过卫星中继器（Satellite relay）成功地<a href="http://thehackernews.com/2017/08/quantum-satellite-data.html" rel="nofollow">发送了超过 1200 公里距离的量子编码数据</a>。迄今为止，这是执行量子密钥分发的最长距离。以前，使用光纤只能达到 300 多公里。虽然量子密钥分发将彻底改变日常加密，但它并不是一个灵丹妙药。终端用户及其设备仍然容易受到攻击者的攻击，攻击者可以直接从端点扫描并解密数据。</p> 
+  <blockquote> 
+   <p>It should also be noted that the focus is on asymmetric, or public-key, algorithms, which are at a higher risk from quantum computers. Most symmetric cryptography is considered relatively secure from such attacks, especially if the key size is doubled.</p> 
+  </blockquote> 
+  <p>我们还应该注意的是，重点是对于非对称或公钥算法，量子计算机对这些算法造成较高的风险。对于这种利用量子计算机进行的攻击，大多数对称加密被认为是相对安全的，特别是当密钥大小加倍时。</p> 
+  <blockquote> 
+   <p>Post-quantum cryptography may also help to keep our data safe when quantum supremacy arrives. Many cryptographers are hard at work designing new cryptographic algorithms that are hopefully secure against attacks using quantum computers. In fact, Google has already begun work on protecting its Chrome browser from the quantum computer threat by testing post-quantum cryptography in its experimental version of the browser known as Chrome Canary.</p> 
+  </blockquote> 
+  <p>量子加密也可能有助于在量子霸权到来时保证我们的数据安全。许多密码学家都在努力设计新的加密算法，这些算法有望抵御基于量子计算机的攻击。事实上，谷歌已经开始着手保护其 Chrome 浏览器免受量子计算机的威胁，在其实验版 Chrome 浏览器（即 Chrome Canary）中<a href="https://security.googleblog.com/2016/07/experimenting-with-post-quantum.html" rel="nofollow">测试了后量子密码技术（Post-quantum cryptography）</a>。</p> 
+  <h2 id="update-august-25-2017">Update — August 25, 2017:</h2> 
+  <p>（更新 —— 2017 年 8 月 25 日）</p> 
+  <blockquote> 
+   <p>Michael J. Biercuk, Professor of Quantum Physics and Quantum Technology at the University of Sydney, has pointed out that 50 qubits would not be sufficient for cracking asymmetric encryption and that the number of qubits needed would be significantly higher.</p> 
+  </blockquote> 
+  <p>悉尼大学量子物理和量子技术研究方向的教授 <a href="https://theconversation.com/profiles/michael-j-biercuk-710" rel="nofollow">Michael J. Biercuk</a>，他<a href="https://twitter.com/MJBiercuk/status/900916599305117697" rel="nofollow">指出</a>，50 个量子比特不足以破解非对称加密，并且所需的量子比特数将显着增加。</p> 
+  <blockquote> 
+   <p>Quantum computers can be built for either general purpose use or tailored for one particular purpose. A 50–100 qubit machine built to outperform a classical computer in a specific task would not have the computational power for useful factoring, i.e. cracking encryption. However, the estimated number of error-corrected qubits needed for useful factoring varies greatly. </p> 
+  </blockquote> 
+  <p>量子计算机可以基于通用的目的被构建，或为特定目标而定制。为特定任务而构建的优于传统计算机的，具有 50-100 量子比特的机器将不会具有用于有用因子的计算能力（如破解加密）。然而，有用因子分解所需的纠错量子比特的估计数量<a href="https://www.entrust.com/wp-content/uploads/2013/05/WP_QuantumCrypto_Jan09.pdf" rel="nofollow">差异</a><a href="http://digitalcommons.csbsju.edu/cgi/viewcontent.cgi?article=1118&amp;context=forum_lectures" rel="nofollow">很大</a>。</p> 
+  <blockquote> 
+   <p>I highly recommend Professor Biercuk’s article for an interesting look at how close (or far away) quantum computers really are from being able to crack encryption.</p> 
+  </blockquote> 
+  <p>我强烈推荐 <a href="https://theconversation.com/hype-and-cash-are-muddying-public-understanding-of-quantum-computing-82647" rel="nofollow">Biercuk 教授的文章</a>，看看量子计算机距离破解加密到底还有多近（或多远）。</p> 
+ </div> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/markdown_views-ea0013b516.css"> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/qq_16775897/article/details/81613111,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/qq_16775897/article/details/81613111,&quot;}">阅读更多</a> 
+</div>

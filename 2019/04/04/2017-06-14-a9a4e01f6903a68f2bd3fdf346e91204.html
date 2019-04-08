@@ -1,0 +1,59 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div class="markdown_views"> 
+  <h2 id="hyperledger-fabric模块划分">Hyperledger Fabric模块划分</h2> 
+  <p><code>Hyperledger项目的git地址：https://github.com/hyperledger/fabric.git</code></p> 
+  <p>本第二讲主要是从fabric源代码结构开始着手分析。 <br> 首先看下整体结构： <br> 整个Hyperledger的fabric技术架构部分 <br> 主要是由以下为三部分组成： <br> fabric-peer：主要起到 peer 作用，包括 endorser、committer 两种角色； <br> fabric-ca：即原先的 membersrvc，独立成一个新的项目。 <br> fabric-order：起到 order 作用。 <br> 其中，fabric-peer 和 fabric-order 代码暂时都在 fabric 项目中，未来可能进一步拆分。</p> 
+  <h2 id="下面是fabric中各个包的大概内容">下面是fabric中各个包的大概内容：</h2> 
+  <h2 id="一bccsp">一，bccsp ✳️</h2> 
+  <p>区块链加密服务提供者（Blockchain Crypto Service Provider），提供一些密码学相关操作的实现，包括 Hash、签名、校验、加解密等。 <br> 主要支持 MSP 的相关调用。 </p> 
+  <h2 id="二bddtests">二，bddtests</h2> 
+  <p>行为驱动测试（Behaviour Driven Development）相关代码。主要是关于各种测试，线下peer节点部署等相关的操作。</p> 
+  <h2 id="三common">三，common</h2> 
+  <p>一些通用的功能模块。包括常用的配置config、加密签名的crypto、ledger设置，工具包含协议设置等等。</p> 
+  <h2 id="四core">四，core ✳️</h2> 
+  <p>大部分核心实现代码都在本包下。其它包的代码封装上层接口，最终调用本包内代码。包含区块链操作Chaincode代码实现、peer节点消息处理及行为的实现、容器container的实现如docker交互实现、策略实现policy及预处理endorser等等。</p> 
+  <h2 id="五devenv">五，devenv</h2> 
+  <p>主要是方便本地搭建开发平台的一些脚本。主要包含了CouchDB设置、golang编译脚本、64位ubantu配置脚本等等。</p> 
+  <h2 id="六docs">六，docs</h2> 
+  <p>项目相关的所有文档。包含客户定制主题以及一些工具的源代码。</p> 
+  <h2 id="七events">七，events ✳️</h2> 
+  <p>EventHub 服务处理相关的模块。主要是包含了消费者，生产者的实现代码。另外，Even服务其包含了四种类型定义如下：REGISTER = 0;BLOCK = 1;CHAINCODE = 2;REJECTION = 3。</p> 
+  <h2 id="八examples">八，examples</h2> 
+  <p>示例文件夹，包括一些 chaincode 示例和监听事件的示例。</p> 
+  <h2 id="九gossip">九，gossip ✳️</h2> 
+  <p>流言算法–gossip算法。一个基于pull的gossip算法的实现。最终确保状态一致。 该协议大致如下： <br> 1）A发起者发送Hello（B唯一标识，nonce）消息到B远程节点（多个）。 <br> 2）收Hello信息后发送SendDigest到A节点，其中包含nonce <br> 3）A收到SendDigest，校验数据和nonce，把B作为待发送节点，并封装想要pull的数据SendReq到B节点 <br> 4）B收到SendReq发送SendRes到A节点，数据为SendReq不包含的数据 </p> 
+  <h2 id="十gotools">十，gotools</h2> 
+  <p>go 相关的开发工具的安装脚本：golint、govendor、goimports、protoc-gen-go、ginkgo、gocov、gocov-xml 等。</p> 
+  <h2 id="十一images">十一，images</h2> 
+  <p>一些跟 Docker 镜像生成相关的配置和脚本。主要包括各个镜像的 Dockerfile.in 文件。这些文件是生成 Dockerfile 的模板。</p> 
+  <h2 id="十二msp">十二，msp ✳️</h2> 
+  <p>成员服务提供者（Member Service Provider），提供一组认证相关的密码学机制和协议，用来负责对网络提供证书分发、校验，身份认证管理等。一些成员管理的实现代码等。</p> 
+  <h2 id="十三orderer">十三，orderer ✳️</h2> 
+  <p>在 fabric 1.0 架构中，共识功能被抽取出来，作为单独的 fabric-orderer 模块来实现，完成核心的排序功能。最核心的功能是实现从客户端过来的 broadcast 请求，和从 orderer 发送到 peer 节点的 deliver 接口。同时，orderer 需要支持多 channel 的维护。主要包含Solo、kafka及bft三个方法。</p> 
+  <h2 id="十四peer">十四，peer ✳️</h2> 
+  <p>peer节点的相关主命令模块。 <br> 作为服务端时候，支持 node 子命令；作为命令行时候，支持 chaincode、channel 等子命令。其中包含一些命令操作的实现等等。</p> 
+  <h2 id="十五proposals">十五，proposals</h2> 
+  <p>一些建议，包含现在对区块的结构优化建议及时序图的呈现。还有其他方面的一些建议文件。</p> 
+  <h2 id="十六protos">十六，protos ✳️</h2> 
+  <p>Protobuf 格式的数据结构和消息协议。都在同一个 protos 包内。 <br> 这里面是所有基本的数据结构（message）定义和 GRPC 的服务（service）接口声明。</p> 
+  <h2 id="十七release">十七，release</h2> 
+  <p>关于如何从dockerhub中拉取docker镜像的相关操作及脚本代码。</p> 
+  <h2 id="十八releasenotes">十八，release_notes</h2> 
+  <p>关于最新2017年6月8日beta版本更新的相关资讯。主要包括release笔记内容及版本变根日志。</p> 
+  <h2 id="十九sampleconfig">十九，sampleconfig</h2> 
+  <p>提供了一些样例证书文件和配置文件。pem格式，通过openssl来查看内容。内容基于BASE64来进行编码。</p> 
+  <h2 id="二十scripts">二十，scripts</h2> 
+  <p>一些辅助脚本，多数为外部 Makefile 调用。比如一些依赖环境的安装如python-pip、然后pip的安装包中的一些依赖环境等。还有一些配置，如让容器永不退出等。</p> 
+  <h2 id="二十一test">二十一，test </h2> 
+  <p>用于测试的一些脚本。 主要包含chaincode、回归测试脚本、容器关联order节点及peer节点测试脚本、环境构筑测试相关脚本如channel、以及一部分的工具LTE、OTE、PTE。</p> 
+  <h2 id="二十二unit-test"> 二十二，unit-test</h2> 
+  <p>单点docker配置测试脚本</p> 
+  <h2 id="二十三vendor">二十三，vendor</h2> 
+  <p>关于部分提供商的内容及管理依赖，包含github.com、golang.org、google系列及gopkg.in相关内容。</p> 
+  <h2 id="除了上述的包信息之外主目录里面还包括一些说明文档安装需求说明license-信息文件等-标号的部分会在后续系列中做专题讲解">除了上述的包信息之外，主目录里面还包括一些说明文档、安装需求说明、License 信息文件等。（ ✳️标号的部分会在后续系列中做专题讲解。）</h2> 
+ </div> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/markdown_views-ea0013b516.css"> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/lsttoy/article/details/73203664,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/lsttoy/article/details/73203664,&quot;}">阅读更多</a> 
+</div>

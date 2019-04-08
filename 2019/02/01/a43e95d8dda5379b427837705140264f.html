@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>Classification基础实验系列三——MobileNet论文笔记与复现 | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="Classification基础实验系列三——MobileNet论文笔记与复现" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="一、概述   本文记录MobileNet论文的阅读笔记以及代码实现。其实本来是想直接看MobileNet v2的，结果v2的论文太难了看不大懂...所以先来看看v1吧🐶   首先根据知乎大佬的说法，MobileNet并非2017年的创作，而是Google此前两年就有的工作，只是文章一直没发表而已。这也解释了为什么MobileNet看起来是一种非常复古的“直筒结构”，性价比不高。关于“性价比”，大佬是这么解释的：   “后续一系列的ResNet, DenseNet等结构已经证明通过复用图像特征， 使用concat/eltwise+ 等操作进行融合， 能极大提升网络的性价比”   其次MobileNet中的Depthwise Conv在训练过程中也有一些问题。这个等到写MobileNet v2笔记时再进一步分析。 1.1 论文主要内容   本文主要分为三个方面的内容： 介绍Depthwise Separable Convolution（深度可分离卷积）以及其在计算量方面相对于传统卷积的优势； 提出了两个超参数Width Multiplier 和Resolution Multiplier ，用于进一步压缩模型的复杂度，减小参数数量。 大量的实验结果用于对比Depthwise和普通卷积，以及比较不同Multiplier下模型的复杂度和准确率。 二、论文阅读 2.1 Depthwise Separable Convolution   主要思想是对传统卷积做了一个分解——将传统卷积分成depthwise和pointwise两步来完成。其中depthwise就是对输入特征的每个通道单独使用一个filter，然后对得到的若干个输出通道再使用1x1conv进行组合，得到新特征，即pointwise Conv。第二步也体现了1x1 Conv跨通道整流的特点。   论文中对此的解释是，标准卷积中，滤波和滤波之后特征的线性组合可以看做两个步骤，深度可分离卷积就是将这两个步骤分开进行。   值得注意的一点是，这种卷积背后的假设是跨channel相关性和跨spatial相关性的解耦。而这种假设目前还无法证明，但是实际实验结果表明深度可分离卷积确实可以减小参数数量。参考上面知乎帖子大佬的回答： 近两年是深度可分离卷积（Depth-wise Separable Convolution）大红大紫的两年，甚至有跟ResNet的Skip-connection一样成为网络基本组件的趋势。Xception论文指出，这种卷积背后的假设是跨channel相关性和跨spatial相关性的解耦。应用深度可分离卷积的另一个优势即是参数量的节省（这一点其实也是解耦的结果，参数描述上享受了正交性的乘法增益）。然而，这一假设的成立与否还是存疑的，目前我们也没有足够的工具去描述和证明这一假设。   下面的草图展示了depthwise和pointwise两个层及其计算量。 Fig. 1. 深度可分离卷积示意图   由于标准卷积的计算量为，用上图的式子除以该式，结果为 （忽略D_G和D_F之间的差距）由于网络中用的卷积核大小D_k均为3x3，使用深度可分离卷积的参数量约为标准卷积的。 Fig. 2. Depthwise和Pointwise视为两层，后面各接一组BN和ReLU   除此之外，论文中还提到了一个实现细节，就是深度可分离卷积中大部分运算量都来自1x1 Conv，而1x1 Convs &quot;do not require this reordering in memory and can be implemented directly with GEMM which is one of the most optimized numerical linear algebra algorithms.&quot;，这里的reordering就是经典的im2col，即caffe中实现卷积的方法。就是说如果空间维度大于1的卷积，为了使用高级优化方法GEMM，需要先用im2col进行矩阵重组。而1x1 Conv节省了这一步，故文章中说1x1 Conv是线性代数数值计算中的最优算法之一。详细了解im2col可以见这篇博客。注意caffe中是按行优先，而Matlab是按列优先。 Fig. 3. im2col与reordering 2.2 Width Multiplier与Resolution Multiplier Width Multiplier 对各层使用同一个缩放因子来减少滤波器个数，使输入通道数变为，输出通道数变为。通常在1, 0.75, 0.5, 0.25中选择。1为标准MobileNet，其他三个为精简的MobileNet。节省的计算量约为 。 Resolution Multiplier 对网络输入尺寸使用一个缩放因子，进而使得每一层feature map尺寸都变成原来的倍。这个缩放因子实际上就是选择不同的输入尺寸，没有像Width Multiplier那样显式设置。该因子节省的计算量也约为。 2.3 实验分析 2.3.1 深度可分离卷积带来的性能下降可以接收 Fig. 4. 将MobileNet中的卷积全部换成普通卷积，对比结果 2.3.2 Shallower or thinner?   在对原始MobileNet进行进一步压缩时，一个问题是为什么我们要使用Width Multiplier，而不是简单地减少模型的层数？文章通过实验证明，使用缩减网络比减小网络层数性能要好。 Fig. 5. Narrow v.s. Shallow MobileNet 2.3.3 Width Multiplier可以设多大？   这个应该是大家最关心的实验了。本实验证明在从1降到0.5的过程中，模型性能是平滑下降的；当从0.5降到0.25时，性能大幅下降。可见对模型性能影响较小，通常是一个值得尝试的选择。 Fig. 6. α的影响 2.3.4 输入分辨率的影响？   随着输入分辨率的降低，模型性能的下降趋势较平滑： Fig. 7. ρ的影响 2.3.5 其他实验   本文还比较了MobileNet与其他网络的性能。比如1.0MobileNet-224要强于GoogLeNet，稍逊于VGG16，但是相比VGG16，模型大小缩小了32倍，计算量少了27倍！另外，0.5 MobileNet-160的性能就超过SqueezeNet和AlexNet了。 三、代码实现 3.1 Gluon中Conv2D   Gluon中nn.Conv2D提供了便利的接口，即通过设置groups参数，可以指定卷积进行的方式。见下方的参数说明 Fig. 8. Conv2D参数 这个参数介绍信息量还是很大的。值得注意的有几个地方： 通常一种比较省事的做法是使用Conv2D时不指定input_channels，不过这样定义完网络之后，模型的初始化会被推迟进行，即当模型第一次call forward函数时才会根据输入图像尺寸推断input_channels进而初始化网络参数。这样可能会影响model.summary()等函数的使用。 看起来Conv2D也提供了扩张卷积的接口 groups参数：控制输入特征图和输出特征图的连接方式。默认groups=1，即卷积核的深度和输入通道深度相同。如果取2，则效果相当于将输入特征按通道那一维分成两半，每一半与一个group进行卷积，输出的特征图concat得到一个特征图。因此，如果将groups参数设置为同输入通道数目一致，就是Depthwise Convolution。   首先我做了一个小实验来对比普通卷积和groups&gt;1的卷积，来验证该参数是否可用于简便地实现depthwise conv。实验虽然选取了较小的输入feature map和卷积核，但是输出结果还是比较冗长。有兴趣的可以直接看代码，后面MobileNet的搭建以及训练实验也在里面。这里直接放上结论： 可以使用Gluon提供的groups接口实现Depthwise Conv。 只需要设置num_in_channels(in_channels)==num_out_channels(channels)==groups，当然，同普通卷积，in_channels参数也可以不显式地指定。不过这样模型初始化会延后到第一次model.forward之后进行。 3.2 实现MobileNet    from mxnet import nd import numpy as np from mxnet.gluon import nn import mxnet as mx from mxnet import gluon class ConvBlock(nn.HybridBlock): def __init__(self, in_channels, channels, strides, padding, num_sync_bn_devices=-1, multiplier=1.0): super(ConvBlock, self).__init__() self.conv_block = nn.HybridSequential() with self.conv_block.name_scope(): self.conv_block.add(nn.Conv2D(int(channels*multiplier), 3, strides, padding, in_channels=in_channels, use_bias=False)) if num_sync_bn_devices == -1: self.conv_block.add(nn.BatchNorm()) else: self.conv_block.add(gluon.contrib.nn.SyncBatchNorm(num_devices=num_sync_bn_devices)) self.conv_block.add(nn.Activation(&#39;relu&#39;)) def hybrid_forward(self, F, x): return self.conv_block(x) class DepthwiseSeperable(nn.HybridBlock): def __init__(self, in_channels, channels, strides, num_sync_bn_devices=-1, multiplier=1.0, **kwags): # Weidth Multiplier in_channels = int(in_channels * multiplier) channels = int(channels * multiplier) super(DepthwiseSeperable, self).__init__(**kwags) self.depthwise = nn.HybridSequential() with self.depthwise.name_scope(): self.depthwise.add(nn.Conv2D(in_channels, 3, strides, padding=1,groups=in_channels, in_channels=in_channels, use_bias=False)) if num_sync_bn_devices == -1: self.depthwise.add(nn.BatchNorm()) else: self.depthwise.add(gluon.contrib.nn.SyncBatchNorm(num_devices=num_sync_bn_devices)) self.depthwise.add(nn.Activation(&#39;relu&#39;)) self.pointwise = nn.HybridSequential() with self.pointwise.name_scope(): self.pointwise.add(nn.Conv2D(channels, 1, in_channels=in_channels, use_bias=False)) if num_sync_bn_devices == -1: self.pointwise.add(nn.BatchNorm()) else: self.pointwise.add(gluon.contrib.nn.SyncBatchNorm(num_devices=num_sync_bn_devices)) self.pointwise.add(nn.Activation(&#39;relu&#39;)) def hybrid_forward(self, F, x): return(self.pointwise(self.depthwise(x))) class MobileNet(nn.HybridBlock): def __init__(self, num_classes, n_devices=2, multiplier=1.0, **kwags): super(MobileNet, self).__init__(**kwags) self.net = nn.HybridSequential() self.net.add(ConvBlock(3, 32, 2, 1, n_devices, multiplier)) self.net.add(DepthwiseSeperable(32, 64, 1, n_devices, multiplier)) self.net.add(DepthwiseSeperable(64, 128, 2, n_devices, multiplier)) self.net.add(DepthwiseSeperable(128, 128, 1, n_devices, multiplier)) self.net.add(DepthwiseSeperable(128, 256, 2, n_devices, multiplier)) self.net.add(DepthwiseSeperable(256, 256, 1, n_devices, multiplier)) self.net.add(DepthwiseSeperable(256, 512, 2, n_devices, multiplier)) for _ in range(5): self.net.add(DepthwiseSeperable(512, 512, 1, n_devices, multiplier)) self.net.add(DepthwiseSeperable(512, 1024, 2, n_devices, multiplier)) self.net.add(DepthwiseSeperable(1024, 1024, 1, n_devices, multiplier)) self.net.add(nn.GlobalAvgPool2D()) self.net.add(nn.Dense(num_classes)) def hybrid_forward(self, F, x): return self.net(x) 可以用下面这段小代码检查下上面定义的模型： net = MobileNet(num_classes=1000, n_devices=2, multiplier=1.0) net.initialize(mx.init.Xavier()) test_input = nd.random_normal(shape=(1, 3, 224, 224)) net.summary(test_input) 也可以使用mxnet.viz.plot_networks打印出模型的graph，不过需要先将模型转换为symbol： net.hybridize() output = net.forward(test_input) # export之后同时生成了一个.json文件和.params文件 net.export(&#39;Gluon-MobileNet&#39;) symnet = mx.symbol.load(&#39;Gluon-MobileNet-symbol.json&#39;) mx.viz.plot_network(symnet, title=&#39;mobilnet_viz&#39;, shape={&#39;data&#39;:(1, 3, 224, 224)}) 图片太长这里就不放了。可以到notebook中去看。 3.3 Experiment on CIFAR10 超参数设置： OPTIMIZER: &#39;nag&#39; BATCH_SIZE = 64 # per gpu EPOCHS = 200 LR = 1e-1 WD = 5e-4 MOMENTUM = 0.9 lr_decay_dict = {40:0.1, 80:0.1, 120:0.1} 数据增强： 训练数据：随机左右翻转；归一化到0-1；减去数据集均值，除以标准差； 测试数据：归一化到0-1；减去数据集均值，除以标准差； 结果： Fig. 9. Training Curve Fig. 10. Classification Report 一个奇怪的现象是模型在第二次decay 0.1时的第二或第三个epoch开始（图中大概第80个epoch处）会迅速开始过拟合。看起来模型的训练受学习率衰减的影响非常大。" />
+<meta property="og:description" content="一、概述   本文记录MobileNet论文的阅读笔记以及代码实现。其实本来是想直接看MobileNet v2的，结果v2的论文太难了看不大懂...所以先来看看v1吧🐶   首先根据知乎大佬的说法，MobileNet并非2017年的创作，而是Google此前两年就有的工作，只是文章一直没发表而已。这也解释了为什么MobileNet看起来是一种非常复古的“直筒结构”，性价比不高。关于“性价比”，大佬是这么解释的：   “后续一系列的ResNet, DenseNet等结构已经证明通过复用图像特征， 使用concat/eltwise+ 等操作进行融合， 能极大提升网络的性价比”   其次MobileNet中的Depthwise Conv在训练过程中也有一些问题。这个等到写MobileNet v2笔记时再进一步分析。 1.1 论文主要内容   本文主要分为三个方面的内容： 介绍Depthwise Separable Convolution（深度可分离卷积）以及其在计算量方面相对于传统卷积的优势； 提出了两个超参数Width Multiplier 和Resolution Multiplier ，用于进一步压缩模型的复杂度，减小参数数量。 大量的实验结果用于对比Depthwise和普通卷积，以及比较不同Multiplier下模型的复杂度和准确率。 二、论文阅读 2.1 Depthwise Separable Convolution   主要思想是对传统卷积做了一个分解——将传统卷积分成depthwise和pointwise两步来完成。其中depthwise就是对输入特征的每个通道单独使用一个filter，然后对得到的若干个输出通道再使用1x1conv进行组合，得到新特征，即pointwise Conv。第二步也体现了1x1 Conv跨通道整流的特点。   论文中对此的解释是，标准卷积中，滤波和滤波之后特征的线性组合可以看做两个步骤，深度可分离卷积就是将这两个步骤分开进行。   值得注意的一点是，这种卷积背后的假设是跨channel相关性和跨spatial相关性的解耦。而这种假设目前还无法证明，但是实际实验结果表明深度可分离卷积确实可以减小参数数量。参考上面知乎帖子大佬的回答： 近两年是深度可分离卷积（Depth-wise Separable Convolution）大红大紫的两年，甚至有跟ResNet的Skip-connection一样成为网络基本组件的趋势。Xception论文指出，这种卷积背后的假设是跨channel相关性和跨spatial相关性的解耦。应用深度可分离卷积的另一个优势即是参数量的节省（这一点其实也是解耦的结果，参数描述上享受了正交性的乘法增益）。然而，这一假设的成立与否还是存疑的，目前我们也没有足够的工具去描述和证明这一假设。   下面的草图展示了depthwise和pointwise两个层及其计算量。 Fig. 1. 深度可分离卷积示意图   由于标准卷积的计算量为，用上图的式子除以该式，结果为 （忽略D_G和D_F之间的差距）由于网络中用的卷积核大小D_k均为3x3，使用深度可分离卷积的参数量约为标准卷积的。 Fig. 2. Depthwise和Pointwise视为两层，后面各接一组BN和ReLU   除此之外，论文中还提到了一个实现细节，就是深度可分离卷积中大部分运算量都来自1x1 Conv，而1x1 Convs &quot;do not require this reordering in memory and can be implemented directly with GEMM which is one of the most optimized numerical linear algebra algorithms.&quot;，这里的reordering就是经典的im2col，即caffe中实现卷积的方法。就是说如果空间维度大于1的卷积，为了使用高级优化方法GEMM，需要先用im2col进行矩阵重组。而1x1 Conv节省了这一步，故文章中说1x1 Conv是线性代数数值计算中的最优算法之一。详细了解im2col可以见这篇博客。注意caffe中是按行优先，而Matlab是按列优先。 Fig. 3. im2col与reordering 2.2 Width Multiplier与Resolution Multiplier Width Multiplier 对各层使用同一个缩放因子来减少滤波器个数，使输入通道数变为，输出通道数变为。通常在1, 0.75, 0.5, 0.25中选择。1为标准MobileNet，其他三个为精简的MobileNet。节省的计算量约为 。 Resolution Multiplier 对网络输入尺寸使用一个缩放因子，进而使得每一层feature map尺寸都变成原来的倍。这个缩放因子实际上就是选择不同的输入尺寸，没有像Width Multiplier那样显式设置。该因子节省的计算量也约为。 2.3 实验分析 2.3.1 深度可分离卷积带来的性能下降可以接收 Fig. 4. 将MobileNet中的卷积全部换成普通卷积，对比结果 2.3.2 Shallower or thinner?   在对原始MobileNet进行进一步压缩时，一个问题是为什么我们要使用Width Multiplier，而不是简单地减少模型的层数？文章通过实验证明，使用缩减网络比减小网络层数性能要好。 Fig. 5. Narrow v.s. Shallow MobileNet 2.3.3 Width Multiplier可以设多大？   这个应该是大家最关心的实验了。本实验证明在从1降到0.5的过程中，模型性能是平滑下降的；当从0.5降到0.25时，性能大幅下降。可见对模型性能影响较小，通常是一个值得尝试的选择。 Fig. 6. α的影响 2.3.4 输入分辨率的影响？   随着输入分辨率的降低，模型性能的下降趋势较平滑： Fig. 7. ρ的影响 2.3.5 其他实验   本文还比较了MobileNet与其他网络的性能。比如1.0MobileNet-224要强于GoogLeNet，稍逊于VGG16，但是相比VGG16，模型大小缩小了32倍，计算量少了27倍！另外，0.5 MobileNet-160的性能就超过SqueezeNet和AlexNet了。 三、代码实现 3.1 Gluon中Conv2D   Gluon中nn.Conv2D提供了便利的接口，即通过设置groups参数，可以指定卷积进行的方式。见下方的参数说明 Fig. 8. Conv2D参数 这个参数介绍信息量还是很大的。值得注意的有几个地方： 通常一种比较省事的做法是使用Conv2D时不指定input_channels，不过这样定义完网络之后，模型的初始化会被推迟进行，即当模型第一次call forward函数时才会根据输入图像尺寸推断input_channels进而初始化网络参数。这样可能会影响model.summary()等函数的使用。 看起来Conv2D也提供了扩张卷积的接口 groups参数：控制输入特征图和输出特征图的连接方式。默认groups=1，即卷积核的深度和输入通道深度相同。如果取2，则效果相当于将输入特征按通道那一维分成两半，每一半与一个group进行卷积，输出的特征图concat得到一个特征图。因此，如果将groups参数设置为同输入通道数目一致，就是Depthwise Convolution。   首先我做了一个小实验来对比普通卷积和groups&gt;1的卷积，来验证该参数是否可用于简便地实现depthwise conv。实验虽然选取了较小的输入feature map和卷积核，但是输出结果还是比较冗长。有兴趣的可以直接看代码，后面MobileNet的搭建以及训练实验也在里面。这里直接放上结论： 可以使用Gluon提供的groups接口实现Depthwise Conv。 只需要设置num_in_channels(in_channels)==num_out_channels(channels)==groups，当然，同普通卷积，in_channels参数也可以不显式地指定。不过这样模型初始化会延后到第一次model.forward之后进行。 3.2 实现MobileNet    from mxnet import nd import numpy as np from mxnet.gluon import nn import mxnet as mx from mxnet import gluon class ConvBlock(nn.HybridBlock): def __init__(self, in_channels, channels, strides, padding, num_sync_bn_devices=-1, multiplier=1.0): super(ConvBlock, self).__init__() self.conv_block = nn.HybridSequential() with self.conv_block.name_scope(): self.conv_block.add(nn.Conv2D(int(channels*multiplier), 3, strides, padding, in_channels=in_channels, use_bias=False)) if num_sync_bn_devices == -1: self.conv_block.add(nn.BatchNorm()) else: self.conv_block.add(gluon.contrib.nn.SyncBatchNorm(num_devices=num_sync_bn_devices)) self.conv_block.add(nn.Activation(&#39;relu&#39;)) def hybrid_forward(self, F, x): return self.conv_block(x) class DepthwiseSeperable(nn.HybridBlock): def __init__(self, in_channels, channels, strides, num_sync_bn_devices=-1, multiplier=1.0, **kwags): # Weidth Multiplier in_channels = int(in_channels * multiplier) channels = int(channels * multiplier) super(DepthwiseSeperable, self).__init__(**kwags) self.depthwise = nn.HybridSequential() with self.depthwise.name_scope(): self.depthwise.add(nn.Conv2D(in_channels, 3, strides, padding=1,groups=in_channels, in_channels=in_channels, use_bias=False)) if num_sync_bn_devices == -1: self.depthwise.add(nn.BatchNorm()) else: self.depthwise.add(gluon.contrib.nn.SyncBatchNorm(num_devices=num_sync_bn_devices)) self.depthwise.add(nn.Activation(&#39;relu&#39;)) self.pointwise = nn.HybridSequential() with self.pointwise.name_scope(): self.pointwise.add(nn.Conv2D(channels, 1, in_channels=in_channels, use_bias=False)) if num_sync_bn_devices == -1: self.pointwise.add(nn.BatchNorm()) else: self.pointwise.add(gluon.contrib.nn.SyncBatchNorm(num_devices=num_sync_bn_devices)) self.pointwise.add(nn.Activation(&#39;relu&#39;)) def hybrid_forward(self, F, x): return(self.pointwise(self.depthwise(x))) class MobileNet(nn.HybridBlock): def __init__(self, num_classes, n_devices=2, multiplier=1.0, **kwags): super(MobileNet, self).__init__(**kwags) self.net = nn.HybridSequential() self.net.add(ConvBlock(3, 32, 2, 1, n_devices, multiplier)) self.net.add(DepthwiseSeperable(32, 64, 1, n_devices, multiplier)) self.net.add(DepthwiseSeperable(64, 128, 2, n_devices, multiplier)) self.net.add(DepthwiseSeperable(128, 128, 1, n_devices, multiplier)) self.net.add(DepthwiseSeperable(128, 256, 2, n_devices, multiplier)) self.net.add(DepthwiseSeperable(256, 256, 1, n_devices, multiplier)) self.net.add(DepthwiseSeperable(256, 512, 2, n_devices, multiplier)) for _ in range(5): self.net.add(DepthwiseSeperable(512, 512, 1, n_devices, multiplier)) self.net.add(DepthwiseSeperable(512, 1024, 2, n_devices, multiplier)) self.net.add(DepthwiseSeperable(1024, 1024, 1, n_devices, multiplier)) self.net.add(nn.GlobalAvgPool2D()) self.net.add(nn.Dense(num_classes)) def hybrid_forward(self, F, x): return self.net(x) 可以用下面这段小代码检查下上面定义的模型： net = MobileNet(num_classes=1000, n_devices=2, multiplier=1.0) net.initialize(mx.init.Xavier()) test_input = nd.random_normal(shape=(1, 3, 224, 224)) net.summary(test_input) 也可以使用mxnet.viz.plot_networks打印出模型的graph，不过需要先将模型转换为symbol： net.hybridize() output = net.forward(test_input) # export之后同时生成了一个.json文件和.params文件 net.export(&#39;Gluon-MobileNet&#39;) symnet = mx.symbol.load(&#39;Gluon-MobileNet-symbol.json&#39;) mx.viz.plot_network(symnet, title=&#39;mobilnet_viz&#39;, shape={&#39;data&#39;:(1, 3, 224, 224)}) 图片太长这里就不放了。可以到notebook中去看。 3.3 Experiment on CIFAR10 超参数设置： OPTIMIZER: &#39;nag&#39; BATCH_SIZE = 64 # per gpu EPOCHS = 200 LR = 1e-1 WD = 5e-4 MOMENTUM = 0.9 lr_decay_dict = {40:0.1, 80:0.1, 120:0.1} 数据增强： 训练数据：随机左右翻转；归一化到0-1；减去数据集均值，除以标准差； 测试数据：归一化到0-1；减去数据集均值，除以标准差； 结果： Fig. 9. Training Curve Fig. 10. Classification Report 一个奇怪的现象是模型在第二次decay 0.1时的第二或第三个epoch开始（图中大概第80个epoch处）会迅速开始过拟合。看起来模型的训练受学习率衰减的影响非常大。" />
+<link rel="canonical" href="http://0.0.0.0:4000/2019/02/01/a43e95d8dda5379b427837705140264f.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2019/02/01/a43e95d8dda5379b427837705140264f.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-02-01T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"一、概述   本文记录MobileNet论文的阅读笔记以及代码实现。其实本来是想直接看MobileNet v2的，结果v2的论文太难了看不大懂...所以先来看看v1吧🐶   首先根据知乎大佬的说法，MobileNet并非2017年的创作，而是Google此前两年就有的工作，只是文章一直没发表而已。这也解释了为什么MobileNet看起来是一种非常复古的“直筒结构”，性价比不高。关于“性价比”，大佬是这么解释的：   “后续一系列的ResNet, DenseNet等结构已经证明通过复用图像特征， 使用concat/eltwise+ 等操作进行融合， 能极大提升网络的性价比”   其次MobileNet中的Depthwise Conv在训练过程中也有一些问题。这个等到写MobileNet v2笔记时再进一步分析。 1.1 论文主要内容   本文主要分为三个方面的内容： 介绍Depthwise Separable Convolution（深度可分离卷积）以及其在计算量方面相对于传统卷积的优势； 提出了两个超参数Width Multiplier 和Resolution Multiplier ，用于进一步压缩模型的复杂度，减小参数数量。 大量的实验结果用于对比Depthwise和普通卷积，以及比较不同Multiplier下模型的复杂度和准确率。 二、论文阅读 2.1 Depthwise Separable Convolution   主要思想是对传统卷积做了一个分解——将传统卷积分成depthwise和pointwise两步来完成。其中depthwise就是对输入特征的每个通道单独使用一个filter，然后对得到的若干个输出通道再使用1x1conv进行组合，得到新特征，即pointwise Conv。第二步也体现了1x1 Conv跨通道整流的特点。   论文中对此的解释是，标准卷积中，滤波和滤波之后特征的线性组合可以看做两个步骤，深度可分离卷积就是将这两个步骤分开进行。   值得注意的一点是，这种卷积背后的假设是跨channel相关性和跨spatial相关性的解耦。而这种假设目前还无法证明，但是实际实验结果表明深度可分离卷积确实可以减小参数数量。参考上面知乎帖子大佬的回答： 近两年是深度可分离卷积（Depth-wise Separable Convolution）大红大紫的两年，甚至有跟ResNet的Skip-connection一样成为网络基本组件的趋势。Xception论文指出，这种卷积背后的假设是跨channel相关性和跨spatial相关性的解耦。应用深度可分离卷积的另一个优势即是参数量的节省（这一点其实也是解耦的结果，参数描述上享受了正交性的乘法增益）。然而，这一假设的成立与否还是存疑的，目前我们也没有足够的工具去描述和证明这一假设。   下面的草图展示了depthwise和pointwise两个层及其计算量。 Fig. 1. 深度可分离卷积示意图   由于标准卷积的计算量为，用上图的式子除以该式，结果为 （忽略D_G和D_F之间的差距）由于网络中用的卷积核大小D_k均为3x3，使用深度可分离卷积的参数量约为标准卷积的。 Fig. 2. Depthwise和Pointwise视为两层，后面各接一组BN和ReLU   除此之外，论文中还提到了一个实现细节，就是深度可分离卷积中大部分运算量都来自1x1 Conv，而1x1 Convs &quot;do not require this reordering in memory and can be implemented directly with GEMM which is one of the most optimized numerical linear algebra algorithms.&quot;，这里的reordering就是经典的im2col，即caffe中实现卷积的方法。就是说如果空间维度大于1的卷积，为了使用高级优化方法GEMM，需要先用im2col进行矩阵重组。而1x1 Conv节省了这一步，故文章中说1x1 Conv是线性代数数值计算中的最优算法之一。详细了解im2col可以见这篇博客。注意caffe中是按行优先，而Matlab是按列优先。 Fig. 3. im2col与reordering 2.2 Width Multiplier与Resolution Multiplier Width Multiplier 对各层使用同一个缩放因子来减少滤波器个数，使输入通道数变为，输出通道数变为。通常在1, 0.75, 0.5, 0.25中选择。1为标准MobileNet，其他三个为精简的MobileNet。节省的计算量约为 。 Resolution Multiplier 对网络输入尺寸使用一个缩放因子，进而使得每一层feature map尺寸都变成原来的倍。这个缩放因子实际上就是选择不同的输入尺寸，没有像Width Multiplier那样显式设置。该因子节省的计算量也约为。 2.3 实验分析 2.3.1 深度可分离卷积带来的性能下降可以接收 Fig. 4. 将MobileNet中的卷积全部换成普通卷积，对比结果 2.3.2 Shallower or thinner?   在对原始MobileNet进行进一步压缩时，一个问题是为什么我们要使用Width Multiplier，而不是简单地减少模型的层数？文章通过实验证明，使用缩减网络比减小网络层数性能要好。 Fig. 5. Narrow v.s. Shallow MobileNet 2.3.3 Width Multiplier可以设多大？   这个应该是大家最关心的实验了。本实验证明在从1降到0.5的过程中，模型性能是平滑下降的；当从0.5降到0.25时，性能大幅下降。可见对模型性能影响较小，通常是一个值得尝试的选择。 Fig. 6. α的影响 2.3.4 输入分辨率的影响？   随着输入分辨率的降低，模型性能的下降趋势较平滑： Fig. 7. ρ的影响 2.3.5 其他实验   本文还比较了MobileNet与其他网络的性能。比如1.0MobileNet-224要强于GoogLeNet，稍逊于VGG16，但是相比VGG16，模型大小缩小了32倍，计算量少了27倍！另外，0.5 MobileNet-160的性能就超过SqueezeNet和AlexNet了。 三、代码实现 3.1 Gluon中Conv2D   Gluon中nn.Conv2D提供了便利的接口，即通过设置groups参数，可以指定卷积进行的方式。见下方的参数说明 Fig. 8. Conv2D参数 这个参数介绍信息量还是很大的。值得注意的有几个地方： 通常一种比较省事的做法是使用Conv2D时不指定input_channels，不过这样定义完网络之后，模型的初始化会被推迟进行，即当模型第一次call forward函数时才会根据输入图像尺寸推断input_channels进而初始化网络参数。这样可能会影响model.summary()等函数的使用。 看起来Conv2D也提供了扩张卷积的接口 groups参数：控制输入特征图和输出特征图的连接方式。默认groups=1，即卷积核的深度和输入通道深度相同。如果取2，则效果相当于将输入特征按通道那一维分成两半，每一半与一个group进行卷积，输出的特征图concat得到一个特征图。因此，如果将groups参数设置为同输入通道数目一致，就是Depthwise Convolution。   首先我做了一个小实验来对比普通卷积和groups&gt;1的卷积，来验证该参数是否可用于简便地实现depthwise conv。实验虽然选取了较小的输入feature map和卷积核，但是输出结果还是比较冗长。有兴趣的可以直接看代码，后面MobileNet的搭建以及训练实验也在里面。这里直接放上结论： 可以使用Gluon提供的groups接口实现Depthwise Conv。 只需要设置num_in_channels(in_channels)==num_out_channels(channels)==groups，当然，同普通卷积，in_channels参数也可以不显式地指定。不过这样模型初始化会延后到第一次model.forward之后进行。 3.2 实现MobileNet    from mxnet import nd import numpy as np from mxnet.gluon import nn import mxnet as mx from mxnet import gluon class ConvBlock(nn.HybridBlock): def __init__(self, in_channels, channels, strides, padding, num_sync_bn_devices=-1, multiplier=1.0): super(ConvBlock, self).__init__() self.conv_block = nn.HybridSequential() with self.conv_block.name_scope(): self.conv_block.add(nn.Conv2D(int(channels*multiplier), 3, strides, padding, in_channels=in_channels, use_bias=False)) if num_sync_bn_devices == -1: self.conv_block.add(nn.BatchNorm()) else: self.conv_block.add(gluon.contrib.nn.SyncBatchNorm(num_devices=num_sync_bn_devices)) self.conv_block.add(nn.Activation(&#39;relu&#39;)) def hybrid_forward(self, F, x): return self.conv_block(x) class DepthwiseSeperable(nn.HybridBlock): def __init__(self, in_channels, channels, strides, num_sync_bn_devices=-1, multiplier=1.0, **kwags): # Weidth Multiplier in_channels = int(in_channels * multiplier) channels = int(channels * multiplier) super(DepthwiseSeperable, self).__init__(**kwags) self.depthwise = nn.HybridSequential() with self.depthwise.name_scope(): self.depthwise.add(nn.Conv2D(in_channels, 3, strides, padding=1,groups=in_channels, in_channels=in_channels, use_bias=False)) if num_sync_bn_devices == -1: self.depthwise.add(nn.BatchNorm()) else: self.depthwise.add(gluon.contrib.nn.SyncBatchNorm(num_devices=num_sync_bn_devices)) self.depthwise.add(nn.Activation(&#39;relu&#39;)) self.pointwise = nn.HybridSequential() with self.pointwise.name_scope(): self.pointwise.add(nn.Conv2D(channels, 1, in_channels=in_channels, use_bias=False)) if num_sync_bn_devices == -1: self.pointwise.add(nn.BatchNorm()) else: self.pointwise.add(gluon.contrib.nn.SyncBatchNorm(num_devices=num_sync_bn_devices)) self.pointwise.add(nn.Activation(&#39;relu&#39;)) def hybrid_forward(self, F, x): return(self.pointwise(self.depthwise(x))) class MobileNet(nn.HybridBlock): def __init__(self, num_classes, n_devices=2, multiplier=1.0, **kwags): super(MobileNet, self).__init__(**kwags) self.net = nn.HybridSequential() self.net.add(ConvBlock(3, 32, 2, 1, n_devices, multiplier)) self.net.add(DepthwiseSeperable(32, 64, 1, n_devices, multiplier)) self.net.add(DepthwiseSeperable(64, 128, 2, n_devices, multiplier)) self.net.add(DepthwiseSeperable(128, 128, 1, n_devices, multiplier)) self.net.add(DepthwiseSeperable(128, 256, 2, n_devices, multiplier)) self.net.add(DepthwiseSeperable(256, 256, 1, n_devices, multiplier)) self.net.add(DepthwiseSeperable(256, 512, 2, n_devices, multiplier)) for _ in range(5): self.net.add(DepthwiseSeperable(512, 512, 1, n_devices, multiplier)) self.net.add(DepthwiseSeperable(512, 1024, 2, n_devices, multiplier)) self.net.add(DepthwiseSeperable(1024, 1024, 1, n_devices, multiplier)) self.net.add(nn.GlobalAvgPool2D()) self.net.add(nn.Dense(num_classes)) def hybrid_forward(self, F, x): return self.net(x) 可以用下面这段小代码检查下上面定义的模型： net = MobileNet(num_classes=1000, n_devices=2, multiplier=1.0) net.initialize(mx.init.Xavier()) test_input = nd.random_normal(shape=(1, 3, 224, 224)) net.summary(test_input) 也可以使用mxnet.viz.plot_networks打印出模型的graph，不过需要先将模型转换为symbol： net.hybridize() output = net.forward(test_input) # export之后同时生成了一个.json文件和.params文件 net.export(&#39;Gluon-MobileNet&#39;) symnet = mx.symbol.load(&#39;Gluon-MobileNet-symbol.json&#39;) mx.viz.plot_network(symnet, title=&#39;mobilnet_viz&#39;, shape={&#39;data&#39;:(1, 3, 224, 224)}) 图片太长这里就不放了。可以到notebook中去看。 3.3 Experiment on CIFAR10 超参数设置： OPTIMIZER: &#39;nag&#39; BATCH_SIZE = 64 # per gpu EPOCHS = 200 LR = 1e-1 WD = 5e-4 MOMENTUM = 0.9 lr_decay_dict = {40:0.1, 80:0.1, 120:0.1} 数据增强： 训练数据：随机左右翻转；归一化到0-1；减去数据集均值，除以标准差； 测试数据：归一化到0-1；减去数据集均值，除以标准差； 结果： Fig. 9. Training Curve Fig. 10. Classification Report 一个奇怪的现象是模型在第二次decay 0.1时的第二或第三个epoch开始（图中大概第80个epoch处）会迅速开始过拟合。看起来模型的训练受学习率衰减的影响非常大。","@type":"BlogPosting","url":"http://0.0.0.0:4000/2019/02/01/a43e95d8dda5379b427837705140264f.html","headline":"Classification基础实验系列三——MobileNet论文笔记与复现","dateModified":"2019-02-01T00:00:00+08:00","datePublished":"2019-02-01T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2019/02/01/a43e95d8dda5379b427837705140264f.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>Classification基础实验系列三——MobileNet论文笔记与复现</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-f57960eb32.css"> 
+ <div class="htmledit_views" id="content_views"> 
+  <div class="show-content-free"> 
+   <div class="image-package"> 
+    <div class="image-container"> 
+     <div class="image-container-fill"></div> 
+     <div class="image-view">
+      <img src="https://upload-images.jianshu.io/upload_images/14755769-68396a46402b281c.png" alt="14755769-68396a46402b281c.png">
+     </div> 
+    </div> 
+    <div class="image-caption"></div> 
+   </div> 
+   <h3>一、概述</h3> 
+   <p>  本文记录<a href="https://arxiv.org/abs/1704.04861" rel="nofollow">MobileNet论文</a>的阅读笔记以及代码实现。其实本来是想直接看MobileNet v2的，结果v2的论文太难了看不大懂...所以先来看看v1吧🐶</p> 
+   <p>  首先根据<a href="https://www.zhihu.com/question/265709710/answer/298245276" rel="nofollow">知乎大佬</a>的说法，MobileNet并非2017年的创作，而是Google此前两年就有的工作，只是文章一直没发表而已。这也解释了为什么MobileNet看起来是一种非常复古的“直筒结构”，性价比不高。关于“性价比”，大佬是这么解释的：</p> 
+   <hr>
+   <p>  <em>“后续一系列的ResNet, DenseNet等结构已经证明通过复用图像特征， 使用concat/eltwise+ 等操作进行融合， 能极大提升网络的性价比”</em></p> 
+   <hr>
+   <p>  其次MobileNet中的Depthwise Conv在训练过程中也有一些问题。这个等到写MobileNet v2笔记时再进一步分析。</p> 
+   <h4>1.1 论文主要内容</h4> 
+   <p>  本文主要分为三个方面的内容：</p> 
+   <ol>
+    <li>介绍Depthwise Separable Convolution（深度可分离卷积）以及其在计算量方面相对于传统卷积的优势；</li> 
+    <li>提出了两个超参数<code>Width Multiplier</code> 和<code>Resolution Multiplier</code> ，用于进一步压缩模型的复杂度，减小参数数量。</li> 
+    <li>大量的实验结果用于对比Depthwise和普通卷积，以及比较不同Multiplier下模型的复杂度和准确率。</li> 
+   </ol>
+   <h3>二、论文阅读</h3> 
+   <h4>2.1 Depthwise Separable Convolution</h4> 
+   <p>  主要思想是对传统卷积做了一个<strong>分解</strong>——将传统卷积分成depthwise和pointwise两步来完成。其中depthwise就是对输入特征的每个通道单独使用一个filter，然后对得到的若干个输出通道再使用1x1conv进行组合，得到新特征，即pointwise Conv。第二步也体现了1x1 Conv跨通道整流的特点。</p> 
+   <p>  论文中对此的解释是，标准卷积中，滤波和滤波之后特征的线性组合可以看做两个步骤，深度可分离卷积就是将这两个步骤分开进行。</p> 
+   <p>  值得注意的一点是，<strong>这种卷积背后的假设是跨channel相关性和跨spatial相关性的解耦。</strong>而这种假设目前还无法证明，但是实际实验结果表明深度可分离卷积确实可以减小参数数量。参考上面知乎帖子大佬的回答：</p> 
+   <hr>
+   <p><em>近两年是深度可分离卷积（Depth-wise Separable Convolution）大红大紫的两年，甚至有跟ResNet的Skip-connection一样成为网络基本组件的趋势。</em><em>Xception论文指出，这种卷积背后的假设是跨channel相关性和跨spatial相关性的解耦。</em><em>应用深度可分离卷积的另一个优势即是参数量的节省（这一点其实也是解耦的结果，参数描述上享受了正交性的乘法增益）。然而，这一假设的成立与否还是存疑的，目前我们也没有足够的工具去描述和证明这一假设。</em></p> 
+   <hr>
+   <p>  下面的草图展示了depthwise和pointwise两个层及其计算量。</p> 
+   <br>
+   <div class="image-package"> 
+    <div class="image-container"> 
+     <div class="image-container-fill"></div> 
+     <div class="image-view">
+      <img src="https://upload-images.jianshu.io/upload_images/14755769-fddfd9072e09feeb.png" alt="14755769-fddfd9072e09feeb.png">
+     </div> 
+    </div> 
+    <div class="image-caption">
+     Fig. 1. 深度可分离卷积示意图
+    </div> 
+   </div> 
+   <p>  由于标准卷积的计算量为，用上图的式子除以该式，结果为 （忽略D_G和D_F之间的差距）由于网络中用的卷积核大小D_k均为3x3，使用深度可分离卷积的参数量约为标准卷积的。</p> 
+   <div class="image-package"> 
+    <div class="image-container"> 
+     <div class="image-container-fill"></div> 
+     <div class="image-view">
+      <img src="https://upload-images.jianshu.io/upload_images/14755769-bbbaf0cc6ea8b070.png" alt="14755769-bbbaf0cc6ea8b070.png">
+     </div> 
+    </div> 
+    <div class="image-caption">
+     Fig. 2. Depthwise和Pointwise视为两层，后面各接一组BN和ReLU
+    </div> 
+   </div> 
+   <p>  除此之外，论文中还提到了一个实现细节，就是深度可分离卷积中大部分运算量都来自1x1 Conv，而1x1 Convs <em>"do not require this reordering in memory and can be implemented directly with GEMM which is one of the most optimized numerical linear algebra algorithms."</em>，这里的reordering就是经典的<code>im2col</code>，即caffe中实现卷积的方法。就是说如果空间维度大于1的卷积，为了使用高级优化方法GEMM，需要先用im2col进行矩阵重组。而1x1 Conv节省了这一步，故文章中说1x1 Conv是线性代数数值计算中的最优算法之一。详细了解im2col可以见<a href="https://blog.csdn.net/Mrhiuser/article/details/52672824" rel="nofollow">这篇博客</a>。注意caffe中是按行优先，而Matlab是按列优先。<br></p>
+   <div class="image-package"> 
+    <div class="image-container"> 
+     <div class="image-container-fill"></div> 
+     <div class="image-view">
+      <img src="https://upload-images.jianshu.io/upload_images/14755769-5a05b0a91f61eb7a.png" alt="14755769-5a05b0a91f61eb7a.png">
+     </div> 
+    </div> 
+    <div class="image-caption">
+     Fig. 3. im2col与reordering
+    </div> 
+   </div>
+   <p></p> 
+   <h4>2.2 Width Multiplier与Resolution Multiplier</h4> 
+   <ul>
+    <li><p>Width Multiplier<br> 对各层使用同一个缩放因子来减少滤波器个数，使输入通道数变为，输出通道数变为。通常在1, 0.75, 0.5, 0.25中选择。1为标准MobileNet，其他三个为精简的MobileNet。节省的计算量约为 。</p></li> 
+    <li><p>Resolution Multiplier<br> 对网络输入尺寸使用一个缩放因子，进而使得每一层feature map尺寸都变成原来的倍。这个缩放因子实际上就是选择不同的输入尺寸，没有像Width Multiplier那样显式设置。该因子节省的计算量也约为。</p></li> 
+   </ul>
+   <h4>2.3 实验分析</h4> 
+   <h5>2.3.1 深度可分离卷积带来的性能下降可以接收</h5> 
+   <div class="image-package"> 
+    <div class="image-container"> 
+     <div class="image-container-fill"></div> 
+     <div class="image-view">
+      <img src="https://upload-images.jianshu.io/upload_images/14755769-cb6f7154b7c9b892.png" alt="14755769-cb6f7154b7c9b892.png">
+     </div> 
+    </div> 
+    <div class="image-caption">
+     Fig. 4. 将MobileNet中的卷积全部换成普通卷积，对比结果
+    </div> 
+   </div> 
+   <h5>2.3.2 Shallower or thinner?</h5> 
+   <p>  在对原始MobileNet进行进一步压缩时，一个问题是为什么我们要使用Width Multiplier，而不是简单地减少模型的层数？文章通过实验证明，使用缩减网络比减小网络层数性能要好。<br></p>
+   <div class="image-package"> 
+    <div class="image-container"> 
+     <div class="image-container-fill"></div> 
+     <div class="image-view">
+      <img src="https://upload-images.jianshu.io/upload_images/14755769-de07ca3e4c7af3f7.png" alt="14755769-de07ca3e4c7af3f7.png">
+     </div> 
+    </div> 
+    <div class="image-caption">
+     Fig. 5. Narrow v.s. Shallow MobileNet
+    </div> 
+   </div>
+   <p></p> 
+   <h5>2.3.3 Width Multiplier可以设多大？</h5> 
+   <p>  这个应该是大家最关心的实验了。本实验证明在从1降到0.5的过程中，模型性能是平滑下降的；当从0.5降到0.25时，性能大幅下降。可见对模型性能影响较小，通常是一个值得尝试的选择。<br></p>
+   <div class="image-package"> 
+    <div class="image-container"> 
+     <div class="image-container-fill"></div> 
+     <div class="image-view">
+      <img src="https://upload-images.jianshu.io/upload_images/14755769-3b4615c9a52f4c58.png" alt="14755769-3b4615c9a52f4c58.png">
+     </div> 
+    </div> 
+    <div class="image-caption">
+     Fig. 6. α的影响
+    </div> 
+   </div>
+   <p></p> 
+   <h5>2.3.4 输入分辨率的影响？</h5> 
+   <p>  随着输入分辨率的降低，模型性能的下降趋势较平滑：</p> 
+   <br>
+   <div class="image-package"> 
+    <div class="image-container"> 
+     <div class="image-container-fill"></div> 
+     <div class="image-view">
+      <img src="https://upload-images.jianshu.io/upload_images/14755769-de7102249097eaee.png" alt="14755769-de7102249097eaee.png">
+     </div> 
+    </div> 
+    <div class="image-caption">
+     Fig. 7. ρ的影响
+    </div> 
+   </div> 
+   <h5>2.3.5 其他实验</h5> 
+   <p>  本文还比较了MobileNet与其他网络的性能。比如1.0MobileNet-224要强于GoogLeNet，稍逊于VGG16，但是相比VGG16，模型大小缩小了32倍，计算量少了27倍！另外，0.5 MobileNet-160的性能就超过SqueezeNet和AlexNet了。</p> 
+   <h3>三、代码实现</h3> 
+   <h4>3.1 Gluon中Conv2D</h4> 
+   <p>  Gluon中nn.Conv2D提供了便利的接口，即通过设置groups参数，可以指定卷积进行的方式。见下方的参数说明</p> 
+   <br>
+   <div class="image-package"> 
+    <div class="image-container"> 
+     <div class="image-container-fill"></div> 
+     <div class="image-view">
+      <img src="https://upload-images.jianshu.io/upload_images/14755769-e9e1b712e9730740.png" alt="14755769-e9e1b712e9730740.png">
+     </div> 
+    </div> 
+    <div class="image-caption">
+     Fig. 8. Conv2D参数
+    </div> 
+   </div> 
+   <ul>
+    <li>这个参数介绍信息量还是很大的。值得注意的有几个地方：</li> 
+   </ul>
+   <ol>
+    <li>通常一种比较省事的做法是使用Conv2D时不指定input_channels，不过这样定义完网络之后，模型的初始化会被推迟进行，即当模型第一次call forward函数时才会根据输入图像尺寸推断input_channels进而初始化网络参数。这样可能会影响model.summary()等函数的使用。</li> 
+    <li>看起来Conv2D也提供了扩张卷积的接口</li> 
+    <li> <code>groups</code>参数：控制输入特征图和输出特征图的连接方式。默认groups=1，即卷积核的深度和输入通道深度相同。<strong>如果取2，则效果相当于将输入特征按通道那一维分成两半，每一半与一个group进行卷积，输出的特征图concat得到一个特征图。</strong>因此，如果将groups参数设置为同输入通道数目一致，就是Depthwise Convolution。</li> 
+   </ol>
+   <p>  首先我做了一个小实验来对比普通卷积和groups&gt;1的卷积，来验证该参数是否可用于简便地实现depthwise conv。实验虽然选取了较小的输入feature map和卷积核，但是输出结果还是比较冗长。有兴趣的可以直接看<a href="https://github.com/cy810557/chiyuan/blob/master/Projects/Classifications/MobileNets/MobileNet-Gluon.ipynb" rel="nofollow">代码</a>，后面MobileNet的搭建以及训练实验也在里面。这里直接放上结论：</p> 
+   <ul>
+    <li>可以使用Gluon提供的groups接口实现Depthwise Conv。 只需要设置<code>num_in_channels(in_channels)==num_out_channels(channels)==groups</code>，当然，同普通卷积，in_channels参数也可以不显式地指定。不过这样模型初始化会延后到第一次model.forward之后进行。</li> 
+   </ul>
+   <h4>3.2 实现MobileNet</h4> 
+   <p>  </p> 
+   <pre><code class="python">from mxnet import nd
+import numpy as np
+from mxnet.gluon import nn
+import mxnet as mx
+from mxnet import gluon
+
+class ConvBlock(nn.HybridBlock):
+    def __init__(self, in_channels, channels, strides, padding, num_sync_bn_devices=-1, multiplier=1.0):
+        super(ConvBlock, self).__init__()
+        self.conv_block = nn.HybridSequential()
+        with self.conv_block.name_scope():
+            self.conv_block.add(nn.Conv2D(int(channels*multiplier), 3, strides, padding, 
+                                          in_channels=in_channels, use_bias=False))
+            if num_sync_bn_devices == -1:
+                self.conv_block.add(nn.BatchNorm())
+            else:
+                self.conv_block.add(gluon.contrib.nn.SyncBatchNorm(num_devices=num_sync_bn_devices))
+            self.conv_block.add(nn.Activation('relu'))
+    def hybrid_forward(self, F, x):
+        return self.conv_block(x)
+
+class DepthwiseSeperable(nn.HybridBlock):
+    def __init__(self, in_channels, channels, strides, num_sync_bn_devices=-1, multiplier=1.0, **kwags):
+        # Weidth Multiplier
+        in_channels = int(in_channels * multiplier)
+        channels = int(channels * multiplier)
+        super(DepthwiseSeperable, self).__init__(**kwags)
+        self.depthwise = nn.HybridSequential()
+        with self.depthwise.name_scope():
+            self.depthwise.add(nn.Conv2D(in_channels, 3, strides, padding=1,groups=in_channels, 
+                                         in_channels=in_channels, use_bias=False))
+            if num_sync_bn_devices == -1:
+                self.depthwise.add(nn.BatchNorm())
+            else:
+                self.depthwise.add(gluon.contrib.nn.SyncBatchNorm(num_devices=num_sync_bn_devices))
+            self.depthwise.add(nn.Activation('relu'))
+            
+        self.pointwise = nn.HybridSequential()
+        with self.pointwise.name_scope():
+            self.pointwise.add(nn.Conv2D(channels, 1, in_channels=in_channels, use_bias=False))
+            if num_sync_bn_devices == -1:
+                self.pointwise.add(nn.BatchNorm())
+            else:
+                self.pointwise.add(gluon.contrib.nn.SyncBatchNorm(num_devices=num_sync_bn_devices))
+            self.pointwise.add(nn.Activation('relu'))
+       
+    def hybrid_forward(self, F, x):
+        return(self.pointwise(self.depthwise(x)))
+
+class MobileNet(nn.HybridBlock):
+    def __init__(self, num_classes, n_devices=2, multiplier=1.0, **kwags):
+        super(MobileNet, self).__init__(**kwags)
+        self.net = nn.HybridSequential()
+        self.net.add(ConvBlock(3, 32, 2, 1, n_devices, multiplier))
+        self.net.add(DepthwiseSeperable(32, 64, 1, n_devices, multiplier))
+        self.net.add(DepthwiseSeperable(64, 128, 2, n_devices, multiplier))
+        self.net.add(DepthwiseSeperable(128, 128, 1, n_devices, multiplier))
+        self.net.add(DepthwiseSeperable(128, 256, 2, n_devices, multiplier))
+
+        self.net.add(DepthwiseSeperable(256, 256, 1, n_devices, multiplier))
+        self.net.add(DepthwiseSeperable(256, 512, 2, n_devices, multiplier))
+        for _ in range(5):
+            self.net.add(DepthwiseSeperable(512, 512, 1, n_devices, multiplier))
+        self.net.add(DepthwiseSeperable(512, 1024, 2, n_devices, multiplier))
+        self.net.add(DepthwiseSeperable(1024, 1024, 1, n_devices, multiplier))
+
+        self.net.add(nn.GlobalAvgPool2D())
+        self.net.add(nn.Dense(num_classes))
+
+    def hybrid_forward(self, F, x):
+        return self.net(x)
+</code></pre> 
+   <ul>
+    <li>可以用下面这段小代码检查下上面定义的模型：</li> 
+   </ul>
+   <pre><code class="python">net = MobileNet(num_classes=1000, n_devices=2, multiplier=1.0)
+net.initialize(mx.init.Xavier())
+test_input = nd.random_normal(shape=(1, 3, 224, 224))
+net.summary(test_input)
+</code></pre> 
+   <ul>
+    <li>也可以使用mxnet.viz.plot_networks打印出模型的graph，不过需要先将模型转换为symbol：</li> 
+   </ul>
+   <pre><code>net.hybridize()
+output = net.forward(test_input)
+# export之后同时生成了一个.json文件和.params文件
+net.export('Gluon-MobileNet')
+symnet = mx.symbol.load('Gluon-MobileNet-symbol.json')
+mx.viz.plot_network(symnet, title='mobilnet_viz', shape={'data':(1, 3, 224, 224)})
+</code></pre> 
+   <p>图片太长这里就不放了。可以到<a href="https://github.com/cy810557/chiyuan/blob/master/Projects/Classifications/MobileNets/MobileNet-Gluon.ipynb" rel="nofollow">notebook</a>中去看。</p> 
+   <h4>3.3 Experiment on CIFAR10</h4> 
+   <p>超参数设置：</p> 
+   <pre><code>OPTIMIZER: 'nag'
+BATCH_SIZE = 64  # per gpu
+EPOCHS = 200
+LR = 1e-1
+WD = 5e-4
+MOMENTUM = 0.9
+lr_decay_dict = {40:0.1, 80:0.1, 120:0.1}
+</code></pre> 
+   <p>数据增强：</p> 
+   <ul>
+    <li>训练数据：随机左右翻转；归一化到0-1；减去数据集均值，除以标准差；</li> 
+    <li>测试数据：归一化到0-1；减去数据集均值，除以标准差；</li> 
+   </ul>
+   <p>结果：</p> 
+   <br>
+   <div class="image-package"> 
+    <div class="image-container"> 
+     <div class="image-container-fill"></div> 
+     <div class="image-view">
+      <img src="https://upload-images.jianshu.io/upload_images/14755769-cb0058007f3ec876.png" alt="14755769-cb0058007f3ec876.png">
+     </div> 
+    </div> 
+    <div class="image-caption">
+     Fig. 9. Training Curve
+    </div> 
+   </div>
+   <br>
+   <div class="image-package"> 
+    <div class="image-container"> 
+     <div class="image-container-fill"></div> 
+     <div class="image-view">
+      <img src="https://upload-images.jianshu.io/upload_images/14755769-7576ddfa29602eeb.png" alt="14755769-7576ddfa29602eeb.png">
+     </div> 
+    </div> 
+    <div class="image-caption">
+     Fig. 10. Classification Report
+    </div> 
+   </div> 
+   <ul>
+    <li>一个奇怪的现象是模型在第二次decay 0.1时的第二或第三个epoch开始（图中大概第80个epoch处）会迅速开始过拟合。看起来模型的训练受学习率衰减的影响非常大。</li> 
+   </ul>
+  </div> 
+ </div> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

@@ -1,0 +1,220 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <div>
+   &nbsp;&nbsp;&nbsp;
+   <span style="font-size:16px;">&nbsp;inline action简单来说就是action调用另外一个action, 具体来说就是一个智能合约的代码调用另外一个智能合约的函数。</span>
+  </div>
+  <div>
+   <span style="font-size:16px;">&nbsp; &nbsp;eoiso.code这一特殊权限是dawn4.0后新增的内部特殊权限，用来加强inline action的安全性。比如alice调用智能合约contract1.test，一开始alice看过contract1.test的逻辑，发现它只是一个打印函数，并不会调用其他合约。所以alice以自己active的权限alice@active去执行contract1.test。但是contract1的拥有者某一天可能偷偷更改了test的实现，在test函数中调用eosio.token的transfer函数以alice@active权限就可以取走alice的EOS. 为了解决权限乱用问题，EOS新增了eosio.code这个特殊权限。采用eosio.code后，contract1.test要以alice@active去调用eosio.token,必须得到alice的授权，即必须在<span style="color:rgb(255,38,0);">alice@active</span>里添加<span style="color:rgb(255,38,0);">contrac1@eosio.code</span>授权</span>
+  </div>
+  <div>
+   <br>
+  </div>
+  <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;color:rgb(51,51,51);background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+   <div style="text-align:left;">
+    <span style="font-family:Monaco;"><span style="font-size:12px;">$cleos set account permission <span style="color:rgb(255,38,0);">alice</span> <span style="color:rgb(255,38,0);">active</span> '{"threshold": 1,"keys": [{"key":"<span style="color:rgb(4,51,255);">EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV</span>", "weight":1}],"accounts": [{"permission":{"actor":"<span style="color:rgb(255,38,0);">contract1</span>","permission":"<span style="color:rgb(255,38,0);">eosio.code</span>"},"weight":1}]}' owner -p <span style="color:rgb(255,38,0);">alice@owner</span></span></span>
+   </div>
+  </div>
+  <div>
+   <span style="font-size:16px;">&nbsp; &nbsp;&nbsp;</span>
+  </div>
+  <div>
+   <span style="font-size:16px;">&nbsp;&nbsp;&nbsp;&nbsp;即用户调用push action -p permission授权的权限只作用域该action,要用到其他action必须再授权eosio.code<br></span>
+  </div>
+  <h2><br></h2>
+  <h2>Inline action权限分析</h2>
+  <div>
+   &nbsp;&nbsp; &nbsp;
+  </div>
+  <div>
+   <span style="font-size:16px;">&nbsp; &nbsp;我们以<a href="https://blog.csdn.net/itleaks/article/details/80535318" rel="nofollow">【inline action开发实践】</a>博文中的实例为例，hello.code智能合约调用hello.target合约</span>
+  </div>
+  <div>
+   <span style="font-size:16px;"><br></span>
+   <div>
+    <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;border:1px solid rgba(0,0,0,.14902);">
+     <div style="color:rgb(51,51,51);background-color:rgb(251,250,248);">
+      <span style="font-size:12px;"><span style="color:rgb(0,0,0);font-family:Monaco;">class hello : public eosio::contract {</span><br></span>
+     </div>
+     <div style="color:rgb(51,51,51);background-color:rgb(251,250,248);">
+      <span style="line-height:normal;color:rgb(0,0,0);font-family:Monaco;"><span style="font-size:12px;">&nbsp; public:</span></span>
+     </div>
+     <div style="color:rgb(51,51,51);background-color:rgb(251,250,248);">
+      <span style="line-height:normal;color:rgb(0,0,0);font-family:Monaco;"><span style="font-size:12px;">&nbsp;&nbsp;&nbsp; using contract::contract;</span></span>
+     </div>
+     <div style="color:rgb(51,51,51);background-color:rgb(251,250,248);">
+      <span style="line-height:normal;color:rgb(0,0,0);font-family:Monaco;"><span style="font-size:12px;">&nbsp;&nbsp;&nbsp; /// @abi action&nbsp;</span></span>
+     </div>
+     <div>
+      <span style="line-height:normal;font-family:Monaco;"><span style="font-size:12px;"><span style="color:rgb(0,0,0);background-color:rgb(251,250,248);">&nbsp;&nbsp;&nbsp; void&nbsp;</span><span style="color:rgb(255,38,0);">hi</span><span style="color:rgb(0,0,0);background-color:rgb(251,250,248);">( account_name from, account_name to) {</span></span></span>
+     </div>
+     <div style="color:rgb(51,51,51);background-color:rgb(251,250,248);">
+      <span style="line-height:normal;color:rgb(0,0,0);font-family:Monaco;"><span style="font-size:12px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; require_auth(from);</span></span>
+     </div>
+     <div style="color:rgb(51,51,51);background-color:rgb(251,250,248);">
+      <span style="line-height:normal;color:rgb(0,0,0);font-family:Monaco;"><span style="font-size:12px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; print( "Hello, from:", name{from}, ", to:", name{to});</span></span>
+     </div>
+     <div style="color:rgb(51,51,51);background-color:rgb(251,250,248);">
+      <span style="font-size:12px;"><span style="line-height:normal;color:rgb(0,0,0);font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="line-height:normal;font-family:Monaco;color:rgb(255,38,0);">action(</span></span>
+     </div>
+     <div style="color:rgb(51,51,51);background-color:rgb(251,250,248);">
+      <span style="font-size:12px;"><span style="line-height:normal;font-family:Monaco;color:rgb(255,38,0);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="line-height:normal;font-family:Monaco;color:rgb(4,51,255);">//这里{to, active}必须授权给{_self, eosio.code}</span></span>
+     </div>
+     <div style="color:rgb(51,51,51);background-color:rgb(251,250,248);">
+      <span style="line-height:normal;font-family:Monaco;color:rgb(255,38,0);"><span style="font-size:12px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; permission_level{to, N(active)},</span></span>
+     </div>
+     <div style="color:rgb(51,51,51);background-color:rgb(251,250,248);">
+      <span style="font-size:12px;"><span style="line-height:normal;font-family:Monaco;color:rgb(255,38,0);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="line-height:normal;font-family:Monaco;color:rgb(4,51,255);">//调用 hello.target合约 的'callme' action</span></span>
+     </div>
+     <div style="color:rgb(51,51,51);background-color:rgb(251,250,248);">
+      <span style="line-height:normal;font-family:Monaco;color:rgb(255,38,0);"><span style="font-size:12px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; N(hello.target), N(callme),</span></span>
+     </div>
+     <div style="color:rgb(51,51,51);background-color:rgb(251,250,248);">
+      <span style="line-height:normal;font-family:Monaco;color:rgb(255,38,0);"><span style="font-size:12px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; std::make_tuple(to)</span></span>
+     </div>
+     <div style="color:rgb(51,51,51);background-color:rgb(251,250,248);">
+      <span style="line-height:normal;font-family:Monaco;color:rgb(255,38,0);"><span style="font-size:12px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ).send();</span></span>
+     </div>
+     <div style="color:rgb(51,51,51);background-color:rgb(251,250,248);">
+      <span style="line-height:normal;color:rgb(0,0,0);font-family:Monaco;"><span style="font-size:12px;">&nbsp;&nbsp;&nbsp; }</span></span>
+     </div>
+     <div style="color:rgb(51,51,51);background-color:rgb(251,250,248);">
+      <span style="line-height:normal;color:rgb(0,0,0);font-family:Monaco;"><span style="font-size:12px;">};</span></span>
+     </div>
+    </div>
+   </div>
+   <div>
+    &nbsp; &nbsp; &nbsp; &nbsp;
+   </div>
+  </div>
+  <div>
+   &nbsp;
+   <span style="font-size:16px;">通过下面的命令执行hello.code智能合约&nbsp;</span>
+  </div>
+  <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;color:rgb(51,51,51);background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+   <span style="font-size:12px;"><span style="font-family:Monaco;">$cleos push action hello.code hi '["args.user"，"args.user1"</span><span style="font-family:Monaco;">]' -p args.user</span></span>
+  </div>
+  <div>
+   &nbsp;&nbsp; &nbsp;
+  </div>
+  <div>
+   &nbsp;&nbsp; &nbsp;
+   <span style="font-size:16px;">调用时序图如下</span>
+  </div>
+  <div>
+   <img src="https://img-blog.csdn.net/2018060316163265" alt="">
+   <br>
+  </div>
+  <div>
+   &nbsp; &nbsp;&nbsp;
+  </div>
+  <div>
+   &nbsp; 
+   <span style="font-size:16px;">&nbsp;时序图中有2次调用check_authorization</span>
+  </div>
+  <ul>
+   <li><span style="font-size:16px;">3中的check_authorization是检测交易的签名是否满足action 'hello.code@hi'调用的权限声明args.user@active，这个检测机制已经在<a href="https://blog.csdn.net/itleaks/article/details/80422288" rel="nofollow">【EOS权限机制】</a>一文已经详细分析过了 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span></li>
+  </ul>
+  <ul>
+   <li><span style="font-size:16px;">11中的check_authorization是检测hello.code@eosio.code是否满足action "hello.target@callme"的权限声明to@active(这里的to='args.user1'),也就是args.user1@active。所以为了让这个inline action调用成功，必须添加如下授权</span></li>
+  </ul>
+  <div style="text-align:left;font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;color:rgb(51,51,51);background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+   <span style="color:rgb(102,102,102);"><span style="font-size:12px;">$cleos set account permission args.user1 active '{"threshold": 1,"keys": [],"accounts": [{"permission":{"actor":"hello.code","permission":"eosio.code"},"weight":1}]}' owner -p args.user1@owner</span></span>
+  </div>
+  <div>
+   <span style="font-size:16px;">&nbsp; &nbsp; &nbsp;这里有个疑问，为啥是检测(hello.code, eosio.code)授权是否满足权限声明呢？我们仔细看下上面的hi代码</span>
+  </div>
+  <p></p>
+  <div></div>
+  <div>
+   <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;font-size:12px;color:rgb(51,51,51);background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+    <div>
+     <span style="line-height:normal;font-family:Monaco;color:rgb(0,0,0);">&nbsp; &nbsp;void </span>
+     <span style="line-height:normal;font-family:Monaco;color:rgb(255,38,0);">hi</span>
+     <span style="line-height:normal;font-family:Monaco;color:rgb(0,0,0);">( account_name from, account_name to) {</span>
+    </div>
+    <div>
+     <span style="color:rgb(0,0,0);line-height:normal;font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; require_auth(from);</span>
+    </div>
+    <div>
+     <span style="color:rgb(0,0,0);line-height:normal;font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; print( "Hello, from:", name{from}, ", to:", name{to});</span>
+    </div>
+    <div>
+     <span style="color:rgb(0,0,0);line-height:normal;font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+     <span style="color:rgb(255,38,0);line-height:normal;font-family:Monaco;">action(</span>
+    </div>
+    <div>
+     <span style="color:rgb(255,38,0);line-height:normal;font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+     <span style="color:rgb(4,51,255);line-height:normal;font-family:Monaco;">//这里{to, active}必须授权给{_self, eosio.code}</span>
+    </div>
+    <div>
+     <span style="color:rgb(255,38,0);line-height:normal;font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; permission_level{to, N(active)},</span>
+    </div>
+    <div>
+     <span style="color:rgb(255,38,0);line-height:normal;font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+     <span style="color:rgb(4,51,255);line-height:normal;font-family:Monaco;">//调用 hello.target合约 的'callme' action</span>
+    </div>
+    <div>
+     <span style="color:rgb(255,38,0);line-height:normal;font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; N(hello.target), N(callme),</span>
+    </div>
+    <div>
+     <span style="color:rgb(255,38,0);line-height:normal;font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; std::make_tuple(to)</span>
+    </div>
+    <div>
+     <span style="color:rgb(255,38,0);line-height:normal;font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ).send();</span>
+    </div>
+    <div>
+     <span style="color:rgb(0,0,0);line-height:normal;font-family:Monaco;">&nbsp;&nbsp;&nbsp; }</span>
+    </div>
+   </div>
+  </div>
+  <div>
+   &nbsp;&nbsp;
+  </div>
+  <div>
+   &nbsp;&nbsp;&nbsp;
+   <span style="font-size:16px;">&nbsp;当hello.code智能合约代码通过action.send调用其他智能合约时，hi代码是拿不到任何私钥的，也就没法为声明的权限签名，即没法证明该智能合约具备action声明的权限to@active。因此，只有系统代码做担保了，因而系统提出了一个虚拟权限eosio.code。然后系统直接告诉系统检验逻辑(authorization_manager) ，‘action(hello.target)’已经具备hello.code@eosio.code权限。然后authorization_manager只需检验to@active是否授权给hello.code@eosio.code即可。通过这种虚拟的权限证明解决了合约调用合约的权限检测问题</span>
+  </div>
+  <div>
+   &nbsp;&nbsp; &nbsp;
+   <img src="https://img-blog.csdn.net/20180603161410340" alt="">
+   <br>
+  </div>
+  <div>
+   <br>
+  </div>
+  <div>
+   &nbsp;&nbsp; &nbsp;上面红色的部分就是系统代为担保的权限证明。对于用户直接提交的action,这个权限证明是从transaction的签名里恢复出来的
+  </div>
+  <p><img src="https://img-blog.csdn.net/20180603161348797" alt=""></p>
+  <div>
+   <div style="color:rgb(51,51,51);font-size:14px;">
+    <div style="background-color:rgb(255,255,255);color:rgb(69,69,69);">
+     <span style="font-size:18px;font-family:SimSun;">/********************************</span>
+    </div>
+    <div style="background-color:rgb(255,255,255);color:rgb(69,69,69);">
+     <span style="font-size:18px;"><span style="line-height:19px;font-family:'Courier New';">* 本文来自CSDN博主"爱踢门"</span></span>
+    </div>
+    <div style="background-color:rgb(255,255,255);">
+     <span style="color:rgb(69,69,69);font-size:18px;font-family:'Courier New';line-height:19px;">* 转载请标明出处</span>
+     <span style="color:rgb(69,69,69);font-size:18px;font-family:'Courier New';line-height:19px;">:</span>
+     <a href="http://blog.csdn.net/itleaks" rel="nofollow" style="font-family:'Courier New';line-height:19px;"><span style="font-weight:700;"><span style="color:rgb(51,102,255);">http://blog.csdn.net/itleaks</span></span></a>
+    </div>
+    <div style="background-color:rgb(255,255,255);color:rgb(69,69,69);">
+     <span style="font-family:SimSun;line-height:19px;">******************************************/</span>
+    </div>
+   </div>
+   <div style="color:rgb(51,51,51);font-size:14px;">
+    <p><span>EOS技术交流群，EOS开发群，以太坊技术群:787804520<br></span></p>
+    <p><span>&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://img-blog.csdn.net/20180528111903133" alt="">&nbsp; &nbsp;&nbsp;</span></p>
+    <p><span>&nbsp; &nbsp; 公众号:<br></span></p>
+    <p><img src="https://img-blog.csdn.net/20180507174317244" alt="" style="color:rgb(51,51,51);font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;font-size:17px;letter-spacing:.5440000295639038px;background-color:rgb(255,255,255);"></p>
+   </div>
+  </div>
+  <div></div> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/ITleaks/article/details/80557560,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/ITleaks/article/details/80557560,&quot;}">阅读更多</a> 
+</div>

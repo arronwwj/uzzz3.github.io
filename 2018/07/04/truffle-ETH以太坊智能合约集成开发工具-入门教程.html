@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>truffle （ETH以太坊智能合约集成开发工具） 入门教程 | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="truffle （ETH以太坊智能合约集成开发工具） 入门教程" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="truffle （ETH以太坊智能合约集成开发工具） 入门教程 前言 在你了解区块链开发之前，你有必要了解区块链的一些基础知识，什么是DApp，DApp与传统app的区别， 什么是以太坊，以太坊中的智能合约是什么，智能合约能干什么，什么是共识算法，目前为止常用的共识算法有哪些， 共识算法解决了什么问题，（PoW，PoS，DPoS等等共识算法），基于以太坊的智能合约开发使用哪些工具，使用哪些语言开发， solidity是什么，智能合约开发与普通开发有什么相同与不同，等等。 你需要提前看下这本书来了解一些入门知识： 《区块链开发指南》 简介 truffle是一个以太坊智能合约集成开发测试环境，他和一般的IDE不同，它并没有代码编辑环境， 但是它能够方便的管理智能合约运行的环境，并且提供一套便捷开发智能合约(Smart Contract)的API， 能够有效的提升开发效率。truffle拥有以下特性： 内建的智能合约编译、连接、发布和二进制文件管理工具。 快速开发自动化测试智能合约脚本。 脚本化、可拓展的发布、迁移框架。 管理任意公有以及私有的发布网络（1或者其他数字，1是以太坊正式运行网络，其他数字是本地开发网络环境）。 使用 EthPM 和 NPM 进行包管理，使用ERC190标准规范。 拥有与智能合约能直接通信的交互式控制台。 可配置的构建管道，支持紧密集成。 外部脚本运行器，用于在Truffle环境中执行脚本。 运行环境 操作系统： windows, linux or mac OS NodeJS 5.0+ node download 安装 truffle $ npm install -g truffle 当前 truffle 版本为 $ truffle version Truffle v4.1.13 (core: 4.1.13) Solidity v0.4.24 (solc-js) 代码编辑器 尽管你可以使用文本编辑器编写智能合约，但是编辑器会让你事半功倍，这里推荐两个solildity代码编辑器。 1. Sublime Text 3 熟悉前端开发的同时都知道这个编辑器，安装几个插件就能配置好开发环境。 下载 Sublime Text 3, 安装solildity，nodejs插件，基本的开发环境就算是好了。 2. VS Code VS Code也是轻量级的开发工具，下载 VS Code , 下载后安装solidity, nodejs 插件。 以上，VSCode在写代码的时候就能够提示语法错误，是VS系列工具的一贯优点，Sublime的优点就是快速轻量。 使用哪个工具完全取决于个人。 详细使用教程 选择以太坊客户端 编译智能合约 运行迁移 测试智能合约 用 JavaScript 编写测试脚本 编写 Solidity 测试脚本 与智能合约交互 使用 EthPM 包管理工具 调试智能合约 使用 Truffle Develop 和 console 编写外部脚本 快速入门 目录 1. 创建项目 2. 浏览项目 3. 测试 4. 编译 5. 迁移到truffle开发环境 6. 使用 Ganache 迁移智能合约 7. 与智能合约交互 1. 创建项目 创建项目文件夹 $ mkdir MetaCoin $ cd MetaCoin 下载并解压MetaCoin项目（unbox） $ truffle unbox metacoin 注意： 使用 truffle unbox &lt;box-name&gt; 下载任意 truffle boxes。" />
+<meta property="og:description" content="truffle （ETH以太坊智能合约集成开发工具） 入门教程 前言 在你了解区块链开发之前，你有必要了解区块链的一些基础知识，什么是DApp，DApp与传统app的区别， 什么是以太坊，以太坊中的智能合约是什么，智能合约能干什么，什么是共识算法，目前为止常用的共识算法有哪些， 共识算法解决了什么问题，（PoW，PoS，DPoS等等共识算法），基于以太坊的智能合约开发使用哪些工具，使用哪些语言开发， solidity是什么，智能合约开发与普通开发有什么相同与不同，等等。 你需要提前看下这本书来了解一些入门知识： 《区块链开发指南》 简介 truffle是一个以太坊智能合约集成开发测试环境，他和一般的IDE不同，它并没有代码编辑环境， 但是它能够方便的管理智能合约运行的环境，并且提供一套便捷开发智能合约(Smart Contract)的API， 能够有效的提升开发效率。truffle拥有以下特性： 内建的智能合约编译、连接、发布和二进制文件管理工具。 快速开发自动化测试智能合约脚本。 脚本化、可拓展的发布、迁移框架。 管理任意公有以及私有的发布网络（1或者其他数字，1是以太坊正式运行网络，其他数字是本地开发网络环境）。 使用 EthPM 和 NPM 进行包管理，使用ERC190标准规范。 拥有与智能合约能直接通信的交互式控制台。 可配置的构建管道，支持紧密集成。 外部脚本运行器，用于在Truffle环境中执行脚本。 运行环境 操作系统： windows, linux or mac OS NodeJS 5.0+ node download 安装 truffle $ npm install -g truffle 当前 truffle 版本为 $ truffle version Truffle v4.1.13 (core: 4.1.13) Solidity v0.4.24 (solc-js) 代码编辑器 尽管你可以使用文本编辑器编写智能合约，但是编辑器会让你事半功倍，这里推荐两个solildity代码编辑器。 1. Sublime Text 3 熟悉前端开发的同时都知道这个编辑器，安装几个插件就能配置好开发环境。 下载 Sublime Text 3, 安装solildity，nodejs插件，基本的开发环境就算是好了。 2. VS Code VS Code也是轻量级的开发工具，下载 VS Code , 下载后安装solidity, nodejs 插件。 以上，VSCode在写代码的时候就能够提示语法错误，是VS系列工具的一贯优点，Sublime的优点就是快速轻量。 使用哪个工具完全取决于个人。 详细使用教程 选择以太坊客户端 编译智能合约 运行迁移 测试智能合约 用 JavaScript 编写测试脚本 编写 Solidity 测试脚本 与智能合约交互 使用 EthPM 包管理工具 调试智能合约 使用 Truffle Develop 和 console 编写外部脚本 快速入门 目录 1. 创建项目 2. 浏览项目 3. 测试 4. 编译 5. 迁移到truffle开发环境 6. 使用 Ganache 迁移智能合约 7. 与智能合约交互 1. 创建项目 创建项目文件夹 $ mkdir MetaCoin $ cd MetaCoin 下载并解压MetaCoin项目（unbox） $ truffle unbox metacoin 注意： 使用 truffle unbox &lt;box-name&gt; 下载任意 truffle boxes。" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/07/04/truffle-ETH%E4%BB%A5%E5%A4%AA%E5%9D%8A%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E9%9B%86%E6%88%90%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7-%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/07/04/truffle-ETH%E4%BB%A5%E5%A4%AA%E5%9D%8A%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E9%9B%86%E6%88%90%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7-%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-07-04T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"truffle （ETH以太坊智能合约集成开发工具） 入门教程 前言 在你了解区块链开发之前，你有必要了解区块链的一些基础知识，什么是DApp，DApp与传统app的区别， 什么是以太坊，以太坊中的智能合约是什么，智能合约能干什么，什么是共识算法，目前为止常用的共识算法有哪些， 共识算法解决了什么问题，（PoW，PoS，DPoS等等共识算法），基于以太坊的智能合约开发使用哪些工具，使用哪些语言开发， solidity是什么，智能合约开发与普通开发有什么相同与不同，等等。 你需要提前看下这本书来了解一些入门知识： 《区块链开发指南》 简介 truffle是一个以太坊智能合约集成开发测试环境，他和一般的IDE不同，它并没有代码编辑环境， 但是它能够方便的管理智能合约运行的环境，并且提供一套便捷开发智能合约(Smart Contract)的API， 能够有效的提升开发效率。truffle拥有以下特性： 内建的智能合约编译、连接、发布和二进制文件管理工具。 快速开发自动化测试智能合约脚本。 脚本化、可拓展的发布、迁移框架。 管理任意公有以及私有的发布网络（1或者其他数字，1是以太坊正式运行网络，其他数字是本地开发网络环境）。 使用 EthPM 和 NPM 进行包管理，使用ERC190标准规范。 拥有与智能合约能直接通信的交互式控制台。 可配置的构建管道，支持紧密集成。 外部脚本运行器，用于在Truffle环境中执行脚本。 运行环境 操作系统： windows, linux or mac OS NodeJS 5.0+ node download 安装 truffle $ npm install -g truffle 当前 truffle 版本为 $ truffle version Truffle v4.1.13 (core: 4.1.13) Solidity v0.4.24 (solc-js) 代码编辑器 尽管你可以使用文本编辑器编写智能合约，但是编辑器会让你事半功倍，这里推荐两个solildity代码编辑器。 1. Sublime Text 3 熟悉前端开发的同时都知道这个编辑器，安装几个插件就能配置好开发环境。 下载 Sublime Text 3, 安装solildity，nodejs插件，基本的开发环境就算是好了。 2. VS Code VS Code也是轻量级的开发工具，下载 VS Code , 下载后安装solidity, nodejs 插件。 以上，VSCode在写代码的时候就能够提示语法错误，是VS系列工具的一贯优点，Sublime的优点就是快速轻量。 使用哪个工具完全取决于个人。 详细使用教程 选择以太坊客户端 编译智能合约 运行迁移 测试智能合约 用 JavaScript 编写测试脚本 编写 Solidity 测试脚本 与智能合约交互 使用 EthPM 包管理工具 调试智能合约 使用 Truffle Develop 和 console 编写外部脚本 快速入门 目录 1. 创建项目 2. 浏览项目 3. 测试 4. 编译 5. 迁移到truffle开发环境 6. 使用 Ganache 迁移智能合约 7. 与智能合约交互 1. 创建项目 创建项目文件夹 $ mkdir MetaCoin $ cd MetaCoin 下载并解压MetaCoin项目（unbox） $ truffle unbox metacoin 注意： 使用 truffle unbox &lt;box-name&gt; 下载任意 truffle boxes。","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/07/04/truffle-ETH%E4%BB%A5%E5%A4%AA%E5%9D%8A%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E9%9B%86%E6%88%90%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7-%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B.html","headline":"truffle （ETH以太坊智能合约集成开发工具） 入门教程","dateModified":"2018-07-04T00:00:00+08:00","datePublished":"2018-07-04T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/07/04/truffle-ETH%E4%BB%A5%E5%A4%AA%E5%9D%8A%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E9%9B%86%E6%88%90%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7-%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>truffle （ETH以太坊智能合约集成开发工具） 入门教程</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div class="markdown_views"> 
+  <h1 id="truffle-eth以太坊智能合约集成开发工具-入门教程">truffle （ETH以太坊智能合约集成开发工具） 入门教程</h1> 
+  <h2 id="前言">前言</h2> 
+  <p>在你了解区块链开发之前，你有必要了解区块链的一些基础知识，什么是DApp，DApp与传统app的区别， <br> 什么是以太坊，以太坊中的智能合约是什么，智能合约能干什么，什么是共识算法，目前为止常用的共识算法有哪些， <br> 共识算法解决了什么问题，（PoW，PoS，DPoS等等共识算法），基于以太坊的智能合约开发使用哪些工具，使用哪些语言开发， <br> solidity是什么，智能合约开发与普通开发有什么相同与不同，等等。</p> 
+  <p>你需要提前看下这本书来了解一些入门知识： <a href="https://download.csdn.net/download/tgbus18990140382/10507133" rel="nofollow">《区块链开发指南》</a></p> 
+  <h2 id="简介">简介</h2> 
+  <p>truffle是一个以太坊智能合约集成开发测试环境，他和一般的IDE不同，它并没有代码编辑环境， <br> 但是它能够方便的管理智能合约运行的环境，并且提供一套便捷开发智能合约(Smart Contract)的API， <br> 能够有效的提升开发效率。truffle拥有以下特性：</p> 
+  <ul> 
+   <li>内建的智能合约编译、连接、发布和二进制文件管理工具。</li> 
+   <li>快速开发自动化测试智能合约脚本。</li> 
+   <li>脚本化、可拓展的发布、迁移框架。</li> 
+   <li>管理任意公有以及私有的发布网络（1或者其他数字，1是以太坊正式运行网络，其他数字是本地开发网络环境）。</li> 
+   <li>使用 <strong>EthPM</strong> 和 <strong>NPM</strong> 进行包管理，使用<a href="https://github.com/ethereum/EIPs/issues/190" rel="nofollow">ERC190</a>标准规范。</li> 
+   <li>拥有与智能合约能直接通信的交互式控制台。</li> 
+   <li>可配置的构建管道，支持紧密集成。</li> 
+   <li>外部脚本运行器，用于在Truffle环境中执行脚本。</li> 
+  </ul> 
+  <h2 id="运行环境">运行环境</h2> 
+  <ul> 
+   <li>操作系统： windows, linux or mac OS</li> 
+   <li>NodeJS 5.0+ <a href="https://nodejs.org/en/" rel="nofollow">node download</a></li> 
+  </ul> 
+  <h2 id="安装-truffle">安装 truffle</h2> 
+  <pre class="prettyprint"><code class="language-bash hljs ">$ npm install -g truffle</code></pre> 
+  <p><strong>当前 truffle 版本为</strong></p> 
+  <pre class="prettyprint"><code class="language-bash hljs ">$ truffle version
+Truffle v4.<span class="hljs-number">1.13</span> (core: <span class="hljs-number">4.1</span>.<span class="hljs-number">13</span>)
+Solidity v0.<span class="hljs-number">4.24</span> (solc-js)</code></pre> 
+  <h2 id="代码编辑器">代码编辑器</h2> 
+  <p>尽管你可以使用文本编辑器编写智能合约，但是编辑器会让你事半功倍，这里推荐两个solildity代码编辑器。</p> 
+  <p><strong>1. Sublime Text 3</strong></p> 
+  <p>熟悉前端开发的同时都知道这个编辑器，安装几个插件就能配置好开发环境。 <br> 下载 <a href="https://www.sublimetext.com/3" rel="nofollow">Sublime Text 3</a>, 安装solildity，nodejs插件，基本的开发环境就算是好了。</p> 
+  <p><strong>2. VS Code</strong></p> 
+  <p>VS Code也是轻量级的开发工具，下载 <a href="https://code.visualstudio.com/" rel="nofollow">VS Code</a> , 下载后安装solidity, nodejs 插件。</p> 
+  <p>以上，VSCode在写代码的时候就能够提示语法错误，是VS系列工具的一贯优点，Sublime的优点就是快速轻量。 <br> 使用哪个工具完全取决于个人。</p> 
+  <h2 id="详细使用教程">详细使用教程</h2> 
+  <ul> 
+   <li><a href="https://blog.csdn.net/tgbus18990140382/article/details/80916268" rel="nofollow">选择以太坊客户端</a></li> 
+   <li><a href="https://blog.csdn.net/tgbus18990140382/article/details/80916284" rel="nofollow">编译智能合约</a></li> 
+   <li><a href="https://blog.csdn.net/tgbus18990140382/article/details/80916293" rel="nofollow">运行迁移</a></li> 
+   <li><a href="https://blog.csdn.net/tgbus18990140382/article/details/80916304" rel="nofollow">测试智能合约</a></li> 
+   <li><a href="https://blog.csdn.net/tgbus18990140382/article/details/80916318" rel="nofollow">用 JavaScript 编写测试脚本</a></li> 
+   <li><a href="https://blog.csdn.net/tgbus18990140382/article/details/80916329" rel="nofollow">编写 Solidity 测试脚本</a></li> 
+   <li><a href="https://blog.csdn.net/tgbus18990140382/article/details/80916340" rel="nofollow">与智能合约交互</a></li> 
+   <li><a href="https://blog.csdn.net/tgbus18990140382/article/details/80916398" rel="nofollow">使用 EthPM 包管理工具</a></li> 
+   <li><a href="https://blog.csdn.net/tgbus18990140382/article/details/80916409" rel="nofollow">调试智能合约</a></li> 
+   <li><a href="https://blog.csdn.net/tgbus18990140382/article/details/80927544" rel="nofollow">使用 Truffle Develop 和 console</a></li> 
+   <li><a href="https://blog.csdn.net/tgbus18990140382/article/details/80924069" rel="nofollow">编写外部脚本</a></li> 
+  </ul> 
+  <h2 id="快速入门">快速入门</h2> 
+  <h3 id="目录">目录</h3> 
+  <p><a href="#createProject" rel="nofollow">1. 创建项目</a> <br> <a href="#exploringProject" rel="nofollow">2. 浏览项目</a> <br> <a href="#testing" rel="nofollow">3. 测试</a> <br> <a href="#compiling" rel="nofollow">4. 编译</a> <br> <a href="#migrateToTruffle" rel="nofollow">5. 迁移到truffle开发环境</a> <br> <a href="#ganacheMigrateContacts" rel="nofollow">6. 使用 Ganache 迁移智能合约</a> <br> <a href="#interactWithContract" rel="nofollow">7. 与智能合约交互</a></p> 
+  <h4 id="1-创建项目"><span id="createProject">1. 创建项目</span></h4> 
+  <ol> 
+   <li>创建项目文件夹</li> 
+  </ol> 
+  <pre class="prettyprint"><code class="language-bash hljs ">$ mkdir MetaCoin
+$ <span class="hljs-built_in">cd</span> MetaCoin</code></pre> 
+  <ol> 
+   <li>下载并解压MetaCoin项目（unbox）</li> 
+  </ol> 
+  <pre class="prettyprint"><code class="language-bash hljs ">$ truffle unbox metacoin</code></pre> 
+  <p><strong>注意：</strong></p> 
+  <pre class="prettyprint"><code class=" hljs xml">使用 truffle unbox <span class="hljs-tag">&lt;<span class="hljs-title">box-name</span>&gt;</span> 下载任意 truffle boxes。
+
+使用 truffle init 初始化一个不包含智能合约的项目。</code></pre> 
+  <p>完成以上步骤后，你将会看到工程目录下有如下文件夹。</p> 
+  <ul> 
+   <li><code>contracts/</code> 合约放在这个目录下（Solidity contracts）</li> 
+   <li><code>migrations</code> 脚本化部署文件</li> 
+   <li><code>test/</code> 测试你的智能合约和应用文件夹</li> 
+   <li><code>truffle.js</code> truffle配置文件</li> 
+  </ul> 
+  <h4 id="2-浏览项目"><span id="exploringProject">2. 浏览项目</span></h4> 
+  <p>这一章我们是快速入门这里不再详细说明每个文件中的内容，只大概描述下文件的作用，详细的说明请查看truffle的文档。</p> 
+  <ol> 
+   <li><p>打开 <code>contracts/MetaCoin.sol</code> ，这是一个用solidity编写的智能合约，它创建了一个MetaCoin token。 <br> 它使用了另外一个在该目录下的合约文件<code>ConvertLib.sol</code>。</p></li> 
+   <li><p>打开 <code>contracts/Migrations.sol</code> ，这个是一个独立的文件，没有依赖其他合约，用来更新你发布的只能合约状态。 <br> 这个是truffle生成的文件，一般我们不编辑它。</p></li> 
+   <li><p>打开 <code>migrations/1_initial_deployment.js</code> ，这个是用于迁移 <code>Migrations.sol</code> 的脚本文件。</p></li> 
+   <li><p>打开 <code>migrations/2_deploy_contracts.js</code> ，这个是用于迁移 <code>MetaCoin.sol</code> 的脚本。 <br> (迁移的脚本会依次执行，以上两个文件的开头都是数字，执行顺序将会按照数字顺序执行。)</p></li> 
+   <li><p>打开 <code>test/TestMetaCoin.sol</code> ，这个是一个用solidity编写的测试文件，他将确保你的智能合约按照你预期的结果运行。</p></li> 
+   <li><p>打开 <code>test/metacoin.js</code>，这个是一个用javascript脚本编写的测试文件，他和上面的solidity编写的测试文件功能基本相同。</p></li> 
+   <li><p>打开 <code>truffle.js</code> ，这个是 truffle 配置文件，用来设置网络一起其他项目相关的设置。 这是一个空白文件， <br> 你可以不进行任何配置，truffle 的命令行中有一些内置的默认参数。</p></li> 
+  </ol> 
+  <h4 id="3-测试"><span id="testing">3. 测试</span></h4> 
+  <ol> 
+   <li>在终端中运行脚本：</li> 
+  </ol> 
+  <pre class="prettyprint"><code class="language-bash hljs ">$ truffle test ./test/TestMetaCoin.sol</code></pre> 
+  <p><strong>注意：</strong></p> 
+  <pre class="prettyprint"><code class="language-text hljs avrasm">在windows中执行这个命令的时候，你会发现 truffle<span class="hljs-preprocessor">.js</span> 被执行了，而 truffle 并没有执行。
+具体解决办法，看</code></pre> 
+  <p><a href="todo" rel="nofollow">这里</a>解决 truffle 命令无法执行问题。</p> 
+  <p>你将会看到如下输出：</p> 
+  <pre class="prettyprint"><code class="language-text hljs ">  TestMetacoin
+    √ testInitialBalanceUsingDeployedContract (58ms)
+    √ testInitialBalanceWithNewMetaCoin (53ms)
+
+
+  2 passing (648ms)</code></pre> 
+  <ol> 
+   <li>运行 js 测试脚本：</li> 
+  </ol> 
+  <pre class="prettyprint"><code class="language-bash hljs ">$ truffle test ./test/metacoin.js</code></pre> 
+  <p>你将会看到如下输出：</p> 
+  <pre class="prettyprint"><code class="language-text hljs livecodeserver">  Contract: MetaCoin
+    √ should <span class="hljs-built_in">put</span> <span class="hljs-number">10000</span> MetaCoin <span class="hljs-operator">in</span> <span class="hljs-operator">the</span> <span class="hljs-keyword">first</span> account
+    √ should call <span class="hljs-operator">a</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">that</span> <span class="hljs-title">depends</span> <span class="hljs-title">on</span> <span class="hljs-title">a</span> <span class="hljs-title">linked</span> <span class="hljs-title">library</span> (<span class="hljs-title">38ms</span>)</span>
+    √ should <span class="hljs-built_in">send</span> coin correctly (<span class="hljs-number">95</span>ms)
+
+
+  <span class="hljs-number">3</span> passing (<span class="hljs-number">193</span>ms)</code></pre> 
+  <h4 id="4-编译"><span id="compiling">4. 编译</span></h4> 
+  <ol> 
+   <li>编译智能合约</li> 
+  </ol> 
+  <pre class="prettyprint"><code class="language-bash hljs ">$ truffle compile</code></pre> 
+  <p>你将会看到如下输出：</p> 
+  <pre class="prettyprint"><code class="language-text hljs tex">Compiling .<span class="hljs-command">\contracts</span><span class="hljs-command">\ConvertLib</span>.sol...
+Compiling .<span class="hljs-command">\contracts</span><span class="hljs-command">\MetaCoin</span>.sol...
+Compiling .<span class="hljs-command">\contracts</span><span class="hljs-command">\Migrations</span>.sol...
+Compiling .<span class="hljs-command">\contracts</span><span class="hljs-command">\MyContract</span>.sol...
+Writing artifacts to .<span class="hljs-command">\build</span><span class="hljs-command">\contracts</span></code></pre> 
+  <p>编译后的文件将会在工程目录下的 <code>build</code> 目录中。</p> 
+  <h4 id="5-迁移到truffle开发环境"><span id="migrateToTruffle">5. 迁移到truffle开发环境</span></h4> 
+  <pre class="prettyprint"><code class="language-text hljs ">注意：使用 Ganache，请跳过本节到下一节。</code></pre> 
+  <p>为了开发智能合约，我们需要连接到区块链。truffle有内置的私有连用于测试。 <br> 这个网络是你电脑上的本地网络，并不会连接到以太坊的主网络。</p> 
+  <p>使用如下命令创建私有连并与其交互：</p> 
+  <ol> 
+   <li>运行 Truffle develop</li> 
+  </ol> 
+  <pre class="prettyprint"><code class="language-bash hljs ">$ truffle develop</code></pre> 
+  <p>你将会看到如下输出：</p> 
+  <pre class="prettyprint"><code class="language-text hljs oxygene">Truffle Develop started at http:<span class="hljs-comment">//127.0.0.1:9545/</span>
+
+Accounts:
+(<span class="hljs-number">0</span>) <span class="hljs-number">0</span>x627306090abab3a6e1400e9345bc60c78a8bef57
+(<span class="hljs-number">1</span>) <span class="hljs-number">0</span>xf17f52151ebef6c7334fad080c5704d77216b732
+(<span class="hljs-number">2</span>) <span class="hljs-number">0</span>xc5fdf4076b8f3a5357c5e395ab970b5b54098fef
+(<span class="hljs-number">3</span>) <span class="hljs-number">0</span>x821aea9a577a9b44299b9c15c88cf3087f3b5544
+(<span class="hljs-number">4</span>) <span class="hljs-number">0</span>x0d1d4e623d10f9fba5db95830f7d3839406c6af2
+(<span class="hljs-number">5</span>) <span class="hljs-number">0</span>x2932b7a2355d6fecc4b5c0b6bd44cc31df247a2e
+(<span class="hljs-number">6</span>) <span class="hljs-number">0</span>x2191ef87e392377ec08e7c08eb105ef5448eced5
+(<span class="hljs-number">7</span>) <span class="hljs-number">0</span>x0f4f2ac550a1b4e2280d04c21cea7ebd822934b5
+(<span class="hljs-number">8</span>) <span class="hljs-number">0</span>x6330a553fc93768f612722bb8c2ec78ac90b3bbc
+(<span class="hljs-number">9</span>) <span class="hljs-number">0</span>x5aeda56215b167893e80b4fe645ba6d5bab767de
+
+<span class="hljs-keyword">Private</span> Keys:
+(<span class="hljs-number">0</span>) c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3
+(<span class="hljs-number">1</span>) ae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f
+(<span class="hljs-number">2</span>) <span class="hljs-number">0</span>dbbe8e4ae425a6d2687f1a7e3ba17bc98c673636790f1b8ad91193c05875ef1
+(<span class="hljs-number">3</span>) c88b703fb08cbea894b6aeff5a544fb92e78a18e19814cd85da83b71f772aa6c
+(<span class="hljs-number">4</span>) <span class="hljs-number">388</span>c684f0ba1ef5017716adb5d21a053ea8e90277d0868337519f97bede61418
+(<span class="hljs-number">5</span>) <span class="hljs-number">659</span>cbb0e2411a44db63778987b1e22153c086a95eb6b18bdf89de078917abc63
+(<span class="hljs-number">6</span>) <span class="hljs-number">82</span>d052c865f5763aad42add438569276c00d3d88a2d062d36b2bae914d58b8c8
+(<span class="hljs-number">7</span>) aa3680d5d48a8283413f7a108367c7299ca73f553735860a87b08f39395618b7
+(<span class="hljs-number">8</span>) <span class="hljs-number">0</span>f62d96d6675f32685bbdb8ac13cda7c23436f63efbb9d07700d8669ff12b7c4
+(<span class="hljs-number">9</span>) <span class="hljs-number">8</span>d5366123cb560bb606379f90a0bfd4769eecc0557f1b362dcae9012b548b1e5
+
+Mnemonic: candy maple cake sugar pudding cream honey rich smooth crumble sweet treat
+
+⚠️  Important ⚠️  : This mnemonic was created <span class="hljs-keyword">for</span> you <span class="hljs-keyword">by</span> Truffle. It <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> secure.
+<span class="hljs-keyword">Ensure</span> you <span class="hljs-keyword">do</span> <span class="hljs-keyword">not</span> use it <span class="hljs-keyword">on</span> production blockchains, <span class="hljs-keyword">or</span> <span class="hljs-keyword">else</span> you risk losing funds.
+
+truffle(develop)&gt;</code></pre> 
+  <p>这里显示了10个账户和它们的私钥，用于和区块链交互。</p> 
+  <p><code>truffle(develop)&gt;</code> 和 <code>geth attach</code> 是相同的交互式控制台。</p> 
+  <ol> 
+   <li>在 <strong>truffle</strong> 交互控制台中，你可以省略 <strong>truffle</strong> 前缀，例如使用 <code>truffle compile</code> 你可以直接使用 <code>compile</code> 。 <br> 用于发布的命令行是 <code>truffle migrate</code> , 在交互命令行中使用 <code>migrate</code> 即可：</li> 
+  </ol> 
+  <pre class="prettyprint"><code class="language-bash hljs ">truffle(develop)&gt; migrate</code></pre> 
+  <p>你将会看到如下输出：</p> 
+  <pre class="prettyprint"><code class="language-text hljs r">Using network <span class="hljs-string">'develop'</span>.
+
+Running migration: 1_initial_migration.js
+  Deploying Migrations...
+  <span class="hljs-keyword">...</span> <span class="hljs-number">0xfc1305e8437792f4111d189a7215a57700f15211d17cf4d5b723c5cef054c313</span>
+  Migrations: <span class="hljs-number">0x8cdaf0cd259887258bc13a92c0a6da92698644c0</span>
+Saving successful migration to network...
+  <span class="hljs-keyword">...</span> <span class="hljs-number">0xd7bc86d31bee32fa3988f1c1eabce403a1b5d570340a3a9cdba53a472ee8c956</span>
+Saving artifacts...
+Running migration: 2_deploy_contracts.js
+  Deploying ConvertLib...
+  <span class="hljs-keyword">...</span> <span class="hljs-number">0x9bad657102554ee0183b260e9144c45cff6f1b8acc158535b1d96a03e21a67a1</span>
+  ConvertLib: <span class="hljs-number">0x345ca3e014aaf5dca488057592ee47305d9b3e10</span>
+  Linking ConvertLib to MetaCoin
+  Deploying MetaCoin...
+  <span class="hljs-keyword">...</span> <span class="hljs-number">0xc68fe7303339ebd996b0b1c5ed7dd72498839ad3729ef991419c40b7ea8378fe</span>
+  MetaCoin: <span class="hljs-number">0xf25186b5081ff5ce73482ad761db0eb0d25abfbf</span>
+Saving successful migration to network...
+  <span class="hljs-keyword">...</span> <span class="hljs-number">0x059cf1bbc372b9348ce487de910358801bbbd1c89182853439bec0afaee6c7db</span>
+Saving artifacts...
+Running migration: 4_example_migration.js
+  Deploying MyContract...
+  <span class="hljs-keyword">...</span> <span class="hljs-number">0x8c2aeb4d8be63db2d5e04459689ef1a84e0116d8805e6149b1b69d26ecc9095a</span>
+  MyContract: <span class="hljs-number">0x9fbda871d559710256a2502a2517b794b482db40</span>
+Saving successful migration to network...
+  <span class="hljs-keyword">...</span> <span class="hljs-number">0xcfa8ca90b302e023e613f1cd644dd62942c82277d36ceef1df5b97b13f67ae6d</span>
+Saving artifacts...</code></pre> 
+  <p>这里显示交易IDs，和智能合约的部署地址。</p> 
+  <h4 id="6-使用-ganache-迁移智能合约"><span id="ganacheMigrateContacts">6. 使用 Ganache 迁移智能合约</span></h4> 
+  <p>truffle develop 是一个将多个工具集中的私有连、控制台，你也可以使用 Ganache ，它是一个桌面应用，用于启动你的私有连。 <br> Ganache 能够让新入门以太坊和区块链的开发者更加容易理解，它预先显示了更多信息。</p> 
+  <p>唯一的额外步骤，运行 Ganache ，你可以修改 <code>truffle</code> 配置文件来指向 <code>Ganache</code> 实例。</p> 
+  <ol> 
+   <li>下载并安装 <a href="https://truffleframework.com/ganache" rel="nofollow">Ganache</a> 。</li> 
+   <li><p>打开 <code>truffle.js</code> 配置文件，替换 <code>networks</code> 配置：</p> <pre class="prettyprint"><code class="language-javascript hljs ">module.exports = {
+  networks: {
+    development: {
+      host: <span class="hljs-string">"127.0.0.1"</span>,
+      port: <span class="hljs-number">7545</span>,
+      network_id: <span class="hljs-string">"*"</span>
+    }
+  }
+};</code></pre> <p>这个配置就是指定 <code>truffle</code> 连接到 <code>Ganache</code> 私有连。</p></li> 
+   <li><p>保存并关闭文件。</p></li> 
+   <li><p>启动 <code>Ganache</code></p> <p><img src="https://img-blog.csdn.net/20180704174002444?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3RnYnVzMTg5OTAxNDAzODI=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="ganache_accounts" title=""></p></li> 
+   <li><p>在终端中输入 <code>migrate</code> 命令，迁移智能合约到由 <code>Ganache</code> 创建的区块链：</p> <pre class="prettyprint"><code class="language-bash hljs ">$ truffle migrate</code></pre> <p>你将会看到如下输出：</p> <pre class="prettyprint"><code class="language-text hljs r">Using network <span class="hljs-string">'development'</span>.
+
+Running migration: 1_initial_migration.js
+  Deploying Migrations...
+  <span class="hljs-keyword">...</span> <span class="hljs-number">0xfc1305e8437792f4111d189a7215a57700f15211d17cf4d5b723c5cef054c313</span>
+  Migrations: <span class="hljs-number">0x13f70ff9440b96e783a9000e2755ac6dbbf33ac4</span>
+Saving successful migration to network...
+  <span class="hljs-keyword">...</span> <span class="hljs-number">0x0f002d7dc7b04ec9b8e05bc3be03fa11ceaea0e5d5c99ac594dc0fa33e74df39</span>
+Saving artifacts...
+Running migration: 2_deploy_contracts.js
+  Deploying ConvertLib...
+  <span class="hljs-keyword">...</span> <span class="hljs-number">0x9bad657102554ee0183b260e9144c45cff6f1b8acc158535b1d96a03e21a67a1</span>
+  ConvertLib: <span class="hljs-number">0x45daf5b81c0238d7fc3f094b2d54c00badf96745</span>
+  Linking ConvertLib to MetaCoin
+  Deploying MetaCoin...
+  <span class="hljs-keyword">...</span> <span class="hljs-number">0x89b661e01f3b910276a9e123881c0dbba728d30fbc0997befaaf0cbad998c6ff</span>
+  MetaCoin: <span class="hljs-number">0x11a3dcd88766fe67f29c73a662b6c40bb63ddce8</span>
+Saving successful migration to network...
+  <span class="hljs-keyword">...</span> <span class="hljs-number">0x2487356aa6d044b475b8213b14d627541c69447e65645da673f83fc75c39df99</span>
+Saving artifacts...
+Running migration: 4_example_migration.js
+  Deploying MyContract...
+  <span class="hljs-keyword">...</span> <span class="hljs-number">0x8c2aeb4d8be63db2d5e04459689ef1a84e0116d8805e6149b1b69d26ecc9095a</span>
+  MyContract: <span class="hljs-number">0x09c654238c3fc3bcddda064c637951c7a8a9ce23</span>
+Saving successful migration to network...
+  <span class="hljs-keyword">...</span> <span class="hljs-number">0xc55fdf833d88082943602c691ec72c62cb2fdc1b5adcc7c232f970c7d69d266b</span>
+Saving artifacts...</code></pre> <p>这里显示的是交易id和你部署的合约地址。</p></li> 
+   <li><p>在 <code>Ganache</code> 中，点击 <code>Transactions</code> 按钮查看已经被处理的交易。</p></li> 
+   <li><p>为了与智能合约交互，你可使用 <code>truffle</code> 控制台。<code>truffle</code> 控制台类似于 <code>Truffle Develop</code> ， <br> 期望他连接到已经存在的区块链（由 <code>Ganache</code> 保证创建区块链）。</p> <pre class="prettyprint"><code class="language-bash hljs ">$ truffle console</code></pre> <p>你将会看到如下输出：</p> <pre class="prettyprint"><code class="language-text hljs erlang"><span class="hljs-function"><span class="hljs-title">truffle</span><span class="hljs-params">(development)</span>&gt;</span></code></pre></li> 
+  </ol> 
+  <h4 id="7-与智能合约交互"><span id="interactWithContract">7. 与智能合约交互</span></h4> 
+  <p>使用控制台与智能合约交互有以下几种方式：</p> 
+  <pre class="prettyprint"><code class="language-text hljs avrasm">注意：我们这个例子中使用 web3<span class="hljs-preprocessor">.eth</span><span class="hljs-preprocessor">.accounts</span>[] 中的所有账户由助记词（mnemonic）保证。
+所以，demo中出现的地址跟你本地区块链中的地址有所不同是很正常的。通常我们这样使用地址 web3<span class="hljs-preprocessor">.eth</span><span class="hljs-preprocessor">.accounts</span>[<span class="hljs-number">0</span>] 。</code></pre> 
+  <ul> 
+   <li>查询 <code>metacoin</code> 发布后智能合约中的账户余额：</li> 
+  </ul> 
+  <pre class="prettyprint"><code class="language-javascript hljs ">MetaCoin.deployed().then(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(instance)</span>{</span><span class="hljs-keyword">return</span> instance.getBalance(web3.eth.accounts[<span class="hljs-number">0</span>]);}).then(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value)</span>{</span><span class="hljs-keyword">return</span> value.toNumber()});</code></pre> 
+  <ul> 
+   <li>查询账户余额值多少ETH</li> 
+  </ul> 
+  <pre class="prettyprint"><code class="language-javascript hljs ">MetaCoin.deployed().then(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(instance)</span>{</span><span class="hljs-keyword">return</span> instance.getBalanceInEth(web3.eth.accounts[<span class="hljs-number">0</span>]);}).then(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value)</span>{</span><span class="hljs-keyword">return</span> value.toNumber()});</code></pre> 
+  <ul> 
+   <li>转 metacoin 从一个账户转账到另外一个账户</li> 
+  </ul> 
+  <pre class="prettyprint"><code class="language-javascript hljs ">MetaCoin.deployed().then(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(instance)</span>{</span><span class="hljs-keyword">return</span> instance.sendCoin(web3.eth.accounts[<span class="hljs-number">1</span>], <span class="hljs-number">500</span>);});</code></pre> 
+  <ul> 
+   <li>查询接收 metacoin 的账户的余额：</li> 
+  </ul> 
+  <pre class="prettyprint"><code class="language-javascript hljs ">MetaCoin.deployed().then(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(instance)</span>{</span><span class="hljs-keyword">return</span> instance.getBalance(web3.eth.accounts[<span class="hljs-number">1</span>]);}).then(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value)</span>{</span><span class="hljs-keyword">return</span> value.toNumber()});</code></pre> 
+  <ul> 
+   <li>查询转出 metacoin 账户的余额：</li> 
+  </ul> 
+  <pre class="prettyprint"><code class="language-javascript hljs ">MetaCoin.deployed().then(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(instance)</span>{</span><span class="hljs-keyword">return</span> instance.getBalance(web3.eth.accounts[<span class="hljs-number">0</span>]);}).then(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value)</span>{</span><span class="hljs-keyword">return</span> value.toNumber()});</code></pre> 
+  <h2 id="继续学习">继续学习</h2> 
+  <p>这个快速教程主要展示了 truffle 的基础教程，但是任然有很多要学习。请继续学习我们剩下的教程，尤其是 <a href="https://truffleframework.com/tutorials/" rel="nofollow">教程</a></p> 
+ </div> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/markdown_views-ea0013b516.css"> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/tgbus18990140382/article/details/80916223,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/tgbus18990140382/article/details/80916223,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

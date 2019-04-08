@@ -1,0 +1,130 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <div class="md_display_div" style="font-family:'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', 'WenQuanYi Micro Hei', Arial, sans-serif;font-size:15px;line-height:27px;color:rgb(51,51,51);background-color:rgb(255,255,255);">
+   <h2 class="text-primary" style="line-height:1.1;color:rgb(51,122,183);font-size:30px;">Description</h2>
+   <p>在一次聚会上，Bob打算和Alice一起玩Blackjack游戏，但Alice平时很少玩扑克类游戏，Bob觉得跟Alice解释清楚Blackjack的规则有点困难，于是Bob决定和Alice玩一次简化版的Blackjack。</p>
+   <h4 style="font-weight:500;line-height:1.1;color:inherit;font-size:18px;">点数计算</h4>
+   <p>游戏过程使用若干副去掉大小王的扑克牌，A代表1点，2-10即为牌面上的点数，J、Q、K均代表10点。</p>
+   <h4 style="font-weight:500;line-height:1.1;color:inherit;font-size:18px;">发牌</h4>
+   <p>游戏包含两位玩家，一位玩家做庄家负责发牌, 另一位玩家为闲家。 发牌时依次派发牌堆最上方的牌。 庄家会向闲家派发一张暗牌(即不被揭开的牌), 然后向自己派发一张暗牌, 接着庄家会向闲家派发一张明牌(即被揭开的牌), 然后又向自己派发一张明牌。 之后庄家会询问闲家是否继续要牌，并以明牌的形式派发。 闲家在看完自己的暗牌和明牌之后决定是否继续要牌。</p>
+   <h4 style="font-weight:500;line-height:1.1;color:inherit;font-size:18px;">爆煲</h4>
+   <p>如果闲家要牌后手上拥有的牌的总点数超过21点(俗称爆煲)，便要揭开手上所有的牌，算作庄家赢。 如果闲家手上拥有的牌的总点数不超过21点, 该闲家可决定是否继续要牌。 当闲家决定不再要牌后，庄家就必须揭开自己手上所有的牌，然后决定是否继续要牌，直到爆煲或者决定不再要牌为止。 如果庄家爆煲，算作闲家赢。</p>
+   <h4 style="font-weight:500;line-height:1.1;color:inherit;font-size:18px;">点数决胜</h4>
+   <p>如果庄家最终没有爆煲，闲家便要揭开手上所有的牌，比较点数决定谁胜谁负。 如果闲家的点数比庄家大，算作闲家赢。 如果闲家的点数和庄家相等或者比庄家小，则算作庄家赢。</p>
+   <p>现在Bob是庄家，Alice是闲家，在Bob开始发牌的时候Alice借助好朋友Cara的超能力已经知道了牌堆最上方的若干张牌，Alice想知道她是否一定可以赢下这一局呢？</p>
+  </div>
+  <div class="md_display_div" style="font-family:'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', 'WenQuanYi Micro Hei', Arial, sans-serif;font-size:15px;line-height:27px;color:rgb(51,51,51);background-color:rgb(255,255,255);">
+   <h2 class="text-primary" style="line-height:1.1;color:rgb(51,122,183);font-size:30px;">Input</h2>
+   <p>输入包含不超过100组数据。 每组数据的第一行为一个整数<span class="math inline"><em>n</em>(5 ≤ <em>n</em> ≤ 42)</span>，即Alice已经知道的牌的数量。 接下来一行包含<span class="math inline"><em>n</em></span>个1-13之间的整数，依次描述了牌堆从上至下最上方的<span class="math inline"><em>n</em></span>张牌的牌面。 这里我们用整数1代表扑克牌的A，整数11、12、13分别代表扑克牌的J、Q、K。 数据保证这<span class="math inline"><em>n</em></span>张牌的总点数不少于42。</p>
+  </div>
+  <div class="md_display_div" style="font-family:'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', 'WenQuanYi Micro Hei', Arial, sans-serif;font-size:15px;line-height:27px;color:rgb(51,51,51);background-color:rgb(255,255,255);">
+   <h2 class="text-primary" style="line-height:1.1;color:rgb(51,122,183);font-size:30px;">Output</h2>
+   <p>对于每组数据，如果Alice一定可以赢下这一局，输出“Yes”，否则输出“No”。</p>
+  </div>
+  <div class="md_display_div" style="font-family:'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', 'WenQuanYi Micro Hei', Arial, sans-serif;font-size:15px;line-height:27px;color:rgb(51,51,51);background-color:rgb(255,255,255);">
+   <h2 class="text-primary" style="line-height:1.1;color:rgb(51,122,183);font-size:30px;">Sample Input</h2>
+   <pre style="font-family:Menlo, Monaco, Consolas, 'Courier New', monospace;font-size:14px;line-height:1.42857;color:rgb(51,51,51);background-color:rgb(245,245,245);border:1px solid rgb(204,204,204);">9
+12 5 13 5 2 7 3 1 5
+9
+5 13 5 5 5 5 1 3 4
+5
+11 11 11 11 2
+8
+8 11 9 6 2 3 2 4</pre>
+  </div>
+  <div class="md_display_div" style="font-family:'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', 'WenQuanYi Micro Hei', Arial, sans-serif;font-size:15px;line-height:27px;color:rgb(51,51,51);background-color:rgb(255,255,255);">
+   <h2 class="text-primary" style="line-height:1.1;color:rgb(51,122,183);font-size:30px;">Sample Output</h2>
+   <pre style="font-family:Menlo, Monaco, Consolas, 'Courier New', monospace;font-size:14px;line-height:1.42857;color:rgb(51,51,51);background-color:rgb(245,245,245);border:1px solid rgb(204,204,204);">Yes
+Yes
+No
+No</pre>
+  </div>
+  <div class="md_display_div" style="font-family:'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', 'WenQuanYi Micro Hei', Arial, sans-serif;font-size:15px;line-height:27px;color:rgb(51,51,51);background-color:rgb(255,255,255);">
+   <h2 class="text-primary" style="line-height:1.1;color:rgb(51,122,183);font-size:30px;">Hint</h2>
+   <p>对于第一个样例，Alice手中的暗牌和明牌分别为Q、K，Bob手中的暗牌和明牌分别为5、5。Alice选择不要牌即可，总点数为20，无论Bob接下来要几张牌，Alice都可以赢。</p>
+   <p>对于第二个样例，Alice手中的暗牌和明牌分别为5、5，Bob手中的暗牌和明牌分别为K、5。Alice可以选择要三张牌，总点数为21，无论Bob接下来要几张牌，Alice都可以赢。Alice也可以选择只要两张牌，总点数为20，同样可以确保赢下这一局。</p>
+   <p>对于第三个样例，Alice手中的暗牌和明牌分别为J、J，Bob手中的暗牌和明牌分别为J、J。Alice只能选择不要牌，否则会爆煲，总点数为20。此时Bob如果也不要牌，总点数为20，庄家赢。因此Alice不能保证一定可以赢Bob。</p>
+   <p>对于第四个样例，Alice手中的暗牌和明牌分别为8、9，Bob手中的暗牌和明牌分别为J、6。无论Alice要几张牌，Bob都有可能赢Alice。</p>
+  </div>
+  <div class="md_display_div" style="font-family:'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', 'WenQuanYi Micro Hei', Arial, sans-serif;font-size:15px;line-height:27px;color:rgb(51,51,51);background-color:rgb(255,255,255);">
+   <h2 class="text-primary" style="line-height:1.1;color:rgb(51,122,183);font-size:30px;">Source</h2>
+   <p>湖南省第十三届大学生计算机程序设计竞赛</p>
+   <p><br></p>
+   <p>题目很长 &nbsp;其实读完后 &nbsp;很好理解</p>
+   <p>首先每人两张牌</p>
+   <p>然后alice摸牌</p>
+   <p>再然后bob摸牌</p>
+   <p>alice可以知道前N张牌是什么</p>
+   <p>问能否必赢</p>
+   <p>注意:题目中的安排明牌<span style="font-family:'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', 'WenQuanYi Micro Hei', Arial, sans-serif;background-color:rgb(255,255,255);">对于alice来说</span>没有什么用 。</p>
+   <p><br></p>
+   <p>做题时 二十分钟不到写完 交上去竟然wrong answer</p>
+   <p>其实有这样一个坑 &nbsp;当alice取牌时 选择性放弃可能比贪心的取牌更好</p>
+   <p>例如:alice 18点 &nbsp; bob &nbsp;14点</p>
+   <p>接下来两张牌为 3 7</p>
+   <p>如果Alice取了3变为21点 bob则可以选择7同样为21点</p>
+   <p>bob取胜</p>
+   <p>如果alice选择性放弃3的牌</p>
+   <p>bob不论选不选3都会输</p>
+   <p>我们可以得出要考虑alice在第任意此取牌后放弃取牌 &nbsp;</p>
+   <p>于是有了这样一个循环</p>
+   <p></p>
+   <pre><code class="language-cpp">for(int i=k;i&lt;n;i++)</code></pre>代码如下 欢迎参考
+   <p><br></p>
+   <pre><code class="language-cpp">#include &lt;iostream&gt;
+using namespace std;
+
+int n;
+/* run this program using the console pauser or add your own getch, system("pause") or input loop */
+
+int main(int argc, char** argv) {
+	//freopen("in.txt","r",stdin);
+	while(cin&gt;&gt;n){
+		int arry[42];//a为闲家  b为庄家
+		int suma=0,sumb=0;
+		for(int i=0;i&lt;n;i++){
+			cin&gt;&gt;arry[i];
+			if(arry[i]&gt;10)	arry[i]=10;
+		}
+		suma+=arry[0]+=arry[2];
+		sumb+=arry[1]+=arry[3];
+		
+		int k=4;//取到第五张牌 
+		int flag=0;
+		
+		for(int i=k;i&lt;n;i++){
+			int now=k;
+			int nowsuma=suma,nowsumb=sumb;
+			while(now&lt;i){
+				int data=arry[now];
+				if(nowsuma+data&gt;21)	break;
+				else nowsuma+=data;
+				now++;
+			}
+			while(now&lt;n){
+				int data=arry[now];
+				if(nowsumb+data&gt;21)	break;
+				else nowsumb+=data;
+				now++;			
+			}
+			if(nowsuma&gt;nowsumb&amp;&amp;now&lt;n){
+				cout&lt;&lt;"Yes\n";
+				flag++;
+				break; 
+			}
+		}
+		
+		if(flag==0)	cout&lt;&lt;"No\n";
+		
+	}
+	return 0;
+}</code></pre>
+  </div>
+  <p></p>
+  <p></p> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/hsx353211851/article/details/80258013,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/hsx353211851/article/details/80258013,&quot;}">阅读更多</a> 
+</div>

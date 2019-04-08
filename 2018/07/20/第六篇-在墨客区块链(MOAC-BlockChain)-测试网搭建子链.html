@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>第六篇 在墨客区块链(MOAC BlockChain) 测试网搭建子链 | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="第六篇 在墨客区块链(MOAC BlockChain) 测试网搭建子链" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="北京时间2018年6月30日，MOAC子链正式上线公测。 以下为MOAC&nbsp;子链公测版安装及应用教程。 &nbsp; 1.&nbsp;准备工作 从MOAC版本发布页： https://github.com/MOACChain/moac-core/releases 下载Windows版本的系统软件包pangu0.8.4.windows.zip。该版本目前仅用于MOAC测试网。 该版本适用于64位Windows 7及以上系统。本文实际操作环境为：64位Windows 10&nbsp;中文版。 本文主要内容来自MOAC中文wiki。建议操作前浏览子链相关内容。网址： https://github.com/delida/MoacDocs/wiki &nbsp; 2.&nbsp;产生本地MOAC节点 解压系统软件包pangu0.8.4.windows.zip到本地硬盘。 安装节点到MOAC测试网。安装命令： D:\pangu0.8.4\vnode&gt;moac --testnet 注意：在moac测试网，任何情形使用moac命令均需要加--testnet。 节点自动安装到目录：C:\Users\[user]\AppData\Roaming\MoacNode\testnet 墨客测试网区块高度可以通过墨客测试网区块浏览器查询。 浏览器网址：http://47.75.144.55:3000/home。 &nbsp; 3.节点基本操作 此节内容参考文档《第三篇 墨客区块链（MOAC BlockChain）节点安装教程》。 3.1 进入console界面 系统关机或主动关闭运行中的节点后，如果需要重新启动节点，在命令行中执行： D:\pangu0.8.4\vnode&gt;moac –testnet console 命令执行后，界面一直滚屏以同步区块数据。 3.2 进入attach界面 打开另一个命令（cmd）终端，转到当前目录，在命令行中执行： D:\pangu0.8.4\vnode&gt;moac –testnet attach 该命令依赖于节点已经启动，命令执行后不会主动滚屏，而是等待命令。 3.3 创建账号 进入MOAC console界面后，执行命令： &gt; personal.newAccount() 系统会在以下目录：C:\Users\[userName]\AppData\Roaming\MoacNode\testnet\keystore，记录一个账号文件。 请保存好该文件，并牢记密码。 3.4 挖矿 在测试网，可以尝试挖矿，用于之后操作的gas费，进入界面后，执行命令： &gt; miner.start() 停止挖矿，执行命令： &gt; miner.stop() 账号余额变动可以通过命令或者在墨客测试网区块浏览器查询。 &nbsp; 4.scs注册 此处内容参考中文wiki内容《scs矿工参与方法》。 4.1 部署子链矿池 部署子链矿池智能合约，用于子链SCS节点矿工加入矿工池。 从MOAC版本发布页： https://github.com/MOACChain/moac-core/releases 下载合约SubChainProtocolBase.sol。进行合约部署，部署前需要按以下方式启动节点： D:\pangu0.8.4\vnode&gt;moac –testnet --rpc –rpccorsdomain &quot;http://wallet.moac.io&quot; 此处内容参考文档《第四篇 在墨客区块链（MOAC BlockChain）部署ERC-20合约》。 部署时选择“Sub&nbsp;Chain Protocol Base”，填入参数Protocol（POS）和Bmin(1)，如图所示。 成功部署后 注意：该步骤非必须，可以直接加入测试网已经存在的矿工池。仅在受网络限制，本节点不能同步的情况下，才必须自己部署子链矿池。 该合约地址经测试工作正常，用户可以在后面的步骤将scs注册到该合约地址。 0x225Ebb0b9DF76E3D48eA0614943340611f635EA0 4.2 启动SCS 在下载的节点文件中，有一个scs目录。 在scs\config目录下有一个配置文件userconfig.json。其中的Beneficiary为矿工收益账号。为了安全起见，建议采用与scsid不同的墨客底层账号用来获取子链的收益（scsid将会在后面讲到）。 进入目录scs\scsserver启动scs： D:\pangu0.8.4\scs\scsserver&gt;scsserver -p &quot;123456123456&quot; 命令中：“-p [密码]” scsid的密码，不设置，则默认密码为 moacscsofflineaccountpwd。 启动后，SCS将会在当前目录下生成一个keystore目录，并在目录中新建一个账号，这个账号就是scsid，可在第一次启动时使用-p设置密码。如果想换一个scsid，则需要删除keystore中的内容重新启动。 可以根据实际需要，按照以上步骤重新启动一个或多个scs。单台电脑建议启动不超过3个scs。 4.3 注册SCS 在启动scs并已经知道一个子链矿池合约地址的情况下（见4.1节），可以进行注册。 写一个scsRegister.js，代码如下。 var Chain3 = require(&#39;chain3&#39;); var chain3 = new Chain3(new Chain3.providers.HttpProvider(&#39;http://localhost:8545&#39;)); //scs注册 console.log(&#39;SCS Register start!&#39;); var baseAddr = &quot;0x7610fd66c272332edd59a43460ad24eee1973bfe&quot;; var basePasswd = &quot;password&quot;; var protocolAddr = &quot;0x225Ebb0b9DF76E3D48eA0614943340611f635EA0&quot;; var scsAddr = &quot;755a37ec5ba302cd0022af2b8e3ff97c1996601b&quot;; //不带0x开头 chain3.personal.unlockAccount(baseAddr, basePasswd,0); sendtx(baseAddr, protocolAddr, &#39;5&#39;,&#39;0x4420e486000000000000000000000000&#39; + scsAddr); function sendtx(src, tgtaddr, amount, strData) { chain3.mc.sendTransaction( { from: src, value:chain3.toSha(amount,’mc’), to: tgtaddr, gas: &quot;9000000&quot;, gasPrice: chain3.mc.gasPrice, data: strData }); console.log(&#39;sending from:&#39; + src + &#39; to:&#39; + tgtaddr + &#39; with data:&#39; + strData); } 主要参数如下： 1.baseAddr、basePasswd：主网的一个账户及其密码，付出本次交易的gas费及scs注册所需的押金（本例5mc）； 2.protocolAddr：步骤4.1子链矿池合约subchainprotocolbase地址； 3.scsAddr：步骤4.2的scsid地址，放在“…/scsserver/scskeystore”目录下； 4.注册mc数量，本例子中为5mc，此处必须大于矿池合约的设置值。scs提交押金越多，能参与的子链越多。 特别注意：scsAddr的地址不要加上“0x”。 在文件目录下执行该注册文件scsRegister.js： D:\pangu0.8.4\scs&gt;node&nbsp;scsRegister.js 在等待一定时间之后（通常是母链50个block），就进入子链矿池，成为该子链的候选SCS节点。注册后，保证金会从baseAddr账号转到子链矿池合约账号。 注册时缴纳的保证金，将在SCS被选中服务子链的时候临时扣除。下图为注册两个SCS，各交2个mc保证金的情况。 4.4 给SCS地址转账 scs在跟底层vnode通信或被调用时，tx是需要交易费的，因此需要在scsid存入1个mc作为gas费。 &nbsp; 4.5 查询SCS注册数量 如果是使用网页版钱包部署的子链矿池合约，可以直接在界面看到scs注册数量等信息。 或者，通过attach界面，使用合约地址查询注册scs数量 &gt; mc.getStorageAt(&quot;0x225Ebb0b9DF76E3D48eA0614943340611f635EA0&quot;,0x02) &nbsp; 5.部署Vnode矿池合约 此处内容参考中文wiki内容《代理vnode节点介绍》。 5.1 部署vnode矿池 从MOAC版本发布页 https://github.com/MOACChain/moac-core/releases 下载合约VnodeProtocolBase.sol 部署时选择“Vnode&nbsp;Protocol Base”，填入参数Bmin(1)。如图所示。 成功后得到合约地址，用于后面vnode的注册。 注意：该步骤非必须，可以直接加入测试网已经存在的Vnode池子。仅在受网络限制，本节点不能同步的情况下，才必须自己部署Vnode池子。 该合约地址经测试工作正常，用户可以不必自己部署合约，在后面的步骤将Vnode节点注册到该合约地址。 0x0fB05e4a2b878855e27A7675135BecA0E257e896 5.2 添加节点到vnode矿池 添加本节点到vnode矿池的代码如下vnodeRegister.js，执行node即可。 var Chain3 = require(&#39;chain3&#39;); var chain3 = new Chain3(new Chain3.providers.HttpProvider(&#39;http://localhost:8545&#39;)); //vnode register var baseAddr = &quot;0x7610fd66c272332edd59a43460ad24eee1973bfe&quot;; var basePasswd = &quot;123456123456&quot;; var vnodeChain = &quot;0x0fB05e4a2b878855e27A7675135BecA0E257e896&quot;; var vnodeAddr = &quot;7610fd66c272332edd59a43460ad24eee1973bfe&quot;;" />
+<meta property="og:description" content="北京时间2018年6月30日，MOAC子链正式上线公测。 以下为MOAC&nbsp;子链公测版安装及应用教程。 &nbsp; 1.&nbsp;准备工作 从MOAC版本发布页： https://github.com/MOACChain/moac-core/releases 下载Windows版本的系统软件包pangu0.8.4.windows.zip。该版本目前仅用于MOAC测试网。 该版本适用于64位Windows 7及以上系统。本文实际操作环境为：64位Windows 10&nbsp;中文版。 本文主要内容来自MOAC中文wiki。建议操作前浏览子链相关内容。网址： https://github.com/delida/MoacDocs/wiki &nbsp; 2.&nbsp;产生本地MOAC节点 解压系统软件包pangu0.8.4.windows.zip到本地硬盘。 安装节点到MOAC测试网。安装命令： D:\pangu0.8.4\vnode&gt;moac --testnet 注意：在moac测试网，任何情形使用moac命令均需要加--testnet。 节点自动安装到目录：C:\Users\[user]\AppData\Roaming\MoacNode\testnet 墨客测试网区块高度可以通过墨客测试网区块浏览器查询。 浏览器网址：http://47.75.144.55:3000/home。 &nbsp; 3.节点基本操作 此节内容参考文档《第三篇 墨客区块链（MOAC BlockChain）节点安装教程》。 3.1 进入console界面 系统关机或主动关闭运行中的节点后，如果需要重新启动节点，在命令行中执行： D:\pangu0.8.4\vnode&gt;moac –testnet console 命令执行后，界面一直滚屏以同步区块数据。 3.2 进入attach界面 打开另一个命令（cmd）终端，转到当前目录，在命令行中执行： D:\pangu0.8.4\vnode&gt;moac –testnet attach 该命令依赖于节点已经启动，命令执行后不会主动滚屏，而是等待命令。 3.3 创建账号 进入MOAC console界面后，执行命令： &gt; personal.newAccount() 系统会在以下目录：C:\Users\[userName]\AppData\Roaming\MoacNode\testnet\keystore，记录一个账号文件。 请保存好该文件，并牢记密码。 3.4 挖矿 在测试网，可以尝试挖矿，用于之后操作的gas费，进入界面后，执行命令： &gt; miner.start() 停止挖矿，执行命令： &gt; miner.stop() 账号余额变动可以通过命令或者在墨客测试网区块浏览器查询。 &nbsp; 4.scs注册 此处内容参考中文wiki内容《scs矿工参与方法》。 4.1 部署子链矿池 部署子链矿池智能合约，用于子链SCS节点矿工加入矿工池。 从MOAC版本发布页： https://github.com/MOACChain/moac-core/releases 下载合约SubChainProtocolBase.sol。进行合约部署，部署前需要按以下方式启动节点： D:\pangu0.8.4\vnode&gt;moac –testnet --rpc –rpccorsdomain &quot;http://wallet.moac.io&quot; 此处内容参考文档《第四篇 在墨客区块链（MOAC BlockChain）部署ERC-20合约》。 部署时选择“Sub&nbsp;Chain Protocol Base”，填入参数Protocol（POS）和Bmin(1)，如图所示。 成功部署后 注意：该步骤非必须，可以直接加入测试网已经存在的矿工池。仅在受网络限制，本节点不能同步的情况下，才必须自己部署子链矿池。 该合约地址经测试工作正常，用户可以在后面的步骤将scs注册到该合约地址。 0x225Ebb0b9DF76E3D48eA0614943340611f635EA0 4.2 启动SCS 在下载的节点文件中，有一个scs目录。 在scs\config目录下有一个配置文件userconfig.json。其中的Beneficiary为矿工收益账号。为了安全起见，建议采用与scsid不同的墨客底层账号用来获取子链的收益（scsid将会在后面讲到）。 进入目录scs\scsserver启动scs： D:\pangu0.8.4\scs\scsserver&gt;scsserver -p &quot;123456123456&quot; 命令中：“-p [密码]” scsid的密码，不设置，则默认密码为 moacscsofflineaccountpwd。 启动后，SCS将会在当前目录下生成一个keystore目录，并在目录中新建一个账号，这个账号就是scsid，可在第一次启动时使用-p设置密码。如果想换一个scsid，则需要删除keystore中的内容重新启动。 可以根据实际需要，按照以上步骤重新启动一个或多个scs。单台电脑建议启动不超过3个scs。 4.3 注册SCS 在启动scs并已经知道一个子链矿池合约地址的情况下（见4.1节），可以进行注册。 写一个scsRegister.js，代码如下。 var Chain3 = require(&#39;chain3&#39;); var chain3 = new Chain3(new Chain3.providers.HttpProvider(&#39;http://localhost:8545&#39;)); //scs注册 console.log(&#39;SCS Register start!&#39;); var baseAddr = &quot;0x7610fd66c272332edd59a43460ad24eee1973bfe&quot;; var basePasswd = &quot;password&quot;; var protocolAddr = &quot;0x225Ebb0b9DF76E3D48eA0614943340611f635EA0&quot;; var scsAddr = &quot;755a37ec5ba302cd0022af2b8e3ff97c1996601b&quot;; //不带0x开头 chain3.personal.unlockAccount(baseAddr, basePasswd,0); sendtx(baseAddr, protocolAddr, &#39;5&#39;,&#39;0x4420e486000000000000000000000000&#39; + scsAddr); function sendtx(src, tgtaddr, amount, strData) { chain3.mc.sendTransaction( { from: src, value:chain3.toSha(amount,’mc’), to: tgtaddr, gas: &quot;9000000&quot;, gasPrice: chain3.mc.gasPrice, data: strData }); console.log(&#39;sending from:&#39; + src + &#39; to:&#39; + tgtaddr + &#39; with data:&#39; + strData); } 主要参数如下： 1.baseAddr、basePasswd：主网的一个账户及其密码，付出本次交易的gas费及scs注册所需的押金（本例5mc）； 2.protocolAddr：步骤4.1子链矿池合约subchainprotocolbase地址； 3.scsAddr：步骤4.2的scsid地址，放在“…/scsserver/scskeystore”目录下； 4.注册mc数量，本例子中为5mc，此处必须大于矿池合约的设置值。scs提交押金越多，能参与的子链越多。 特别注意：scsAddr的地址不要加上“0x”。 在文件目录下执行该注册文件scsRegister.js： D:\pangu0.8.4\scs&gt;node&nbsp;scsRegister.js 在等待一定时间之后（通常是母链50个block），就进入子链矿池，成为该子链的候选SCS节点。注册后，保证金会从baseAddr账号转到子链矿池合约账号。 注册时缴纳的保证金，将在SCS被选中服务子链的时候临时扣除。下图为注册两个SCS，各交2个mc保证金的情况。 4.4 给SCS地址转账 scs在跟底层vnode通信或被调用时，tx是需要交易费的，因此需要在scsid存入1个mc作为gas费。 &nbsp; 4.5 查询SCS注册数量 如果是使用网页版钱包部署的子链矿池合约，可以直接在界面看到scs注册数量等信息。 或者，通过attach界面，使用合约地址查询注册scs数量 &gt; mc.getStorageAt(&quot;0x225Ebb0b9DF76E3D48eA0614943340611f635EA0&quot;,0x02) &nbsp; 5.部署Vnode矿池合约 此处内容参考中文wiki内容《代理vnode节点介绍》。 5.1 部署vnode矿池 从MOAC版本发布页 https://github.com/MOACChain/moac-core/releases 下载合约VnodeProtocolBase.sol 部署时选择“Vnode&nbsp;Protocol Base”，填入参数Bmin(1)。如图所示。 成功后得到合约地址，用于后面vnode的注册。 注意：该步骤非必须，可以直接加入测试网已经存在的Vnode池子。仅在受网络限制，本节点不能同步的情况下，才必须自己部署Vnode池子。 该合约地址经测试工作正常，用户可以不必自己部署合约，在后面的步骤将Vnode节点注册到该合约地址。 0x0fB05e4a2b878855e27A7675135BecA0E257e896 5.2 添加节点到vnode矿池 添加本节点到vnode矿池的代码如下vnodeRegister.js，执行node即可。 var Chain3 = require(&#39;chain3&#39;); var chain3 = new Chain3(new Chain3.providers.HttpProvider(&#39;http://localhost:8545&#39;)); //vnode register var baseAddr = &quot;0x7610fd66c272332edd59a43460ad24eee1973bfe&quot;; var basePasswd = &quot;123456123456&quot;; var vnodeChain = &quot;0x0fB05e4a2b878855e27A7675135BecA0E257e896&quot;; var vnodeAddr = &quot;7610fd66c272332edd59a43460ad24eee1973bfe&quot;;" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/07/20/%E7%AC%AC%E5%85%AD%E7%AF%87-%E5%9C%A8%E5%A2%A8%E5%AE%A2%E5%8C%BA%E5%9D%97%E9%93%BE(MOAC-BlockChain)-%E6%B5%8B%E8%AF%95%E7%BD%91%E6%90%AD%E5%BB%BA%E5%AD%90%E9%93%BE.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/07/20/%E7%AC%AC%E5%85%AD%E7%AF%87-%E5%9C%A8%E5%A2%A8%E5%AE%A2%E5%8C%BA%E5%9D%97%E9%93%BE(MOAC-BlockChain)-%E6%B5%8B%E8%AF%95%E7%BD%91%E6%90%AD%E5%BB%BA%E5%AD%90%E9%93%BE.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-07-20T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"北京时间2018年6月30日，MOAC子链正式上线公测。 以下为MOAC&nbsp;子链公测版安装及应用教程。 &nbsp; 1.&nbsp;准备工作 从MOAC版本发布页： https://github.com/MOACChain/moac-core/releases 下载Windows版本的系统软件包pangu0.8.4.windows.zip。该版本目前仅用于MOAC测试网。 该版本适用于64位Windows 7及以上系统。本文实际操作环境为：64位Windows 10&nbsp;中文版。 本文主要内容来自MOAC中文wiki。建议操作前浏览子链相关内容。网址： https://github.com/delida/MoacDocs/wiki &nbsp; 2.&nbsp;产生本地MOAC节点 解压系统软件包pangu0.8.4.windows.zip到本地硬盘。 安装节点到MOAC测试网。安装命令： D:\\pangu0.8.4\\vnode&gt;moac --testnet 注意：在moac测试网，任何情形使用moac命令均需要加--testnet。 节点自动安装到目录：C:\\Users\\[user]\\AppData\\Roaming\\MoacNode\\testnet 墨客测试网区块高度可以通过墨客测试网区块浏览器查询。 浏览器网址：http://47.75.144.55:3000/home。 &nbsp; 3.节点基本操作 此节内容参考文档《第三篇 墨客区块链（MOAC BlockChain）节点安装教程》。 3.1 进入console界面 系统关机或主动关闭运行中的节点后，如果需要重新启动节点，在命令行中执行： D:\\pangu0.8.4\\vnode&gt;moac –testnet console 命令执行后，界面一直滚屏以同步区块数据。 3.2 进入attach界面 打开另一个命令（cmd）终端，转到当前目录，在命令行中执行： D:\\pangu0.8.4\\vnode&gt;moac –testnet attach 该命令依赖于节点已经启动，命令执行后不会主动滚屏，而是等待命令。 3.3 创建账号 进入MOAC console界面后，执行命令： &gt; personal.newAccount() 系统会在以下目录：C:\\Users\\[userName]\\AppData\\Roaming\\MoacNode\\testnet\\keystore，记录一个账号文件。 请保存好该文件，并牢记密码。 3.4 挖矿 在测试网，可以尝试挖矿，用于之后操作的gas费，进入界面后，执行命令： &gt; miner.start() 停止挖矿，执行命令： &gt; miner.stop() 账号余额变动可以通过命令或者在墨客测试网区块浏览器查询。 &nbsp; 4.scs注册 此处内容参考中文wiki内容《scs矿工参与方法》。 4.1 部署子链矿池 部署子链矿池智能合约，用于子链SCS节点矿工加入矿工池。 从MOAC版本发布页： https://github.com/MOACChain/moac-core/releases 下载合约SubChainProtocolBase.sol。进行合约部署，部署前需要按以下方式启动节点： D:\\pangu0.8.4\\vnode&gt;moac –testnet --rpc –rpccorsdomain &quot;http://wallet.moac.io&quot; 此处内容参考文档《第四篇 在墨客区块链（MOAC BlockChain）部署ERC-20合约》。 部署时选择“Sub&nbsp;Chain Protocol Base”，填入参数Protocol（POS）和Bmin(1)，如图所示。 成功部署后 注意：该步骤非必须，可以直接加入测试网已经存在的矿工池。仅在受网络限制，本节点不能同步的情况下，才必须自己部署子链矿池。 该合约地址经测试工作正常，用户可以在后面的步骤将scs注册到该合约地址。 0x225Ebb0b9DF76E3D48eA0614943340611f635EA0 4.2 启动SCS 在下载的节点文件中，有一个scs目录。 在scs\\config目录下有一个配置文件userconfig.json。其中的Beneficiary为矿工收益账号。为了安全起见，建议采用与scsid不同的墨客底层账号用来获取子链的收益（scsid将会在后面讲到）。 进入目录scs\\scsserver启动scs： D:\\pangu0.8.4\\scs\\scsserver&gt;scsserver -p &quot;123456123456&quot; 命令中：“-p [密码]” scsid的密码，不设置，则默认密码为 moacscsofflineaccountpwd。 启动后，SCS将会在当前目录下生成一个keystore目录，并在目录中新建一个账号，这个账号就是scsid，可在第一次启动时使用-p设置密码。如果想换一个scsid，则需要删除keystore中的内容重新启动。 可以根据实际需要，按照以上步骤重新启动一个或多个scs。单台电脑建议启动不超过3个scs。 4.3 注册SCS 在启动scs并已经知道一个子链矿池合约地址的情况下（见4.1节），可以进行注册。 写一个scsRegister.js，代码如下。 var Chain3 = require(&#39;chain3&#39;); var chain3 = new Chain3(new Chain3.providers.HttpProvider(&#39;http://localhost:8545&#39;)); //scs注册 console.log(&#39;SCS Register start!&#39;); var baseAddr = &quot;0x7610fd66c272332edd59a43460ad24eee1973bfe&quot;; var basePasswd = &quot;password&quot;; var protocolAddr = &quot;0x225Ebb0b9DF76E3D48eA0614943340611f635EA0&quot;; var scsAddr = &quot;755a37ec5ba302cd0022af2b8e3ff97c1996601b&quot;; //不带0x开头 chain3.personal.unlockAccount(baseAddr, basePasswd,0); sendtx(baseAddr, protocolAddr, &#39;5&#39;,&#39;0x4420e486000000000000000000000000&#39; + scsAddr); function sendtx(src, tgtaddr, amount, strData) { chain3.mc.sendTransaction( { from: src, value:chain3.toSha(amount,’mc’), to: tgtaddr, gas: &quot;9000000&quot;, gasPrice: chain3.mc.gasPrice, data: strData }); console.log(&#39;sending from:&#39; + src + &#39; to:&#39; + tgtaddr + &#39; with data:&#39; + strData); } 主要参数如下： 1.baseAddr、basePasswd：主网的一个账户及其密码，付出本次交易的gas费及scs注册所需的押金（本例5mc）； 2.protocolAddr：步骤4.1子链矿池合约subchainprotocolbase地址； 3.scsAddr：步骤4.2的scsid地址，放在“…/scsserver/scskeystore”目录下； 4.注册mc数量，本例子中为5mc，此处必须大于矿池合约的设置值。scs提交押金越多，能参与的子链越多。 特别注意：scsAddr的地址不要加上“0x”。 在文件目录下执行该注册文件scsRegister.js： D:\\pangu0.8.4\\scs&gt;node&nbsp;scsRegister.js 在等待一定时间之后（通常是母链50个block），就进入子链矿池，成为该子链的候选SCS节点。注册后，保证金会从baseAddr账号转到子链矿池合约账号。 注册时缴纳的保证金，将在SCS被选中服务子链的时候临时扣除。下图为注册两个SCS，各交2个mc保证金的情况。 4.4 给SCS地址转账 scs在跟底层vnode通信或被调用时，tx是需要交易费的，因此需要在scsid存入1个mc作为gas费。 &nbsp; 4.5 查询SCS注册数量 如果是使用网页版钱包部署的子链矿池合约，可以直接在界面看到scs注册数量等信息。 或者，通过attach界面，使用合约地址查询注册scs数量 &gt; mc.getStorageAt(&quot;0x225Ebb0b9DF76E3D48eA0614943340611f635EA0&quot;,0x02) &nbsp; 5.部署Vnode矿池合约 此处内容参考中文wiki内容《代理vnode节点介绍》。 5.1 部署vnode矿池 从MOAC版本发布页 https://github.com/MOACChain/moac-core/releases 下载合约VnodeProtocolBase.sol 部署时选择“Vnode&nbsp;Protocol Base”，填入参数Bmin(1)。如图所示。 成功后得到合约地址，用于后面vnode的注册。 注意：该步骤非必须，可以直接加入测试网已经存在的Vnode池子。仅在受网络限制，本节点不能同步的情况下，才必须自己部署Vnode池子。 该合约地址经测试工作正常，用户可以不必自己部署合约，在后面的步骤将Vnode节点注册到该合约地址。 0x0fB05e4a2b878855e27A7675135BecA0E257e896 5.2 添加节点到vnode矿池 添加本节点到vnode矿池的代码如下vnodeRegister.js，执行node即可。 var Chain3 = require(&#39;chain3&#39;); var chain3 = new Chain3(new Chain3.providers.HttpProvider(&#39;http://localhost:8545&#39;)); //vnode register var baseAddr = &quot;0x7610fd66c272332edd59a43460ad24eee1973bfe&quot;; var basePasswd = &quot;123456123456&quot;; var vnodeChain = &quot;0x0fB05e4a2b878855e27A7675135BecA0E257e896&quot;; var vnodeAddr = &quot;7610fd66c272332edd59a43460ad24eee1973bfe&quot;;","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/07/20/%E7%AC%AC%E5%85%AD%E7%AF%87-%E5%9C%A8%E5%A2%A8%E5%AE%A2%E5%8C%BA%E5%9D%97%E9%93%BE(MOAC-BlockChain)-%E6%B5%8B%E8%AF%95%E7%BD%91%E6%90%AD%E5%BB%BA%E5%AD%90%E9%93%BE.html","headline":"第六篇 在墨客区块链(MOAC BlockChain) 测试网搭建子链","dateModified":"2018-07-20T00:00:00+08:00","datePublished":"2018-07-20T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/07/20/%E7%AC%AC%E5%85%AD%E7%AF%87-%E5%9C%A8%E5%A2%A8%E5%AE%A2%E5%8C%BA%E5%9D%97%E9%93%BE(MOAC-BlockChain)-%E6%B5%8B%E8%AF%95%E7%BD%91%E6%90%AD%E5%BB%BA%E5%AD%90%E9%93%BE.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>第六篇 在墨客区块链(MOAC BlockChain) 测试网搭建子链</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <p>北京时间2018年6月30日，MOAC子链正式上线公测。</p> 
+  <p>以下为MOAC&nbsp;子链公测版安装及应用教程。</p> 
+  <p>&nbsp;</p> 
+  <p><strong>1.&nbsp;准备工作</strong></p> 
+  <p>从MOAC版本发布页：</p> 
+  <p><a href="https://github.com/MOACChain/moac-core/releases" rel="nofollow">https://github.com/MOACChain/moac-core/releases</a></p> 
+  <p>下载Windows版本的系统软件包<strong>pangu0.8.4.windows.zip</strong>。该版本目前仅用于<strong>MOAC测试网</strong>。</p> 
+  <p>该版本适用于64位Windows 7及以上系统。本文实际操作环境为：64位Windows 10&nbsp;中文版。</p> 
+  <p>本文主要内容来自MOAC中文wiki。建议操作前浏览子链相关内容。网址：</p> 
+  <p><a href="https://github.com/delida/MoacDocs/wiki" rel="nofollow">https://github.com/delida/MoacDocs/wiki</a></p> 
+  <p>&nbsp;</p> 
+  <p><strong>2.&nbsp;产生本地MOAC节点</strong></p> 
+  <p>解压系统软件包<strong>pangu0.8.4.windows.zip</strong>到本地硬盘。</p> 
+  <p>安装节点到MOAC测试网。安装命令：</p> 
+  <pre class="has">
+<code>D:\pangu0.8.4\vnode&gt;moac --testnet</code></pre> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180720091143959?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2x5cTEzNTczMjIxNjc1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p><strong>注意：</strong>在moac测试网，任何情形使用moac命令均需要加--testnet。</p> 
+  <p>节点自动安装到目录：C:\Users\[user]\AppData\Roaming\MoacNode\testnet</p> 
+  <p>墨客测试网区块高度可以通过墨客测试网区块浏览器查询。</p> 
+  <p>浏览器网址：<a href="http://47.75.144.55:3000/home" rel="nofollow">http://47.75.144.55:3000/home</a>。</p> 
+  <p>&nbsp;</p> 
+  <p><strong>3.节点</strong><strong>基本操作</strong></p> 
+  <p>此节内容参考文档《<a href="https://blog.csdn.net/lyq13573221675/article/details/81078424" rel="nofollow">第三篇 墨客区块链（MOAC BlockChain）节点安装教程</a>》。</p> 
+  <p><strong>3.1 进入console界面</strong></p> 
+  <p>系统关机或主动关闭运行中的节点后，如果需要重新启动节点，在命令行中执行：</p> 
+  <pre class="has">
+<code>D:\pangu0.8.4\vnode&gt;moac –testnet console</code></pre> 
+  <p>命令执行后，界面一直滚屏以同步区块数据。</p> 
+  <p><strong>3.2 进入attach界面</strong></p> 
+  <p>打开另一个命令（cmd）终端，转到当前目录，在命令行中执行：</p> 
+  <pre class="has">
+<code>D:\pangu0.8.4\vnode&gt;moac –testnet attach</code></pre> 
+  <p>该命令依赖于节点已经启动，命令执行后不会主动滚屏，而是等待命令。</p> 
+  <p><strong>3.3 创建账号</strong></p> 
+  <p>进入MOAC console界面后，执行命令：</p> 
+  <pre class="has">
+<code>&gt; personal.newAccount()</code></pre> 
+  <p>系统会在以下目录：C:\Users\[userName]\AppData\Roaming\MoacNode\testnet\keystore，记录一个账号文件。</p> 
+  <p>请保存好该文件，并牢记密码。</p> 
+  <p><strong>3.4 挖矿</strong></p> 
+  <p>在测试网，可以尝试挖矿，用于之后操作的gas费，进入界面后，执行命令：</p> 
+  <pre class="has">
+<code>&gt; miner.start()</code></pre> 
+  <p>停止挖矿，执行命令：</p> 
+  <pre class="has">
+<code>&gt; miner.stop()</code></pre> 
+  <p>账号余额变动可以通过命令或者在墨客测试网区块浏览器查询。</p> 
+  <p>&nbsp;</p> 
+  <p><strong>4</strong><strong>.</strong><strong>scs注册</strong></p> 
+  <p>此处内容参考中文wiki内容《<a href="https://github.com/delida/MoacDocs/wiki/7.3%E3%80%81SCS%E7%9F%BF%E5%B7%A5%E5%8F%82%E4%B8%8E%E6%96%B9%E6%B3%95" rel="nofollow">scs矿工参与方法</a>》。</p> 
+  <p><strong>4.1 部署子链矿池</strong></p> 
+  <p>部署子链矿池智能合约，用于子链SCS节点矿工加入矿工池。</p> 
+  <p>从MOAC版本发布页：</p> 
+  <p><a href="https://github.com/MOACChain/moac-core/releases" rel="nofollow">https://github.com/MOACChain/moac-core/releases</a></p> 
+  <p>下载合约<strong>SubChainProtocolBase.sol</strong>。进行合约部署，部署前需要按以下方式启动节点：</p> 
+  <pre class="has">
+<code>D:\pangu0.8.4\vnode&gt;moac –testnet --rpc –rpccorsdomain "http://wallet.moac.io"</code></pre> 
+  <p>此处内容参考文档《<a href="https://blog.csdn.net/lyq13573221675/article/details/81085339" rel="nofollow">第四篇 在墨客区块链（MOAC BlockChain）部署ERC-20合约</a>》。</p> 
+  <p>部署时选择“Sub&nbsp;Chain Protocol Base”，填入参数Protocol（POS）和Bmin(1)，如图所示。</p> 
+  <p style="text-align:center;"><img alt="" class="has" src="https://img-blog.csdn.net/20180720094627446?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2x5cTEzNTczMjIxNjc1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>成功部署后</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180720094732579?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2x5cTEzNTczMjIxNjc1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p><strong>注意：</strong>该步骤非必须，可以直接加入测试网已经存在的矿工池。仅在受网络限制，本节点不能同步的情况下，才必须自己部署子链矿池。</p> 
+  <p>该合约地址经测试工作正常，用户可以在后面的步骤将scs注册到该合约地址。</p> 
+  <p>0x225Ebb0b9DF76E3D48eA0614943340611f635EA0</p> 
+  <p><strong>4.2 启动SCS</strong></p> 
+  <p>在下载的节点文件中，有一个scs目录。</p> 
+  <p>在scs\config目录下有一个配置文件userconfig.json。其中的Beneficiary为矿工收益账号。为了安全起见，建议采用与scsid不同的墨客底层账号用来获取子链的收益（scsid将会在后面讲到）。</p> 
+  <p>进入目录scs\scsserver启动scs：</p> 
+  <pre class="has">
+<code>D:\pangu0.8.4\scs\scsserver&gt;scsserver -p "123456123456"</code></pre> 
+  <p>命令中：“-p [密码]” scsid的密码，不设置，则默认密码为 moacscsofflineaccountpwd。</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180720095713157?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2x5cTEzNTczMjIxNjc1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>启动后，SCS将会在当前目录下生成一个keystore目录，并在目录中新建一个账号，这个账号就是scsid，可在第一次启动时使用-p设置密码。如果想换一个scsid，则需要删除keystore中的内容重新启动。</p> 
+  <p style="text-align:center;"><img alt="" class="has" src="https://img-blog.csdn.net/20180720095837908?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2x5cTEzNTczMjIxNjc1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>可以根据实际需要，按照以上步骤重新启动一个或多个scs。单台电脑建议启动不超过3个scs。</p> 
+  <p><strong>4.3 注册SCS</strong></p> 
+  <p>在启动scs并已经知道一个子链矿池合约地址的情况下（见4.1节），可以进行注册。</p> 
+  <p>写一个scsRegister.js，代码如下。</p> 
+  <pre class="has">
+<code>var Chain3 = require('chain3');
+var chain3 = new Chain3(new Chain3.providers.HttpProvider('http://localhost:8545'));
+//scs注册
+console.log('SCS Register start!');
+var baseAddr = "0x7610fd66c272332edd59a43460ad24eee1973bfe";
+var basePasswd = "password";
+var protocolAddr = "0x225Ebb0b9DF76E3D48eA0614943340611f635EA0";
+var scsAddr = "755a37ec5ba302cd0022af2b8e3ff97c1996601b";    //不带0x开头
+chain3.personal.unlockAccount(baseAddr, basePasswd,0);
+sendtx(baseAddr, protocolAddr, '5','0x4420e486000000000000000000000000' + scsAddr);
+function sendtx(src, tgtaddr, amount, strData) {
+    chain3.mc.sendTransaction(
+        {
+            from: src,
+            value:chain3.toSha(amount,’mc’),
+            to: tgtaddr,
+            gas: "9000000",
+            gasPrice: chain3.mc.gasPrice,
+            data: strData
+        });
+    console.log('sending from:' +   src + ' to:' + tgtaddr  + ' with data:' + strData);
+}</code></pre> 
+  <p>主要参数如下：</p> 
+  <p>1.baseAddr、basePasswd：主网的一个账户及其密码，付出本次交易的gas费及scs注册所需的押金（本例5mc）；</p> 
+  <p>2.protocolAddr：步骤4.1子链矿池合约subchainprotocolbase地址；</p> 
+  <p>3.scsAddr：步骤4.2的scsid地址，放在“…/scsserver/scskeystore”目录下；</p> 
+  <p>4.注册mc数量，本例子中为5mc，此处必须大于矿池合约的设置值。scs提交押金越多，能参与的子链越多。</p> 
+  <p><strong>特别注意：</strong>scsAddr的地址不要加上“0x”。</p> 
+  <p>在文件目录下执行该注册文件scsRegister.js：</p> 
+  <pre class="has">
+<code>D:\pangu0.8.4\scs&gt;node&nbsp;scsRegister.js</code></pre> 
+  <p>在等待一定时间之后（通常是母链50个block），就进入子链矿池，成为该子链的候选SCS节点。注册后，保证金会从baseAddr账号转到子链矿池合约账号。</p> 
+  <p>注册时缴纳的保证金，将在SCS被选中服务子链的时候临时扣除。下图为注册两个SCS，各交2个mc保证金的情况。</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180720104224357?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2x5cTEzNTczMjIxNjc1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p><strong>4.4 给SCS地址转账</strong></p> 
+  <p>scs在跟底层vnode通信或被调用时，tx是需要交易费的，因此需要在scsid存入1个mc作为gas费。</p> 
+  <p>&nbsp;</p> 
+  <p><strong>4.5 查询SCS注册数量</strong></p> 
+  <p>如果是使用网页版钱包部署的子链矿池合约，可以直接在界面看到scs注册数量等信息。</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180720111700974?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2x5cTEzNTczMjIxNjc1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>或者，通过attach界面，使用合约地址查询注册scs数量</p> 
+  <pre class="has">
+<code>&gt; mc.getStorageAt("0x225Ebb0b9DF76E3D48eA0614943340611f635EA0",0x02)</code></pre> 
+  <p style="text-align:center;"><img alt="" class="has" src="https://img-blog.csdn.net/20180720112005243?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2x5cTEzNTczMjIxNjc1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>&nbsp;</p> 
+  <p><strong>5</strong><strong>.</strong><strong>部署</strong><strong>Vnode</strong><strong>矿池合约</strong></p> 
+  <p>此处内容参考中文wiki内容《<a href="https://github.com/delida/MoacDocs/wiki/7.8%E3%80%81%E4%BB%A3%E7%90%86vnode%E8%8A%82%E7%82%B9%EF%BC%88VNODE-PROXY%EF%BC%89%E4%BB%8B%E7%BB%8D" rel="nofollow">代理vnode节点介绍</a>》。</p> 
+  <p><strong>5.1 部署vnode矿池</strong></p> 
+  <p>从MOAC版本发布页</p> 
+  <p><a href="https://github.com/MOACChain/moac-core/releases" rel="nofollow">https://github.com/MOACChain/moac-core/releases</a></p> 
+  <p>下载合约<strong>VnodeProtocolBase.sol</strong></p> 
+  <p>部署时选择“Vnode&nbsp;Protocol Base”，填入参数Bmin(1)。如图所示。</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180720125502349?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2x5cTEzNTczMjIxNjc1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>成功后得到合约地址，用于后面vnode的注册。</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180720130040663?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2x5cTEzNTczMjIxNjc1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p><strong>注意：</strong>该步骤非必须，可以直接加入测试网已经存在的Vnode池子。仅在受网络限制，本节点不能同步的情况下，才必须自己部署Vnode池子。</p> 
+  <p>该合约地址经测试工作正常，用户可以不必自己部署合约，在后面的步骤将Vnode节点注册到该合约地址。</p> 
+  <p>0x0fB05e4a2b878855e27A7675135BecA0E257e896</p> 
+  <p><strong>5.2 添加节点到vnode矿池</strong></p> 
+  <p>添加本节点到vnode矿池的代码如下vnodeRegister.js，执行node即可。</p> 
+  <pre class="has">
+<code>var Chain3 = require('chain3');
+var chain3 = new Chain3(new Chain3.providers.HttpProvider('http://localhost:8545'));
+//vnode register
+var baseAddr = "0x7610fd66c272332edd59a43460ad24eee1973bfe";
+var basePasswd = "123456123456";
+var vnodeChain = "0x0fB05e4a2b878855e27A7675135BecA0E257e896";
+var vnodeAddr = "7610fd66c272332edd59a43460ad24eee1973bfe"; 
+
+chain3.personal.unlockAccount(baseAddr,basePasswd,0);
+sendtx(baseAddr, vnodeChain, '2','0x32434a2e000000000000000000000000' + vnodeAddr //数据1
+    +'0000000000000000000000000000000000000000000000000000000000000040'//数据2
+    +'0000000000000000000000000000000000000000000000000000000000000013'//数据3
+    //192.168.10.16:50062（填入本机实际IP地址值，并修改数据3和数据4）
+    +'3139322e3136382e31302e31363a353030363200000000000000000000000000');//数据4
+
+function sendtx(src, tgtaddr, amount, strData) {
+    chain3.mc.sendTransaction(
+        {
+            from: src,
+            value:chain3.toSha(amount,'mc'),
+            to: tgtaddr,
+            gas: "9000000",
+            gasPrice: chain3.mc.gasPrice,
+            data: strData
+        });
+    console.log('sending from:' +   src + ' to:' + tgtaddr  + ' with data:' + strData);
+}</code></pre> 
+  <p>主要参数如下：</p> 
+  <p>1.baseAddr、basePasswd：Dapp用户用来发送交易前账户解锁；</p> 
+  <p>2.vnodeChain：部署VNODE-PROXY合约得到的合约地址；</p> 
+  <p>3.vnodeAddr：vnodeconfig.json的VnodeBeneficialAddress</p> 
+  <p>4.&nbsp;数据1：'0x32434a2e '是VNODE-PROXY合约 中‘register(address vnode, string link)’通过hash算法Keccak256得到前4个字节，本例押金交2mc；本例带两个参数；</p> 
+  <p>添加成功后，启动节点方式不变。</p> 
+  <p><strong>注意：</strong>该步骤非必须，也就是说并不是必须把本节点注册为proxy Vnode，可以直接加入测试网已经存在的Vnode矿工池，后面附有合约地址。仅在受网络限制，本节点不能同步的情况下，才必须自己部署vnode矿池并将本节点注册为proxy。</p> 
+  <p>&nbsp;</p> 
+  <p><strong>6</strong><strong>.</strong><strong>部署子链合约</strong></p> 
+  <p>此处内容参考中文wiki内容《<a href="https://github.com/delida/MoacDocs/wiki/7.4%E3%80%81DAPP%E7%94%A8%E6%88%B7%E7%9A%84%E5%8F%82%E4%B8%8E%E6%96%B9%E6%B3%95" rel="nofollow">DAPP用户的参与方法</a>》。</p> 
+  <p><strong>6.1 编译子链合约</strong></p> 
+  <p>合约可以通过多种方式编译，比如在线编译工具remix等，如果是本地命令行编译，需要安装solidity环境。</p> 
+  <pre class="has">
+<code>D:\scs&gt;&nbsp;solcjs --bin --abi -o bin SubChainBase.sol SubChainProtocolBase.sol</code></pre> 
+  <p>SubChainBase.sol是子链合约，其中import "./SubChainProtocolBase.sol";</p> 
+  <p>因此要把SubChainProtocolBase.sol合约放在同一个目录下。</p> 
+  <p>编译结果如果没有error，会在bin目录生成相应的*.bin和*.abi文件。</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180720132507662?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2x5cTEzNTczMjIxNjc1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p><strong>6.2 部署子链合约</strong></p> 
+  <p>部署子链合约的代码如下deploySubChain.js，执行node即可。</p> 
+  <pre class="has">
+<code>var Chain3 = require('chain3');
+var chain3 = new Chain3(new Chain3.providers.HttpProvider('http://localhost:8545'));
+//deploy subChainBase
+chain3.personal.unlockAccount(chain3.mc.accounts[0], '123456123456',0);
+var proto = "0x225Ebb0b9DF76E3D48eA0614943340611f635EA0" ;
+var vnodeProtocolBaseAddr = "0x0fB05e4a2b878855e27A7675135BecA0E257e896" ;
+var min = 1 ;
+var max = 10 ;
+var thousandth = 1 ;
+var flushRound = 20 ;
+var subchainbaseContract = chain3.mc.contract([{"constant":true,......,"type":"event"}]);
+var subchainbase = subchainbaseContract.new(
+   proto,
+   vnodeProtocolBaseAddr,
+   min,
+   max,
+   thousandth,
+   flushRound,
+   {
+        from: chain3.mc.accounts[0], 
+        data: '0x6060604052600c601555670d...708e8ee3c23da8b02d0278eb0029', 
+        gas: '9000000'
+   }, function (e, contract){
+        console.log(e, contract);
+        if (typeof contract.address !== 'undefined') {
+            console.log('Contract mined! address: ' + contract.address + ' transactionHash: ' + contract.transactionHash);
+        }
+  }) </code></pre> 
+  <p>子链控制合约subchainbase是DAPP用户使用子链的基本合约，其提供子链运行前和运行中的一些必要接口。</p> 
+  <p>通常来说，子链控制合约subchainbase需要修改相应的内容如下：</p> 
+  <p>1.&nbsp;参数proto：通过官方渠道获取到，或者自己部署的子链矿池合约subchainprotocolbase的地址，复制粘贴到此变量；</p> 
+  <p>2.&nbsp;参数vnodeProtocolBaseAddr：通过官方渠道获取到，或者自己部署的代理智能合约vnodeprotocolbase的地址，复制粘贴到此变量；</p> 
+  <p>3.&nbsp;参数min：子链运行后需要的SCS的最小数量，建议数量为1；</p> 
+  <p>4.&nbsp;参数max：子链运行后需要的SCS的最大数量，建议数量为100；</p> 
+  <p>5.&nbsp;参数thousandth：默认为1；</p> 
+  <p>6.&nbsp;参数flushRound：子链刷新周期（以母链block生成数量为准），小于100的值，合约会自动置为100；</p> 
+  <p>7.&nbsp;合约部署时的gas值必须为9000000；</p> 
+  <p>8.&nbsp;Chain3.mc.contract：其内容是6.1节编译结果的SubChainBase.abi；</p> 
+  <p>9.Data：其内容是6.1节编译结果的SubChainBase.bin，<strong>前面要加</strong><strong>”0x”</strong></p> 
+  <p><strong>6.</strong><strong>3&nbsp;</strong><strong>子链控制合约信息</strong></p> 
+  <p>部署成功后：</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180720133701685?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2x5cTEzNTczMjIxNjc1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>得到子链控制合约地址（0x8a194e9567d7339b968dac61546a52f89a8c7a2f）和本次交易hash。</p> 
+  <p><strong>6.4 子链开放注册</strong></p> 
+  <p>通过开放子链注册，候选SCS内部完成注册，最终成为子链的一员，才有资格参与子链的相关业务。 需要注意的是：SCS参与子链注册是通过SCS地址（我们也称为scsid，放在“./scskeystore”目录下）发送交易到子链完成；因此需要给SCS地址储备一定量的moac，建议1个moac。同时子链合约需要最终提供gas费给scs，因此，也需要给子链控制合约发送一定量的moac。</p> 
+  <p>部署子链开放注册的代码如下registerOpen.js，执行node即可。</p> 
+  <pre class="has">
+<code>var Chain3 = require('chain3');
+var chain3 = new Chain3(new Chain3.providers.HttpProvider('http://localhost:8545'));
+//register open
+var dappAddr = "0x7610fd66c272332edd59a43460ad24eee1973bfe";
+var dappPasswd = "123456123456";
+var subchainAddr = "0x8a194e9567d7339b968dac61546a52f89a8c7a2f";//子链控制合约地址
+
+chain3.personal.unlockAccount(dappAddr, dappPasswd,0);
+sendtx(dappAddr, subchainAddr, '0','0x5defc56c' );
+
+function sendtx(src, tgtaddr, amount, strData) {
+    chain3.mc.sendTransaction(
+         {
+            from: src,
+            value:chain3.toSha(amount,'mc'),
+            to: tgtaddr,
+            gas: "2000000",
+            gasPrice: chain3.mc.gasPrice,
+            data: strData
+         }); 
+    console.log('sending from:' +   src + ' to:' + tgtaddr  + ' with data:' + strData);  
+}    </code></pre> 
+  <p>1.dappAddr、dappPasswd：Dapp用户用来发送交易前账户解锁；</p> 
+  <p>2.subchainAddr：部署子链控制合约subchainbase的地址；</p> 
+  <p>3.数据：'0x5defc56c'是子链控制合约subchainbase中‘registerOpen()’通过hash算法Keccak256得到前4个字节，此处不用修改；</p> 
+  <p>执行后：</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180720134029899?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2x5cTEzNTczMjIxNjc1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p><strong>6.5 查看注册情况</strong></p> 
+  <p>通过registerOpen后，系统将自动选择符合条件的SCS节点并通知他们进行注册，DAPP用户需要通过如下方法查看已经注册完成的SCS节点数目（nodeCount）：</p> 
+  <pre class="has">
+<code>&gt;mc.getStorageAt(subchainAddr,0x0e)</code></pre> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180720153425734?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2x5cTEzNTczMjIxNjc1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>通过合约地址subchainAddr查询合约中第0x0e个public成员变量（即nodeCount）的值，请不要修改此值 当达到子链运行需要的SCS的数量区间后，即可进入RegisterClose步骤。</p> 
+  <p><strong>6.6 子链关闭注册</strong></p> 
+  <p>首先介绍一下RegisterClose的主要工作：</p> 
+  <p>1.Dapp用户设置子链关闭注册；</p> 
+  <p>2.已经注册SCS数目必须不小于子链要求的最小数目，否则子链注册无效；</p> 
+  <p>3.主网广播通知所有的协议合约中候选SCS，包括已经注册的成功的SCS；</p> 
+  <p>4.SCS收到广播后，SCS自身完成初始化并开始子链运行。</p> 
+  <p>关闭子链注册后，候选SCS不能再通过subchain RegisterOpen方式注册该子链，已经注册的SCS处于正常运行状态，参与子链的相关业务，如：处理交易、出块、刷新等。</p> 
+  <p>部署子链关闭注册的代码如下registerClose.js，执行node即可。</p> 
+  <pre class="has">
+<code>var Chain3 = require('chain3');
+var chain3 = new Chain3(new Chain3.providers.HttpProvider('http://localhost:8545'));
+//register open
+var dappAddr = "0x7610fd66c272332edd59a43460ad24eee1973bfe";
+var dappPasswd = "123456123456";
+var subchainAddr = "0x8a194e9567d7339b968dac61546a52f89a8c7a2f";//子链控制合约地址
+
+chain3.personal.unlockAccount(dappAddr, dappPasswd,0);
+sendtx(dappAddr, subchainAddr, '0','0x69f3576f' );
+
+function sendtx(src, tgtaddr, amount, strData) {
+    chain3.mc.sendTransaction(
+         {
+             from: src,
+             value:chain3.toSha(amount,'mc'),
+             to: tgtaddr,
+             gas: "2000000",
+             gasPrice: chain3.mc.gasPrice,
+             data: strData
+          }); 
+    console.log('sending from:' +   src + ' to:' + tgtaddr  + ' with data:' + strData);
+}   </code></pre> 
+  <p>其中，</p> 
+  <p>1.dappAddr、dappPasswd：Dapp用户用来发送交易前账户解锁；</p> 
+  <p>2.subchainAddr：部署子链合约得到的合约地址；</p> 
+  <p>3.数据：'0x69f3576f'是子链控制合约subchainbase中‘registerClose()’通过hash算法Keccak256得到前4个字节；</p> 
+  <p>执行完毕，如果一切正常，子链建成并开始出块。实测环境中3个scs轮流出块，显示如下。</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180720173719129?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2x5cTEzNTczMjIxNjc1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>图中显示本scs出块正常，当前为子链第15个区块，由本scs挖矿出块成功。</p> 
+  <p>如果是同步其他scs出的子链区块，“SendBkToVnode”显示为“Insert”。</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180720173741676?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2x5cTEzNTczMjIxNjc1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>至此，子链部署完成。</p> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/lyq13573221675/article/details/81125954,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/lyq13573221675/article/details/81125954,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

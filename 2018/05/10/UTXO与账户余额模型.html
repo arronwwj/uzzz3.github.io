@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>UTXO与账户/余额模型 | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="UTXO与账户/余额模型" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="在今天的区块链网络中，两种记录模式非常流行。 第一种方法称为UTXO（未使用交易输出）模型，第二种方法是账户/余额模型。 UTXO模型由比特币使用，而以太坊使用账户/余额模型。 在这篇文章中，我们将对这两种模型的工作原理，它们如何不同以及简要介绍两者的优点和缺点提出基本的了解。 在比特币中，每笔交易都会花费先前交易的产出，并产生新的产出，这些产出可能会在未来通过交易消耗。 所有未使用的事务都保存在每个完全同步的节点中，因此该模型被命名为“UTXO”。 用户的钱包跟踪与用户拥有的所有地址相关联的未使用交易的列表，并且钱包的余额被计算为这些未使用的交易的总和。 图片来源： https : //bitcoin.org 让我们来看看UTXO模型如何在比特币交易中工作的简单示例： 1.通过采矿，Alice获得了12.5个比特币。 Alice的钱包与一个12.5比特币的UTXO记录相关联。 2.爱丽丝想给鲍勃1比特币。 Alice的钱包首先解锁了她12.5比特币的UTXO，并使用这12.5比特币作为交易的输入。 该交易将1比特币发送到Bob的地址，并且将11.5比特币的提醒以新的UTXO的形式发回给Alice，以新创建的地址（由Alice拥有）。 3.假设在步骤2之前还有另一个与Bob相关的2个比特币的UTXO，Bob的钱包现在显示他的余额是3个比特币。 Bob的钱包现在跟踪两个UTXO：一个来自前一个，另一个来自第二步的交易。如果Bob希望花费他们，则需要解锁每个UTXO。 另一方面，账户/余额模型会将每个账户的余额保持为全球状态。 检查帐户的余额以确保其大于或等于支出交易金额。 以下是这个模型在以太坊中的工作原理简图： 艾丽斯通过采矿获得5个醚。 在系统中记录爱丽丝有5个醚。 2.爱丽丝想给鲍勃1乙醚，所以系统将首先从爱丽丝的账户中扣除1乙醚，所以爱丽丝现在有9个乙醚。 3.系统然后将鲍勃的账户增加1乙醚。 系统知道鲍勃有2个醚，所以Bob的平衡增加到3个醚。 UTXO模型中的交易的一个比喻是纸币账单（纸币）。 每个账户通过累积钱包中的账单数量（与这个地址/钱包相关联）来记录它有多少钱。 当我们想花钱的时候，我们使用一个或多个账单（现有的UTXO），足以支付成本，并可能收到一些改变（新的UTXO）。 每张账单只能用一次，因为一旦用完，UTXO就从池中移出。 另一方面，以太坊的记录保存就像银行一样。 类比是使用ATM /借记卡。 银行跟踪每张借记卡有多少钱，当我们需要花钱时，银行会在批准交易前检查记录以确保我们有足够的余额。 两种模式都达到了在共识系统中跟踪账户余额的同一目标。 UTXO模型的好处是： 可扩展性 - 由于可以同时处理多个UTXO，因此可以实现并行事务并鼓励可伸缩性创新。 隐私 - 甚至比特币也不是一个完全匿名的系统，但只要用户为每笔交易使用新地址，UTXO就可以提供更高级别的隐私。 如果需要增强隐私性，可以考虑更复杂的方案，例如环签名。 账户/余额模型的好处是： 简单性 - 以太坊选择了一种更直观的模式，以便为复杂智能合约的开发人员带来益处，尤其是那些需要国家信息或涉及多方的开发人员。 一个例子是一个智能合约，跟踪各国根据它们执行不同的任务。 UTXO的无状态模型会迫使交易包含状态信息，这不必要地使合约的设计复杂化。 效率 - 除了简单之外，账户/余额模型更加高效，因为每笔交易只需要验证发送账户是否有足够的余额来支付交易。 账户/余额模型的一个缺点是暴露于双重支出攻击。 可以实施递增的随机数来抵消这种类型的攻击。 在以太坊中，每个帐户都有一个公共可见的随机数，每次进行交易时，随机数都会增加一个。 这可以防止相同的事务被多次提交。 （注意，这个随机数不同于以太坊的以太坊证明，这是一个随机值。） 与计算机体系结构中的大多数情况一样，两种模型都有权衡。 一些区块链，特别是Hyperledger，采用了UTXO，因为它们可以从比特币区块链创新中受益。 我们将研究构建在这两个记录保持模型之上的更多技术。 https://medium.com/@sunflora98/utxo-vs-account-balance-model-5e6470f4e0cf 阅读更多" />
+<meta property="og:description" content="在今天的区块链网络中，两种记录模式非常流行。 第一种方法称为UTXO（未使用交易输出）模型，第二种方法是账户/余额模型。 UTXO模型由比特币使用，而以太坊使用账户/余额模型。 在这篇文章中，我们将对这两种模型的工作原理，它们如何不同以及简要介绍两者的优点和缺点提出基本的了解。 在比特币中，每笔交易都会花费先前交易的产出，并产生新的产出，这些产出可能会在未来通过交易消耗。 所有未使用的事务都保存在每个完全同步的节点中，因此该模型被命名为“UTXO”。 用户的钱包跟踪与用户拥有的所有地址相关联的未使用交易的列表，并且钱包的余额被计算为这些未使用的交易的总和。 图片来源： https : //bitcoin.org 让我们来看看UTXO模型如何在比特币交易中工作的简单示例： 1.通过采矿，Alice获得了12.5个比特币。 Alice的钱包与一个12.5比特币的UTXO记录相关联。 2.爱丽丝想给鲍勃1比特币。 Alice的钱包首先解锁了她12.5比特币的UTXO，并使用这12.5比特币作为交易的输入。 该交易将1比特币发送到Bob的地址，并且将11.5比特币的提醒以新的UTXO的形式发回给Alice，以新创建的地址（由Alice拥有）。 3.假设在步骤2之前还有另一个与Bob相关的2个比特币的UTXO，Bob的钱包现在显示他的余额是3个比特币。 Bob的钱包现在跟踪两个UTXO：一个来自前一个，另一个来自第二步的交易。如果Bob希望花费他们，则需要解锁每个UTXO。 另一方面，账户/余额模型会将每个账户的余额保持为全球状态。 检查帐户的余额以确保其大于或等于支出交易金额。 以下是这个模型在以太坊中的工作原理简图： 艾丽斯通过采矿获得5个醚。 在系统中记录爱丽丝有5个醚。 2.爱丽丝想给鲍勃1乙醚，所以系统将首先从爱丽丝的账户中扣除1乙醚，所以爱丽丝现在有9个乙醚。 3.系统然后将鲍勃的账户增加1乙醚。 系统知道鲍勃有2个醚，所以Bob的平衡增加到3个醚。 UTXO模型中的交易的一个比喻是纸币账单（纸币）。 每个账户通过累积钱包中的账单数量（与这个地址/钱包相关联）来记录它有多少钱。 当我们想花钱的时候，我们使用一个或多个账单（现有的UTXO），足以支付成本，并可能收到一些改变（新的UTXO）。 每张账单只能用一次，因为一旦用完，UTXO就从池中移出。 另一方面，以太坊的记录保存就像银行一样。 类比是使用ATM /借记卡。 银行跟踪每张借记卡有多少钱，当我们需要花钱时，银行会在批准交易前检查记录以确保我们有足够的余额。 两种模式都达到了在共识系统中跟踪账户余额的同一目标。 UTXO模型的好处是： 可扩展性 - 由于可以同时处理多个UTXO，因此可以实现并行事务并鼓励可伸缩性创新。 隐私 - 甚至比特币也不是一个完全匿名的系统，但只要用户为每笔交易使用新地址，UTXO就可以提供更高级别的隐私。 如果需要增强隐私性，可以考虑更复杂的方案，例如环签名。 账户/余额模型的好处是： 简单性 - 以太坊选择了一种更直观的模式，以便为复杂智能合约的开发人员带来益处，尤其是那些需要国家信息或涉及多方的开发人员。 一个例子是一个智能合约，跟踪各国根据它们执行不同的任务。 UTXO的无状态模型会迫使交易包含状态信息，这不必要地使合约的设计复杂化。 效率 - 除了简单之外，账户/余额模型更加高效，因为每笔交易只需要验证发送账户是否有足够的余额来支付交易。 账户/余额模型的一个缺点是暴露于双重支出攻击。 可以实施递增的随机数来抵消这种类型的攻击。 在以太坊中，每个帐户都有一个公共可见的随机数，每次进行交易时，随机数都会增加一个。 这可以防止相同的事务被多次提交。 （注意，这个随机数不同于以太坊的以太坊证明，这是一个随机值。） 与计算机体系结构中的大多数情况一样，两种模型都有权衡。 一些区块链，特别是Hyperledger，采用了UTXO，因为它们可以从比特币区块链创新中受益。 我们将研究构建在这两个记录保持模型之上的更多技术。 https://medium.com/@sunflora98/utxo-vs-account-balance-model-5e6470f4e0cf 阅读更多" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/05/10/UTXO%E4%B8%8E%E8%B4%A6%E6%88%B7%E4%BD%99%E9%A2%9D%E6%A8%A1%E5%9E%8B.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/05/10/UTXO%E4%B8%8E%E8%B4%A6%E6%88%B7%E4%BD%99%E9%A2%9D%E6%A8%A1%E5%9E%8B.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-05-10T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"在今天的区块链网络中，两种记录模式非常流行。 第一种方法称为UTXO（未使用交易输出）模型，第二种方法是账户/余额模型。 UTXO模型由比特币使用，而以太坊使用账户/余额模型。 在这篇文章中，我们将对这两种模型的工作原理，它们如何不同以及简要介绍两者的优点和缺点提出基本的了解。 在比特币中，每笔交易都会花费先前交易的产出，并产生新的产出，这些产出可能会在未来通过交易消耗。 所有未使用的事务都保存在每个完全同步的节点中，因此该模型被命名为“UTXO”。 用户的钱包跟踪与用户拥有的所有地址相关联的未使用交易的列表，并且钱包的余额被计算为这些未使用的交易的总和。 图片来源： https : //bitcoin.org 让我们来看看UTXO模型如何在比特币交易中工作的简单示例： 1.通过采矿，Alice获得了12.5个比特币。 Alice的钱包与一个12.5比特币的UTXO记录相关联。 2.爱丽丝想给鲍勃1比特币。 Alice的钱包首先解锁了她12.5比特币的UTXO，并使用这12.5比特币作为交易的输入。 该交易将1比特币发送到Bob的地址，并且将11.5比特币的提醒以新的UTXO的形式发回给Alice，以新创建的地址（由Alice拥有）。 3.假设在步骤2之前还有另一个与Bob相关的2个比特币的UTXO，Bob的钱包现在显示他的余额是3个比特币。 Bob的钱包现在跟踪两个UTXO：一个来自前一个，另一个来自第二步的交易。如果Bob希望花费他们，则需要解锁每个UTXO。 另一方面，账户/余额模型会将每个账户的余额保持为全球状态。 检查帐户的余额以确保其大于或等于支出交易金额。 以下是这个模型在以太坊中的工作原理简图： 艾丽斯通过采矿获得5个醚。 在系统中记录爱丽丝有5个醚。 2.爱丽丝想给鲍勃1乙醚，所以系统将首先从爱丽丝的账户中扣除1乙醚，所以爱丽丝现在有9个乙醚。 3.系统然后将鲍勃的账户增加1乙醚。 系统知道鲍勃有2个醚，所以Bob的平衡增加到3个醚。 UTXO模型中的交易的一个比喻是纸币账单（纸币）。 每个账户通过累积钱包中的账单数量（与这个地址/钱包相关联）来记录它有多少钱。 当我们想花钱的时候，我们使用一个或多个账单（现有的UTXO），足以支付成本，并可能收到一些改变（新的UTXO）。 每张账单只能用一次，因为一旦用完，UTXO就从池中移出。 另一方面，以太坊的记录保存就像银行一样。 类比是使用ATM /借记卡。 银行跟踪每张借记卡有多少钱，当我们需要花钱时，银行会在批准交易前检查记录以确保我们有足够的余额。 两种模式都达到了在共识系统中跟踪账户余额的同一目标。 UTXO模型的好处是： 可扩展性 - 由于可以同时处理多个UTXO，因此可以实现并行事务并鼓励可伸缩性创新。 隐私 - 甚至比特币也不是一个完全匿名的系统，但只要用户为每笔交易使用新地址，UTXO就可以提供更高级别的隐私。 如果需要增强隐私性，可以考虑更复杂的方案，例如环签名。 账户/余额模型的好处是： 简单性 - 以太坊选择了一种更直观的模式，以便为复杂智能合约的开发人员带来益处，尤其是那些需要国家信息或涉及多方的开发人员。 一个例子是一个智能合约，跟踪各国根据它们执行不同的任务。 UTXO的无状态模型会迫使交易包含状态信息，这不必要地使合约的设计复杂化。 效率 - 除了简单之外，账户/余额模型更加高效，因为每笔交易只需要验证发送账户是否有足够的余额来支付交易。 账户/余额模型的一个缺点是暴露于双重支出攻击。 可以实施递增的随机数来抵消这种类型的攻击。 在以太坊中，每个帐户都有一个公共可见的随机数，每次进行交易时，随机数都会增加一个。 这可以防止相同的事务被多次提交。 （注意，这个随机数不同于以太坊的以太坊证明，这是一个随机值。） 与计算机体系结构中的大多数情况一样，两种模型都有权衡。 一些区块链，特别是Hyperledger，采用了UTXO，因为它们可以从比特币区块链创新中受益。 我们将研究构建在这两个记录保持模型之上的更多技术。 https://medium.com/@sunflora98/utxo-vs-account-balance-model-5e6470f4e0cf 阅读更多","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/05/10/UTXO%E4%B8%8E%E8%B4%A6%E6%88%B7%E4%BD%99%E9%A2%9D%E6%A8%A1%E5%9E%8B.html","headline":"UTXO与账户/余额模型","dateModified":"2018-05-10T00:00:00+08:00","datePublished":"2018-05-10T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/05/10/UTXO%E4%B8%8E%E8%B4%A6%E6%88%B7%E4%BD%99%E9%A2%9D%E6%A8%A1%E5%9E%8B.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>UTXO与账户/余额模型</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <p class="graf graf--p graf-after--figure"><span class="notranslate">在今天的区块链网络中，两种记录模式非常流行。</span> <span class="notranslate">第一种方法称为UTXO（未使用交易输出）模型，第二种方法是账户/余额模型。</span> <span class="notranslate"> UTXO模型由比特币使用，而以太坊使用账户/余额模型。</span> <span class="notranslate">在这篇文章中，我们将对这两种模型的工作原理，它们如何不同以及简要介绍两者的优点和缺点提出基本的了解。</span> </p>
+  <p class="graf graf--p graf-after--p"> <span class="notranslate">在比特币中，每笔交易都会花费先前交易的产出，并产生新的产出，这些产出可能会在未来通过交易消耗。</span> <span class="notranslate">所有未使用的事务都保存在每个完全同步的节点中，因此该模型被命名为“UTXO”。</span> <span class="notranslate">用户的钱包跟踪与用户拥有的所有地址相关联的未使用交易的列表，并且钱包的余额被计算为这些未使用的交易的总和。</span> </p>
+  <div class="aspectRatioPlaceholder is-locked">
+   <div class="aspectRatioPlaceholder-fill">
+    <img class="progressiveMedia-image js-progressiveMedia-image" src="https://cdn-images-1.medium.com/max/1600/1*eAKr5SIZfWXwC9dFBOmS3Q.png" alt="">
+   </div>
+   <div class="progressiveMedia js-progressiveMedia graf-image is-canvasLoaded is-imageLoaded"></div>
+  </div>
+  <span class="notranslate">图片来源： <a href="https://translate.googleusercontent.com/translate_c?act=url&amp;depth=1&amp;hl=en&amp;ie=UTF8&amp;prev=_t&amp;rurl=translate.google.com&amp;sl=auto&amp;sp=nmt4&amp;tl=zh-CN&amp;u=https://bitcoin.org/&amp;xid=17259,15700002,15700023,15700124,15700149,15700168,15700173,15700186,15700189,15700201&amp;usg=ALkJrhj2gkJbqAa0HGtrx11VLZx43QLA2g" rel="nofollow" class="markup--anchor markup--figure-anchor">https</a> : <a href="https://translate.googleusercontent.com/translate_c?act=url&amp;depth=1&amp;hl=en&amp;ie=UTF8&amp;prev=_t&amp;rurl=translate.google.com&amp;sl=auto&amp;sp=nmt4&amp;tl=zh-CN&amp;u=https://bitcoin.org/&amp;xid=17259,15700002,15700023,15700124,15700149,15700168,15700173,15700186,15700189,15700201&amp;usg=ALkJrhj2gkJbqAa0HGtrx11VLZx43QLA2g" rel="nofollow" class="markup--anchor markup--figure-anchor">//bitcoin.org</a></span> 
+  <p class="graf graf--p graf-after--figure"> <span class="notranslate">让我们来看看UTXO模型如何在比特币交易中工作的简单示例：</span> </p>
+  <p class="graf graf--p graf-after--p"> <span class="notranslate"> 1.通过采矿，Alice获得了12.5个比特币。</span> <span class="notranslate"> Alice的钱包与一个12.5比特币的UTXO记录相关联。</span> </p>
+  <p class="graf graf--p graf-after--p"> <span class="notranslate"> 2.爱丽丝想给鲍勃1比特币。</span> <span class="notranslate"> Alice的钱包首先解锁了她12.5比特币的UTXO，并使用这12.5比特币作为交易的输入。</span> <span class="notranslate">该交易将1比特币发送到Bob的地址，并且将11.5比特币的提醒以新的UTXO的形式发回给Alice，以新创建的地址（由Alice拥有）。</span> </p>
+  <p class="graf graf--p graf-after--p"> <span class="notranslate"> 3.假设在步骤2之前还有另一个与Bob相关的2个比特币的UTXO，Bob的钱包现在显示他的余额是3个比特币。</span> <span class="notranslate"> Bob的钱包现在跟踪两个UTXO：一个来自前一个，另一个来自第二步的交易。如果Bob希望花费他们，则需要解锁每个UTXO。</span> </p>
+  <p class="graf graf--p graf-after--p"> <span class="notranslate">另一方面，账户/余额模型会将每个账户的余额保持为全球状态。</span> <span class="notranslate">检查帐户的余额以确保其大于或等于支出交易金额。</span> </p>
+  <p class="graf graf--p graf-after--p"> <span class="notranslate">以下是这个模型在以太坊中的工作原理简图：</span> </p>
+  <p class="graf graf--p graf-after--p"> <span class="notranslate">艾丽斯通过采矿获得5个醚。</span> <span class="notranslate">在系统中记录爱丽丝有5个醚。</span> </p>
+  <p class="graf graf--p graf-after--p"> <span class="notranslate"> 2.爱丽丝想给鲍勃1乙醚，所以系统将首先从爱丽丝的账户中扣除1乙醚，所以爱丽丝现在有9个乙醚。</span> </p>
+  <p class="graf graf--p graf-after--p"> <span class="notranslate"> 3.系统然后将鲍勃的账户增加1乙醚。</span> <span class="notranslate">系统知道鲍勃有2个醚，所以Bob的平衡增加到3个醚。</span> </p>
+  <div class="aspectRatioPlaceholder is-locked">
+   <div class="aspectRatioPlaceholder-fill">
+    <img class="progressiveMedia-image js-progressiveMedia-image" src="https://cdn-images-1.medium.com/max/1600/1*6whyX-OXfKoC0Smsr1eVRw.jpeg" alt="">
+   </div>
+   <div class="progressiveMedia js-progressiveMedia graf-image is-canvasLoaded is-imageLoaded"></div>
+  </div>
+  <p class="graf graf--p graf-after--figure"> <span class="notranslate"> UTXO模型中的交易的一个比喻是纸币账单（纸币）。</span> <span class="notranslate">每个账户通过累积钱包中的账单数量（与这个地址/钱包相关联）来记录它有多少钱。</span> <span class="notranslate">当我们想花钱的时候，我们使用一个或多个账单（现有的UTXO），足以支付成本，并可能收到一些改变（新的UTXO）。</span> <span class="notranslate">每张账单只能用一次，因为一旦用完，UTXO就从池中移出。</span> </p>
+  <div class="aspectRatioPlaceholder is-locked">
+   <div class="aspectRatioPlaceholder-fill">
+    <img class="progressiveMedia-image js-progressiveMedia-image" src="https://cdn-images-1.medium.com/max/1600/1*lSuuawGODIbsJneZDQ9eLg.png" alt="">
+   </div>
+   <div class="progressiveMedia js-progressiveMedia graf-image is-canvasLoaded is-imageLoaded"></div>
+  </div>
+  <p class="graf graf--p graf-after--figure"> <span class="notranslate">另一方面，以太坊的记录保存就像银行一样。</span> <span class="notranslate">类比是使用ATM /借记卡。</span> <span class="notranslate">银行跟踪每张借记卡有多少钱，当我们需要花钱时，银行会在批准交易前检查记录以确保我们有足够的余额。</span> </p>
+  <p class="graf graf--p graf-after--p"> <span class="notranslate">两种模式都达到了在共识系统中跟踪账户余额的同一目标。</span> </p>
+  <p class="graf graf--p graf-after--p"> <span class="notranslate"> UTXO模型的好处是：</span> </p>
+  <ul class="postList">
+   <li class="graf graf--li graf-after--p"> <span class="notranslate">可扩展性 - 由于可以同时处理多个UTXO，因此可以实现并行事务并鼓励可伸缩性创新。</span> </li>
+   <li class="graf graf--li graf-after--li"> <span class="notranslate">隐私 - 甚至比特币也不是一个完全匿名的系统，但只要用户为每笔交易使用新地址，UTXO就可以提供更高级别的隐私。</span> <span class="notranslate">如果需要增强隐私性，可以考虑更复杂的方案，例如环签名。</span> </li>
+  </ul>
+  <p class="graf graf--p graf-after--li"> <span class="notranslate">账户/余额模型的好处是：</span> </p>
+  <ul class="postList">
+   <li class="graf graf--li graf-after--p"> <span class="notranslate">简单性 - 以太坊选择了一种更直观的模式，以便为复杂智能合约的开发人员带来益处，尤其是那些需要国家信息或涉及多方的开发人员。</span> <span class="notranslate">一个例子是一个智能合约，跟踪各国根据它们执行不同的任务。</span> <span class="notranslate"> UTXO的无状态模型会迫使交易包含状态信息，这不必要地使合约的设计复杂化。</span> </li>
+   <li class="graf graf--li graf-after--li"> <span class="notranslate">效率 - 除了简单之外，账户/余额模型更加高效，因为每笔交易只需要验证发送账户是否有足够的余额来支付交易。</span> </li>
+  </ul>
+  <p class="graf graf--p graf-after--li"> <span class="notranslate">账户/余额模型的一个缺点是暴露于双重支出攻击。</span> <span class="notranslate">可以实施递增的随机数来抵消这种类型的攻击。</span> <span class="notranslate">在以太坊中，每个帐户都有一个公共可见的随机数，每次进行交易时，随机数都会增加一个。</span> <span class="notranslate">这可以防止相同的事务被多次提交。</span> <span class="notranslate"> （注意，这个随机数不同于以太坊的以太坊证明，这是一个随机值。）</span> </p>
+  <p class="graf graf--p graf-after--p graf--trailing"> <span class="notranslate">与计算机体系结构中的大多数情况一样，两种模型都有权衡。</span> <span class="notranslate">一些区块链，特别是Hyperledger，采用了UTXO，因为它们可以从比特币区块链创新中受益。</span> <span class="notranslate">我们将研究构建在这两个记录保持模型之上的更多技术。</span></p>
+  <p class="graf graf--p graf-after--p graf--trailing"><span class="notranslate"><br></span></p>
+  <p class="graf graf--p graf-after--p graf--trailing"><span class="notranslate">https://medium.com/@sunflora98/utxo-vs-account-balance-model-5e6470f4e0cf<br></span></p> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/omnispace/article/details/80262019,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/omnispace/article/details/80262019,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

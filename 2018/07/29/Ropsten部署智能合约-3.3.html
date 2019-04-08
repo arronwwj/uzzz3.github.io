@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>Ropsten部署智能合约-3.3 | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="Ropsten部署智能合约-3.3" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="先来解决3.2中myetherwallet中遇到的问题，为什么不能add custom token呢？ 首先要选择Network Ropsten (infu.io)网络，下图右上角 这样之后就可以顺利添加该账户所有的合约代币&nbsp; 可以向合约转账代币，原来我错误的理解为代币是合约所有的，其正确的理解代码是合约所有的，需要从账户向合约转账代币。 注意上图中 To Address: 0xFdbf00b8d61e2C572802e7f19E0fa9a2a118E478&nbsp;If sending tokens, this should be the token contract address. &nbsp;转账代币，只能向合约转账代币。这是错误的，通过myetherwallet也可将代币从一个账户转账到另一个账户。 这是一笔转账成功的交易 https://ropsten.etherscan.io/tx/0x2e4d1cd272dc364827cbe73f979aa7d999e34bc61d62f6421c2746ddd76c73fd 查看代币转账交易 https://ropsten.etherscan.io/tx/0x9a5f344e5191f6ed765fbf65b5b5b27d08efa76dbcd1527249e9b9172900ad4b 查看账户 TOKEN页面 通过myetherwallet也可以转账给其他账户部署的合约，交易链接如下 https://ropsten.etherscan.io/tx/0x1dede2b1b8ce8d580605e239daa895d2850c0b62626848796059b61bf7836bad 还有个问题为什么我创建的合约代币没有单位呢？对比Ropsten部署合约4.1中有代币符号的截图。 &nbsp;发现这个部署的合约没有跟代币关联起来。 &nbsp; &nbsp; &nbsp; 阅读更多" />
+<meta property="og:description" content="先来解决3.2中myetherwallet中遇到的问题，为什么不能add custom token呢？ 首先要选择Network Ropsten (infu.io)网络，下图右上角 这样之后就可以顺利添加该账户所有的合约代币&nbsp; 可以向合约转账代币，原来我错误的理解为代币是合约所有的，其正确的理解代码是合约所有的，需要从账户向合约转账代币。 注意上图中 To Address: 0xFdbf00b8d61e2C572802e7f19E0fa9a2a118E478&nbsp;If sending tokens, this should be the token contract address. &nbsp;转账代币，只能向合约转账代币。这是错误的，通过myetherwallet也可将代币从一个账户转账到另一个账户。 这是一笔转账成功的交易 https://ropsten.etherscan.io/tx/0x2e4d1cd272dc364827cbe73f979aa7d999e34bc61d62f6421c2746ddd76c73fd 查看代币转账交易 https://ropsten.etherscan.io/tx/0x9a5f344e5191f6ed765fbf65b5b5b27d08efa76dbcd1527249e9b9172900ad4b 查看账户 TOKEN页面 通过myetherwallet也可以转账给其他账户部署的合约，交易链接如下 https://ropsten.etherscan.io/tx/0x1dede2b1b8ce8d580605e239daa895d2850c0b62626848796059b61bf7836bad 还有个问题为什么我创建的合约代币没有单位呢？对比Ropsten部署合约4.1中有代币符号的截图。 &nbsp;发现这个部署的合约没有跟代币关联起来。 &nbsp; &nbsp; &nbsp; 阅读更多" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/07/29/Ropsten%E9%83%A8%E7%BD%B2%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6-3.3.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/07/29/Ropsten%E9%83%A8%E7%BD%B2%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6-3.3.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-07-29T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"先来解决3.2中myetherwallet中遇到的问题，为什么不能add custom token呢？ 首先要选择Network Ropsten (infu.io)网络，下图右上角 这样之后就可以顺利添加该账户所有的合约代币&nbsp; 可以向合约转账代币，原来我错误的理解为代币是合约所有的，其正确的理解代码是合约所有的，需要从账户向合约转账代币。 注意上图中 To Address: 0xFdbf00b8d61e2C572802e7f19E0fa9a2a118E478&nbsp;If sending tokens, this should be the token contract address. &nbsp;转账代币，只能向合约转账代币。这是错误的，通过myetherwallet也可将代币从一个账户转账到另一个账户。 这是一笔转账成功的交易 https://ropsten.etherscan.io/tx/0x2e4d1cd272dc364827cbe73f979aa7d999e34bc61d62f6421c2746ddd76c73fd 查看代币转账交易 https://ropsten.etherscan.io/tx/0x9a5f344e5191f6ed765fbf65b5b5b27d08efa76dbcd1527249e9b9172900ad4b 查看账户 TOKEN页面 通过myetherwallet也可以转账给其他账户部署的合约，交易链接如下 https://ropsten.etherscan.io/tx/0x1dede2b1b8ce8d580605e239daa895d2850c0b62626848796059b61bf7836bad 还有个问题为什么我创建的合约代币没有单位呢？对比Ropsten部署合约4.1中有代币符号的截图。 &nbsp;发现这个部署的合约没有跟代币关联起来。 &nbsp; &nbsp; &nbsp; 阅读更多","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/07/29/Ropsten%E9%83%A8%E7%BD%B2%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6-3.3.html","headline":"Ropsten部署智能合约-3.3","dateModified":"2018-07-29T00:00:00+08:00","datePublished":"2018-07-29T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/07/29/Ropsten%E9%83%A8%E7%BD%B2%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6-3.3.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>Ropsten部署智能合约-3.3</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <p>先来解决3.2中myetherwallet中遇到的问题，为什么不能add custom token呢？</p> 
+  <p>首先要选择Network Ropsten (infu.io)网络，下图右上角</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180728075214425?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdWRhb3FpYW5nX3Rq/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>这样之后就可以顺利添加该账户所有的合约代币&nbsp;</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180728075457830?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdWRhb3FpYW5nX3Rq/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>可以向合约转账代币，原来我错误的理解为代币是合约所有的，其正确的理解代码是合约所有的，需要从账户向合约转账代币。</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180728075730406?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdWRhb3FpYW5nX3Rq/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>注意上图中</p> 
+  <table>
+   <tbody>
+    <tr>
+     <td>To Address:</td> 
+     <td>0xFdbf00b8d61e2C572802e7f19E0fa9a2a118E478&nbsp;<br><em>If sending tokens, this should be the token contract address.</em></td> 
+    </tr>
+   </tbody>
+  </table>
+  <p>&nbsp;转账代币，只能向合约转账代币。这是错误的，通过myetherwallet也可将代币从一个账户转账到另一个账户。</p> 
+  <p>这是一笔转账成功的交易</p> 
+  <p><a href="https://ropsten.etherscan.io/tx/0x2e4d1cd272dc364827cbe73f979aa7d999e34bc61d62f6421c2746ddd76c73fd" rel="nofollow">https://ropsten.etherscan.io/tx/0x2e4d1cd272dc364827cbe73f979aa7d999e34bc61d62f6421c2746ddd76c73fd</a></p> 
+  <p>查看代币转账交易</p> 
+  <p><a href="https://ropsten.etherscan.io/tx/0x9a5f344e5191f6ed765fbf65b5b5b27d08efa76dbcd1527249e9b9172900ad4b" rel="nofollow">https://ropsten.etherscan.io/tx/0x9a5f344e5191f6ed765fbf65b5b5b27d08efa76dbcd1527249e9b9172900ad4b</a></p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180728075927813?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdWRhb3FpYW5nX3Rq/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/2018072808000051?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdWRhb3FpYW5nX3Rq/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>查看账户</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180728080250641?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdWRhb3FpYW5nX3Rq/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>TOKEN页面</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180728082538780?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdWRhb3FpYW5nX3Rq/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/2018072808260212?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdWRhb3FpYW5nX3Rq/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>通过myetherwallet也可以转账给其他账户部署的合约，交易链接如下</p> 
+  <p><a href="https://ropsten.etherscan.io/tx/0x1dede2b1b8ce8d580605e239daa895d2850c0b62626848796059b61bf7836bad" rel="nofollow">https://ropsten.etherscan.io/tx/0x1dede2b1b8ce8d580605e239daa895d2850c0b62626848796059b61bf7836bad</a></p> 
+  <p>还有个问题为什么我创建的合约代币没有单位呢？对比Ropsten部署合约4.1中有代币符号的截图。</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180729093001289?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdWRhb3FpYW5nX3Rq/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180729093013742?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdWRhb3FpYW5nX3Rq/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>&nbsp;发现这个部署的合约没有跟代币关联起来。</p> 
+  <p>&nbsp;</p> 
+  <p>&nbsp;</p> 
+  <p>&nbsp;</p> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/liudaoqiang_tj/article/details/81256668,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/liudaoqiang_tj/article/details/81256668,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

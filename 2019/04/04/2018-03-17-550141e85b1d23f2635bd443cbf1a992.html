@@ -1,0 +1,328 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views">
+   1. 两台物理机器
+  <br>
+  <br>
+  <br>192.168.1.244 &nbsp;root密码t5
+  <br>192.168.1.246 &nbsp;root密码t5
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>2. tendermint搭建 &nbsp;在tendermint/docs/examples这个目录，有四个节点的配置和文档，可以参考使用
+  <br>&nbsp; 2.1 编译出tendermint可执行文件，然后分别scp到245和246
+  <br>&nbsp; 2.2 在245执行 ./tendermint init，在root/.tendermint下会生成两个目录，分别是config和data目录。
+  <br>&nbsp; &nbsp; 2.2.1 config/config.toml tendermint的配置信息 这里有3个关键端口46656,46657,46658，各参数有对应解释。
+  <br>&nbsp; &nbsp; 2.2.2 config/genesis.json 创世validator信息。注意，所有节点的chain-id必须是一样的。
+  <br>&nbsp; 2.3 同理在246上执行
+  <br>&nbsp; 2.4 将245和246的genesis.json的validators进行配置，将两台机器都配置起来。也就是说，将245和246的validators信息相互添加。比如，244的genesis.json内容如下：
+  <br>---------------------
+  <br>{"genesis_time":"0001-01-01T00:00:00Z","chain_id":"test-chain-zusn4r","validators":[{"pub_key":{"type":"ed25519","data":"26AB8CCB5836A85EBFCB3BC5EAEA2A9E91C0ADBA58FBDA43F18BA2801AAB3074"},"power":10,"name":""},{"pub_key":{"type":"ed25519","data":"E058A49F4AA4AD852738F77316728644360F368CDA91AFAAF310DBAFFC7AC8FB"},"power":10,"name":""}],"app_hash":""}
+  <br>
+  <br>
+  <br>---------------------
+  <br>&nbsp; 2.5 在两台机器上都依次运行如下命令
+  <br>./two-nodes-server &amp; &nbsp;//这是一个tendermint abci server，实现了deliver_tx, check_tx, commit三个函数，但都是空的。（注意，这个two-nodes-server是用户自己写的，tendermint上没有，请参考tendermint的规范自行实现）
+  <br>/root/tendermint node --p2p.persistent_peers=192.168.1.245:46656,192.168.1.246:46656
+  <br>
+  <br>
+  <br>&nbsp; 2.6 genesis.jon的文件内容如下
+  <br>------------------------------------
+  <br>{
+  <br>&nbsp;"genesis_time":"0001-01-01T00:00:00Z",
+  <br>&nbsp;"chain_id":"test-chain-zusn4r", #注意，两个节点的chain_id必须相同
+  <br>&nbsp;"validators":[
+  <br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {
+  <br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "pub_key":{
+  <br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "type":"ed25519",
+  <br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "data":"E058A49F4AA4AD852738F77316728644360F368CDA91AFAAF310DBAFFC7AC8FB"
+  <br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; },
+  <br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "power":10,
+  <br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "name":""
+  <br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }
+  <br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ],
+  <br>&nbsp; "app_hash":""
+  <br>}
+  <br>------------------------------------
+  <br>name不需要设置
+  <br>app_hash不需要设置
+  <br>
+  <br>
+  <br>&nbsp; 2.7 如果只启动一个node，会出现如下log错误
+  <br>I[03-16|09:31:29.744] Ignoring inbound connection: error while adding peer module=p2p address=192.168.199.245:24420 err="Connect to self"
+  <br>E[03-16|09:31:29.744] Failed to add peer &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; module=p2p address=192.168.199.245:46656 err="Connect to self"
+  <br>E[03-16|09:31:29.744] Error dialing peer &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; module=p2p err="Connect to self"
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>I[03-16|09:31:31.161] Dialing peer &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; module=p2p address=192.168.199.246:46656
+  <br>E[03-16|09:31:31.162] Failed to dial peer &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;module=p2p address=192.168.199.246:46656 err="Error creating peer: dial tcp 192.168.199.246:46656: getsockopt: connection refused"
+  <br>E[03-16|09:31:31.162] Error dialing peer &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; module=p2p err="Error creating peer: dial tcp 192.168.199.246:46656: getsockopt: connection refused"
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>I[03-16|09:31:38.487] Ensure peers &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; module=p2p numOutPeers=0 numDialing=0 numToDial=10
+  <br>I[03-16|09:31:38.487] No addresses to dial nor connected peers. Falling back to seeds module=p2p&nbsp;
+  <br>
+  <br>
+  <br>不知道什么意思。
+  <br>
+  <br>
+  <br>&nbsp; 如果两个node都启动了，两边都会反复发送各种信息，导致数据增加。
+  <br>
+  <br>
+  <br>&nbsp; 两个节点会进行各种数据一致性操作，形如
+  <br>I[03-16|09:29:30.442] enterCommit(37/0). Current: 37/0/RoundStepPrecommit module=consensus&nbsp;
+  <br>I[03-16|09:29:30.460] Finalizing commit of block with 0 txs &nbsp; &nbsp; &nbsp; &nbsp;module=consensus height=37 hash=7309D981D10A34DC32524A43E5263F3670BD20E4 root=
+  <br>I[03-16|09:29:30.461] Block{
+  <br>&nbsp; Header{
+  <br>&nbsp; &nbsp; ChainID: &nbsp; &nbsp; &nbsp; &nbsp;test-chain-zusn4r
+  <br>&nbsp; &nbsp; Height: &nbsp; &nbsp; &nbsp; &nbsp; 37
+  <br>&nbsp; &nbsp; Time: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 2018-03-16 17:29:29.799 +0800 CST
+  <br>&nbsp; &nbsp; NumTxs: &nbsp; &nbsp; &nbsp; &nbsp; 0
+  <br>&nbsp; &nbsp; TotalTxs: &nbsp; &nbsp; &nbsp; 0
+  <br>&nbsp; &nbsp; LastBlockID: &nbsp; &nbsp;29E35DB1BFEDAE943E22A0BFC80DCC9FA0870156:1:E7262AFCF107
+  <br>&nbsp; &nbsp; LastCommit: &nbsp; &nbsp; 71C5837C2EAA278B75C9B52FA1486E27DFFF1D8D
+  <br>&nbsp; &nbsp; Data: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;
+  <br>&nbsp; &nbsp; Validators: &nbsp; &nbsp; 869EA33897CCB904E6BDEF9127DD0F2B7F85942E
+  <br>&nbsp; &nbsp; App: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+  <br>&nbsp; &nbsp; Conensus: &nbsp; &nbsp; &nbsp; 0B8CEF95EC57AC2D96038FD0AE3901C14FAE8E73
+  <br>&nbsp; &nbsp; Results: &nbsp; &nbsp; &nbsp; &nbsp;
+  <br>&nbsp; &nbsp; Evidence: &nbsp; &nbsp; &nbsp;&nbsp;
+  <br>&nbsp; }#7309D981D10A34DC32524A43E5263F3670BD20E4
+  <br>&nbsp; Data{
+  <br>&nbsp; &nbsp;&nbsp;
+  <br>&nbsp; }#
+  <br>&nbsp; Data{
+  <br>&nbsp; &nbsp;&nbsp;
+  <br>&nbsp; }#
+  <br>&nbsp; Commit{
+  <br>&nbsp; &nbsp; BlockID: &nbsp; &nbsp;29E35DB1BFEDAE943E22A0BFC80DCC9FA0870156:1:E7262AFCF107
+  <br>&nbsp; &nbsp; Precommits: Vote{0:6B09230E6A6D 36/00/2(Precommit) 29E35DB1BFED {/C2CCC1696A99.../} @ 2018-03-16T09:29:28.192Z}
+  <br>&nbsp; &nbsp; Vote{1:6E9331178A68 36/00/2(Precommit) 29E35DB1BFED {/AE54DB25FD29.../} @ 2018-03-16T09:29:28.395Z}
+  <br>&nbsp; }#71C5837C2EAA278B75C9B52FA1486E27DFFF1D8D
+  <br>}#7309D981D10A34DC32524A43E5263F3670BD20E4 module=consensus&nbsp;
+  <br>I[03-16|09:29:30.544] Executed block &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; module=state height=37 validTxs=0 invalidTxs=0
+  <br>I[03-16|09:29:30.576] Committed state &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;module=state height=37 txs=0 appHash=
+  <br>I[03-16|09:29:30.576] Recheck txs &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;module=mempool numtxs=0 height=37
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>3.双节点配置成功。当两个节点同时运行时，会不停地添加新区块。分析其运行逻辑。
+  <br>3.1 连接自身的错误
+  <br>I[03-17|07:23:59.274] Dialed peer with unknown ID - unable to authenticate module=p2p peer=192.168.199.246:46656 addr=192.168.199.246:46656
+  <br>E[03-17|07:23:59.274] Failed to add peer &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; module=p2p address=192.168.199.246:46656 err="Connect to self"
+  <br>E[03-17|07:23:59.274] Error dialing peer &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; module=p2p err="Connect to self"
+  <br>I[03-17|07:23:59.274] Ignoring inbound connection: error while adding peer module=p2p address=192.168.199.246:28486 err="Connect to self"
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>3.2 一个节点运行若干次完整的提交
+  <br>I[03-17|07:24:00.309] Connected to peer &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;module=p2p peer="Peer{MConn{192.168.199.245:46656} 37c4c21306aeec4df34750add95317cb8292ba36 out}"
+  <br>
+  <br>
+  <br>//height=183的提交
+  <br>I[03-17|07:24:01.143] Time to switch to consensus reactor! &nbsp; &nbsp; &nbsp; &nbsp; module=blockchain height=183
+  <br>/*
+  <br>本语句在tendermint/blockchain/reactor.go:260执行，这个语句的意思是，如果本地的区块已经是最新的，那么就中断poolRoutine，然后转入到consensos共识引擎。
+  <br>*/
+  <br>
+  <br>
+  <br>I[03-17|07:24:01.143] Stopping BlockPool &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; module=blockchain impl=BlockPool
+  <br>
+  <br>
+  <br>//进入共识引擎执行，tendermint/consensus/reactor.go:86
+  <br>I[03-17|07:24:01.143] SwitchToConsensus &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;module=consensus&nbsp;
+  <br>
+  <br>
+  <br>//然后，执行conR.conS.updateToState(state)，产生一个新的NewRoundStepMessage.
+  <br>//updateToState在tendermint/consensus/state.go:427
+  <br>I[03-17|07:24:01.145] Ignoring updateToState() &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; module=consensus newHeight=183 oldHeight=183
+  <br>
+  <br>
+  <br>I[03-17|07:24:01.145] Starting ConsensusState &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;module=consensus impl=ConsensusState
+  <br>I[03-17|07:24:01.145] Starting baseWAL &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; module=consensus wal=/root/.tendermint/data/cs.wal/wal impl=baseWAL
+  <br>I[03-17|07:24:01.145] Starting TimeoutTicker &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; module=consensus impl=TimeoutTicker
+  <br>I[03-17|07:24:01.204] Catchup by replaying consensus messages &nbsp; &nbsp; &nbsp;module=consensus height=183
+  <br>I[03-17|07:24:01.204] Replay: New Step &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; module=consensus height=183 round=0 step=RoundStepNewHeight
+  <br>I[03-17|07:24:01.204] Replay: Done &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; module=consensus&nbsp;
+  <br>I[03-17|07:24:01.205] Timed out &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;module=consensus dur=-4.1239649s height=183 round=0 step=RoundStepNewHeight
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>//待确认：可见，这里的原理是，定时触发，也就是说，只要系统运行起来了，就是连续不断地主动对transaction进行打包区块，然后存入数据库，没有数据就上传空块。
+  <br>//在config.toml，有timeout的各配置，也有是否创建空块的配置。
+  <br>//to-do：修改timeout配置，减慢新块生成; 不允许创建空块，看执行效果。
+  <br>//这个逻辑都在 enterNewRound 这个函数里。
+  <br>I[03-17|07:24:01.231] enterNewRound(183/0). Current: 183/0/RoundStepNewHeight module=consensus&nbsp;
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>//发起了新一轮之后，等待transaction过来，如果到了，就进入propose阶段。关键代码如下
+  <br>/*
+  <br>
+  <span> </span>cs.eventBus.PublishEventNewRound(cs.RoundStateEvent())
+  <br>
+  <br>
+  <br>
+  <span> </span>// Wait for txs to be available in the mempool
+  <br>
+  <span> </span>// before we enterPropose in round 0. If the last block changed the app hash,
+  <br>
+  <span> </span>// we may need an empty "proof" block, and enterPropose immediately.
+  <br>
+  <span> </span>waitForTxs := cs.config.WaitForTxs() &amp;&amp; round == 0 &amp;&amp; !cs.needProofBlock(height)
+  <br>
+  <span> </span>if waitForTxs {
+  <br>
+  <span> </span>if cs.config.CreateEmptyBlocksInterval &gt; 0 {
+  <br>
+  <span> </span>cs.scheduleTimeout(cs.config.EmptyBlocksInterval(), height, round, cstypes.RoundStepNewRound)
+  <br>
+  <span> </span>}
+  <br>
+  <span> </span>go cs.proposalHeartbeat(height, round)
+  <br>
+  <span> </span>} else {
+  <br>
+  <span> </span>cs.enterPropose(height, round)
+  <br>
+  <span> </span>}
+  <br>*/
+  <br>
+  <br>
+  <br>I[03-17|07:24:01.231] enterPropose(183/0). Current: 183/0/RoundStepNewRound module=consensus&nbsp;
+  <br>I[03-17|07:24:01.231] enterPropose: Not our turn to propose &nbsp; &nbsp; &nbsp; &nbsp;module=consensus proposer=6B09230E6A6DF383F6BD87E8476604E6FB3D9BF9 privValidator="PrivValidator{6E9331178A680C23F74161DC8150B71AA55911D4 LH:182, LR:0, LS:3}"
+  <br>I[03-17|07:24:01.548] Added to prevote &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; module=consensus vote="Vote{0:6B09230E6A6D 183/00/1(Prevote) C63EA5FFB734 {/0986998AD845.../} @ 2018-03-17T07:21:56.596Z}" prevotes="VoteSet{H:183 R:0 T:1 +2/3:&lt;nil&gt; BA{2:X_} map[]}"
+  <br>I[03-17|07:24:01.564] Received complete proposal block &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; module=consensus height=183 hash=C63EA5FFB7346ACFAE5C930BECC536482EB7B9F5
+  <br>I[03-17|07:24:01.565] enterPrevote(183/0). Current: 183/0/RoundStepPropose module=consensus&nbsp;
+  <br>I[03-17|07:24:01.566] enterPrevote: ProposalBlock is valid &nbsp; &nbsp; &nbsp; &nbsp; module=consensus height=183 round=0
+  <br>I[03-17|07:24:01.589] Signed and pushed vote &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; module=consensus height=183 round=0 vote="Vote{1:6E9331178A68 183/00/1(Prevote) C63EA5FFB734 {/BBBD2EE8D8FD.../} @ 2018-03-17T07:24:01.566Z}" err=null
+  <br>I[03-17|07:24:01.623] Added to prevote &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; module=consensus vote="Vote{1:6E9331178A68 183/00/1(Prevote) C63EA5FFB734 {/BBBD2EE8D8FD.../} @ 2018-03-17T07:24:01.566Z}" prevotes="VoteSet{H:183 R:0 T:1 +2/3:C63EA5FFB7346ACFAE5C930BECC536482EB7B9F5:1:B687C704F4C7 BA{2:XX} map[]}"
+  <br>I[03-17|07:24:01.623] enterPrecommit(183/0). Current: 183/0/RoundStepPrevote module=consensus&nbsp;
+  <br>I[03-17|07:24:01.623] enterPrecommit: +2/3 prevoted proposal block. Locking module=consensus hash=C63EA5FFB7346ACFAE5C930BECC536482EB7B9F5
+  <br>I[03-17|07:24:01.640] Signed and pushed vote &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; module=consensus height=183 round=0 vote="Vote{1:6E9331178A68 183/00/2(Precommit) C63EA5FFB734 {/2923B4309FA8.../} @ 2018-03-17T07:24:01.625Z}" err=null
+  <br>I[03-17|07:24:01.674] Added to precommit &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; module=consensus vote="Vote{1:6E9331178A68 183/00/2(Precommit) C63EA5FFB734 {/2923B4309FA8.../} @ 2018-03-17T07:24:01.625Z}" precommits="VoteSet{H:183 R:0 T:2 +2/3:&lt;nil&gt; BA{2:_X} map[]}"
+  <br>I[03-17|07:24:02.365] Added to precommit &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; module=consensus vote="Vote{0:6B09230E6A6D 183/00/2(Precommit) C63EA5FFB734 {/0C489D106468.../} @ 2018-03-17T07:24:01.788Z}" precommits="VoteSet{H:183 R:0 T:2 +2/3:C63EA5FFB7346ACFAE5C930BECC536482EB7B9F5:1:B687C704F4C7 BA{2:XX} map[37c4c21306aeec4df34750add95317cb8292ba36:C63EA5FFB7346ACFAE5C930BECC536482EB7B9F5:1:B687C704F4C7]}"
+  <br>I[03-17|07:24:02.365] enterCommit(183/0). Current: 183/0/RoundStepPrecommit module=consensus&nbsp;
+  <br>I[03-17|07:24:02.383] Finalizing commit of block with 0 txs &nbsp; &nbsp; &nbsp; &nbsp;module=consensus height=183 hash=C63EA5FFB7346ACFAE5C930BECC536482EB7B9F5 root=
+  <br>I[03-17|07:24:02.384] Block{
+  <br>&nbsp; Header{
+  <br>&nbsp; &nbsp; ChainID: &nbsp; &nbsp; &nbsp; &nbsp;test-chain-zusn4r
+  <br>&nbsp; &nbsp; Height: &nbsp; &nbsp; &nbsp; &nbsp; 183
+  <br>&nbsp; &nbsp; Time: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 2018-03-17 15:21:56.46 +0800 CST
+  <br>&nbsp; &nbsp; NumTxs: &nbsp; &nbsp; &nbsp; &nbsp; 0
+  <br>&nbsp; &nbsp; TotalTxs: &nbsp; &nbsp; &nbsp; 0
+  <br>&nbsp; &nbsp; LastBlockID: &nbsp; &nbsp;7236DB885E7926BFD636EA41F2F7B8C1B1ABDC89:1:6D13078EE514
+  <br>&nbsp; &nbsp; LastCommit: &nbsp; &nbsp; 2A8FE9A778D4BB154273C531B79B93613981E2D0
+  <br>&nbsp; &nbsp; Data: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;
+  <br>&nbsp; &nbsp; Validators: &nbsp; &nbsp; 869EA33897CCB904E6BDEF9127DD0F2B7F85942E
+  <br>&nbsp; &nbsp; App: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+  <br>&nbsp; &nbsp; Conensus: &nbsp; &nbsp; &nbsp; 0B8CEF95EC57AC2D96038FD0AE3901C14FAE8E73
+  <br>&nbsp; &nbsp; Results: &nbsp; &nbsp; &nbsp; &nbsp;
+  <br>&nbsp; &nbsp; Evidence: &nbsp; &nbsp; &nbsp;&nbsp;
+  <br>&nbsp; }#C63EA5FFB7346ACFAE5C930BECC536482EB7B9F5
+  <br>&nbsp; Data{
+  <br>&nbsp; &nbsp;&nbsp;
+  <br>&nbsp; }#
+  <br>&nbsp; Data{
+  <br>&nbsp; &nbsp;&nbsp;
+  <br>&nbsp; }#
+  <br>&nbsp; Commit{
+  <br>&nbsp; &nbsp; BlockID: &nbsp; &nbsp;7236DB885E7926BFD636EA41F2F7B8C1B1ABDC89:1:6D13078EE514
+  <br>&nbsp; &nbsp; Precommits: Vote{0:6B09230E6A6D 182/00/2(Precommit) 7236DB885E79 {/F4819FCC3235.../} @ 2018-03-17T07:21:54.678Z}
+  <br>&nbsp; &nbsp; Vote{1:6E9331178A68 182/00/2(Precommit) 7236DB885E79 {/35BF5493AD1A.../} @ 2018-03-17T07:21:54.868Z}
+  <br>&nbsp; }#2A8FE9A778D4BB154273C531B79B93613981E2D0
+  <br>}#C63EA5FFB7346ACFAE5C930BECC536482EB7B9F5 module=consensus&nbsp;
+  <br>I[03-17|07:24:02.434] Executed block &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; module=state height=183 validTxs=0 invalidTxs=0
+  <br>I[03-17|07:24:02.457] Committed state &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;module=state height=183 txs=0 appHash=
+  <br>I[03-17|07:24:02.457] Recheck txs &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;module=mempool numtxs=0 height=183
+  <br>I[03-17|07:24:03.366] Timed out &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;module=consensus dur=817.386392ms height=184 round=0 step=RoundStepNewHeight
+  <br>I[03-17|07:24:03.390] enterNewRound(184/0). Current: 184/0/RoundStepNewHeight module=consensus&nbsp;
+  <br>I[03-17|07:24:03.390] enterPropose(184/0). Current: 184/0/RoundStepNewRound module=consensus&nbsp;
+  <br>I[03-17|07:24:03.390] enterPropose: Our turn to propose &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;module=consensus proposer=6E9331178A680C23F74161DC8150B71AA55911D4 privValidator="PrivValidator{6E9331178A680C23F74161DC8150B71AA55911D4 LH:183, LR:0, LS:3}"
+  <br>I[03-17|07:24:03.415] Signed proposal &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;module=consensus height=184 round=0 proposal="Proposal{184/0 1:074B0C7D3F2F (-1,:0:000000000000) {/BB9FB54A39E1.../} @ 2018-03-17T07:24:03.391Z}"
+  <br>I[03-17|07:24:03.466] Received complete proposal block &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; module=consensus height=184 hash=AF8E0F68D4C66E76B88B9EFDA793BBF1DF591A10
+  <br>I[03-17|07:24:03.466] enterPrevote(184/0). Current: 184/0/RoundStepPropose module=consensus&nbsp;
+  <br>I[03-17|07:24:03.467] enterPrevote: ProposalBlock is valid &nbsp; &nbsp; &nbsp; &nbsp; module=consensus height=184 round=0
+  <br>I[03-17|07:24:03.482] Signed and pushed vote &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; module=consensus height=184 round=0 vote="Vote{1:6E9331178A68 184/00/1(Prevote) AF8E0F68D4C6 {/09BE46698FA6.../} @ 2018-03-17T07:24:03.467Z}" err=null
+  <br>I[03-17|07:24:03.549] Added to prevote &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; module=consensus vote="Vote{1:6E9331178A68 184/00/1(Prevote) AF8E0F68D4C6 {/09BE46698FA6.../} @ 2018-03-17T07:24:03.467Z}" prevotes="VoteSet{H:184 R:0 T:1 +2/3:&lt;nil&gt; BA{2:_X} map[]}"
+  <br>I[03-17|07:24:03.941] Added to prevote &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; module=consensus vote="Vote{0:6B09230E6A6D 184/00/1(Prevote) AF8E0F68D4C6 {/56B63ACBE0F0.../} @ 2018-03-17T07:24:03.713Z}" prevotes="VoteSet{H:184 R:0 T:1 +2/3:AF8E0F68D4C66E76B88B9EFDA793BBF1DF591A10:1:074B0C7D3F2F BA{2:XX} map[]}"
+  <br>I[03-17|07:24:03.941] enterPrecommit(184/0). Current: 184/0/RoundStepPrevote module=consensus&nbsp;
+  <br>I[03-17|07:24:03.942] enterPrecommit: +2/3 prevoted proposal block. Locking module=consensus hash=AF8E0F68D4C66E76B88B9EFDA793BBF1DF591A10
+  <br>I[03-17|07:24:03.957] Signed and pushed vote &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; module=consensus height=184 round=0 vote="Vote{1:6E9331178A68 184/00/2(Precommit) AF8E0F68D4C6 {/A43D527016E1.../} @ 2018-03-17T07:24:03.943Z}" err=null
+  <br>I[03-17|07:24:03.991] Added to precommit &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; module=consensus vote="Vote{1:6E9331178A68 184/00/2(Precommit) AF8E0F68D4C6 {/A43D527016E1.../} @ 2018-03-17T07:24:03.943Z}" precommits="VoteSet{H:184 R:0 T:2 +2/3:&lt;nil&gt; BA{2:_X} map[]}"
+  <br>I[03-17|07:24:04.050] Added to precommit &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; module=consensus vote="Vote{0:6B09230E6A6D 184/00/2(Precommit) AF8E0F68D4C6 {/A471C4BC8148.../} @ 2018-03-17T07:24:03.814Z}" precommits="VoteSet{H:184 R:0 T:2 +2/3:AF8E0F68D4C66E76B88B9EFDA793BBF1DF591A10:1:074B0C7D3F2F BA{2:XX} map[]}"
+  <br>I[03-17|07:24:04.050] enterCommit(184/0). Current: 184/0/RoundStepPrecommit module=consensus&nbsp;
+  <br>I[03-17|07:24:04.068] Finalizing commit of block with 0 txs &nbsp; &nbsp; &nbsp; &nbsp;module=consensus height=184 hash=AF8E0F68D4C66E76B88B9EFDA793BBF1DF591A10 root=
+  <br>I[03-17|07:24:04.068] Block{
+  <br>&nbsp; Header{
+  <br>&nbsp; &nbsp; ChainID: &nbsp; &nbsp; &nbsp; &nbsp;test-chain-zusn4r
+  <br>&nbsp; &nbsp; Height: &nbsp; &nbsp; &nbsp; &nbsp; 184
+  <br>&nbsp; &nbsp; Time: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 2018-03-17 15:24:03.39 +0800 CST
+  <br>&nbsp; &nbsp; NumTxs: &nbsp; &nbsp; &nbsp; &nbsp; 0
+  <br>&nbsp; &nbsp; TotalTxs: &nbsp; &nbsp; &nbsp; 0
+  <br>&nbsp; &nbsp; LastBlockID: &nbsp; &nbsp;C63EA5FFB7346ACFAE5C930BECC536482EB7B9F5:1:B687C704F4C7
+  <br>&nbsp; &nbsp; LastCommit: &nbsp; &nbsp; 3B2FBDDFA6759D78886A69A607A425798F1EE56F
+  <br>&nbsp; &nbsp; Data: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;
+  <br>&nbsp; &nbsp; Validators: &nbsp; &nbsp; 869EA33897CCB904E6BDEF9127DD0F2B7F85942E
+  <br>&nbsp; &nbsp; App: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+  <br>&nbsp; &nbsp; Conensus: &nbsp; &nbsp; &nbsp; 0B8CEF95EC57AC2D96038FD0AE3901C14FAE8E73
+  <br>&nbsp; &nbsp; Results: &nbsp; &nbsp; &nbsp; &nbsp;
+  <br>&nbsp; &nbsp; Evidence: &nbsp; &nbsp; &nbsp;&nbsp;
+  <br>&nbsp; }#AF8E0F68D4C66E76B88B9EFDA793BBF1DF591A10
+  <br>&nbsp; Data{
+  <br>&nbsp; &nbsp;&nbsp;
+  <br>&nbsp; }#
+  <br>&nbsp; Data{
+  <br>&nbsp; &nbsp;&nbsp;
+  <br>&nbsp; }#
+  <br>&nbsp; Commit{
+  <br>&nbsp; &nbsp; BlockID: &nbsp; &nbsp;C63EA5FFB7346ACFAE5C930BECC536482EB7B9F5:1:B687C704F4C7
+  <br>&nbsp; &nbsp; Precommits: Vote{0:6B09230E6A6D 183/00/2(Precommit) C63EA5FFB734 {/0C489D106468.../} @ 2018-03-17T07:24:01.788Z}
+  <br>&nbsp; &nbsp; Vote{1:6E9331178A68 183/00/2(Precommit) C63EA5FFB734 {/2923B4309FA8.../} @ 2018-03-17T07:24:01.625Z}
+  <br>&nbsp; }#3B2FBDDFA6759D78886A69A607A425798F1EE56F
+  <br>}#AF8E0F68D4C66E76B88B9EFDA793BBF1DF591A10 module=consensus&nbsp;
+  <br>I[03-17|07:24:04.118] Executed block &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; module=state height=184 validTxs=0 invalidTxs=0
+  <br>I[03-17|07:24:04.150] Committed state &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;module=state height=184 txs=0 appHash=
+  <br>I[03-17|07:24:04.150] Recheck txs &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;module=mempool numtxs=0 height=184
+  <br>I[03-17|07:24:05.051] Timed out &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;module=consensus dur=784.086656ms height=185 round=0 step=RoundStepNewHeight
+  <br>I[03-17|07:24:05.066] enterNewRound(185/0). Current: 185/0/RoundStepNewHeight module=consensus&nbsp;
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/lizhe_dashuju/article/details/79594790,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/lizhe_dashuju/article/details/79594790,&quot;}">阅读更多</a> 
+</div>

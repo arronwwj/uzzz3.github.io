@@ -1,0 +1,220 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div id="content_views" class="markdown_views prism-atom-one-dark"> 
+  <!-- flowchart 箭头图标 勿删 --> 
+  <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+   <path stroke-linecap="round" d="M5,0 0,2.5 5,5z" id="raphael-marker-block" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></path>
+  </svg> 
+  <p>参考自：<a href="https://juejin.im/post/5c57f86c51882562002aec03" rel="nofollow">https://juejin.im/post/5c57f86c51882562002aec03</a></p> 
+  <article class="article">
+   <div></div>
+   <div>
+    <div></div>
+   </div>
+   <div class="author-info-block">
+    <a href="/user/5697a5e860b2608e6c4a6128" rel="" target="_blank" class="avatar-link"></a>
+    <div class="lazy avatar avatar loaded"></div>
+    <div class="author-info-box">
+     <a href="/user/5697a5e860b2608e6c4a6128" rel="" target="_blank" class="username ellipsis"></a>
+     <div class="meta-box">
+      <time title="Mon Feb 04 2019 16:33:04 GMT+0800 (中国标准时间)" class="time"></time>
+      <span class="views-count"></span>
+      <!---->
+     </div>
+    </div>
+   </div>
+   <!---->
+   <h1 class="article-title"></h1>
+   <div class="article-content">
+    <p>无论是研究方向是 AI 方面的学生，或者是做机器学习方面的算法工程师，在掌握基础的机器学习相关知识后，都必须掌握搜索论文的技能，特别是研究或者工作领域方向的最新论文，更进阶一点的技能，就是可以复现论文的算法，这是在论文作者没有开源代码的时候的一个解决办法，但是在能够掌握这项技能前，我们希望能够搜索到其他人复现的代码。</p> 
+    <p>因此，今天我会推荐两个相关的网站，并且都是同个团队的成果，这个两个网站，一个可以用于展示带有代码实现的论文算法，另一个给出了多个领域最新最好的算法论文结果。</p> 
+    <h4 class="heading">1. Papers with Code</h4> 
+    <p>首先给出这个网站的网址：</p> 
+    <p><a target="_blank" href="https://link.juejin.im?target=https%3A%2F%2Fpaperswithcode.com" rel="nofollow noopener noreferrer">paperswithcode.com</a></p> 
+    <p>这是 Reddit 的一个用户 rstoj 做的一个网站，将 ArXiv 上的<strong>最新机器学习论文与 Github 上的代码</strong>（TensorFlow/PyTorch/MXNet/等）对应起来。相比之前推荐的<a target="_blank" href="https://link.juejin.im?target=https%3A%2F%2Fmp.weixin.qq.com%2Fs%2FImQcGt8guLKZawNLS-_HzA" rel="nofollow noopener noreferrer">阅读 ArXiv 的网站</a>，这位用户做出了满足更多研究者的最大需求--寻找论文算法实现的代码！</p> 
+    <p>这个项目索引了<strong>大约 5 万篇论文（最近 5 年发布在 arxiv 上的论文）和 1 万个 Github 库</strong>。</p> 
+    <p>你可以按<strong>标题关键词</strong>查询，或者<strong>研究领域关键词</strong>，如图像分类、文本分类等搜索，也可以按流行程度、最新论文以及 Github 上 Star 数量最多来排列。这个网站能让你跟上机器学习社区流行的最新动态。</p> 
+    <p>首先是看下这个网站大概长什么样的：</p> 
+    <p></p>
+    <figure>
+     <img class="lazyload inited loaded" src="https://user-gold-cdn.xitu.io/2019/2/4/168b7a27bd7f8b79?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+     <figcaption></figcaption>
+    </figure>
+    <p></p> 
+    <p>上图给出的是按照流行程度来排列，对每篇论文给出了题目、作者、投稿的会议或者顶会，一些简介，比如是否当前领域最先进算法，标签(即关键词，论文研究的方向）和采用的代码框架（比如是 Pytorch 还是 TensorFlow 或者其他框架），论文和代码链接，还有当前 Github 的 Star 数量，以及每小时增加的 Star 数量。</p> 
+    <p>如果是按照 Github Star 数量最多排列，如下图所示：</p> 
+    <p></p>
+    <figure>
+     <img class="lazyload inited loaded" src="https://user-gold-cdn.xitu.io/2019/2/4/168b7a27bb15e222?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+     <figcaption></figcaption>
+    </figure>
+    <p></p> 
+    <p>可以看到最多 Star 数量前两位都是 TensorFlow ，第三位是 Caffe 框架。</p> 
+    <p>另外，如果我们在搜索框输入研究领域的关键词，比如图像分类--Image Classification，搜索结果如下所示：</p> 
+    <p></p>
+    <figure>
+     <img class="lazyload inited loaded" src="https://user-gold-cdn.xitu.io/2019/2/4/168b7a27bd919036?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+     <figcaption></figcaption>
+    </figure>
+    <p></p> 
+    <p>它会展示当前包含该领域带有论文的共 250 篇论文，然后是展示几个数据集上效果最好的算法和论文，以及开源项目（如果开源了），然后就是子领域--Subtasks，最后是该领域的有代码的论文，按照 Github 上 Star 数量来排列。</p> 
+    <hr> 
+    <h4 class="heading">2. Browse state-of-the-art</h4> 
+    <p>同样先给出网址：</p> 
+    <p><a target="_blank" href="https://link.juejin.im?target=https%3A%2F%2Fpaperswithcode.com%2Fsota" rel="nofollow noopener noreferrer">paperswithcode.com/sota</a></p> 
+    <p>这个网站主要是解决另一个问题--寻找一个领域目前最好的（State of the art, Sota）算法的论文以及实现代码。这也是刚接触到一个新领域时候，必须要做的事情，先找到最新最好的算法论文，然后根据这篇论文的代码实现，先跑下代码，接着再去了解细节，或者是根据它的参考论文，来学习这个领域最近几年的论文（一般是 3 年到 5 年内的），逐渐熟悉这个领域的研究方向和难点所在。</p> 
+    <p>还是 Papers with Code 的团队做出了一个可以查询领域最新算法的网站，它总共包含了 16 个大类，950+的单独子类任务，500+个评估结果（包含 Sota 结果）、700+数据库，8000+论文。如下图所示：</p> 
+    <p></p>
+    <figure>
+     <img class="lazyload inited loaded" src="https://user-gold-cdn.xitu.io/2019/2/4/168b7a27bdac200a?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+     <figcaption></figcaption>
+    </figure>
+    <p></p> 
+    <p>16 个分类包括：</p> 
+    <ul> 
+     <li>计算机视觉</li> 
+     <li>自然语言处理</li> 
+     <li>医疗</li> 
+     <li>研究方法</li> 
+     <li>杂类</li> 
+     <li>语音</li> 
+     <li>游戏</li> 
+     <li>图(Graphs）</li> 
+     <li>时间序列</li> 
+     <li>音频</li> 
+     <li>机器人</li> 
+     <li>音乐</li> 
+     <li>推理</li> 
+     <li>计算机编码</li> 
+     <li>知识库</li> 
+     <li>对抗性(Adversarial)</li> 
+    </ul> 
+    <p>点击<strong>计算机视觉</strong>这个大类，可以看到具体又划分了450+个子任务，如下图所示：</p> 
+    <p></p>
+    <figure>
+     <img class="lazyload inited loaded" src="https://user-gold-cdn.xitu.io/2019/2/4/168b7a27bd898480?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+     <figcaption></figcaption>
+    </figure>
+    <p></p> 
+    <p>这里可以继续点击进去每个子任务，比如图像分类，然后会得到如下图所示：</p> 
+    <p></p>
+    <figure>
+     <img class="lazyload inited loaded" src="https://user-gold-cdn.xitu.io/2019/2/4/168b7a27bd919036?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+     <figcaption></figcaption>
+    </figure>
+    <p></p> 
+    <p>上图其实就是在刚刚介绍 Paper with Code 网站时候，介绍搜索领域关键词例子中的图例了。</p> 
+    <hr> 
+    <p>最后，再给出两个网站的网址：</p> 
+    <ul> 
+     <li><a target="_blank" href="https://link.juejin.im?target=https%3A%2F%2Fpaperswithcode.com" rel="nofollow noopener noreferrer">paperswithcode.com</a></li> 
+     <li><a target="_blank" href="https://link.juejin.im?target=https%3A%2F%2Fpaperswithcode.com%2Fsota" rel="nofollow noopener noreferrer">paperswithcode.com/sota</a></li> 
+    </ul> 
+   </div>
+  </article> 
+ </div> 
+ <link href="https://csdnimg.cn/release/phoenix/mdeditor/markdown_views-7b4cdcb592.css" rel="stylesheet"> 
+</div>
+<div></div>
+<div>
+ <div></div>
+</div>
+<div class="author-info-block">
+ <a href="/user/5697a5e860b2608e6c4a6128" rel="" target="_blank" class="avatar-link"></a>
+ <div class="lazy avatar avatar loaded"></div>
+ <div class="author-info-box">
+  <a href="/user/5697a5e860b2608e6c4a6128" rel="" target="_blank" class="username ellipsis"></a>
+  <div class="meta-box">
+   <time title="Mon Feb 04 2019 16:33:04 GMT+0800 (中国标准时间)" class="time"></time>
+   <span class="views-count"></span>
+   <!---->
+  </div>
+ </div>
+</div>
+<!---->
+<h1 class="article-title"></h1>
+<div class="article-content">
+ <p>无论是研究方向是 AI 方面的学生，或者是做机器学习方面的算法工程师，在掌握基础的机器学习相关知识后，都必须掌握搜索论文的技能，特别是研究或者工作领域方向的最新论文，更进阶一点的技能，就是可以复现论文的算法，这是在论文作者没有开源代码的时候的一个解决办法，但是在能够掌握这项技能前，我们希望能够搜索到其他人复现的代码。</p> 
+ <p>因此，今天我会推荐两个相关的网站，并且都是同个团队的成果，这个两个网站，一个可以用于展示带有代码实现的论文算法，另一个给出了多个领域最新最好的算法论文结果。</p> 
+ <h4 class="heading">1. Papers with Code</h4> 
+ <p>首先给出这个网站的网址：</p> 
+ <p><a target="_blank" href="https://link.juejin.im?target=https%3A%2F%2Fpaperswithcode.com" rel="nofollow noopener noreferrer">paperswithcode.com</a></p> 
+ <p>这是 Reddit 的一个用户 rstoj 做的一个网站，将 ArXiv 上的<strong>最新机器学习论文与 Github 上的代码</strong>（TensorFlow/PyTorch/MXNet/等）对应起来。相比之前推荐的<a target="_blank" href="https://link.juejin.im?target=https%3A%2F%2Fmp.weixin.qq.com%2Fs%2FImQcGt8guLKZawNLS-_HzA" rel="nofollow noopener noreferrer">阅读 ArXiv 的网站</a>，这位用户做出了满足更多研究者的最大需求--寻找论文算法实现的代码！</p> 
+ <p>这个项目索引了<strong>大约 5 万篇论文（最近 5 年发布在 arxiv 上的论文）和 1 万个 Github 库</strong>。</p> 
+ <p>你可以按<strong>标题关键词</strong>查询，或者<strong>研究领域关键词</strong>，如图像分类、文本分类等搜索，也可以按流行程度、最新论文以及 Github 上 Star 数量最多来排列。这个网站能让你跟上机器学习社区流行的最新动态。</p> 
+ <p>首先是看下这个网站大概长什么样的：</p> 
+ <p></p>
+ <figure>
+  <img class="lazyload inited loaded" src="https://user-gold-cdn.xitu.io/2019/2/4/168b7a27bd7f8b79?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+  <figcaption></figcaption>
+ </figure>
+ <p></p> 
+ <p>上图给出的是按照流行程度来排列，对每篇论文给出了题目、作者、投稿的会议或者顶会，一些简介，比如是否当前领域最先进算法，标签(即关键词，论文研究的方向）和采用的代码框架（比如是 Pytorch 还是 TensorFlow 或者其他框架），论文和代码链接，还有当前 Github 的 Star 数量，以及每小时增加的 Star 数量。</p> 
+ <p>如果是按照 Github Star 数量最多排列，如下图所示：</p> 
+ <p></p>
+ <figure>
+  <img class="lazyload inited loaded" src="https://user-gold-cdn.xitu.io/2019/2/4/168b7a27bb15e222?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+  <figcaption></figcaption>
+ </figure>
+ <p></p> 
+ <p>可以看到最多 Star 数量前两位都是 TensorFlow ，第三位是 Caffe 框架。</p> 
+ <p>另外，如果我们在搜索框输入研究领域的关键词，比如图像分类--Image Classification，搜索结果如下所示：</p> 
+ <p></p>
+ <figure>
+  <img class="lazyload inited loaded" src="https://user-gold-cdn.xitu.io/2019/2/4/168b7a27bd919036?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+  <figcaption></figcaption>
+ </figure>
+ <p></p> 
+ <p>它会展示当前包含该领域带有论文的共 250 篇论文，然后是展示几个数据集上效果最好的算法和论文，以及开源项目（如果开源了），然后就是子领域--Subtasks，最后是该领域的有代码的论文，按照 Github 上 Star 数量来排列。</p> 
+ <hr> 
+ <h4 class="heading">2. Browse state-of-the-art</h4> 
+ <p>同样先给出网址：</p> 
+ <p><a target="_blank" href="https://link.juejin.im?target=https%3A%2F%2Fpaperswithcode.com%2Fsota" rel="nofollow noopener noreferrer">paperswithcode.com/sota</a></p> 
+ <p>这个网站主要是解决另一个问题--寻找一个领域目前最好的（State of the art, Sota）算法的论文以及实现代码。这也是刚接触到一个新领域时候，必须要做的事情，先找到最新最好的算法论文，然后根据这篇论文的代码实现，先跑下代码，接着再去了解细节，或者是根据它的参考论文，来学习这个领域最近几年的论文（一般是 3 年到 5 年内的），逐渐熟悉这个领域的研究方向和难点所在。</p> 
+ <p>还是 Papers with Code 的团队做出了一个可以查询领域最新算法的网站，它总共包含了 16 个大类，950+的单独子类任务，500+个评估结果（包含 Sota 结果）、700+数据库，8000+论文。如下图所示：</p> 
+ <p></p>
+ <figure>
+  <img class="lazyload inited loaded" src="https://user-gold-cdn.xitu.io/2019/2/4/168b7a27bdac200a?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+  <figcaption></figcaption>
+ </figure>
+ <p></p> 
+ <p>16 个分类包括：</p> 
+ <ul> 
+  <li>计算机视觉</li> 
+  <li>自然语言处理</li> 
+  <li>医疗</li> 
+  <li>研究方法</li> 
+  <li>杂类</li> 
+  <li>语音</li> 
+  <li>游戏</li> 
+  <li>图(Graphs）</li> 
+  <li>时间序列</li> 
+  <li>音频</li> 
+  <li>机器人</li> 
+  <li>音乐</li> 
+  <li>推理</li> 
+  <li>计算机编码</li> 
+  <li>知识库</li> 
+  <li>对抗性(Adversarial)</li> 
+ </ul> 
+ <p>点击<strong>计算机视觉</strong>这个大类，可以看到具体又划分了450+个子任务，如下图所示：</p> 
+ <p></p>
+ <figure>
+  <img class="lazyload inited loaded" src="https://user-gold-cdn.xitu.io/2019/2/4/168b7a27bd898480?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+  <figcaption></figcaption>
+ </figure>
+ <p></p> 
+ <p>这里可以继续点击进去每个子任务，比如图像分类，然后会得到如下图所示：</p> 
+ <p></p>
+ <figure>
+  <img class="lazyload inited loaded" src="https://user-gold-cdn.xitu.io/2019/2/4/168b7a27bd919036?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+  <figcaption></figcaption>
+ </figure>
+ <p></p> 
+ <p>上图其实就是在刚刚介绍 Paper with Code 网站时候，介绍搜索领域关键词例子中的图例了。</p> 
+ <hr> 
+ <p>最后，再给出两个网站的网址：</p> 
+ <ul> 
+  <li><a target="_blank" href="https://link.juejin.im?target=https%3A%2F%2Fpaperswithcode.com" rel="nofollow noopener noreferrer">paperswithcode.com</a></li> 
+  <li><a target="_blank" href="https://link.juejin.im?target=https%3A%2F%2Fpaperswithcode.com%2Fsota" rel="nofollow noopener noreferrer">paperswithcode.com/sota</a></li> 
+ </ul> 
+</div>

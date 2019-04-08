@@ -1,0 +1,27 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views">
+   miner.cpp源码分析
+  <br>
+  <br>
+  <br>一个完整的服务端程序在语法上是一个树.因此可以从任意一个叶节点开始朔源整个逻辑.
+  <br>
+  <br>
+  <br>[1] miner.cpp 挖矿相关代码&nbsp;
+  <br>&nbsp; [1.1] CreateNewBlock &nbsp;#创建新区块函数, 搜索源码发现, 在rpc/mining.cpp有两处调用这个函数, 第123行和第522行, 分别对应函数 generateBlocks 和 getblocktemplate.
+  <br>&nbsp; [1.2] generateBlocks #在mining.cpp的108行, 创建区块.在generatetoaddress函数被调用
+  <br>&nbsp; &nbsp; [1.2.1] generatetoaddress #在mining.cpp的156行. # 这个函数是处理request的, 根据注释, "在rpc调用返回值之前, 立刻对区块挖矿,然后发给一个指定的地址". 处理request差不多就表示到顶了, 因为再向上就是bitcoind启动的各种服务. 这个函数在rpc/client.cpp第34行被使用,在这里,是解释函数参数的类型问题.
+  <br>&nbsp; [1.3] getblocktemplate #在mining.cpp的第290行, 获取block模板.这个也是处理resquest请求,在调用链的顶层. 这个函数的构造出一个模板化的区块, 传入的参数是 模板类型, 区块的类型, 区块规则等等,返回的是一个区块, 包括版本,规则,掩码,transaction列表等等.
+  <br>&nbsp; [1.4] CRPCCommand commands #位于mining.cpp的最后,静态结构体. 这个里头,包含了mining.cpp对外的接口. RegisterMiningRPCCommands把commands注册路由.
+  <br>&nbsp; &nbsp; [1.4.1] RegisterMiningRPCCommands # 这个函数,在rpc/register.h里被调用. 调用函数是RegisterAllCoreRPCCommands.
+  <br>&nbsp; &nbsp; &nbsp; [1.4.1.1]RegisterAllCoreRPCCommands # 这个函数将所有的服务进行注册. 在init.cpp的第1053行被AppInitParameterInteraction函数调用.
+  <br>
+  <p>&nbsp; &nbsp; &nbsp; &nbsp; [1.4.1.1.1] AppInitParameterInteraction # 初始化参数交互设置,这个服务是在 bitcoind.cpp的第142行被调用,也就是AppInit函数.到这里,就回到我们在bitcoind.cpp的分析了.</p>
+  <p><br></p>
+  <p>[2] rpc目录. 这个目录是整个rpc服务的代码.比如blockchain.cpp, mining.cpp, misc.cpp, net.cpp, rawtransaction.cpp,等等都是各种服务的定义/实现/注册.server.cpp是rpc服务端的起停运行.rpc服务在bitcoind.cpp初始化的时候启动.</p>
+  <br> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/lizhe_dashuju/article/details/79152161,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/lizhe_dashuju/article/details/79152161,&quot;}">阅读更多</a> 
+</div>

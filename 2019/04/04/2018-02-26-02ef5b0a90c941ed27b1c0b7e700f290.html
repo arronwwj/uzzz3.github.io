@@ -1,0 +1,107 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div class="markdown_views"> 
+  <p><img src="http://i.imgur.com/vhdeDvX.png" alt="" title=""></p> 
+  <p>安全是软件开始中很重要的一个环节,在金融场景以及设计资产的场景下更是如此,在加密算法中主要使用较多加密方式分别是对称加密和非对称加密,对称加密中的代表是<strong>AES,DES,3DES</strong>等,非对称加密中使用比较多的是<strong>RSA,ECC</strong>等,最近火热的比特币中就使用ECC椭圆曲线算法,本篇文章主要是笔者在使用Golang在使用RSA中使用私钥加密公钥解密中遇到的问题,以及寻找的解决方案进行阐述,希望可以帮助到大家!</p> 
+  <p>附上:</p> 
+  <p>喵了个咪的博客:<a href="w-blog.cn" rel="nofollow">w-blog.cn</a> <br> gorsa-Github地址:<a href="https://github.com/farmerx/gorsa" rel="nofollow">https://github.com/farmerx/gorsa</a> <br> 喵咪优化过的gorsa-Github地址:<a href="https://github.com/wenzhenxi/gorsa" rel="nofollow">https://github.com/wenzhenxi/gorsa</a></p> 
+  <p><strong>PS:特别感谢farmerx提供的gorsa实现</strong></p> 
+  <h2 id="1了解rsa">1.了解RSA</h2> 
+  <p>要了解RSA就要先分别对称加密和非对称加密的区别:</p> 
+  <ul> 
+   <li>对称加密中只有一个钥匙也就是KEY,加解密都依靠这组密钥</li> 
+   <li>非对称加密中有公私钥之分,私钥可以生产公钥(比特币的钱包地址就是公钥),一般加密通过公钥加密私钥解密(也有私钥加密公钥解密)</li> 
+  </ul> 
+  <p>RSA使用场景:</p> 
+  <ol> 
+   <li><p>我们最熟悉的就是HTTPS中就是使用的RSA加密,CA机构给你颁发的就是私钥给到我们进行配置,在请求过程中端用CA内置到系统的公钥加密,请求道服务器由服务器进行解密验证,保障了传输过程中的请求加密</p></li> 
+   <li><p>高安全场景(比如金融设备银联交易等)下的双向认证(一机一密钥),每台机器本地都会生成一组公私钥对,并且吧公钥发送给服务器,这个使用发起的请求模型如下:</p></li> 
+  </ol> 
+  <hr> 
+  <p>服务器的公私钥对简称: s_puk,s_pvk</p> 
+  <p>端生成的公私钥对简称: c_puk,c_pvk</p> 
+  <p>服务器存储: s_pvk和c_puk</p> 
+  <p>端存储 :s_puk,c_pvk</p> 
+  <p>端使用c_pvk加密请求 -&gt; 服务器使用c_puk解密(验证端) -&gt; 使用s_pvk加密返回结果返回 -&gt; 端使用s_puk解密获得返回结果(验证服务器)</p> 
+  <p>这个过程中就完成了端认证服务器,服务器认证端称之为双向认证(这里是指简单的表达这个模型,更加安全的模式中会引入加密机进一步保障安全)</p> 
+  <hr> 
+  <p><strong>PS:关于RSA加密的具体算法实现可以参考以下两篇文章</strong></p> 
+  <p><a href="http://www.ruanyifeng.com/blog/2013/06/rsa_algorithm_part_one.html" rel="nofollow">RSA算法原理（一） </a></p> 
+  <p><a href="http://www.ruanyifeng.com/blog/2013/07/rsa_algorithm_part_two.html" rel="nofollow">RSA算法原理（二）</a></p> 
+  <h2 id="2gorsa">2.GoRSA</h2> 
+  <p>在Golang使用RSA加密算法的时候笔者遇到了一个坑,在网上找遍了官方提供的库<strong>crypto/rsa</strong>中只有公钥加密私钥解密的实现,意味着无法实现私钥加密公钥解密,而要实现双向认证必须要使用<strong>私钥加密公钥解密</strong>,通过几个小时的寻找其实有很多论坛中也在讨论这个问题,也有童鞋在GITHUB上面提及了一些解决方案,有用C封装了一次的等,但是使用其他特别难受甚至运行不起来,在快要绝望的时候找到了貌似可以使用的库,通过查看源码使用的是软实现,在这里推荐给大家</p> 
+  <p>基于 <a href="https://github.com/farmerx/gorsa" rel="nofollow">https://github.com/farmerx/gorsa</a> 进行封装优化了如下几点:</p> 
+  <ul> 
+   <li>优化公私钥需要提前注册初始化,在并发情况下公私钥匙会混乱的问题</li> 
+   <li>加密机没有进行base64处理,在跨程序传递或存储过程中都需要base64避免二次封装</li> 
+   <li>传入返回都统一使用string类型避免转换麻烦</li> 
+  </ul> 
+  <p>获取扩展包:</p> 
+  <pre class="prettyprint"><code class=" hljs cs">go <span class="hljs-keyword">get</span> github.com/wenzhenxi/gorsa</code></pre> 
+  <p>具体使用:</p> 
+  <pre class="prettyprint"><code class=" hljs go"><span class="hljs-keyword">package</span> main
+
+<span class="hljs-keyword">import</span> (
+    <span class="hljs-string">"log"</span>
+    <span class="hljs-string">"errors"</span>
+    <span class="hljs-string">"github.com/wenzhenxi/gorsa"</span>
+)
+
+<span class="hljs-keyword">var</span> Pubkey = <span class="hljs-string">`-----BEGIN 公钥----- MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAk+89V7vpOj1rG6bTAKYM 56qmFLwNCBVDJ3MltVVtxVUUByqc5b6u909MmmrLBqS//PWC6zc3wZzU1+ayh8xb UAEZuA3EjlPHIaFIVIz04RaW10+1xnby/RQE23tDqsv9a2jv/axjE/27b62nzvCW eItu1kNQ3MGdcuqKjke+LKhQ7nWPRCOd/ffVqSuRvG0YfUEkOz/6UpsPr6vrI331 hWRB4DlYy8qFUmDsyvvExe4NjZWblXCqkEXRRAhi2SQRCl3teGuIHtDUxCskRIDi aMD+Qt2Yp+Vvbz6hUiqIWSIH1BoHJer/JOq2/O6X3cmuppU4AdVNgy8Bq236iXvr MQIDAQAB -----END 公钥----- `</span>
+
+<span class="hljs-keyword">var</span> Pirvatekey = <span class="hljs-string">`-----BEGIN 私钥----- MIIEpAIBAAKCAQEAk+89V7vpOj1rG6bTAKYM56qmFLwNCBVDJ3MltVVtxVUUByqc 5b6u909MmmrLBqS//PWC6zc3wZzU1+ayh8xbUAEZuA3EjlPHIaFIVIz04RaW10+1 xnby/RQE23tDqsv9a2jv/axjE/27b62nzvCWeItu1kNQ3MGdcuqKjke+LKhQ7nWP RCOd/ffVqSuRvG0YfUEkOz/6UpsPr6vrI331hWRB4DlYy8qFUmDsyvvExe4NjZWb lXCqkEXRRAhi2SQRCl3teGuIHtDUxCskRIDiaMD+Qt2Yp+Vvbz6hUiqIWSIH1BoH Jer/JOq2/O6X3cmuppU4AdVNgy8Bq236iXvrMQIDAQABAoIBAQCCbxZvHMfvCeg+ YUD5+W63dMcq0QPMdLLZPbWpxMEclH8sMm5UQ2SRueGY5UBNg0WkC/R64BzRIS6p jkcrZQu95rp+heUgeM3C4SmdIwtmyzwEa8uiSY7Fhbkiq/Rly6aN5eB0kmJpZfa1 6S9kTszdTFNVp9TMUAo7IIE6IheT1x0WcX7aOWVqp9MDXBHV5T0Tvt8vFrPTldFg IuK45t3tr83tDcx53uC8cL5Ui8leWQjPh4BgdhJ3/MGTDWg+LW2vlAb4x+aLcDJM CH6Rcb1b8hs9iLTDkdVw9KirYQH5mbACXZyDEaqj1I2KamJIU2qDuTnKxNoc96HY 2XMuSndhAoGBAMPwJuPuZqioJfNyS99x++ZTcVVwGRAbEvTvh6jPSGA0k3cYKgWR NnssMkHBzZa0p3/NmSwWc7LiL8whEFUDAp2ntvfPVJ19Xvm71gNUyCQ/hojqIAXy tsNT1gBUTCMtFZmAkUsjqdM/hUnJMM9zH+w4lt5QM2y/YkCThoI65BVbAoGBAMFI GsIbnJDNhVap7HfWcYmGOlWgEEEchG6Uq6Lbai9T8c7xMSFc6DQiNMmQUAlgDaMV b6izPK4KGQaXMFt5h7hekZgkbxCKBd9xsLM72bWhM/nd/HkZdHQqrNAPFhY6/S8C IjRnRfdhsjBIA8K73yiUCsQlHAauGfPzdHET8ktjAoGAQdxeZi1DapuirhMUN9Zr kr8nkE1uz0AafiRpmC+cp2Hk05pWvapTAtIXTo0jWu38g3QLcYtWdqGa6WWPxNOP NIkkcmXJjmqO2yjtRg9gevazdSAlhXpRPpTWkSPEt+o2oXNa40PomK54UhYDhyeu akuXQsD4mCw4jXZJN0suUZMCgYAgzpBcKjulCH19fFI69RdIdJQqPIUFyEViT7Hi bsPTTLham+3u78oqLzQukmRDcx5ddCIDzIicMfKVf8whertivAqSfHytnf/pMW8A vUPy5G3iF5/nHj76CNRUbHsfQtv+wqnzoyPpHZgVQeQBhcoXJSm+qV3cdGjLU6OM HgqeaQKBgQCnmL5SX7GSAeB0rSNugPp2GezAQj0H4OCc8kNrHK8RUvXIU9B2zKA2 z/QUKFb1gIGcKxYr+LqQ25/+TGvINjuf6P3fVkHL0U8jOG0IqpPJXO3Vl9B8ewWL cFQVB/nQfmaMa4ChK0QEUe+Mqi++MwgYbRHx1lIOXEfUJO+PXrMekw== -----END 私钥----- `</span>
+
+
+<span class="hljs-keyword">func</span> main() {
+    <span class="hljs-comment">// 公钥加密私钥解密</span>
+    <span class="hljs-keyword">if</span> err := applyPubEPriD(); err != <span class="hljs-constant">nil</span> {
+        log.Println(err)
+    }
+    <span class="hljs-comment">// 公钥解密私钥加密</span>
+    <span class="hljs-keyword">if</span> err := applyPriEPubD(); err != <span class="hljs-constant">nil</span> {
+        log.Println(err)
+    }
+}
+
+<span class="hljs-comment">// 公钥加密私钥解密</span>
+<span class="hljs-keyword">func</span> applyPubEPriD() error {
+    pubenctypt, err := gorsa.PublicEncrypt(<span class="hljs-string">`hello world`</span>,Pubkey)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-constant">nil</span> {
+        <span class="hljs-keyword">return</span> err
+    }
+
+    pridecrypt, err := gorsa.PriKeyDecrypt(pubenctypt,Pirvatekey)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-constant">nil</span> {
+        <span class="hljs-keyword">return</span> err
+    }
+    <span class="hljs-keyword">if</span> <span class="hljs-typename">string</span>(pridecrypt) != <span class="hljs-string">`hello world`</span> {
+        <span class="hljs-keyword">return</span> errors.New(<span class="hljs-string">`解密失败`</span>)
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-constant">nil</span>
+}
+
+<span class="hljs-comment">// 公钥解密私钥加密</span>
+<span class="hljs-keyword">func</span> applyPriEPubD() error {
+    prienctypt, err := gorsa.PriKeyEncrypt(<span class="hljs-string">`hello world`</span>,Pirvatekey)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-constant">nil</span> {
+        <span class="hljs-keyword">return</span> err
+    }
+
+    pubdecrypt, err := gorsa.PublicDecrypt(prienctypt,Pubkey)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-constant">nil</span> {
+        <span class="hljs-keyword">return</span> err
+    }
+    <span class="hljs-keyword">if</span> <span class="hljs-typename">string</span>(pubdecrypt) != <span class="hljs-string">`hello world`</span> {
+        <span class="hljs-keyword">return</span> errors.New(<span class="hljs-string">`解密失败`</span>)
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-constant">nil</span>
+}
+</code></pre> 
+  <h2 id="3-总结">3 总结</h2> 
+  <p>RSA在软件开发中运用广泛,如果大家也遇到了<strong>Golang私钥加密公钥解密问题</strong>,欢迎大家使用gorsa扩展解决问题,欢迎大家收藏点赞!</p> 
+  <p>注:笔者能力有限有说的不对的地方希望大家能够指出,也希望多多交流!</p> 
+ </div> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/markdown_views-ea0013b516.css"> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/u011142688/article/details/79380129,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/u011142688/article/details/79380129,&quot;}">阅读更多</a> 
+</div>

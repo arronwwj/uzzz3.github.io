@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>web3.js 1.0部署合约 | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="web3.js 1.0部署合约" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Solidity 的编译 Solidity 的编译现在不能直接用 web3 这个包来编译了： var compiled = web3.eth.compile.solidity(contractSource) 以前可以这样用web3来编译，可是现在会报错：Returned error: Error: Method eth_compileSolidity not supported.&nbsp;原因是 web3 的 Solidity 编译器已经被移除了。替代方案：使用 solc 来编译 Solidity： const solc = require(&#39;solc&#39;) const solcOutput = solc.compile({sources: {main: contractSource}}, 1) 这样编译后的ABI存放在&nbsp;solcOutput.contracts[&#39;main:Greeting&#39;].interface&nbsp;中（假设合约名字叫Greeting）, 而编译后的字节码存放在&nbsp;solcOutput.contracts[&#39;main:Greeting&#39;].bytecode。 获取ETH账户地址 以前可以用&nbsp;web3.eth.accounts&nbsp;就可以直接获取到所有的地址的一个数组，然而现在必须要调用web3.eth.getAccounts()这个函数。而且需要注意的是这个函数是一个异步函数，返回的不是地址，而是一个Promise&lt;地址列表&gt;. 建议使用 async/await 来处理： const accountsList = await web3.eth.getAccounts() /* accountsList 是一个字符串数组（地址列表） [ &#39;0x055Ce03B2DE2e40e9dA322b6098378f5F6280A33&#39;, &#39;0x30B540058a8AF78c6b73CF2b72eA81B665280D0d&#39;, &#39;0x0B5baD78Ce6d3D1935fabd9C1AA2aA4F65317DCC&#39;, &#39;0x6B706d2058591C2Af396dbC539c30625f0BAD68F&#39;, &#39;0x52f581eCDd4522B7bA49b15C4E20B0a90aa31553&#39;, &#39;0x805F94503Fa8a3510a06636Fb62f6d9a6b6f7294&#39;, &#39;0xdD3598E8b4Bc232e9D966685bfFb2aa0F5A70E25&#39;, &#39;0x7246738dd4EbCd92fa4527A5521359b9560519E8&#39;, &#39;0x1B85A66ED4C0472A395594Dc865C1406d1859cF0&#39;, &#39;0xA6293d77DF43f6C4C106D047b8373194c1b55Ef9&#39; ] */ 发布合约 以前在&nbsp;web3.eth.compile.solidity()&nbsp;还能正常工作的时候，直接调用其返回值的&nbsp;new()&nbsp;方法就能发布合约了；然而现在要分成两步： 创建合约 发布合约 第一步，创建合约使用的是&nbsp;web3.eth.Contract&nbsp;这个类（注意大小写）。需要创建这个类的一个实例，比如： const myContact = new web3.eth.Contract(contractAbi, {data: contractBytecode}) 其中的&nbsp;contractBytecode&nbsp;是以16进制编码的合约字节码，即之前solc编译返回的solcOutput.contracts[&#39;main:Greeting&#39;].bytecode. 第二步，发布合约要调用&nbsp;myContact.deploy().send()。对于&nbsp;deploy()&nbsp;而言，如果你的合约的构造函数是带参数的，则调用&nbsp;deploy()&nbsp;函数一定要把参数带上 -- Solidity 不像 JavaScript 一样缺少的参数会容忍的。而调用&nbsp;send()&nbsp;的时候别忘了指定是从哪个地址扣费(from选项)，以及燃料多少(gas选项)。send()&nbsp;函数比较有意思的是，它返回的不光是一个&nbsp;Promise，还是一个&nbsp;EventEmiter，因而可以监听发布过程中的一些事件： transactionHash&nbsp;- 生成了交易hash的事件，一般只会触发一次 receipt&nbsp;- 合约已经打包到区块上了，一般只触发一次，这时就已经可以调用这个合约了 confirmation&nbsp;- 合约已经打包到区块链上并收到了确认，每次确认都会触发一次，最多到第24次确认 error&nbsp;- 发布合约失败 最后，本Demo中的 Greeting 合约而言就是这样来发布的： myContact.deploy({arguments: [&quot;Hello world!&quot;]}) // arguments will be passed to the contract&#39;s constructor .send({from: deployAddr, gas: gasEstimate * 10}) // send() returns a Promise &amp; EventEmit .on(&#39;transactionHash&#39;, function(transactionHash){ util.log(&quot;deploy transaction hash: &quot;, transactionHash) }) .on(&#39;receipt&#39;, function(receipt){ util.log(&quot;deploy receipt: &quot;, receipt) }) .on(&#39;confirmation&#39;, function(confirmationNum, receipt){ util.log(&quot;got confirmations number: &quot;, confirmationNum) }) .then(async function(myContactInstance){ util.log(&quot;deployed successfully.&quot;) util.log(&quot;now the addr %o balance is %o&quot;, deployAddr, await web3.eth.getBalance(deployAddr))" />
+<meta property="og:description" content="Solidity 的编译 Solidity 的编译现在不能直接用 web3 这个包来编译了： var compiled = web3.eth.compile.solidity(contractSource) 以前可以这样用web3来编译，可是现在会报错：Returned error: Error: Method eth_compileSolidity not supported.&nbsp;原因是 web3 的 Solidity 编译器已经被移除了。替代方案：使用 solc 来编译 Solidity： const solc = require(&#39;solc&#39;) const solcOutput = solc.compile({sources: {main: contractSource}}, 1) 这样编译后的ABI存放在&nbsp;solcOutput.contracts[&#39;main:Greeting&#39;].interface&nbsp;中（假设合约名字叫Greeting）, 而编译后的字节码存放在&nbsp;solcOutput.contracts[&#39;main:Greeting&#39;].bytecode。 获取ETH账户地址 以前可以用&nbsp;web3.eth.accounts&nbsp;就可以直接获取到所有的地址的一个数组，然而现在必须要调用web3.eth.getAccounts()这个函数。而且需要注意的是这个函数是一个异步函数，返回的不是地址，而是一个Promise&lt;地址列表&gt;. 建议使用 async/await 来处理： const accountsList = await web3.eth.getAccounts() /* accountsList 是一个字符串数组（地址列表） [ &#39;0x055Ce03B2DE2e40e9dA322b6098378f5F6280A33&#39;, &#39;0x30B540058a8AF78c6b73CF2b72eA81B665280D0d&#39;, &#39;0x0B5baD78Ce6d3D1935fabd9C1AA2aA4F65317DCC&#39;, &#39;0x6B706d2058591C2Af396dbC539c30625f0BAD68F&#39;, &#39;0x52f581eCDd4522B7bA49b15C4E20B0a90aa31553&#39;, &#39;0x805F94503Fa8a3510a06636Fb62f6d9a6b6f7294&#39;, &#39;0xdD3598E8b4Bc232e9D966685bfFb2aa0F5A70E25&#39;, &#39;0x7246738dd4EbCd92fa4527A5521359b9560519E8&#39;, &#39;0x1B85A66ED4C0472A395594Dc865C1406d1859cF0&#39;, &#39;0xA6293d77DF43f6C4C106D047b8373194c1b55Ef9&#39; ] */ 发布合约 以前在&nbsp;web3.eth.compile.solidity()&nbsp;还能正常工作的时候，直接调用其返回值的&nbsp;new()&nbsp;方法就能发布合约了；然而现在要分成两步： 创建合约 发布合约 第一步，创建合约使用的是&nbsp;web3.eth.Contract&nbsp;这个类（注意大小写）。需要创建这个类的一个实例，比如： const myContact = new web3.eth.Contract(contractAbi, {data: contractBytecode}) 其中的&nbsp;contractBytecode&nbsp;是以16进制编码的合约字节码，即之前solc编译返回的solcOutput.contracts[&#39;main:Greeting&#39;].bytecode. 第二步，发布合约要调用&nbsp;myContact.deploy().send()。对于&nbsp;deploy()&nbsp;而言，如果你的合约的构造函数是带参数的，则调用&nbsp;deploy()&nbsp;函数一定要把参数带上 -- Solidity 不像 JavaScript 一样缺少的参数会容忍的。而调用&nbsp;send()&nbsp;的时候别忘了指定是从哪个地址扣费(from选项)，以及燃料多少(gas选项)。send()&nbsp;函数比较有意思的是，它返回的不光是一个&nbsp;Promise，还是一个&nbsp;EventEmiter，因而可以监听发布过程中的一些事件： transactionHash&nbsp;- 生成了交易hash的事件，一般只会触发一次 receipt&nbsp;- 合约已经打包到区块上了，一般只触发一次，这时就已经可以调用这个合约了 confirmation&nbsp;- 合约已经打包到区块链上并收到了确认，每次确认都会触发一次，最多到第24次确认 error&nbsp;- 发布合约失败 最后，本Demo中的 Greeting 合约而言就是这样来发布的： myContact.deploy({arguments: [&quot;Hello world!&quot;]}) // arguments will be passed to the contract&#39;s constructor .send({from: deployAddr, gas: gasEstimate * 10}) // send() returns a Promise &amp; EventEmit .on(&#39;transactionHash&#39;, function(transactionHash){ util.log(&quot;deploy transaction hash: &quot;, transactionHash) }) .on(&#39;receipt&#39;, function(receipt){ util.log(&quot;deploy receipt: &quot;, receipt) }) .on(&#39;confirmation&#39;, function(confirmationNum, receipt){ util.log(&quot;got confirmations number: &quot;, confirmationNum) }) .then(async function(myContactInstance){ util.log(&quot;deployed successfully.&quot;) util.log(&quot;now the addr %o balance is %o&quot;, deployAddr, await web3.eth.getBalance(deployAddr))" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/06/01/web3.js-1.0%E9%83%A8%E7%BD%B2%E5%90%88%E7%BA%A6.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/06/01/web3.js-1.0%E9%83%A8%E7%BD%B2%E5%90%88%E7%BA%A6.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-06-01T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"Solidity 的编译 Solidity 的编译现在不能直接用 web3 这个包来编译了： var compiled = web3.eth.compile.solidity(contractSource) 以前可以这样用web3来编译，可是现在会报错：Returned error: Error: Method eth_compileSolidity not supported.&nbsp;原因是 web3 的 Solidity 编译器已经被移除了。替代方案：使用 solc 来编译 Solidity： const solc = require(&#39;solc&#39;) const solcOutput = solc.compile({sources: {main: contractSource}}, 1) 这样编译后的ABI存放在&nbsp;solcOutput.contracts[&#39;main:Greeting&#39;].interface&nbsp;中（假设合约名字叫Greeting）, 而编译后的字节码存放在&nbsp;solcOutput.contracts[&#39;main:Greeting&#39;].bytecode。 获取ETH账户地址 以前可以用&nbsp;web3.eth.accounts&nbsp;就可以直接获取到所有的地址的一个数组，然而现在必须要调用web3.eth.getAccounts()这个函数。而且需要注意的是这个函数是一个异步函数，返回的不是地址，而是一个Promise&lt;地址列表&gt;. 建议使用 async/await 来处理： const accountsList = await web3.eth.getAccounts() /* accountsList 是一个字符串数组（地址列表） [ &#39;0x055Ce03B2DE2e40e9dA322b6098378f5F6280A33&#39;, &#39;0x30B540058a8AF78c6b73CF2b72eA81B665280D0d&#39;, &#39;0x0B5baD78Ce6d3D1935fabd9C1AA2aA4F65317DCC&#39;, &#39;0x6B706d2058591C2Af396dbC539c30625f0BAD68F&#39;, &#39;0x52f581eCDd4522B7bA49b15C4E20B0a90aa31553&#39;, &#39;0x805F94503Fa8a3510a06636Fb62f6d9a6b6f7294&#39;, &#39;0xdD3598E8b4Bc232e9D966685bfFb2aa0F5A70E25&#39;, &#39;0x7246738dd4EbCd92fa4527A5521359b9560519E8&#39;, &#39;0x1B85A66ED4C0472A395594Dc865C1406d1859cF0&#39;, &#39;0xA6293d77DF43f6C4C106D047b8373194c1b55Ef9&#39; ] */ 发布合约 以前在&nbsp;web3.eth.compile.solidity()&nbsp;还能正常工作的时候，直接调用其返回值的&nbsp;new()&nbsp;方法就能发布合约了；然而现在要分成两步： 创建合约 发布合约 第一步，创建合约使用的是&nbsp;web3.eth.Contract&nbsp;这个类（注意大小写）。需要创建这个类的一个实例，比如： const myContact = new web3.eth.Contract(contractAbi, {data: contractBytecode}) 其中的&nbsp;contractBytecode&nbsp;是以16进制编码的合约字节码，即之前solc编译返回的solcOutput.contracts[&#39;main:Greeting&#39;].bytecode. 第二步，发布合约要调用&nbsp;myContact.deploy().send()。对于&nbsp;deploy()&nbsp;而言，如果你的合约的构造函数是带参数的，则调用&nbsp;deploy()&nbsp;函数一定要把参数带上 -- Solidity 不像 JavaScript 一样缺少的参数会容忍的。而调用&nbsp;send()&nbsp;的时候别忘了指定是从哪个地址扣费(from选项)，以及燃料多少(gas选项)。send()&nbsp;函数比较有意思的是，它返回的不光是一个&nbsp;Promise，还是一个&nbsp;EventEmiter，因而可以监听发布过程中的一些事件： transactionHash&nbsp;- 生成了交易hash的事件，一般只会触发一次 receipt&nbsp;- 合约已经打包到区块上了，一般只触发一次，这时就已经可以调用这个合约了 confirmation&nbsp;- 合约已经打包到区块链上并收到了确认，每次确认都会触发一次，最多到第24次确认 error&nbsp;- 发布合约失败 最后，本Demo中的 Greeting 合约而言就是这样来发布的： myContact.deploy({arguments: [&quot;Hello world!&quot;]}) // arguments will be passed to the contract&#39;s constructor .send({from: deployAddr, gas: gasEstimate * 10}) // send() returns a Promise &amp; EventEmit .on(&#39;transactionHash&#39;, function(transactionHash){ util.log(&quot;deploy transaction hash: &quot;, transactionHash) }) .on(&#39;receipt&#39;, function(receipt){ util.log(&quot;deploy receipt: &quot;, receipt) }) .on(&#39;confirmation&#39;, function(confirmationNum, receipt){ util.log(&quot;got confirmations number: &quot;, confirmationNum) }) .then(async function(myContactInstance){ util.log(&quot;deployed successfully.&quot;) util.log(&quot;now the addr %o balance is %o&quot;, deployAddr, await web3.eth.getBalance(deployAddr))","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/06/01/web3.js-1.0%E9%83%A8%E7%BD%B2%E5%90%88%E7%BA%A6.html","headline":"web3.js 1.0部署合约","dateModified":"2018-06-01T00:00:00+08:00","datePublished":"2018-06-01T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/06/01/web3.js-1.0%E9%83%A8%E7%BD%B2%E5%90%88%E7%BA%A6.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>web3.js 1.0部署合约</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <h1 class="entry-title" style="border:0px;vertical-align:baseline;clear:both;line-height:1.2;font-weight:normal;">Solidity 的编译</h1>
+  <div class="entry-content" style="border:0px;vertical-align:baseline;line-height:1.71429;color:rgb(68,68,68);font-family:Helvetica, Arial, sans-serif;background-color:rgb(255,255,255);">
+   <p style="font-size:14px;border:0px;vertical-align:baseline;line-height:1.71429;">Solidity 的编译现在不能直接用 web3 这个包来编译了：</p>
+   <pre class="line-numbers prism-highlight" style="border:1px solid rgb(237,237,237);vertical-align:baseline;color:rgb(102,102,102);font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:1.71429;"><code class="language-js hljs javascript" style="border:0px;vertical-align:baseline;background-color:rgb(240,240,240);color:rgb(68,68,68);font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;"><span class="hljs-keyword" style="border:0px;font-size:12px;vertical-align:baseline;font-weight:bold;">var</span> compiled = web3.eth.compile.solidity(contractSource)
+</code></pre>
+   <p style="font-size:14px;border:0px;vertical-align:baseline;line-height:1.71429;">以前可以这样用web3来编译，可是现在会报错：<code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">Returned error: Error: Method eth_compileSolidity not supported.</code>&nbsp;原因是 web3 的 Solidity 编译器已经被移除了。<br>替代方案：使用 solc 来编译 Solidity：</p>
+   <pre class="line-numbers prism-highlight" style="border:1px solid rgb(237,237,237);vertical-align:baseline;color:rgb(102,102,102);font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:1.71429;"><code class="language-js hljs javascript" style="border:0px;vertical-align:baseline;background-color:rgb(240,240,240);color:rgb(68,68,68);font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;"><span class="hljs-keyword" style="border:0px;font-size:12px;vertical-align:baseline;font-weight:bold;">const</span> solc = <span class="hljs-built_in" style="border:0px;font-size:12px;vertical-align:baseline;color:rgb(57,115,0);">require</span>(<span class="hljs-string" style="border:0px;font-size:12px;vertical-align:baseline;color:rgb(136,0,0);">'solc'</span>)
+<span class="hljs-keyword" style="border:0px;font-size:12px;vertical-align:baseline;font-weight:bold;">const</span> solcOutput = solc.compile({<span class="hljs-attr" style="border:0px;font-size:12px;vertical-align:baseline;">sources</span>: {<span class="hljs-attr" style="border:0px;font-size:12px;vertical-align:baseline;">main</span>: contractSource}}, <span class="hljs-number" style="border:0px;font-size:12px;vertical-align:baseline;color:rgb(136,0,0);">1</span>)
+</code></pre>
+   <p style="font-size:14px;border:0px;vertical-align:baseline;line-height:1.71429;">这样编译后的ABI存放在&nbsp;<code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">solcOutput.contracts['main:Greeting'].interface</code>&nbsp;中（假设合约名字叫<code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">Greeting</code>）, 而编译后的字节码存放在&nbsp;<code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">solcOutput.contracts['main:Greeting'].bytecode</code>。</p>
+   <h2 style="border:0px;vertical-align:baseline;clear:both;line-height:1.6;">获取ETH账户地址</h2>
+   <p style="font-size:14px;border:0px;vertical-align:baseline;line-height:1.71429;">以前可以用&nbsp;<code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">web3.eth.accounts</code>&nbsp;就可以直接获取到所有的地址的一个数组，然而现在必须要调用<code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">web3.eth.getAccounts()</code>这个函数。而且需要注意的是这个函数是一个异步函数，返回的不是地址，而是一个<code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">Promise&lt;地址列表&gt;</code>. 建议使用 async/await 来处理：</p>
+   <pre class="line-numbers prism-highlight" style="border:1px solid rgb(237,237,237);vertical-align:baseline;color:rgb(102,102,102);font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:1.71429;"><code class="language-js hljs javascript" style="border:0px;vertical-align:baseline;background-color:rgb(240,240,240);color:rgb(68,68,68);font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;"><span class="hljs-keyword" style="border:0px;font-size:12px;vertical-align:baseline;font-weight:bold;">const</span>  accountsList = <span class="hljs-keyword" style="border:0px;font-size:12px;vertical-align:baseline;font-weight:bold;">await</span> web3.eth.getAccounts()
+<span class="hljs-comment" style="border:0px;font-size:12px;vertical-align:baseline;color:rgb(136,136,136);">/* accountsList 是一个字符串数组（地址列表） [ '0x055Ce03B2DE2e40e9dA322b6098378f5F6280A33', '0x30B540058a8AF78c6b73CF2b72eA81B665280D0d', '0x0B5baD78Ce6d3D1935fabd9C1AA2aA4F65317DCC', '0x6B706d2058591C2Af396dbC539c30625f0BAD68F', '0x52f581eCDd4522B7bA49b15C4E20B0a90aa31553', '0x805F94503Fa8a3510a06636Fb62f6d9a6b6f7294', '0xdD3598E8b4Bc232e9D966685bfFb2aa0F5A70E25', '0x7246738dd4EbCd92fa4527A5521359b9560519E8', '0x1B85A66ED4C0472A395594Dc865C1406d1859cF0', '0xA6293d77DF43f6C4C106D047b8373194c1b55Ef9' ] */</span>
+</code></pre>
+   <h2 style="border:0px;vertical-align:baseline;clear:both;line-height:1.6;">发布合约</h2>
+   <p style="font-size:14px;border:0px;vertical-align:baseline;line-height:1.71429;">以前在&nbsp;<code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">web3.eth.compile.solidity()</code>&nbsp;还能正常工作的时候，直接调用其返回值的&nbsp;<code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">new()</code>&nbsp;方法就能发布合约了；然而现在要分成两步：</p>
+   <ol style="font-size:14px;border:0px;vertical-align:baseline;list-style-position:outside;line-height:1.71429;">
+    <li style="border:0px;vertical-align:baseline;">创建合约</li>
+    <li style="border:0px;vertical-align:baseline;">发布合约</li>
+   </ol>
+   <p style="font-size:14px;border:0px;vertical-align:baseline;line-height:1.71429;">第一步，创建合约使用的是&nbsp;<code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">web3.eth.Contract</code>&nbsp;这个类（注意大小写）。需要创建这个类的一个实例，比如：</p>
+   <pre class="line-numbers prism-highlight" style="border:1px solid rgb(237,237,237);vertical-align:baseline;color:rgb(102,102,102);font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:1.71429;"><code class="language-js hljs javascript" style="border:0px;vertical-align:baseline;background-color:rgb(240,240,240);color:rgb(68,68,68);font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;"><span class="hljs-keyword" style="border:0px;font-size:12px;vertical-align:baseline;font-weight:bold;">const</span> myContact = <span class="hljs-keyword" style="border:0px;font-size:12px;vertical-align:baseline;font-weight:bold;">new</span> web3.eth.Contract(contractAbi, {<span class="hljs-attr" style="border:0px;font-size:12px;vertical-align:baseline;">data</span>: contractBytecode})
+</code></pre>
+   <p style="font-size:14px;border:0px;vertical-align:baseline;line-height:1.71429;">其中的&nbsp;<code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">contractBytecode</code>&nbsp;是以16进制编码的合约字节码，即之前solc编译返回的<code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">solcOutput.contracts['main:Greeting'].bytecode</code>.</p>
+   <p style="font-size:14px;border:0px;vertical-align:baseline;line-height:1.71429;">第二步，发布合约要调用&nbsp;<code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">myContact.deploy().send()</code>。<br>对于&nbsp;<code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">deploy()</code>&nbsp;而言，如果你的合约的构造函数是带参数的，则调用&nbsp;<code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">deploy()</code>&nbsp;函数一定要把参数带上 -- Solidity 不像 JavaScript 一样缺少的参数会容忍的。<br>而调用&nbsp;<code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">send()</code>&nbsp;的时候别忘了指定是从哪个地址扣费(<code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">from</code>选项)，以及燃料多少(<code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">gas</code>选项)。<br><code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">send()</code>&nbsp;函数比较有意思的是，它返回的不光是一个&nbsp;<code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">Promise</code>，还是一个&nbsp;<code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">EventEmiter</code>，因而可以监听发布过程中的一些事件：</p>
+   <ul style="font-size:14px;border:0px;vertical-align:baseline;list-style-position:outside;line-height:1.71429;">
+    <li style="border:0px;vertical-align:baseline;"><code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">transactionHash</code>&nbsp;- 生成了交易hash的事件，一般只会触发一次</li>
+    <li style="border:0px;vertical-align:baseline;"><code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">receipt</code>&nbsp;- 合约已经打包到区块上了，一般只触发一次，这时就已经可以调用这个合约了</li>
+    <li style="border:0px;vertical-align:baseline;"><code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">confirmation</code>&nbsp;- 合约已经打包到区块链上并收到了确认，每次确认都会触发一次，最多到第24次确认</li>
+    <li style="border:0px;vertical-align:baseline;"><code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">error</code>&nbsp;- 发布合约失败</li>
+   </ul>
+   <p style="font-size:14px;border:0px;vertical-align:baseline;line-height:1.71429;">最后，本Demo中的 Greeting 合约而言就是这样来发布的：</p>
+   <pre class="line-numbers prism-highlight" style="border:1px solid rgb(237,237,237);vertical-align:baseline;color:rgb(102,102,102);font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:1.71429;"><code class="language-js hljs javascript" style="border:0px;vertical-align:baseline;background-color:rgb(240,240,240);color:rgb(68,68,68);font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">myContact.deploy({<span class="hljs-attr" style="border:0px;font-size:12px;vertical-align:baseline;">arguments</span>: [<span class="hljs-string" style="border:0px;font-size:12px;vertical-align:baseline;color:rgb(136,0,0);">"Hello world!"</span>]}) <span class="hljs-comment" style="border:0px;font-size:12px;vertical-align:baseline;color:rgb(136,136,136);">// arguments will be passed to the contract's constructor</span>
+            .send({<span class="hljs-attr" style="border:0px;font-size:12px;vertical-align:baseline;">from</span>: deployAddr, <span class="hljs-attr" style="border:0px;font-size:12px;vertical-align:baseline;">gas</span>: gasEstimate * <span class="hljs-number" style="border:0px;font-size:12px;vertical-align:baseline;color:rgb(136,0,0);">10</span>}) <span class="hljs-comment" style="border:0px;font-size:12px;vertical-align:baseline;color:rgb(136,136,136);">// send() returns a Promise &amp; EventEmit</span>
+            .on(<span class="hljs-string" style="border:0px;font-size:12px;vertical-align:baseline;color:rgb(136,0,0);">'transactionHash'</span>, <span class="hljs-function" style="border:0px;font-size:12px;vertical-align:baseline;"><span class="hljs-keyword" style="border:0px;vertical-align:baseline;font-weight:bold;">function</span>(<span class="hljs-params" style="border:0px;vertical-align:baseline;">transactionHash</span>)</span>{
+                util.log(<span class="hljs-string" style="border:0px;font-size:12px;vertical-align:baseline;color:rgb(136,0,0);">"deploy transaction hash: "</span>, transactionHash)
+            })
+            .on(<span class="hljs-string" style="border:0px;font-size:12px;vertical-align:baseline;color:rgb(136,0,0);">'receipt'</span>, <span class="hljs-function" style="border:0px;font-size:12px;vertical-align:baseline;"><span class="hljs-keyword" style="border:0px;vertical-align:baseline;font-weight:bold;">function</span>(<span class="hljs-params" style="border:0px;vertical-align:baseline;">receipt</span>)</span>{
+                util.log(<span class="hljs-string" style="border:0px;font-size:12px;vertical-align:baseline;color:rgb(136,0,0);">"deploy receipt: "</span>, receipt)
+            })
+            .on(<span class="hljs-string" style="border:0px;font-size:12px;vertical-align:baseline;color:rgb(136,0,0);">'confirmation'</span>, <span class="hljs-function" style="border:0px;font-size:12px;vertical-align:baseline;"><span class="hljs-keyword" style="border:0px;vertical-align:baseline;font-weight:bold;">function</span>(<span class="hljs-params" style="border:0px;vertical-align:baseline;">confirmationNum, receipt</span>)</span>{
+                util.log(<span class="hljs-string" style="border:0px;font-size:12px;vertical-align:baseline;color:rgb(136,0,0);">"got confirmations number: "</span>, confirmationNum)
+            })
+            .then(<span class="hljs-keyword" style="border:0px;font-size:12px;vertical-align:baseline;font-weight:bold;">async</span> <span class="hljs-function" style="border:0px;font-size:12px;vertical-align:baseline;"><span class="hljs-keyword" style="border:0px;vertical-align:baseline;font-weight:bold;">function</span>(<span class="hljs-params" style="border:0px;vertical-align:baseline;">myContactInstance</span>)</span>{
+                util.log(<span class="hljs-string" style="border:0px;font-size:12px;vertical-align:baseline;color:rgb(136,0,0);">"deployed successfully."</span>)
+                util.log(<span class="hljs-string" style="border:0px;font-size:12px;vertical-align:baseline;color:rgb(136,0,0);">"now the addr %o balance is %o"</span>, deployAddr, <span class="hljs-keyword" style="border:0px;font-size:12px;vertical-align:baseline;font-weight:bold;">await</span> web3.eth.getBalance(deployAddr))
+
+                testContact(myContactInstance)
+            })
+            .catch(<span class="hljs-function" style="border:0px;font-size:12px;vertical-align:baseline;"><span class="hljs-params" style="border:0px;vertical-align:baseline;">err</span> =&gt;</span> {
+                util.log(<span class="hljs-string" style="border:0px;font-size:12px;vertical-align:baseline;color:rgb(136,0,0);">"Error: failed to deploy, detail:"</span>, err)
+            })
+</code></pre>
+   <h2 style="border:0px;vertical-align:baseline;clear:both;line-height:1.6;">gasEstimate为什么要乘以10？</h2>
+   <p style="font-size:14px;border:0px;vertical-align:baseline;line-height:1.71429;">一定要记得&nbsp;<code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">web3.eth.estimateGas()</code>&nbsp;返回的 gas 的数量只是一个估计值，建议实际调用的时候要多加点 gas -- 比如像我一样乘以10，以免gas不够就尴尬了。</p>
+   <h2 style="border:0px;vertical-align:baseline;clear:both;line-height:1.6;">调用合约</h2>
+   <p style="font-size:14px;border:0px;vertical-align:baseline;line-height:1.71429;">以前的合约的方法就直接在合约实例上，所以直接调用就行了，如<code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">myContactInstance.greet.call({from:xxxAddr})</code>；但是现在合约的方法在<code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">.methods</code>里面，即要这样调用：<code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">myContactInstance.methods.greet().call({from: testAddr})</code>.</p>
+   <p style="font-size:14px;border:0px;vertical-align:baseline;line-height:1.71429;">调用合约的时候有两种方式，以前是分<code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">.call()</code>和<code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">.sendTransaction()</code>，现在是<code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">.call()</code>和<code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">.send()</code>. 其中前者(<code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">.call()</code>)适用于&nbsp;<code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">constant</code>&nbsp;类型的方法，而后者(<code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">.send()</code>)适用于其他方法（有交易或会修改storage的方法）。</p>
+   <p style="font-size:14px;border:0px;vertical-align:baseline;line-height:1.71429;"><code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">.call()</code>的返回值（Promise解决后）就是合约方法的返回值，然而<code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">.send()</code>的返回值（Promise解决后）是这次交易的信息，包括transactionHash和blockHash等 -- 即使在 Solidity 中有返回值也将被忽略。所以，非&nbsp;<code style="border:0px;vertical-align:baseline;font-family:Consolas, Monaco, 'Lucida Console', monospace;line-height:2;">constant</code>&nbsp;类型的方法建议不要有返回值，出错了就直接抛异常挂掉；如果真的想返回什么，建议通过事件的方式来通知调用者。</p>
+   <p style="border:0px;vertical-align:baseline;line-height:1.71429;"></p>
+   <p style="border:0px;vertical-align:baseline;clear:both;line-height:1.6;color:rgb(68,68,68);font-family:Helvetica, Arial, sans-serif;background-color:rgb(255,255,255);"><span>转载自：</span><span style="font-size:18px;">初探ETH智能合约 — Solidity开发部署踩坑记</span></p>
+   <p style="border:0px;vertical-align:baseline;clear:both;line-height:1.6;color:rgb(68,68,68);font-family:Helvetica, Arial, sans-serif;background-color:rgb(255,255,255);">https://www.clarencep.com/2018/03/28/eth-smart-contract-solidity-develop-and-deploy-demo/</p>
+   <p style="border:0px;vertical-align:baseline;clear:both;line-height:1.6;color:rgb(68,68,68);font-family:Helvetica, Arial, sans-serif;background-color:rgb(255,255,255);">完整的demo等见原文；</p>
+   <br>
+  </div> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/xiaohei5194/article/details/80535574,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/xiaohei5194/article/details/80535574,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

@@ -1,0 +1,834 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>如何使用 Java 语言为 Hyperledger Fabric 编写区块链链代码智能合约 | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="如何使用 Java 语言为 Hyperledger Fabric 编写区块链链代码智能合约" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="面向 Java 开发人员的链代码简介 您或许听说过区块链，但可能不确定它对 Java™ 开发人员有何用。本教程将帮助大家解惑。我将分步展示如何使用 Hyperledger Fabric v0.6 来构建、运行和执行使用 Java 语言编写的智能合约或链代码。您将安装一些工具，定义本地区块链网络，构建并运行一个链代码智能合约。 有关区块链的概述，请参阅 developerWorks 博客中的 “区块链是什么？分布式账本技术入门”。 前提条件 本教程假设您满足以下前提条件： 听说过区块链或 Hyperledger Fabric 框架 拥有中等水平的 Java 编程知识，以及使用该语言和平台的经验 熟悉或（最好）精通使用： Eclipse IDE Docker 和 Docker Compose Gradle Linux 命令行 SoapUI 或另一种 HTTP 客户端软件，比如 Postman 您还应该能够在最少的指导下在计算机上安装软件。由于篇幅所限，我不会介绍所有必要软件的详细安装说明；为您提供软件的网站应该提供了安装说明。 深入介绍本教程之前，我想简单说说区块链。 区块链基础 尽管关于区块链存在大量炒作，但它确实物有所值。该技术不仅本身很有趣，而且它是颠覆性的，有潜力彻底变革互联网上的业务执行方式。 如何变革？让我们来想想一次成功的业务交易的基本属性： 信任：我们达成了协议，但我能够真的相信您会遵守它（或尊重我）吗？ 透明性：允许查看 “幕后情况”（这既能建立信任，又能减少对信任的需求）。 责任性：用来定义确定所有各方是否都认为该协议得以遵守的条件。 两方或多方之间的任何业务关系的健康程度对应于上述 3 种属性的不同级别（例如，更信任意味着需要的透明度更少，反之亦然），但其中一些属性必须存在，否则就会出现问题。 “区块链技术正被快速应用到您身边的软件开发项目中。您准备好了吗？” 区块链有何帮助？首先，通过使用通用框架，业务合作伙伴可以提前建立一个信任网络。然后，通过使用对所有交易方可见的账本，区块链提供了透明性。最后，通过采用所有各方的一致意见（使用智能合约或链代码的形式），建立了责任制。 这对 Java 开发人员有何意义？ Hyperledger 社区和 Hyperledger Fabric 的快速发展，意味着区块链技术正快速被应用到您身边的软件开发项目中。您准备好了吗？ 区块链技术发展形势 有时，开发技术可能会妨碍业务问题的解决。本教程的主要目的是展示如何编写 Java 链代码，所以我选择了最简单的开发技术组合来实现此目的。 也就是说，该组合中的组件还有其他选择。在本教程中，我将使用 Docker 作为网络容器环境，而另一个选择是带 VirtualBox 的 Vagrant。如果从未使用过 Vagrant，您至少应该尝试一下。 Docker 是一个容器环境，而 Vagrant 使用了虚拟化。在与 VirtualBox 结合使用时，虚拟化环境对计算环境进行了不同程度的控制，这一点备受一些开发人员的青睐（使其成为 fabric 开发人员的理想选择）。 如果想进一步了解容器化与虚拟化孰优孰劣，请参阅 developerWorks 博客上的 “Docker 是什么？容器对应用程序有哪些好处的简介”。 如果开发人员只想编写代码，而不必担心容器、虚拟化或任何基础架构，那么可以选择 IBM® Bluemix®。尽管 Bluemix 支持运行完整的 IBM 区块链网络，但它目前还不支持使用 Java 语言开发链代码。预计此情况很快就会发生变化，所以请时刻关注。 如果在您的印象中，区块链技术当时的发展情况非常不稳定，您是对的。但是，这意味着您在恰当的时机（从一开始）就开始接触区块链和链代码。随着该技术发展成熟，您早期阶段学习该技术的投资将会不断得到丰厚的回报。 区块链是能够彻底改变每个人的业务执行方式的颠覆式技术之一。这类技术不仅包括 B2B，还包括 B2C，甚至还有 C2C。这的确是一个非常激动人心的时刻。 让我们开始吧！ 设置开发环境 要运行链代码，首先需要设置开发环境。 完成本节后，您就可以运行一个 Hyperledger Java 链代码示例了，在该示例中，您将在真实链代码上部署和调用交易。然后，我将展示如何（几乎）从头编写一个新链代码程序。 在本节中，您将： 设置网络环境 — 用于运行您的本地区块链网络。 安装构建软件 — 用于构建您的链代码。 安装一个 HTTP 客户端 — 用于在您的链代码上调用交易。 启动区块链网络。 构建 Java shim 客户端 JAR。 实话说，要编写链代码，有许多设置工作要做。但是，如果您按照这些说明进行操作并稍微勤奋一点，您的付出将是值得的。 1.设置网络环境 本教程将使用 Docker 以及来自 Docker Hub 的预构建区块链网络组件镜像来运行本地区块链网络。如果愿意的话，可以从头构建 fabric（毕竟它是开源的），但在此阶段，使用 Docker Hub 中提供的预构建的 Hyperledger Fabric 镜像更容易一些。 我在介绍中已经提到过，另一个选择（您可能在 Hyperledger 文档中看到过）是使用 Vagrant 和 VirtualBox。Vagrant 是 fabric 开发人员的一个不错选择，但作为链代码开发人员，与处理 fabric 本身相比，我们更关心链代码的构建、运行和测试。 如果已经安装 Docker 1.12 版或更高版本，可以跳到下一节（“安装构建软件”）。在下面的操作说明中，假设您尚未安装 Docker（也就是说，您不是从以前的 Docker 版本进行升级）。安装 Docker 的过程中也会安装 Docker Compose，该工具用于定义和运行需要多个容器的应用程序，比如本教程中将运行的本地 Hyperledger 区块链网络。 安装 Docker 可在这里找到针对 Mac、Windows 和 Linux 的安装说明： 将 Docker 安装在 Mac、Windows 和 Linux 上 验证 Docker 安装 要测试 Docker 安装，可打开一个终端窗口（或 Windows 上的命令提示符）并键入以下命令： docker -v docker-compose -v 您会获得以下输出： $ docker -v Docker version 1.13.1, build 092cba3 $ docker-compose -v docker-compose version 1.11.1, build 7c5d5e4 如果想查看 Docker 的实际运行效果，您可运行 hello-world 镜像，如下所示： $ docker run hello-world Unable to find image &#39;hello-world:latest&#39; locally latest: Pulling from library/hello-world 78445dd45222: Pull complete Digest: sha256:c5515758d4c5e1e838e9cd307f6c6a0d620b5e07e6f927b07d05f6d12a1ac8d7 Status: Downloaded newer image for hello-world:latest" />
+<meta property="og:description" content="面向 Java 开发人员的链代码简介 您或许听说过区块链，但可能不确定它对 Java™ 开发人员有何用。本教程将帮助大家解惑。我将分步展示如何使用 Hyperledger Fabric v0.6 来构建、运行和执行使用 Java 语言编写的智能合约或链代码。您将安装一些工具，定义本地区块链网络，构建并运行一个链代码智能合约。 有关区块链的概述，请参阅 developerWorks 博客中的 “区块链是什么？分布式账本技术入门”。 前提条件 本教程假设您满足以下前提条件： 听说过区块链或 Hyperledger Fabric 框架 拥有中等水平的 Java 编程知识，以及使用该语言和平台的经验 熟悉或（最好）精通使用： Eclipse IDE Docker 和 Docker Compose Gradle Linux 命令行 SoapUI 或另一种 HTTP 客户端软件，比如 Postman 您还应该能够在最少的指导下在计算机上安装软件。由于篇幅所限，我不会介绍所有必要软件的详细安装说明；为您提供软件的网站应该提供了安装说明。 深入介绍本教程之前，我想简单说说区块链。 区块链基础 尽管关于区块链存在大量炒作，但它确实物有所值。该技术不仅本身很有趣，而且它是颠覆性的，有潜力彻底变革互联网上的业务执行方式。 如何变革？让我们来想想一次成功的业务交易的基本属性： 信任：我们达成了协议，但我能够真的相信您会遵守它（或尊重我）吗？ 透明性：允许查看 “幕后情况”（这既能建立信任，又能减少对信任的需求）。 责任性：用来定义确定所有各方是否都认为该协议得以遵守的条件。 两方或多方之间的任何业务关系的健康程度对应于上述 3 种属性的不同级别（例如，更信任意味着需要的透明度更少，反之亦然），但其中一些属性必须存在，否则就会出现问题。 “区块链技术正被快速应用到您身边的软件开发项目中。您准备好了吗？” 区块链有何帮助？首先，通过使用通用框架，业务合作伙伴可以提前建立一个信任网络。然后，通过使用对所有交易方可见的账本，区块链提供了透明性。最后，通过采用所有各方的一致意见（使用智能合约或链代码的形式），建立了责任制。 这对 Java 开发人员有何意义？ Hyperledger 社区和 Hyperledger Fabric 的快速发展，意味着区块链技术正快速被应用到您身边的软件开发项目中。您准备好了吗？ 区块链技术发展形势 有时，开发技术可能会妨碍业务问题的解决。本教程的主要目的是展示如何编写 Java 链代码，所以我选择了最简单的开发技术组合来实现此目的。 也就是说，该组合中的组件还有其他选择。在本教程中，我将使用 Docker 作为网络容器环境，而另一个选择是带 VirtualBox 的 Vagrant。如果从未使用过 Vagrant，您至少应该尝试一下。 Docker 是一个容器环境，而 Vagrant 使用了虚拟化。在与 VirtualBox 结合使用时，虚拟化环境对计算环境进行了不同程度的控制，这一点备受一些开发人员的青睐（使其成为 fabric 开发人员的理想选择）。 如果想进一步了解容器化与虚拟化孰优孰劣，请参阅 developerWorks 博客上的 “Docker 是什么？容器对应用程序有哪些好处的简介”。 如果开发人员只想编写代码，而不必担心容器、虚拟化或任何基础架构，那么可以选择 IBM® Bluemix®。尽管 Bluemix 支持运行完整的 IBM 区块链网络，但它目前还不支持使用 Java 语言开发链代码。预计此情况很快就会发生变化，所以请时刻关注。 如果在您的印象中，区块链技术当时的发展情况非常不稳定，您是对的。但是，这意味着您在恰当的时机（从一开始）就开始接触区块链和链代码。随着该技术发展成熟，您早期阶段学习该技术的投资将会不断得到丰厚的回报。 区块链是能够彻底改变每个人的业务执行方式的颠覆式技术之一。这类技术不仅包括 B2B，还包括 B2C，甚至还有 C2C。这的确是一个非常激动人心的时刻。 让我们开始吧！ 设置开发环境 要运行链代码，首先需要设置开发环境。 完成本节后，您就可以运行一个 Hyperledger Java 链代码示例了，在该示例中，您将在真实链代码上部署和调用交易。然后，我将展示如何（几乎）从头编写一个新链代码程序。 在本节中，您将： 设置网络环境 — 用于运行您的本地区块链网络。 安装构建软件 — 用于构建您的链代码。 安装一个 HTTP 客户端 — 用于在您的链代码上调用交易。 启动区块链网络。 构建 Java shim 客户端 JAR。 实话说，要编写链代码，有许多设置工作要做。但是，如果您按照这些说明进行操作并稍微勤奋一点，您的付出将是值得的。 1.设置网络环境 本教程将使用 Docker 以及来自 Docker Hub 的预构建区块链网络组件镜像来运行本地区块链网络。如果愿意的话，可以从头构建 fabric（毕竟它是开源的），但在此阶段，使用 Docker Hub 中提供的预构建的 Hyperledger Fabric 镜像更容易一些。 我在介绍中已经提到过，另一个选择（您可能在 Hyperledger 文档中看到过）是使用 Vagrant 和 VirtualBox。Vagrant 是 fabric 开发人员的一个不错选择，但作为链代码开发人员，与处理 fabric 本身相比，我们更关心链代码的构建、运行和测试。 如果已经安装 Docker 1.12 版或更高版本，可以跳到下一节（“安装构建软件”）。在下面的操作说明中，假设您尚未安装 Docker（也就是说，您不是从以前的 Docker 版本进行升级）。安装 Docker 的过程中也会安装 Docker Compose，该工具用于定义和运行需要多个容器的应用程序，比如本教程中将运行的本地 Hyperledger 区块链网络。 安装 Docker 可在这里找到针对 Mac、Windows 和 Linux 的安装说明： 将 Docker 安装在 Mac、Windows 和 Linux 上 验证 Docker 安装 要测试 Docker 安装，可打开一个终端窗口（或 Windows 上的命令提示符）并键入以下命令： docker -v docker-compose -v 您会获得以下输出： $ docker -v Docker version 1.13.1, build 092cba3 $ docker-compose -v docker-compose version 1.11.1, build 7c5d5e4 如果想查看 Docker 的实际运行效果，您可运行 hello-world 镜像，如下所示： $ docker run hello-world Unable to find image &#39;hello-world:latest&#39; locally latest: Pulling from library/hello-world 78445dd45222: Pull complete Digest: sha256:c5515758d4c5e1e838e9cd307f6c6a0d620b5e07e6f927b07d05f6d12a1ac8d7 Status: Downloaded newer image for hello-world:latest" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/05/21/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8-Java-%E8%AF%AD%E8%A8%80%E4%B8%BA-Hyperledger-Fabric-%E7%BC%96%E5%86%99%E5%8C%BA%E5%9D%97%E9%93%BE%E9%93%BE%E4%BB%A3%E7%A0%81%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/05/21/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8-Java-%E8%AF%AD%E8%A8%80%E4%B8%BA-Hyperledger-Fabric-%E7%BC%96%E5%86%99%E5%8C%BA%E5%9D%97%E9%93%BE%E9%93%BE%E4%BB%A3%E7%A0%81%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-05-21T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"面向 Java 开发人员的链代码简介 您或许听说过区块链，但可能不确定它对 Java™ 开发人员有何用。本教程将帮助大家解惑。我将分步展示如何使用 Hyperledger Fabric v0.6 来构建、运行和执行使用 Java 语言编写的智能合约或链代码。您将安装一些工具，定义本地区块链网络，构建并运行一个链代码智能合约。 有关区块链的概述，请参阅 developerWorks 博客中的 “区块链是什么？分布式账本技术入门”。 前提条件 本教程假设您满足以下前提条件： 听说过区块链或 Hyperledger Fabric 框架 拥有中等水平的 Java 编程知识，以及使用该语言和平台的经验 熟悉或（最好）精通使用： Eclipse IDE Docker 和 Docker Compose Gradle Linux 命令行 SoapUI 或另一种 HTTP 客户端软件，比如 Postman 您还应该能够在最少的指导下在计算机上安装软件。由于篇幅所限，我不会介绍所有必要软件的详细安装说明；为您提供软件的网站应该提供了安装说明。 深入介绍本教程之前，我想简单说说区块链。 区块链基础 尽管关于区块链存在大量炒作，但它确实物有所值。该技术不仅本身很有趣，而且它是颠覆性的，有潜力彻底变革互联网上的业务执行方式。 如何变革？让我们来想想一次成功的业务交易的基本属性： 信任：我们达成了协议，但我能够真的相信您会遵守它（或尊重我）吗？ 透明性：允许查看 “幕后情况”（这既能建立信任，又能减少对信任的需求）。 责任性：用来定义确定所有各方是否都认为该协议得以遵守的条件。 两方或多方之间的任何业务关系的健康程度对应于上述 3 种属性的不同级别（例如，更信任意味着需要的透明度更少，反之亦然），但其中一些属性必须存在，否则就会出现问题。 “区块链技术正被快速应用到您身边的软件开发项目中。您准备好了吗？” 区块链有何帮助？首先，通过使用通用框架，业务合作伙伴可以提前建立一个信任网络。然后，通过使用对所有交易方可见的账本，区块链提供了透明性。最后，通过采用所有各方的一致意见（使用智能合约或链代码的形式），建立了责任制。 这对 Java 开发人员有何意义？ Hyperledger 社区和 Hyperledger Fabric 的快速发展，意味着区块链技术正快速被应用到您身边的软件开发项目中。您准备好了吗？ 区块链技术发展形势 有时，开发技术可能会妨碍业务问题的解决。本教程的主要目的是展示如何编写 Java 链代码，所以我选择了最简单的开发技术组合来实现此目的。 也就是说，该组合中的组件还有其他选择。在本教程中，我将使用 Docker 作为网络容器环境，而另一个选择是带 VirtualBox 的 Vagrant。如果从未使用过 Vagrant，您至少应该尝试一下。 Docker 是一个容器环境，而 Vagrant 使用了虚拟化。在与 VirtualBox 结合使用时，虚拟化环境对计算环境进行了不同程度的控制，这一点备受一些开发人员的青睐（使其成为 fabric 开发人员的理想选择）。 如果想进一步了解容器化与虚拟化孰优孰劣，请参阅 developerWorks 博客上的 “Docker 是什么？容器对应用程序有哪些好处的简介”。 如果开发人员只想编写代码，而不必担心容器、虚拟化或任何基础架构，那么可以选择 IBM® Bluemix®。尽管 Bluemix 支持运行完整的 IBM 区块链网络，但它目前还不支持使用 Java 语言开发链代码。预计此情况很快就会发生变化，所以请时刻关注。 如果在您的印象中，区块链技术当时的发展情况非常不稳定，您是对的。但是，这意味着您在恰当的时机（从一开始）就开始接触区块链和链代码。随着该技术发展成熟，您早期阶段学习该技术的投资将会不断得到丰厚的回报。 区块链是能够彻底改变每个人的业务执行方式的颠覆式技术之一。这类技术不仅包括 B2B，还包括 B2C，甚至还有 C2C。这的确是一个非常激动人心的时刻。 让我们开始吧！ 设置开发环境 要运行链代码，首先需要设置开发环境。 完成本节后，您就可以运行一个 Hyperledger Java 链代码示例了，在该示例中，您将在真实链代码上部署和调用交易。然后，我将展示如何（几乎）从头编写一个新链代码程序。 在本节中，您将： 设置网络环境 — 用于运行您的本地区块链网络。 安装构建软件 — 用于构建您的链代码。 安装一个 HTTP 客户端 — 用于在您的链代码上调用交易。 启动区块链网络。 构建 Java shim 客户端 JAR。 实话说，要编写链代码，有许多设置工作要做。但是，如果您按照这些说明进行操作并稍微勤奋一点，您的付出将是值得的。 1.设置网络环境 本教程将使用 Docker 以及来自 Docker Hub 的预构建区块链网络组件镜像来运行本地区块链网络。如果愿意的话，可以从头构建 fabric（毕竟它是开源的），但在此阶段，使用 Docker Hub 中提供的预构建的 Hyperledger Fabric 镜像更容易一些。 我在介绍中已经提到过，另一个选择（您可能在 Hyperledger 文档中看到过）是使用 Vagrant 和 VirtualBox。Vagrant 是 fabric 开发人员的一个不错选择，但作为链代码开发人员，与处理 fabric 本身相比，我们更关心链代码的构建、运行和测试。 如果已经安装 Docker 1.12 版或更高版本，可以跳到下一节（“安装构建软件”）。在下面的操作说明中，假设您尚未安装 Docker（也就是说，您不是从以前的 Docker 版本进行升级）。安装 Docker 的过程中也会安装 Docker Compose，该工具用于定义和运行需要多个容器的应用程序，比如本教程中将运行的本地 Hyperledger 区块链网络。 安装 Docker 可在这里找到针对 Mac、Windows 和 Linux 的安装说明： 将 Docker 安装在 Mac、Windows 和 Linux 上 验证 Docker 安装 要测试 Docker 安装，可打开一个终端窗口（或 Windows 上的命令提示符）并键入以下命令： docker -v docker-compose -v 您会获得以下输出： $ docker -v Docker version 1.13.1, build 092cba3 $ docker-compose -v docker-compose version 1.11.1, build 7c5d5e4 如果想查看 Docker 的实际运行效果，您可运行 hello-world 镜像，如下所示： $ docker run hello-world Unable to find image &#39;hello-world:latest&#39; locally latest: Pulling from library/hello-world 78445dd45222: Pull complete Digest: sha256:c5515758d4c5e1e838e9cd307f6c6a0d620b5e07e6f927b07d05f6d12a1ac8d7 Status: Downloaded newer image for hello-world:latest","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/05/21/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8-Java-%E8%AF%AD%E8%A8%80%E4%B8%BA-Hyperledger-Fabric-%E7%BC%96%E5%86%99%E5%8C%BA%E5%9D%97%E9%93%BE%E9%93%BE%E4%BB%A3%E7%A0%81%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6.html","headline":"如何使用 Java 语言为 Hyperledger Fabric 编写区块链链代码智能合约","dateModified":"2018-05-21T00:00:00+08:00","datePublished":"2018-05-21T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/05/21/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8-Java-%E8%AF%AD%E8%A8%80%E4%B8%BA-Hyperledger-Fabric-%E7%BC%96%E5%86%99%E5%8C%BA%E5%9D%97%E9%93%BE%E9%93%BE%E4%BB%A3%E7%A0%81%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>如何使用 Java 语言为 Hyperledger Fabric 编写区块链链代码智能合约</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div class="markdown_views"> 
+  <h3 id="面向-java-开发人员的链代码简介">面向 Java 开发人员的链代码简介</h3> 
+  <p>您或许听说过区块链，但可能不确定它对 Java™ 开发人员有何用。本教程将帮助大家解惑。我将分步展示如何使用 Hyperledger Fabric v0.6 来构建、运行和执行使用 Java 语言编写的智能合约或链代码。您将安装一些工具，定义本地区块链网络，构建并运行一个链代码智能合约。</p> 
+  <p>有关区块链的概述，请参阅 developerWorks 博客中的 “<a href="https://www.ibm.com/developerworks/community/blogs/3302cc3b-074e-44da-90b1-5055f1dc0d9c/entry/what-is-blockchain-hyperledger-fabric-distributed-ledger?lang=zh" rel="nofollow">区块链是什么？分布式账本技术入门</a>”。</p> 
+  <h3 id="前提条件">前提条件</h3> 
+  <p>本教程假设您满足以下前提条件：</p> 
+  <ul> 
+   <li>听说过区块链或 Hyperledger Fabric 框架</li> 
+   <li>拥有中等水平的 Java 编程知识，以及使用该语言和平台的经验</li> 
+   <li>熟悉或（最好）精通使用： <br> 
+    <ul>
+     <li>Eclipse IDE</li> 
+     <li>Docker 和 Docker Compose</li> 
+     <li>Gradle</li> 
+     <li>Linux 命令行</li> 
+     <li>SoapUI 或另一种 HTTP 客户端软件，比如 Postman</li>
+    </ul></li> 
+  </ul> 
+  <p>您还应该能够在最少的指导下在计算机上安装软件。由于篇幅所限，我不会介绍所有必要软件的详细安装说明；为您提供软件的网站应该提供了安装说明。</p> 
+  <p>深入介绍本教程之前，我想简单说说区块链。</p> 
+  <h3 id="区块链基础">区块链基础</h3> 
+  <p>尽管关于区块链存在大量炒作，但它确实物有所值。该技术不仅本身很有趣，而且它是颠覆性的，有潜力彻底变革互联网上的业务执行方式。</p> 
+  <p>如何变革？让我们来想想一次成功的业务交易的基本属性：</p> 
+  <ul> 
+   <li>信任：我们达成了协议，但我能够真的相信您会遵守它（或尊重我）吗？</li> 
+   <li>透明性：允许查看 “幕后情况”（这既能建立信任，又能减少对信任的需求）。</li> 
+   <li>责任性：用来定义确定所有各方是否都认为该协议得以遵守的条件。 <br> 两方或多方之间的任何业务关系的健康程度对应于上述 3 种属性的不同级别（例如，更信任意味着需要的透明度更少，反之亦然），但其中一些属性必须存在，否则就会出现问题。</li> 
+  </ul> 
+  <blockquote> 
+   <p>“区块链技术正被快速应用到您身边的软件开发项目中。您准备好了吗？”</p> 
+  </blockquote> 
+  <p>区块链有何帮助？首先，通过使用通用框架，业务合作伙伴可以提前建立一个信任网络。然后，通过使用对所有交易方可见的账本，区块链提供了透明性。最后，通过采用所有各方的一致意见（使用智能合约或链代码的形式），建立了责任制。</p> 
+  <p>这对 Java 开发人员有何意义？</p> 
+  <p>Hyperledger 社区和 Hyperledger Fabric 的快速发展，意味着区块链技术正快速被应用到您身边的软件开发项目中。您准备好了吗？</p> 
+  <h3 id="区块链技术发展形势">区块链技术发展形势</h3> 
+  <p>有时，开发技术可能会妨碍业务问题的解决。本教程的主要目的是展示如何编写 Java 链代码，所以我选择了最简单的开发技术组合来实现此目的。</p> 
+  <p>也就是说，该组合中的组件还有其他选择。在本教程中，我将使用 <a href="https://www.docker.com/" rel="nofollow">Docker</a> 作为网络容器环境，而另一个选择是带 <a href="https://www.virtualbox.org/" rel="nofollow">VirtualBox</a> 的 <a href="https://www.vagrantup.com/" rel="nofollow">Vagrant</a>。如果从未使用过 Vagrant，您至少应该尝试一下。</p> 
+  <p>Docker 是一个容器环境，而 Vagrant 使用了虚拟化。在与 VirtualBox 结合使用时，虚拟化环境对计算环境进行了不同程度的控制，这一点备受一些开发人员的青睐（使其成为 fabric 开发人员的理想选择）。</p> 
+  <p>如果想进一步了解容器化与虚拟化孰优孰劣，请参阅 developerWorks 博客上的 “<a href="https://www.ibm.com/developerworks/community/blogs/3302cc3b-074e-44da-90b1-5055f1dc0d9c/entry/what-is-docker-containers?lang=zh" rel="nofollow">Docker 是什么？容器对应用程序有哪些好处的简介”</a>。</p> 
+  <p>如果开发人员只想编写代码，而不必担心容器、虚拟化或任何基础架构，那么可以选择 IBM® Bluemix®。尽管 Bluemix 支持运行完整的 IBM 区块链网络，但它目前还不支持使用 Java 语言开发链代码。预计此情况很快就会发生变化，所以请时刻关注。</p> 
+  <p>如果在您的印象中，区块链技术当时的发展情况非常不稳定，您是对的。但是，这意味着您在恰当的时机（从一开始）就开始接触区块链和链代码。随着该技术发展成熟，您早期阶段学习该技术的投资将会不断得到丰厚的回报。</p> 
+  <p>区块链是能够彻底改变每个人的业务执行方式的颠覆式技术之一。这类技术不仅包括 B2B，还包括 B2C，甚至还有 C2C。这的确是一个非常激动人心的时刻。</p> 
+  <p>让我们开始吧！</p> 
+  <h3 id="设置开发环境">设置开发环境</h3> 
+  <p>要运行链代码，首先需要设置开发环境。</p> 
+  <p>完成本节后，您就可以运行一个 Hyperledger Java 链代码示例了，在该示例中，您将在真实链代码上部署和调用交易。然后，我将展示如何（几乎）从头编写一个新链代码程序。</p> 
+  <p>在本节中，您将：</p> 
+  <ul> 
+   <li>设置网络环境 — 用于运行您的本地区块链网络。</li> 
+   <li>安装构建软件 — 用于构建您的链代码。</li> 
+   <li>安装一个 HTTP 客户端 — 用于在您的链代码上调用交易。</li> 
+   <li>启动区块链网络。</li> 
+   <li>构建 Java shim 客户端 JAR。</li> 
+  </ul> 
+  <p>实话说，要编写链代码，有许多设置工作要做。但是，如果您按照这些说明进行操作并稍微勤奋一点，您的付出将是值得的。</p> 
+  <h4 id="1设置网络环境">1.设置网络环境</h4> 
+  <p>本教程将使用 Docker 以及来自 Docker Hub 的预构建区块链网络组件镜像来运行本地区块链网络。如果愿意的话，可以从头构建 fabric（毕竟它是开源的），但在此阶段，使用 Docker Hub 中提供的预构建的 Hyperledger Fabric 镜像更容易一些。</p> 
+  <p>我在介绍中已经提到过，另一个选择（您可能在 Hyperledger 文档中看到过）是使用 Vagrant 和 VirtualBox。Vagrant 是 fabric 开发人员的一个不错选择，但作为链代码开发人员，与处理 fabric 本身相比，我们更关心链代码的构建、运行和测试。</p> 
+  <p>如果已经安装 Docker 1.12 版或更高版本，可以跳到下一节（“安装构建软件”）。在下面的操作说明中，假设您尚未安装 Docker（也就是说，您不是从以前的 Docker 版本进行升级）。安装 Docker 的过程中也会安装 Docker Compose，该工具用于定义和运行需要多个容器的应用程序，比如本教程中将运行的本地 Hyperledger 区块链网络。</p> 
+  <p><strong>安装 Docker</strong> <br> 可在这里找到针对 Mac、Windows 和 Linux 的安装说明：</p> 
+  <p><a href="https://docs.docker.com/engine/getstarted/step_one" rel="nofollow">将 Docker 安装在 Mac、Windows 和 Linux 上</a></p> 
+  <p><strong>验证 Docker 安装</strong> <br> 要测试 Docker 安装，可打开一个终端窗口（或 Windows 上的命令提示符）并键入以下命令：</p> 
+  <pre class="prettyprint"><code class=" hljs lasso">docker <span class="hljs-attribute">-v</span>
+docker<span class="hljs-attribute">-compose</span> <span class="hljs-attribute">-v</span></code></pre> 
+  <p>您会获得以下输出：</p> 
+  <pre class="prettyprint"><code class=" hljs lasso">$ docker <span class="hljs-attribute">-v</span>
+Docker version <span class="hljs-number">1.13</span><span class="hljs-number">.1</span>, build <span class="hljs-number">092</span>cba3
+$ docker<span class="hljs-attribute">-compose</span> <span class="hljs-attribute">-v</span>
+docker<span class="hljs-attribute">-compose</span> version <span class="hljs-number">1.11</span><span class="hljs-number">.1</span>, build <span class="hljs-number">7</span>c5d5e4</code></pre> 
+  <p>如果想查看 Docker 的实际运行效果，您可运行 hello-world 镜像，如下所示：</p> 
+  <pre class="prettyprint"><code class=" hljs livecodeserver">$ docker run hello-world
+Unable <span class="hljs-built_in">to</span> find image <span class="hljs-string">'hello-world:latest'</span> locally
+latest: Pulling <span class="hljs-built_in">from</span> library/hello-world
+<span class="hljs-number">78445</span>dd45222: Pull complete 
+Digest: sha256:c5515758d4c5e1e838e9cd307f6c6a0d620b5e07e6f927b07d05f6d12a1ac8d7
+Status: Downloaded newer image <span class="hljs-keyword">for</span> hello-world:latest
+
+
+Hello <span class="hljs-built_in">from</span> Docker! This message shows that your installation appears <span class="hljs-built_in">to</span> be working correctly.
+
+
+To generate this message, Docker took <span class="hljs-operator">the</span> following steps:
+ <span class="hljs-number">1.</span> The Docker client contacted <span class="hljs-operator">the</span> Docker daemon.
+ <span class="hljs-number">2.</span> The Docker daemon pulled <span class="hljs-operator">the</span> <span class="hljs-string">"hello-world"</span> image <span class="hljs-built_in">from</span> <span class="hljs-operator">the</span> Docker Hub.
+ <span class="hljs-number">3.</span> The Docker daemon created <span class="hljs-operator">a</span> <span class="hljs-built_in">new</span> container <span class="hljs-built_in">from</span> that image which runs <span class="hljs-operator">the</span>
+    executable that produces <span class="hljs-operator">the</span> output you are currently reading.
+ <span class="hljs-number">4.</span> The Docker daemon streamed that output <span class="hljs-built_in">to</span> <span class="hljs-operator">the</span> Docker client, which sent <span class="hljs-keyword">it</span>
+    <span class="hljs-built_in">to</span> your terminal.
+
+To <span class="hljs-keyword">try</span> something more ambitious, you can run <span class="hljs-operator">an</span> Ubuntu container <span class="hljs-operator">with</span>:
+ $ docker run -<span class="hljs-keyword">it</span> ubuntu bash
+
+Share images, automate workflows, <span class="hljs-operator">and</span> more <span class="hljs-operator">with</span> <span class="hljs-operator">a</span> free Docker ID:
+ <span class="hljs-keyword">https</span>://cloud.docker.com/
+
+For more examples <span class="hljs-operator">and</span> ideas, visit:
+ <span class="hljs-keyword">https</span>://docs.docker.com/engine/userguide/</code></pre> 
+  <h4 id="2安装构建软件">2.安装构建软件</h4> 
+  <p>对于构建系统，Hyperledger Fabric 使用了 Gradle，本教程也将使用它。Gradle 是一个构建自动化系统，它结合使用了指定构建组件的简单语法与 Apache Ant 和 Apache Maven 的最佳特性，创建了一个容易使用的强大构建系统。如此多开发人员正将他们的项目切换到 Gradle，这不足为奇。请注意，本文使用的是 Gradle 3.3 版本。使用其他版本的 Gradle 可能会导致项目搭建失败。</p> 
+  <p>可以在 <a href="https://gradle.org/" rel="nofollow">Gradle 主页</a> 上进一步了解 Gradle（和它的一些知名度高的用户）。</p> 
+  <p><strong>安装 Gradle</strong> <br> 要安装 Gradle，请按照下面的说明进行操作：</p> 
+  <p><a href="https://gradle.org/install" rel="nofollow">将 Gradle 安装在 Mac、Windows 和 Linux 上</a></p> 
+  <p><strong>验证 Gradle 安装</strong> <br> 要验证 Gradle 安装，可打开一个终端窗口并执行此命令：</p> 
+  <pre class="prettyprint"><code class=" hljs lasso">gradle <span class="hljs-attribute">-v</span></code></pre> 
+  <p>您会看到以下输出：</p> 
+  <pre class="prettyprint"><code class=" hljs asciidoc">$ gradle -v
+
+<span class="hljs-code">------------------------------------------------------------ Gradle 3.3 ------------------------------------------------------------</span>
+
+Build time:   2017-01-03 15:31:04 UTC
+Revision:     075893a3d0798c0c1f322899b41ceca82e4e134b
+
+Groovy:       2.4.7
+Ant:          Apache Ant(TM) version 1.9.6 compiled on June 29 2015
+JVM:          1.8.0<span class="hljs-emphasis">_102 (Oracle Corporation 25.102-b14) OS: Mac OS X 10.12.3 x86_</span>64
+</code></pre> 
+  <h4 id="3安装-http-客户端">3.安装 HTTP 客户端</h4> 
+  <p>接下来安装 HTTP 客户端软件，它允许链代码与 Hyperledger 区块链结构的 REST 接口进行通信。您的浏览器可以发出 HTTP GET，但要与 fabric 进行交互，您需要能够通过 POST 发出消息。这意味着您需要一个 HTTP 客户端。</p> 
+  <p>我为本教程选择的 HTTP 客户端是 SoapUI，它提供了一个强大的、容易使用的、包含许多功能的免费社区版本。</p> 
+  <p><strong>安装 SoapUI</strong> <br> 要安装 SoapUI，请按照下面的说明进行操作：</p> 
+  <p><a href="https://www.soapui.org/getting-started/installing-soapui.html" rel="nofollow">为 Mac OS、Windows 和 Linux 安装 SoapUI</a></p> 
+  <p><strong>验证 SoapUI 安装</strong> <br> 要确认 SoapUI 已安装，可在计算机上启动该应用程序。在 Mac OS 上，打开 SoapUI 后会显示 SoapUI Starter Page，如图 1 所示。</p> 
+  <p>Mac OS X 上的 SoapUI <br> <img src="https://www.ibm.com/developerworks/cn/java/j-chaincode-for-java-developers/Figure-1.png" alt="Mac OS X 上的 SoapUI" title=""></p> 
+  <h4 id="4启动区块链网络">4.启动区块链网络</h4> 
+  <p>现在您已安装开发和测试链代码所需的软件，是时候启动本地区块链网络了。第一步是定义网络的配置。</p> 
+  <p>首先，创建一个目录，用它作为链代码开发过程中使用的所有源代码的 root 目录。在本教程中，我将使用 ~/home/mychaincode（或 Windows 上的 C:\home\chaincode）。</p> 
+  <p>接下来，将 GOPATH 环境变量设置为此路径。我们不会编译任何 Go 代码，也不会构建 Golang 包或其他二进制文件，但 Golang 术语已融合到 Hyperledger 中，所以熟悉按 Go 语言和 GOPATH 的方式进行思考是一个不错的主意。</p> 
+  <p>在 Linux 上，执行以下命令：</p> 
+  <pre class="prettyprint"><code class=" hljs bash"><span class="hljs-keyword">export</span> GOPATH=~/home/mychaincode</code></pre> 
+  <p>或者在 Windows 上，可以使用以下命令：</p> 
+  <pre class="prettyprint"><code class=" hljs tex">SET GOPATH=C:<span class="hljs-command">\home</span><span class="hljs-command">\mychaincode</span></code></pre> 
+  <p>接下来，必须告诉 Docker Compose 如何创建和运行区块链对等网络。该网络是使用 YAML 定义的，应该将它命名为 docker-compose.yml。可以将文件命名为其他名称，但在启动 Docker Compose 时，必须指定 -f 标志。建议坚持使用默认名称，也就是 docker-compose.yml。</p> 
+  <p>在 GOPATH 的 root 目录中创建 docker-compose.yml 文件。粘贴以下内容：</p> 
+  <pre class="prettyprint"><code class=" hljs haml">membersrvc:
+  image: hyperledger/fabric-membersrvc
+  ports:
+    -<span class="ruby"> <span class="hljs-string">"7054:7054"</span> </span>  command: membersrvc
+vp0:
+  image: hyperledger/fabric-peer:x86_64-0.6.0-preview
+  ports:
+    -<span class="ruby"> <span class="hljs-string">"7050:7050"</span> </span>    -<span class="ruby"> <span class="hljs-string">"7051:7051"</span> </span>    -<span class="ruby"> <span class="hljs-string">"7053:7053"</span> </span>  environment:
+    -<span class="ruby"> <span class="hljs-constant">CORE_PEER_ADDRESSAUTODETECT</span>=<span class="hljs-keyword">true</span> </span>    -<span class="ruby"> <span class="hljs-constant">CORE_VM_ENDPOINT</span>=<span class="hljs-symbol">unix:</span>/<span class="hljs-regexp">//var</span><span class="hljs-regexp">/run/docker</span>.sock </span>    -<span class="ruby"> <span class="hljs-constant">CORE_LOGGING_LEVEL</span>=<span class="hljs-constant">DEBUG</span> </span>    -<span class="ruby"> <span class="hljs-constant">CORE_PEER_ID</span>=vp<span class="hljs-number">0</span> </span>    -<span class="ruby"> <span class="hljs-constant">CORE_PEER_PKI_ECA_PADDR</span>=<span class="hljs-symbol">membersrvc:</span><span class="hljs-number">7054</span> </span>    -<span class="ruby"> <span class="hljs-constant">CORE_PEER_PKI_TCA_PADDR</span>=<span class="hljs-symbol">membersrvc:</span><span class="hljs-number">7054</span> </span>    -<span class="ruby"> <span class="hljs-constant">CORE_PEER_PKI_TLSCA_PADDR</span>=<span class="hljs-symbol">membersrvc:</span><span class="hljs-number">7054</span> </span>    -<span class="ruby"> <span class="hljs-constant">CORE_SECURITY_ENABLED</span>=<span class="hljs-keyword">false</span> </span>    -<span class="ruby"> <span class="hljs-constant">CORE_SECURITY_ENROLLID</span>=test_vp<span class="hljs-number">0</span> </span>    -<span class="ruby"> <span class="hljs-constant">CORE_SECURITY_ENROLLSECRET</span>=<span class="hljs-constant">MwYpmSRjupbT</span> </span>  links:
+    -<span class="ruby"> membersrvc </span>  command: sh -c "sleep 5; peer node start --peer-chaincodedev"</code></pre> 
+  <p>这里涉及许多内容，其中大部分内容都不属于本教程的讨论范围，但我想稍微解释一下。</p> 
+  <ul> 
+   <li>此文件告诉 Docker Compose 定义两个服务： <br> 
+    <ul>
+     <li>membersrvc：提供成员服务的成员服务节点，具体来讲，它是一个证书签发机构 (CA)，负责处理所有加密解密工作（比如颁发和撤销证书）。将用于此目的的预构建 Docker 镜像命名为 hyperledger/fabric-membersrvc。</li> 
+     <li>vp0：网络中的单独验证对等节点。对于开发目的，我们不需要奢侈地执行对等网络验证，只需要一个对等节点即可。将用于此目的的预构建 Docker 镜像命名为 hyperledger/fabric-peer： x86_64-0.6.0-preview。请注意，由于 Fabric 版本升级，如果省略掉冒号及之后的字符，会导致构建错误。此处指定使用 Fabric 0.6 版本。hyperledger/fabric-peer 等同于 hyperledger/fabric-peer：latest。</li>
+    </ul></li> 
+   <li>一些环境变量由 vp0 对等节点设置。请注意，CORE_LOGGING_LEVEL 变量被设置为 DEBUG。这会生成大量输出，这些输出有时很方便。但是，如果想要更少的输出，可将该级别更改为 INFO。请参阅 Hyperledger 设置文档中的 “<a href="https://github.com/hyperledger/fabric/blob/v0.6/docs/Setup/logging-control.md" rel="nofollow">日志控制</a>” 了解日志级别的更多信息。 <br> 可以在 <a href="https://docs.docker.com/compose/compose-file/" rel="nofollow">Docker 网站</a> 上找到有关 Docker Compose YML 文件定义的更多信息。</li> 
+  </ul> 
+  <p>接下来请注意，CORE_SECURITY_ENABLED 的值为 false。这意味着 fabric 不需要您发送任何类型的最终用户凭证。安全性不属于本教程的讨论范围，但是如果您有兴趣了解更多信息，可以根据您的链代码请求来查阅<a href="https://github.com/hyperledger/fabric/blob/v0.6/docs/Setup/Chaincode-setup.md#note-on-security-functionality" rel="nofollow">这篇安全功能说明</a>。</p> 
+  <p>最后提醒一句：对任何这些值的默认设置（尤其是端口值）的任何改动都有可能导致本教程中的示例无法运行。区块链网络是一组分布式软件组件，它们需要经过精确协调的通信。强烈建议在理解 fabric 的所有组件如何相互作用之前，<strong>不要</strong>更改端口值的默认值。</p> 
+  <p>完成区块链的定义后，就可以启动本地区块链网络了。为此，请运行 Docker Compose。导航到您的 $GOPATH 并执行此命令：</p> 
+  <pre class="prettyprint"><code class=" hljs lasso">docker<span class="hljs-attribute">-compose</span> up</code></pre> 
+  <p>您会在终端窗口中获得以下输出：</p> 
+  <pre class="prettyprint"><code class=" hljs r">$ docker-compose up
+.
+.
+Pulling membersrvc (hyperledger/fabric-membersrvc:latest)<span class="hljs-keyword">...</span>
+latest: Pulling from hyperledger/fabric-membersrvc
+.
+.
+Status: Downloaded newer image <span class="hljs-keyword">for</span> hyperledger/fabric-membersrvc:latest
+Pulling vp0 (hyperledger/fabric-peer:latest)<span class="hljs-keyword">...</span>
+latest: Pulling from hyperledger/fabric-peer
+.
+.
+Status: Downloaded newer image <span class="hljs-keyword">for</span> hyperledger/fabric-peer:latest
+Creating mychaincode_membersrvc_1
+Creating mychaincode_vp0_1
+Attaching to mychaincode_membersrvc_1, mychaincode_vp0_1
+vp0_1         | <span class="hljs-number">19</span>:<span class="hljs-number">30</span>:<span class="hljs-number">03.773</span> [logging] LoggingInit -&gt; DEBU <span class="hljs-number">001</span> Setting default logging level to DEBUG <span class="hljs-keyword">for</span> command <span class="hljs-string">'node'</span>
+vp0_1         | <span class="hljs-number">19</span>:<span class="hljs-number">30</span>:<span class="hljs-number">03.773</span> [nodeCmd] serve -&gt; INFO <span class="hljs-number">002</span> Running <span class="hljs-keyword">in</span> chaincode development mode
+.
+.
+.
+vp0_1         | <span class="hljs-number">19</span>:<span class="hljs-number">30</span>:<span class="hljs-number">04.146</span> [peer] chatWithSomePeers -&gt; DEBU 07c Starting up the first peer of a new network
+vp0_1         | <span class="hljs-number">19</span>:<span class="hljs-number">30</span>:<span class="hljs-number">04.146</span> [consensus/statetransfer] verifyAndRecoverBlockchain -&gt; DEBU 07d Validating existing blockchain, highest validated block is <span class="hljs-number">0</span>, valid through <span class="hljs-number">0</span>
+vp0_1         | <span class="hljs-number">19</span>:<span class="hljs-number">30</span>:<span class="hljs-number">04.146</span> [consensus/statetransfer] blockThread -&gt; INFO <span class="hljs-number">07e</span> Validated blockchain to the genesis block
+vp0_1         | <span class="hljs-number">19</span>:<span class="hljs-number">30</span>:<span class="hljs-number">04.146</span> [consensus/handler] <span class="hljs-number">1</span> -&gt; DEBU 07f Starting up message thread <span class="hljs-keyword">for</span> consenter
+vp0_1         | <span class="hljs-number">19</span>:<span class="hljs-number">30</span>:<span class="hljs-number">04.146</span> [nodeCmd] serve -&gt; INFO <span class="hljs-number">080</span> Starting peer with ID=name:<span class="hljs-string">"vp0"</span> , network ID=dev, address=<span class="hljs-number">172.17</span><span class="hljs-number">.0</span><span class="hljs-number">.3</span>:<span class="hljs-number">7051</span>, rootnodes=, validator=true
+vp0_1         | <span class="hljs-number">19</span>:<span class="hljs-number">30</span>:<span class="hljs-number">04.146</span> [rest] StartOpenchainRESTServer -&gt; INFO <span class="hljs-number">081</span> Initializing the REST service on <span class="hljs-number">0.0</span><span class="hljs-number">.0</span><span class="hljs-number">.0</span>:<span class="hljs-number">7050</span>, TLS is disabled.
+vp0_1         | <span class="hljs-number">19</span>:<span class="hljs-number">30</span>:<span class="hljs-number">04.147</span> [peer] ensureConnected -&gt; DEBU <span class="hljs-number">082</span> Starting Peer reconnect service (touch service), with period = 6s
+.
+.</code></pre> 
+  <p>此输出告诉您该网络在正常运行，已准备好接受链代码注册请求。</p> 
+  <p><strong>备注</strong>：突出显示的行应该仅在第一次运行区块链网络时出现，因为 Docker 需要从 Docker Hub 下载镜像。镜像下载到计算机后，仅在来自 Docker Hub 的镜像比您计算机上的镜像更新时，Docker 才会拉入它们。</p> 
+  <p>现在已准备好构建 Java shim 客户端 JAR，它允许 Java 语言链代码与 Hyperledger Fabric 框架进行通信。</p> 
+  <h4 id="5构建-java-shim-客户端-jar">5.构建 Java shim 客户端 JAR</h4> 
+  <p>在运行链代码示例前，需要从 Hyperledger 的 GitHub 存储库获取最新的源代码。</p> 
+  <p>首先，需要将 Hyperledger Fabric 克隆到本地机器上，以便构建链代码（<strong>备注</strong>：这是一项临时措施；在以后某个时刻，应该能从主要的 Maven 存储库访问 Java shim 客户端 JAR）。</p> 
+  <p><strong>备注</strong>：回想一下，您之前已将 GOPATH 设置为 Linux（或 Mac）上的 ~/home/mychaincode 或 Windows 上的 C:\home\mychaincode。</p> 
+  <p>执行此命令来创建结构构建脚本所期望的目录结构：</p> 
+  <pre class="prettyprint"><code class=" hljs perl"><span class="hljs-keyword">mkdir</span> -p <span class="hljs-variable">$GOPATH</span>/src/github.com/hyperledger</code></pre> 
+  <p>接下来，导航到已创建的新目录结构的底部：</p> 
+  <pre class="prettyprint"><code class=" hljs bash"><span class="hljs-built_in">cd</span> <span class="hljs-variable">$GOPATH</span>/src/github.com/hyperledger</code></pre> 
+  <p>您需要从这里获取 Hyperledger 源代码，以便构建 Java shim 客户端 JAR。</p> 
+  <p>可通过两种方式获得 Hyperledger 源代码。</p> 
+  <ul> 
+   <li><p>不使用 git： <br> 导航到 <a href="https://github.com/hyperledger/fabric" rel="nofollow">Hyperledger GitHub 镜像</a>，选择v0.6分支，并单击 Clone or download 按钮，然后单击 Download ZIP（参见图 2）。一个名为 fabric-master.zip 的 ZIP 文件被下载到您的计算机，您可以将它解压到 $GOPATH/src/github.com/hyperledger。备注：请确保在解压该文件时，将 root 目录的名称从 fabric-master 更改为 fabric。</p></li> 
+   <li><p>使用 git： <br> 导航到 $GOPATH/src/github.com/hyperledger，将文本字段中的 URL 复制到 “Clone with HTTPS” 框中（参见图 2 中的箭头），然后使用复制的 URL 执行此命令：</p></li> 
+  </ul> 
+  <pre class="prettyprint"><code class=" hljs php">git <span class="hljs-keyword">clone</span> https:<span class="hljs-comment">//github.com/hyperledger/fabric.git</span></code></pre> 
+  <p>或</p> 
+  <pre class="prettyprint"><code class=" hljs avrasm">git clone –b v0<span class="hljs-number">.6</span> 
+<span class="hljs-label">https:</span>//gerrit<span class="hljs-preprocessor">.hyperledger</span><span class="hljs-preprocessor">.org</span>/r/fabric</code></pre> 
+  <p>您会看到 git 命令返回了以下终端窗口输出：</p> 
+  <pre class="prettyprint"><code class=" hljs r">$ git clone https://github.com/hyperledger/fabric.git
+Cloning into <span class="hljs-string">'fabric'</span><span class="hljs-keyword">...</span>
+remote: Counting objects: <span class="hljs-number">26976</span>, done.
+remote: Compressing objects: <span class="hljs-number">100</span>% (<span class="hljs-number">406</span>/<span class="hljs-number">406</span>), done.
+remote: Total <span class="hljs-number">26976</span> (delta <span class="hljs-number">172</span>), reused <span class="hljs-number">0</span> (delta <span class="hljs-number">0</span>), pack-reused <span class="hljs-number">26558</span>
+Receiving objects: <span class="hljs-number">100</span>% (<span class="hljs-number">26976</span>/<span class="hljs-number">26976</span>), <span class="hljs-number">43.68</span> MiB | <span class="hljs-number">4.85</span> MiB/s, done.
+Resolving deltas: <span class="hljs-number">100</span>% (<span class="hljs-number">15114</span>/<span class="hljs-number">15114</span>), done.</code></pre> 
+  <p><img src="https://www.ibm.com/developerworks/cn/java/j-chaincode-for-java-developers/Figure-2.jpg" alt="Hyperledger GitHub 镜像" title=""></p> 
+  <p>现在您已准备好构建 Java 链代码 shim 客户端 JAR。导航到 $GOPATH/src/github.com/hyperledger/fabric/core/chaincode/shim/java 并运行以下两个命令：</p> 
+  <pre class="prettyprint"><code class=" hljs avrasm">gradle -b build<span class="hljs-preprocessor">.gradle</span> clean
+gradle -b build<span class="hljs-preprocessor">.gradle</span> build</code></pre> 
+  <p>Gradle 构建输出应如下所示：</p> 
+  <pre class="prettyprint"><code class=" hljs asciidoc">$ cd $GOPATH/src/github.com/hyperledger/fabric/core/chaincode/shim/java
+$ gradle -b build.gradle clean
+Starting a Gradle Daemon (subsequent builds will be faster)
+<span class="hljs-attribute">:core:chaincode:shim:java:clean</span>
+
+BUILD SUCCESSFUL
+
+Total time: 5.422 secs
+$ gradle -b build.gradle build
+<span class="hljs-attribute">:core:chaincode:shim:java:copyProtos</span> UP-TO-DATE
+<span class="hljs-attribute">:core:chaincode:shim:java:extractIncludeProto</span>
+<span class="hljs-attribute">:core:chaincode:shim:java:extractProto</span> UP-TO-DATE
+<span class="hljs-attribute">:core:chaincode:shim:java:generateProto</span> UP-TO-DATE
+<span class="hljs-attribute">:core:chaincode:shim:java:compileJava</span>
+<span class="hljs-attribute">:core:chaincode:shim:java:processResources</span>
+<span class="hljs-attribute">:core:chaincode:shim:java:classes</span>
+<span class="hljs-attribute">:core:chaincode:shim:java:jar</span>
+<span class="hljs-attribute">:core:chaincode:shim:java:assemble</span>
+<span class="hljs-attribute">:core:chaincode:shim:java:extractIncludeTestProto</span>
+<span class="hljs-attribute">:core:chaincode:shim:java:extractTestProto</span> UP-TO-DATE
+<span class="hljs-attribute">:core:chaincode:shim:java:generateTestProto</span> UP-TO-DATE
+<span class="hljs-attribute">:core:chaincode:shim:java:compileTestJava</span> UP-TO-DATE
+<span class="hljs-attribute">:core:chaincode:shim:java:processTestResources</span> UP-TO-DATE
+<span class="hljs-attribute">:core:chaincode:shim:java:testClasses</span> UP-TO-DATE
+<span class="hljs-attribute">:core:chaincode:shim:java:test</span> UP-TO-DATE
+<span class="hljs-attribute">:core:chaincode:shim:java:check</span> UP-TO-DATE
+<span class="hljs-attribute">:core:chaincode:shim:java:build</span>
+<span class="hljs-attribute">:core:chaincode:shim:java:copyToLib</span>
+<span class="hljs-attribute">:core:chaincode:shim:java:generatePomFileForMavenJavaPublication</span>
+<span class="hljs-attribute">:core:chaincode:shim:java:publishMavenJavaPublicationToMavenLocal</span>
+<span class="hljs-attribute">:core:chaincode:shim:java:publishToMavenLocal</span>
+
+BUILD SUCCESSFUL
+
+Total time: 4.521 secs</code></pre> 
+  <p>构建过程中执行的最后一件事是，将 shim 客户端 JAR 添加到本地 Maven 存储库。现在您已准备好构建链代码。除非在未来某个时刻要更新结构源代码，或者出于某种原因想要再次重新构建 shim 客户端 JAR，否则不需要再次运行 Java shim 客户端 JAR。</p> 
+  <h3 id="部署并运行-java-链代码示例">部署并运行 Java 链代码示例</h3> 
+  <p>您已经定义并启动了本地区块链网络，而且已构建 Java shim 客户端 JAR 并安装到本地 Maven 存储库中，现在已准备好在之前下载的 Hyperledger Fabric 附带的一个 Java 链代码示例上构建、注册和调用交易。</p> 
+  <p><strong>部署并运行链代码</strong></p> 
+  <p>您将执行以下步骤：</p> 
+  <ul> 
+   <li>使用 Gradle 构建示例。</li> 
+   <li>通过运行 Gradle 构建软件为您创建的脚本，向验证对等网络注册该示例。</li> 
+   <li>使用 SoapUI 将示例部署到本地区块链网络。</li> 
+   <li>使用 SoapUI 在示例链代码上调用交易。</li> 
+  </ul> 
+  <h4 id="1构建示例">1.构建示例</h4> 
+  <p>导航到 $GOPATH/src/github.com/hyperledger/fabric/examples/chaincode/java/Example 目录。</p> 
+  <p>接下来，通过命令行，使用此命令启动 Gradle 构建软件：</p> 
+  <pre class="prettyprint"><code class=" hljs avrasm">gradle -b build<span class="hljs-preprocessor">.gradle</span> build</code></pre> 
+  <p>您会看到以下输出：</p> 
+  <pre class="prettyprint"><code class=" hljs asciidoc">$ cd GOPATH/src/github.com/hyperledger/fabric/examples/chaincode/java/Example
+$ gradle -b build.gradle build
+Starting a Gradle Daemon (subsequent builds will be faster)
+<span class="hljs-attribute">:examples:chaincode:java:Example:compileJava</span>
+<span class="hljs-attribute">:examples:chaincode:java:Example:processResources</span> UP-TO-DATE
+<span class="hljs-attribute">:examples:chaincode:java:Example:classes</span>
+<span class="hljs-attribute">:examples:chaincode:java:Example:jar</span>
+<span class="hljs-attribute">:examples:chaincode:java:Example:startScripts</span>
+<span class="hljs-attribute">:examples:chaincode:java:Example:distTar</span>
+<span class="hljs-attribute">:examples:chaincode:java:Example:distZip</span>
+<span class="hljs-attribute">:examples:chaincode:java:Example:assemble</span>
+<span class="hljs-attribute">:examples:chaincode:java:Example:compileTestJava</span> UP-TO-DATE
+<span class="hljs-attribute">:examples:chaincode:java:Example:processTestResources</span> UP-TO-DATE
+<span class="hljs-attribute">:examples:chaincode:java:Example:testClasses</span> UP-TO-DATE
+<span class="hljs-attribute">:examples:chaincode:java:Example:test</span> UP-TO-DATE
+<span class="hljs-attribute">:examples:chaincode:java:Example:check</span> UP-TO-DATE
+<span class="hljs-attribute">:examples:chaincode:java:Example:build</span>
+<span class="hljs-attribute">:examples:chaincode:java:Example:copyToLib</span>
+
+BUILD SUCCESSFUL
+
+Total time: 6.935 secs</code></pre> 
+  <p>该构建过程通过两种形式创建了一个位于目录 build/distributions 中的独立发行版：TAR 文件和 ZIP 文件，每个文件都包含运行链代码所需的所有资源，其中包括一个用于驱动链代码的名为 Example 的脚本。</p> 
+  <p>Example 链代码现在已准备好向本地区块链网络注册。</p> 
+  <h4 id="2注册示例">2.注册示例</h4> 
+  <p>确保本地区块链网络正在运行。如果未运行，则需要启动它。如果需要温习一下相关内容，请参阅“<a href="https://www.ibm.com/developerworks/cn/java/j-chaincode-for-java-developers/index.html#blockchainnetwork" rel="nofollow">启动区块链网络</a>”部分。</p> 
+  <p>如果您未在 $GOPATH/src/github.com/hyperledger/fabric/examples/chaincode/java/Example 目录下，请导航到这里。</p> 
+  <p>接下来，将 Example.zip（或 Example.tar）解压到 build/distributions 目录中：</p> 
+  <pre class="prettyprint"><code class=" hljs avrasm">$ cd $GOPATH/src/github<span class="hljs-preprocessor">.com</span>/hyperledger/fabric/examples/chaincode/java/Example
+$ cd build/distributions/
+$ unzip Example<span class="hljs-preprocessor">.zip</span> 
+<span class="hljs-label">Archive:</span>  Example<span class="hljs-preprocessor">.zip</span>
+  inflating: Example/lib/chaincode<span class="hljs-preprocessor">.jar</span>  
+  inflating: Example/lib/grpc-all-<span class="hljs-number">0.13</span><span class="hljs-number">.2</span><span class="hljs-preprocessor">.jar</span>  
+  inflating: Example/lib/commons-<span class="hljs-keyword">cli</span>-<span class="hljs-number">1.3</span><span class="hljs-number">.1</span><span class="hljs-preprocessor">.jar</span>  
+  inflating: Example/lib/shim-client-<span class="hljs-number">1.0</span><span class="hljs-preprocessor">.jar</span>  
+  inflating: Example/lib/grpc-netty-<span class="hljs-number">0.13</span><span class="hljs-number">.2</span><span class="hljs-preprocessor">.jar</span>  
+  inflating: Example/lib/grpc-auth-<span class="hljs-number">0.13</span><span class="hljs-number">.2</span><span class="hljs-preprocessor">.jar</span>  
+  inflating: Example/lib/grpc-protobuf-nano-<span class="hljs-number">0.13</span><span class="hljs-number">.2</span><span class="hljs-preprocessor">.jar</span>  
+  inflating: Example/lib/grpc-core-<span class="hljs-number">0.13</span><span class="hljs-number">.2</span><span class="hljs-preprocessor">.jar</span>  
+  inflating: Example/lib/grpc-protobuf-<span class="hljs-number">0.13</span><span class="hljs-number">.2</span><span class="hljs-preprocessor">.jar</span>  
+  inflating: Example/lib/grpc-okhttp-<span class="hljs-number">0.13</span><span class="hljs-number">.2</span><span class="hljs-preprocessor">.jar</span>  
+  inflating: Example/lib/grpc-stub-<span class="hljs-number">0.13</span><span class="hljs-number">.2</span><span class="hljs-preprocessor">.jar</span>  
+  inflating: Example/lib/protobuf-java-<span class="hljs-number">3.0</span><span class="hljs-number">.0</span><span class="hljs-preprocessor">.jar</span>  
+  inflating: Example/lib/netty-tcnative-boringssl-static-<span class="hljs-number">1.1</span><span class="hljs-number">.33</span><span class="hljs-preprocessor">.Fork</span>21-osx-x86_64<span class="hljs-preprocessor">.jar</span>  
+  inflating: Example/lib/netty-codec-http2-<span class="hljs-number">4.1</span><span class="hljs-number">.0</span><span class="hljs-preprocessor">.CR</span>3<span class="hljs-preprocessor">.jar</span>  
+  inflating: Example/lib/google-auth-library-oauth2-http-<span class="hljs-number">0.3</span><span class="hljs-number">.0</span><span class="hljs-preprocessor">.jar</span>  
+  inflating: Example/lib/guava-<span class="hljs-number">18.0</span><span class="hljs-preprocessor">.jar</span>  
+  inflating: Example/lib/protobuf-javanano-<span class="hljs-number">3.0</span><span class="hljs-number">.0</span>-alpha-<span class="hljs-number">5.</span>jar  
+  inflating: Example/lib/jsr305-<span class="hljs-number">3.0</span><span class="hljs-number">.0</span><span class="hljs-preprocessor">.jar</span>  
+  inflating: Example/lib/okio-<span class="hljs-number">1.6</span><span class="hljs-number">.0</span><span class="hljs-preprocessor">.jar</span>  
+  inflating: Example/lib/okhttp-<span class="hljs-number">2.5</span><span class="hljs-number">.0</span><span class="hljs-preprocessor">.jar</span>  
+  inflating: Example/lib/netty-codec-http-<span class="hljs-number">4.1</span><span class="hljs-number">.0</span><span class="hljs-preprocessor">.CR</span>3<span class="hljs-preprocessor">.jar</span>  
+  inflating: Example/lib/netty-handler-<span class="hljs-number">4.1</span><span class="hljs-number">.0</span><span class="hljs-preprocessor">.CR</span>3<span class="hljs-preprocessor">.jar</span>  
+  inflating: Example/lib/google-auth-library-credentials-<span class="hljs-number">0.3</span><span class="hljs-number">.0</span><span class="hljs-preprocessor">.jar</span>  
+  inflating: Example/lib/google-http-client-<span class="hljs-number">1.19</span><span class="hljs-number">.0</span><span class="hljs-preprocessor">.jar</span>  
+  inflating: Example/lib/google-http-client-jackson2-<span class="hljs-number">1.19</span><span class="hljs-number">.0</span><span class="hljs-preprocessor">.jar</span>  
+  inflating: Example/lib/netty-codec-<span class="hljs-number">4.1</span><span class="hljs-number">.0</span><span class="hljs-preprocessor">.CR</span>3<span class="hljs-preprocessor">.jar</span>  
+  inflating: Example/lib/netty-buffer-<span class="hljs-number">4.1</span><span class="hljs-number">.0</span><span class="hljs-preprocessor">.CR</span>3<span class="hljs-preprocessor">.jar</span>  
+  inflating: Example/lib/netty-transport-<span class="hljs-number">4.1</span><span class="hljs-number">.0</span><span class="hljs-preprocessor">.CR</span>3<span class="hljs-preprocessor">.jar</span>  
+  inflating: Example/lib/httpclient-<span class="hljs-number">4.0</span><span class="hljs-number">.1</span><span class="hljs-preprocessor">.jar</span>  
+  inflating: Example/lib/jackson-core-<span class="hljs-number">2.1</span><span class="hljs-number">.3</span><span class="hljs-preprocessor">.jar</span>  
+  inflating: Example/lib/netty-common-<span class="hljs-number">4.1</span><span class="hljs-number">.0</span><span class="hljs-preprocessor">.CR</span>3<span class="hljs-preprocessor">.jar</span>  
+  inflating: Example/lib/netty-resolver-<span class="hljs-number">4.1</span><span class="hljs-number">.0</span><span class="hljs-preprocessor">.CR</span>3<span class="hljs-preprocessor">.jar</span>  
+  inflating: Example/lib/httpcore-<span class="hljs-number">4.0</span><span class="hljs-number">.1</span><span class="hljs-preprocessor">.jar</span>  
+  inflating: Example/lib/commons-logging-<span class="hljs-number">1.1</span><span class="hljs-number">.1</span><span class="hljs-preprocessor">.jar</span>  
+  inflating: Example/lib/commons-codec-<span class="hljs-number">1.3</span><span class="hljs-preprocessor">.jar</span>  
+  inflating: Example/bin/Example     
+  inflating: Example/bin/Example<span class="hljs-preprocessor">.bat</span></code></pre> 
+  <p>您可能想知道 “为何有如此多的文件？”该发行版包含（在独立进程中）单独运行链代码所需的一切资源，以及所有依赖 JAR 文件。</p> 
+  <p>要注册链代码示例，可在 build/distributions 文件夹中执行以下脚本：</p> 
+  <pre class="prettyprint"><code class=" hljs ">./Example/bin/Example</code></pre> 
+  <p>这会运行一个独立进程来向本地区块链网络注册链代码示例。您会看到以下终端窗口输出：</p> 
+  <pre class="prettyprint"><code class=" hljs avrasm">$ ./Example/bin/Example
+Hello world! starting [Ljava<span class="hljs-preprocessor">.lang</span><span class="hljs-preprocessor">.String</span><span class="hljs-comment">;@7ef20235</span>
+Feb <span class="hljs-number">22</span>, <span class="hljs-number">2017</span> <span class="hljs-number">10</span>:<span class="hljs-number">05</span>:<span class="hljs-number">08</span> AM example<span class="hljs-preprocessor">.Example</span> main
+<span class="hljs-label">INFO:</span> starting
+Feb <span class="hljs-number">22</span>, <span class="hljs-number">2017</span> <span class="hljs-number">10</span>:<span class="hljs-number">05</span>:<span class="hljs-number">08</span> AM org<span class="hljs-preprocessor">.hyperledger</span><span class="hljs-preprocessor">.java</span><span class="hljs-preprocessor">.shim</span><span class="hljs-preprocessor">.ChaincodeBase</span> newPeerClientConnection
+<span class="hljs-label">INFO:</span> Inside newPeerCLientConnection
+Feb <span class="hljs-number">22</span>, <span class="hljs-number">2017</span> <span class="hljs-number">10</span>:<span class="hljs-number">05</span>:<span class="hljs-number">08</span> AM io<span class="hljs-preprocessor">.grpc</span><span class="hljs-preprocessor">.internal</span><span class="hljs-preprocessor">.TransportSet</span>$1 <span class="hljs-keyword">call</span>
+<span class="hljs-label">INFO:</span> Created transport io<span class="hljs-preprocessor">.grpc</span><span class="hljs-preprocessor">.netty</span><span class="hljs-preprocessor">.NettyClientTransport</span><span class="hljs-localvars">@3</span>dd7b80b(/<span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">7051</span>) for /<span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">7051</span>
+Feb <span class="hljs-number">22</span>, <span class="hljs-number">2017</span> <span class="hljs-number">10</span>:<span class="hljs-number">05</span>:<span class="hljs-number">14</span> AM io<span class="hljs-preprocessor">.grpc</span><span class="hljs-preprocessor">.internal</span><span class="hljs-preprocessor">.TransportSet</span>$TransportListener transportReady
+<span class="hljs-label">INFO:</span> Transport io<span class="hljs-preprocessor">.grpc</span><span class="hljs-preprocessor">.netty</span><span class="hljs-preprocessor">.NettyClientTransport</span><span class="hljs-localvars">@3</span>dd7b80b(/<span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">7051</span>) for /<span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">7051</span> is ready</code></pre> 
+  <p>查看本地区块链网络的控制台，您会看到以下输出行：</p> 
+  <pre class="prettyprint"><code class=" hljs coffeescript">.
+.
+vp0_1         | <span class="hljs-number">16</span>:<span class="hljs-number">05</span>:<span class="hljs-number">14.048</span> [chaincode] HandleChaincodeStream<span class="hljs-function"> -&gt;</span> DEBU <span class="hljs-number">06</span>d Current context deadline = <span class="hljs-number">0001</span>-<span class="hljs-number">01</span>-<span class="hljs-number">01</span> <span class="hljs-number">00</span>:<span class="hljs-number">00</span>:<span class="hljs-number">00</span> +<span class="hljs-number">0000</span> UTC, ok = <span class="hljs-literal">false</span>
+vp0_1         | <span class="hljs-number">16</span>:<span class="hljs-number">05</span>:<span class="hljs-number">14.065</span> [chaincode] processStream<span class="hljs-function"> -&gt;</span> DEBU <span class="hljs-number">06</span>e []Received message REGISTER from shim
+vp0_1         | <span class="hljs-number">16</span>:<span class="hljs-number">05</span>:<span class="hljs-number">14.065</span> [chaincode] HandleMessage<span class="hljs-function"> -&gt;</span> DEBU <span class="hljs-number">06</span>f []Handling ChaincodeMessage <span class="hljs-keyword">of</span> <span class="hljs-attribute">type</span>: REGISTER <span class="hljs-keyword">in</span> state created
+vp0_1         | <span class="hljs-number">16</span>:<span class="hljs-number">05</span>:<span class="hljs-number">14.065</span> [chaincode] beforeRegisterEvent<span class="hljs-function"> -&gt;</span> DEBU <span class="hljs-number">070</span> Received REGISTER <span class="hljs-keyword">in</span> state created
+vp0_1         | <span class="hljs-number">16</span>:<span class="hljs-number">05</span>:<span class="hljs-number">14.065</span> [chaincode] registerHandler<span class="hljs-function"> -&gt;</span> DEBU <span class="hljs-number">071</span> registered handler complete <span class="hljs-keyword">for</span> chaincode hello
+vp0_1         | <span class="hljs-number">16</span>:<span class="hljs-number">05</span>:<span class="hljs-number">14.065</span> [chaincode] beforeRegisterEvent<span class="hljs-function"> -&gt;</span> DEBU <span class="hljs-number">072</span> Got REGISTER <span class="hljs-keyword">for</span> chaincodeID = <span class="hljs-attribute">name</span>:<span class="hljs-string">"hello"</span> , sending back REGISTERED
+.
+.</code></pre> 
+  <p>记下注册日志输出中的 chaincodeID name（示例中为 hello；如上面 <strong>第 8 行</strong> 所示）。以后在通过结构的 REST 接口部署 Example 链代码时，JSON 消息中需要使用此信息。</p> 
+  <p>上面的输出表明 Example 链代码正在运行，而且已向本地区块链验证对等网络注册，并做好了部署准备。</p> 
+  <h4 id="3部署示例">3.部署示例</h4> 
+  <p>Hyperledger Fabric 提供了一个用于与该结构交互的 REST Web 服务接口。与 fabric 的第一次交互是部署链代码。确保本地区块链网络正在运行，然后启动 SoapUI，单击 REST 按钮创建一个新的 REST 项目。您会看到一个类似图 3 的对话框，在其中输入用于所有 REST 请求的基础 URL： <br> <img src="https://www.ibm.com/developerworks/cn/java/j-chaincode-for-java-developers/Figure-3.png" alt="SoapUI New REST Project 对话框" title=""></p> 
+  <p>输入 <a href="http://localhost:7050" rel="nofollow">http://localhost:7050</a> 作为 URL，然后单击 OK。端口 7050 是 fabric 使用的默认 REST 端口，而且因为区块链网络是在本地计算机上运行的，所以将使用 localhost 作为主机名。</p> 
+  <p>在 SoapUI 启动后，可以执行一次快速冒烟测试，以确保它能与本地区块链网络进行通信。展开刚创建的新的 REST 资源，直到看到 Request 1，然后在 Editor 窗口中打开它。使用 GET 方法，在 resource 下输入 /chain。确保单击了 output 选项卡上的 JSON 选项，然后运行请求（通过单击 arrow 图标）。执行此请求时，会在 Editor 窗口右侧的输出选项卡中返回当前区块的哈希值，如图 4 所示： <br> <img src="https://www.ibm.com/developerworks/cn/java/j-chaincode-for-java-developers/Figure-4.png" alt="区块链冒烟测试" title=""></p> 
+  <p>如果看到一条类似图 4 的 JSON 消息（当然您的网络的 currentBlockHash 值会有所不同），那么您已准备好部署 Example 链代码。</p> 
+  <p>右键单击 REST Project 1 (<a href="http://localhost:7050" rel="nofollow">http://localhost:7050</a>) 下的端点并选择 New Resource；您会看到一个包含 Resource Path 字段的 “New REST Resource” 对话框（参见图 5）： <br> <img src="https://www.ibm.com/developerworks/cn/java/j-chaincode-for-java-developers/Figure-5.png" alt=" SoapUI New Resource 对话框" title=""> <br> 输入 /chaincode 作为 resource path，然后单击 OK，您会看到 SoapUI Projects 面板中显示了新资源。打开对此资源的请求（默认情况下该请求名为 Request 1），将方法更改为 POST，并将此 JSON 粘贴到请求编辑器窗口左下角的请求区域：</p> 
+  <pre class="prettyprint"><code class=" hljs json">{
+"<span class="hljs-attribute">jsonrpc</span>": <span class="hljs-value"><span class="hljs-string">"2.0"</span></span>,
+  "<span class="hljs-attribute">method</span>": <span class="hljs-value"><span class="hljs-string">"deploy"</span></span>,
+  "<span class="hljs-attribute">params</span>": <span class="hljs-value">{ "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>, "<span class="hljs-attribute">chaincodeID</span>":<span class="hljs-value">{ "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"hello"</span> </span>}</span>, "<span class="hljs-attribute">CtorMsg</span>": <span class="hljs-value">{ "<span class="hljs-attribute">args</span>": <span class="hljs-value">[<span class="hljs-string">""</span>] </span>} </span>}</span>,
+  "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1</span> </span>}</code></pre> 
+  <p>有 3 点需要注意：</p> 
+  <p><strong>第 3 行</strong>：method 值必须为 deploy。 <br> <strong>第 6-7 行</strong>：JSON 消息中的 chaincodeID.name 必须与您在上一节中注册 Example 链代码时所用的 chaincodeID 匹配（在 Example 链代码中，该值为 hello）。 <br> <strong>第 13 行</strong>：id 值用于协调请求。本教程不需要过多地考虑它，但要注意的是，在响应中始终会发送回该值（参见下一个清单）。 <br> 提交此请求时，JSON 输出应如下所示：</p> 
+  <pre class="prettyprint"><code class=" hljs json">{
+   "<span class="hljs-attribute">jsonrpc</span>": <span class="hljs-value"><span class="hljs-string">"2.0"</span></span>,
+   "<span class="hljs-attribute">result</span>":    <span class="hljs-value">{ "<span class="hljs-attribute">status</span>": <span class="hljs-value"><span class="hljs-string">"OK"</span></span>, "<span class="hljs-attribute">message</span>": <span class="hljs-value"><span class="hljs-string">"hello"</span> </span>}</span>,
+   "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1</span> </span>}</code></pre> 
+  <p>图 6 给出了 SoapUI 中的输出的屏幕截图。JSON 输出消息会显示在输出选项卡中，该选项卡位于请求编辑器的右侧。 <br> <img src="https://www.ibm.com/developerworks/cn/java/j-chaincode-for-java-developers/Figure-6.png" alt="SoapUI 链代码部署请求" title=""></p> 
+  <p>终端窗口中的网络日志输出应包含以下行：</p> 
+  <pre class="prettyprint"><code class=" hljs applescript">.
+.
+vp0_1         | <span class="hljs-number">20</span>:<span class="hljs-number">48</span>:<span class="hljs-number">39.482</span> [<span class="hljs-property">rest</span>] ProcessChaincode -&gt; INFO <span class="hljs-number">0</span>c4 REST processing chaincode request...
+vp0_1         | <span class="hljs-number">20</span>:<span class="hljs-number">48</span>:<span class="hljs-number">39.482</span> [<span class="hljs-property">rest</span>] processChaincodeDeploy -&gt; INFO <span class="hljs-number">0</span>c5 REST deploying chaincode...
+vp0_1         | <span class="hljs-number">20</span>:<span class="hljs-number">48</span>:<span class="hljs-number">39.483</span> [devops] Deploy -&gt; DEBU <span class="hljs-number">0</span>c6 Creating deployment <span class="hljs-keyword">transaction</span> (hello)
+vp0_1         | <span class="hljs-number">20</span>:<span class="hljs-number">48</span>:<span class="hljs-number">39.483</span> [devops] Deploy -&gt; DEBU <span class="hljs-number">0</span>c7 Sending deploy <span class="hljs-keyword">transaction</span> (hello) <span class="hljs-keyword">to</span> validator
+vp0_1         | <span class="hljs-number">20</span>:<span class="hljs-number">48</span>:<span class="hljs-number">39.483</span> [peer] sendTransactionsToLocalEngine -&gt; DEBU <span class="hljs-number">0</span>c8 Marshalling <span class="hljs-keyword">transaction</span> CHAINCODE_DEPLOY <span class="hljs-keyword">to</span> send <span class="hljs-keyword">to</span> <span class="hljs-keyword">local</span> engine
+vp0_1         | <span class="hljs-number">20</span>:<span class="hljs-number">48</span>:<span class="hljs-number">39.483</span> [peer] sendTransactionsToLocalEngine -&gt; DEBU <span class="hljs-number">0</span>c9 Sending message CHAIN_TRANSACTION <span class="hljs-keyword">with</span> timestamp seconds:<span class="hljs-number">1487796519</span> nanos:<span class="hljs-number">483661510</span>  <span class="hljs-keyword">to</span> <span class="hljs-keyword">local</span> engine
+vp0_1         | <span class="hljs-number">20</span>:<span class="hljs-number">48</span>:<span class="hljs-number">39.483</span> [consensus/noops] RecvMsg -&gt; DEBU <span class="hljs-number">0</span>ca Handling Message <span class="hljs-keyword">of</span> type: CHAIN_TRANSACTION 
+vp0_1         | <span class="hljs-number">20</span>:<span class="hljs-number">48</span>:<span class="hljs-number">39.483</span> [consensus/noops] broadcastConsensusMsg -&gt; DEBU <span class="hljs-number">0</span>cb Broadcasting CONSENSUS
+vp0_1         | <span class="hljs-number">20</span>:<span class="hljs-number">48</span>:<span class="hljs-number">39.483</span> [peer] Broadcast -&gt; DEBU <span class="hljs-number">0</span>cc Broadcast took <span class="hljs-number">1.135</span>s
+vp0_1         | <span class="hljs-number">20</span>:<span class="hljs-number">48</span>:<span class="hljs-number">39.483</span> [consensus/noops] RecvMsg -&gt; DEBU <span class="hljs-number">0</span>cd Sending <span class="hljs-keyword">to</span> channel tx uuid: hello
+vp0_1         | <span class="hljs-number">20</span>:<span class="hljs-number">48</span>:<span class="hljs-number">39.483</span> [<span class="hljs-property">rest</span>] processChaincodeDeploy -&gt; INFO <span class="hljs-number">0</span>ce Successfully deployed chainCode: hello
+vp0_1         | <span class="hljs-number">20</span>:<span class="hljs-number">48</span>:<span class="hljs-number">39.484</span> [<span class="hljs-property">rest</span>] ProcessChaincode -&gt; INFO <span class="hljs-number">0</span>cf REST successfully deploy chaincode: {<span class="hljs-string">"jsonrpc"</span>:<span class="hljs-string">"2.0"</span>,<span class="hljs-string">"result"</span>:{<span class="hljs-string">"status"</span>:<span class="hljs-string">"OK"</span>,<span class="hljs-string">"message"</span>:<span class="hljs-string">"hello"</span>},<span class="hljs-string">"id"</span>:<span class="hljs-number">1</span>}
+.
+.</code></pre> 
+  <p><strong>第 3-4 行</strong>显示了输出，表明网络已收到部署消息，并且该结构正在部署链代码。<strong>第 13-14 行</strong>表明链代码已成功部署。</p> 
+  <p>在运行链代码的终端窗口中，可以注意到以下输出：</p> 
+  <pre class="prettyprint"><code class=" hljs avrasm">$ ./build/distributions/Example/bin/Example
+Hello world! starting [Ljava<span class="hljs-preprocessor">.lang</span><span class="hljs-preprocessor">.String</span><span class="hljs-comment">;@7ef20235</span>
+Feb <span class="hljs-number">22</span>, <span class="hljs-number">2017</span> <span class="hljs-number">2</span>:<span class="hljs-number">44</span>:<span class="hljs-number">43</span> PM example<span class="hljs-preprocessor">.Example</span> main
+<span class="hljs-label">INFO:</span> starting
+Feb <span class="hljs-number">22</span>, <span class="hljs-number">2017</span> <span class="hljs-number">2</span>:<span class="hljs-number">44</span>:<span class="hljs-number">43</span> PM org<span class="hljs-preprocessor">.hyperledger</span><span class="hljs-preprocessor">.java</span><span class="hljs-preprocessor">.shim</span><span class="hljs-preprocessor">.ChaincodeBase</span> newPeerClientConnection
+<span class="hljs-label">INFO:</span> Inside newPeerCLientConnection
+Feb <span class="hljs-number">22</span>, <span class="hljs-number">2017</span> <span class="hljs-number">2</span>:<span class="hljs-number">44</span>:<span class="hljs-number">43</span> PM io<span class="hljs-preprocessor">.grpc</span><span class="hljs-preprocessor">.internal</span><span class="hljs-preprocessor">.TransportSet</span>$1 <span class="hljs-keyword">call</span>
+<span class="hljs-label">INFO:</span> Created transport io<span class="hljs-preprocessor">.grpc</span><span class="hljs-preprocessor">.netty</span><span class="hljs-preprocessor">.NettyClientTransport</span><span class="hljs-localvars">@46</span>adccd3(/<span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">7051</span>) for /<span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">7051</span>
+Feb <span class="hljs-number">22</span>, <span class="hljs-number">2017</span> <span class="hljs-number">2</span>:<span class="hljs-number">44</span>:<span class="hljs-number">48</span> PM io<span class="hljs-preprocessor">.grpc</span><span class="hljs-preprocessor">.internal</span><span class="hljs-preprocessor">.TransportSet</span>$TransportListener transportReady
+<span class="hljs-label">INFO:</span> Transport io<span class="hljs-preprocessor">.grpc</span><span class="hljs-preprocessor">.netty</span><span class="hljs-preprocessor">.NettyClientTransport</span><span class="hljs-localvars">@46</span>adccd3(/<span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">7051</span>) for /<span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">7051</span> is ready
+Feb <span class="hljs-number">22</span>, <span class="hljs-number">2017</span> <span class="hljs-number">2</span>:<span class="hljs-number">48</span>:<span class="hljs-number">40</span> PM example<span class="hljs-preprocessor">.Example</span> run
+<span class="hljs-label">INFO:</span> <span class="hljs-keyword">In</span> run, function:
+Feb <span class="hljs-number">22</span>, <span class="hljs-number">2017</span> <span class="hljs-number">2</span>:<span class="hljs-number">48</span>:<span class="hljs-number">40</span> PM example<span class="hljs-preprocessor">.Example</span> run</code></pre> 
+  <p>我包含了所有上下文输出，在向区块链网络发送部署消息时，您会看到类似第 <strong>11-13 行</strong>的消息。</p> 
+  <h4 id="4在示例上调用交易">4.在示例上调用交易</h4> 
+  <p>最后，将会调用 hello 方法，可以看到它会在运行链代码的终端窗口的日志消息中显示出来。</p> 
+  <p>在 SoapUI 中的 chaincode 资源下，右键单击 Method 1 并选择 Clone Method。将该方法命名为 Invoke，然后单击 OK。打开新的 Invoke 方法下的 Request 1，并粘贴到以下 JSON 请求中：</p> 
+  <pre class="prettyprint"><code class=" hljs json">{
+"<span class="hljs-attribute">jsonrpc</span>": <span class="hljs-value"><span class="hljs-string">"2.0"</span></span>,
+  "<span class="hljs-attribute">method</span>": <span class="hljs-value"><span class="hljs-string">"invoke"</span></span>,
+  "<span class="hljs-attribute">params</span>": <span class="hljs-value">{ "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>, "<span class="hljs-attribute">chaincodeID</span>":<span class="hljs-value">{ "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"hello"</span> </span>}</span>, "<span class="hljs-attribute">CtorMsg</span>": <span class="hljs-value">{ "<span class="hljs-attribute">args</span>": <span class="hljs-value">[<span class="hljs-string">"hello"</span>] </span>} </span>}</span>,
+  "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">2</span> </span>}</code></pre> 
+  <p>运行该请求时，会看到以下 JSON 响应：</p> 
+  <pre class="prettyprint"><code class=" hljs json">{ "<span class="hljs-attribute">jsonrpc</span>":<span class="hljs-value"><span class="hljs-string">"2.0"</span></span>, "<span class="hljs-attribute">result</span>":    <span class="hljs-value">{ "<span class="hljs-attribute">status</span>":<span class="hljs-value"><span class="hljs-string">"OK"</span></span>, "<span class="hljs-attribute">message</span>":<span class="hljs-value"><span class="hljs-string">"1c1811d0-a958-4c58-ab1d-e1df550c18a3"</span> </span>}</span>, "<span class="hljs-attribute">id</span>":<span class="hljs-value"><span class="hljs-number">2</span> </span>}</code></pre> 
+  <p>图 7 给出了 SoapUI 中的输出的屏幕截图 <br> <img src="https://www.ibm.com/developerworks/cn/java/j-chaincode-for-java-developers/Figure-7.png" alt="SoapUI 链代码调用请求" title=""></p> 
+  <p>网络日志输出应包含以下行：</p> 
+  <pre class="prettyprint"><code class=" hljs applescript">.
+.
+vp0_1         | <span class="hljs-number">21</span>:<span class="hljs-number">44</span>:<span class="hljs-number">35.143</span> [<span class="hljs-property">rest</span>] ProcessChaincode -&gt; INFO <span class="hljs-number">555</span> REST processing chaincode request...
+vp0_1         | <span class="hljs-number">21</span>:<span class="hljs-number">44</span>:<span class="hljs-number">35.143</span> [<span class="hljs-property">rest</span>] processChaincodeInvokeOrQuery -&gt; INFO <span class="hljs-number">556</span> REST invoke chaincode...
+vp0_1         | <span class="hljs-number">21</span>:<span class="hljs-number">44</span>:<span class="hljs-number">35.143</span> [devops] invokeOrQuery -&gt; INFO <span class="hljs-number">557</span> Transaction ID: <span class="hljs-number">1</span>c1811d0-a958-<span class="hljs-number">4</span>c58-ab1d-e1df550c18a3
+vp0_1         | <span class="hljs-number">21</span>:<span class="hljs-number">44</span>:<span class="hljs-number">35.143</span> [devops] createExecTx -&gt; DEBU <span class="hljs-number">558</span> Creating invocation <span class="hljs-keyword">transaction</span> (<span class="hljs-number">1</span>c1811d0-a958-<span class="hljs-number">4</span>c58-ab1d-e1df550c18a3)
+vp0_1         | <span class="hljs-number">21</span>:<span class="hljs-number">44</span>:<span class="hljs-number">35.143</span> [devops] invokeOrQuery -&gt; DEBU <span class="hljs-number">559</span> Sending invocation <span class="hljs-keyword">transaction</span> (<span class="hljs-number">1</span>c1811d0-a958-<span class="hljs-number">4</span>c58-ab1d-e1df550c18a3) <span class="hljs-keyword">to</span> validator
+vp0_1         | <span class="hljs-number">21</span>:<span class="hljs-number">44</span>:<span class="hljs-number">35.143</span> [peer] sendTransactionsToLocalEngine -&gt; DEBU <span class="hljs-number">55</span>a Marshalling <span class="hljs-keyword">transaction</span> CHAINCODE_INVOKE <span class="hljs-keyword">to</span> send <span class="hljs-keyword">to</span> <span class="hljs-keyword">local</span> engine
+vp0_1         | <span class="hljs-number">21</span>:<span class="hljs-number">44</span>:<span class="hljs-number">35.143</span> [peer] sendTransactionsToLocalEngine -&gt; DEBU <span class="hljs-number">55</span>b Sending message CHAIN_TRANSACTION <span class="hljs-keyword">with</span> timestamp seconds:<span class="hljs-number">1487799875</span> nanos:<span class="hljs-number">143438691</span>  <span class="hljs-keyword">to</span> <span class="hljs-keyword">local</span> engine
+vp0_1         | <span class="hljs-number">21</span>:<span class="hljs-number">44</span>:<span class="hljs-number">35.143</span> [consensus/noops] RecvMsg -&gt; DEBU <span class="hljs-number">55</span>c Handling Message <span class="hljs-keyword">of</span> type: CHAIN_TRANSACTION 
+vp0_1         | <span class="hljs-number">21</span>:<span class="hljs-number">44</span>:<span class="hljs-number">35.143</span> [consensus/noops] broadcastConsensusMsg -&gt; DEBU <span class="hljs-number">55</span>d Broadcasting CONSENSUS
+vp0_1         | <span class="hljs-number">21</span>:<span class="hljs-number">44</span>:<span class="hljs-number">35.143</span> [peer] Broadcast -&gt; DEBU <span class="hljs-number">55</span>e Broadcast took <span class="hljs-number">1.249</span>s
+vp0_1         | <span class="hljs-number">21</span>:<span class="hljs-number">44</span>:<span class="hljs-number">35.143</span> [consensus/noops] RecvMsg -&gt; DEBU <span class="hljs-number">55</span>f Sending <span class="hljs-keyword">to</span> channel tx uuid: <span class="hljs-number">1</span>c1811d0-a958-<span class="hljs-number">4</span>c58-ab1d-e1df550c18a3
+vp0_1         | <span class="hljs-number">21</span>:<span class="hljs-number">44</span>:<span class="hljs-number">35.143</span> [<span class="hljs-property">rest</span>] processChaincodeInvokeOrQuery -&gt; INFO <span class="hljs-number">560</span> Successfully submitted invoke <span class="hljs-keyword">transaction</span> <span class="hljs-keyword">with</span> txid (<span class="hljs-number">1</span>c1811d0-a958-<span class="hljs-number">4</span>c58-ab1d-e1df550c18a3)
+vp0_1         | <span class="hljs-number">21</span>:<span class="hljs-number">44</span>:<span class="hljs-number">35.143</span> [<span class="hljs-property">rest</span>] ProcessChaincode -&gt; INFO <span class="hljs-number">561</span> REST successfully submitted invoke <span class="hljs-keyword">transaction</span>: {<span class="hljs-string">"jsonrpc"</span>:<span class="hljs-string">"2.0"</span>,<span class="hljs-string">"result"</span>:{<span class="hljs-string">"status"</span>:<span class="hljs-string">"OK"</span>,<span class="hljs-string">"message"</span>:<span class="hljs-string">"1c1811d0-a958-4c58-ab1d-e1df550c18a3"</span>},<span class="hljs-string">"id"</span>:<span class="hljs-number">2</span>}
+.
+.</code></pre> 
+  <p>链代码日志输出如下所示：</p> 
+  <pre class="prettyprint"><code class=" hljs avrasm">$ ./build/distributions/Example/bin/Example
+Hello world! starting [Ljava<span class="hljs-preprocessor">.lang</span><span class="hljs-preprocessor">.String</span><span class="hljs-comment">;@7ef20235</span>
+Feb <span class="hljs-number">22</span>, <span class="hljs-number">2017</span> <span class="hljs-number">3</span>:<span class="hljs-number">26</span>:<span class="hljs-number">57</span> PM example<span class="hljs-preprocessor">.Example</span> main
+<span class="hljs-label">INFO:</span> starting
+Feb <span class="hljs-number">22</span>, <span class="hljs-number">2017</span> <span class="hljs-number">3</span>:<span class="hljs-number">26</span>:<span class="hljs-number">57</span> PM org<span class="hljs-preprocessor">.hyperledger</span><span class="hljs-preprocessor">.java</span><span class="hljs-preprocessor">.shim</span><span class="hljs-preprocessor">.ChaincodeBase</span> newPeerClientConnection
+<span class="hljs-label">INFO:</span> Inside newPeerCLientConnection
+Feb <span class="hljs-number">22</span>, <span class="hljs-number">2017</span> <span class="hljs-number">3</span>:<span class="hljs-number">26</span>:<span class="hljs-number">57</span> PM io<span class="hljs-preprocessor">.grpc</span><span class="hljs-preprocessor">.internal</span><span class="hljs-preprocessor">.TransportSet</span>$1 <span class="hljs-keyword">call</span>
+<span class="hljs-label">INFO:</span> Created transport io<span class="hljs-preprocessor">.grpc</span><span class="hljs-preprocessor">.netty</span><span class="hljs-preprocessor">.NettyClientTransport</span><span class="hljs-localvars">@765</span>e4953(/<span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">7051</span>) for /<span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">7051</span>
+Feb <span class="hljs-number">22</span>, <span class="hljs-number">2017</span> <span class="hljs-number">3</span>:<span class="hljs-number">27</span>:<span class="hljs-number">02</span> PM io<span class="hljs-preprocessor">.grpc</span><span class="hljs-preprocessor">.internal</span><span class="hljs-preprocessor">.TransportSet</span>$TransportListener transportReady
+<span class="hljs-label">INFO:</span> Transport io<span class="hljs-preprocessor">.grpc</span><span class="hljs-preprocessor">.netty</span><span class="hljs-preprocessor">.NettyClientTransport</span><span class="hljs-localvars">@765</span>e4953(/<span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">7051</span>) for /<span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">7051</span> is ready
+Feb <span class="hljs-number">22</span>, <span class="hljs-number">2017</span> <span class="hljs-number">3</span>:<span class="hljs-number">27</span>:<span class="hljs-number">24</span> PM example<span class="hljs-preprocessor">.Example</span> run
+<span class="hljs-label">INFO:</span> <span class="hljs-keyword">In</span> run, function:
+Feb <span class="hljs-number">22</span>, <span class="hljs-number">2017</span> <span class="hljs-number">3</span>:<span class="hljs-number">27</span>:<span class="hljs-number">24</span> PM example<span class="hljs-preprocessor">.Example</span> run
+<span class="hljs-label">SEVERE:</span> No matching case for function:
+Feb <span class="hljs-number">22</span>, <span class="hljs-number">2017</span> <span class="hljs-number">3</span>:<span class="hljs-number">30</span>:<span class="hljs-number">55</span> PM example<span class="hljs-preprocessor">.Example</span> run
+<span class="hljs-label">INFO:</span> <span class="hljs-keyword">In</span> run, function:hello
+hello invoked</code></pre> 
+  <p>我再次给出了所有链代码输出。您可以看到哪些地方（<strong>第 16 行</strong>）调用了 hello 函数。</p> 
+  <p>现在您已知道如何在本地区块链网络上构建、部署和运行 Java 链代码。在下一节中，将会使用 Eclipse IDE（几乎）从头编写一个链代码程序，使用 Gradle 构建该链代码程序，然后使用 SoapUI 体验它。</p> 
+  <h3 id="编写第一个-java-链代码程序">编写第一个 Java 链代码程序</h3> 
+  <p>在上一节中，您已经熟悉了如何构建、运行、部署和调用链代码，但尚未编写任何 Java 代码。</p> 
+  <p>在本节中，将会使用 Eclipse IDE、一个用于 Eclipse 的 Gradle 插件，以及一个名为 ChaincodeTutorial 的 Java 链代码框架项目，编写第一个 Java 链代码程序。您将从我为此教程创建的 GitHub 存储库中获取框架代码，将该代码导入 Eclipse 中，添加代码来让链代码智慧合同按要求生效，然后在 Eclipse IDE 内使用 Gradle 构建该代码。</p> 
+  <p>您将执行的步骤如下：</p> 
+  <ul> 
+   <li>安装适用于 Eclipse 的 Gradle Buildship 插件。</li> 
+   <li>从 GitHub 克隆 ChaincodeTutorial 项目。</li> 
+   <li>将该项目导入 Eclipse 中。</li> 
+   <li>探索该链代码框架项目。</li> 
+   <li>编写 Java 链代码。</li> 
+   <li>构建 Java 链代码。 <br> 完成本节后，您的链代码就可以在本地区块链网络上运行了。</li> 
+  </ul> 
+  <h4 id="1安装适用于-eclipse-的-gradle-buildship-插件">1.安装适用于 Eclipse 的 Gradle Buildship 插件</h4> 
+  <p>您使用自己喜欢的任何 IDE，但本教程中的说明是针对 Eclipse 的。<strong>备注</strong>：Buildship Gradle 插件有助于将 Gradle 与 Eclipse 集成，但仍然需要将 Gradle 安装在计算机上。</p> 
+  <p>如果您一直在按照教程进行操作，那么您应该已经将 Gradle 安装在计算机上；如果尚未安装它，请立即安装。请参阅 “安装构建软件” 部分，了解如何将 Gradle 安装在计算机上。 <br> <img src="https://www.ibm.com/developerworks/cn/java/j-chaincode-for-java-developers/Figure-8.png" alt="Eclipse Marketplace：Gradle Buildship 插件" title=""></p> 
+  <p>在 <strong>Buildship Gradle Integration</strong> 下，单击 <strong>Install</strong> 按钮并按照提示进行操作。单击 <strong>Finish</strong> 后，将安装适用于 Eclipse 的 Buildship Gradle 插件，而且会要求您重启 Eclipse。</p> 
+  <p>重新打开 Eclipse 后，Gradle 应该已经与 Eclipse IDE 全面集成。您现在已准备好从 GItHub 克隆 ChaincodeTutorial 存储库。</p> 
+  <h4 id="从-github-克隆-chaincodetutorial-项目">从 GitHub 克隆 ChaincodeTutorial 项目</h4> 
+  <p>配置 Eclipse IDE 和 Gradle集成后，将从 GitHub 克隆 ChaincodeTutorial 代码并将其导入 Eclipse 中。打开一个命令提示符或终端窗口，导航到 $GOPATH 并执行以下命令：</p> 
+  <pre class="prettyprint"><code class=" hljs php">git <span class="hljs-keyword">clone</span> https:<span class="hljs-comment">//github.com/makotogo/ChaincodeTutorial.git</span></code></pre> 
+  <p>命令输出应类似于：</p> 
+  <pre class="prettyprint"><code class=" hljs r">$ export GOPATH=/Users/sperry/home/mychaincode
+$ cd $GOPATH
+$ git clone https://github.com/makotogo/ChaincodeTutorial.git
+Cloning into <span class="hljs-string">'ChaincodeTutorial'</span><span class="hljs-keyword">...</span>
+remote: Counting objects: <span class="hljs-number">133</span>, done.
+remote: Compressing objects: <span class="hljs-number">100</span>% (<span class="hljs-number">90</span>/<span class="hljs-number">90</span>), done.
+remote: Total <span class="hljs-number">133</span> (delta <span class="hljs-number">16</span>), reused <span class="hljs-number">118</span> (delta <span class="hljs-number">1</span>), pack-reused <span class="hljs-number">0</span>
+Receiving objects: <span class="hljs-number">100</span>% (<span class="hljs-number">133</span>/<span class="hljs-number">133</span>), <span class="hljs-number">9.39</span> MiB | <span class="hljs-number">1.95</span> MiB/s, done.
+Resolving deltas: <span class="hljs-number">100</span>% (<span class="hljs-number">16</span>/<span class="hljs-number">16</span>), done.
+$ cd ChaincodeTutorial
+$ pwd
+/Users/sperry/home/mychaincode/ChaincodeTutorial</code></pre> 
+  <p>此命令将 Blockchain ChaincodeTutorial 存储库从 GitHub 克隆到 $GOPATH。它包含一个 Java 链代码框架项目，您可以在本地区块链网络中构建、运行和测试它。</p> 
+  <p>但在执行所有这些操作之前，需要将该代码导入 Eclipse 中。</p> 
+  <h4 id="3将该项目导入-eclipse-中">3.将该项目导入 Eclipse 中</h4> 
+  <p>在 Eclipse 中，转到 <strong>File &gt; Import…&gt; Gradle &gt; Existing Gradle Project</strong>。这会打开一个向导对话框（参见图 9）。</p> 
+  <p><img src="https://www.ibm.com/developerworks/cn/java/j-chaincode-for-java-developers/Figure-9.png" alt="Eclipse Import Wizard：Gradle Project" title=""></p> 
+  <p>单击 <strong>Next</strong>。在向导中随后出现的对话框中（参见图 10），浏览到 $GOPATH/ChaincodeTutorial，然后单击 <strong>Finish</strong> 导入该项目。 <br> <img src="https://www.ibm.com/developerworks/cn/java/j-chaincode-for-java-developers/Figure-10.png" alt="Eclipse Import Wizard：Gradle Project（项目的 root 目录）" title=""></p> 
+  <p>完成项目导入后，确保选择了 <strong>Java Perspective</strong>，您刚导入的 ChaincodeTutorial 项目会显示在 Project Explorer 视图中。</p> 
+  <p>将代码导入 Eclipse 工作区后，就可以编写链代码了。</p> 
+  <h4 id="4探索该链代码框架项目">4.探索该链代码框架项目</h4> 
+  <p>在本节中，将探索该链代码项目，以便理解在编写任何 Java 代码前它应该如何运行。</p> 
+  <p>作为开发人员，我们喜欢编写代码，所以我不想让您失去编写 Java 代码的机会。但是，项目设置可能很复杂，我不想让这些设置阻碍实现本教程的主要目的。为此，我提供了您所需的大部分代码。</p> 
+  <p>首先让我们快速查看一下基类 AbstractChaincode，它位于 com.makotojava.learn.blockchain.chaincode 包中，如清单 1 所示。</p> 
+  <p>清单 1. AbstractChaincode 类</p> 
+  <pre class="prettyprint"><code class=" hljs java"><span class="hljs-keyword">package</span> com.makotojava.learn.blockchain.chaincode;
+
+<span class="hljs-keyword">import</span> java.util.Arrays;
+
+<span class="hljs-keyword">import</span> org.apache.commons.logging.Log;
+<span class="hljs-keyword">import</span> org.apache.commons.logging.LogFactory;
+<span class="hljs-keyword">import</span> org.hyperledger.java.shim.ChaincodeBase;
+<span class="hljs-keyword">import</span> org.hyperledger.java.shim.ChaincodeStub;
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AbstractChaincode</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ChaincodeBase</span> {</span>
+
+  <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> Log log = LogFactory.getLog(AbstractChaincode.class);
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> String FUNCTION_INIT = <span class="hljs-string">"init"</span>;
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> String FUNCTION_QUERY = <span class="hljs-string">"query"</span>;
+
+  <span class="hljs-keyword">protected</span> <span class="hljs-keyword">abstract</span> String <span class="hljs-title">handleInit</span>(ChaincodeStub stub, String[] args);
+  <span class="hljs-keyword">protected</span> <span class="hljs-keyword">abstract</span> String <span class="hljs-title">handleQuery</span>(ChaincodeStub stub, String[] args);
+  <span class="hljs-keyword">protected</span> <span class="hljs-keyword">abstract</span> String <span class="hljs-title">handleOther</span>(ChaincodeStub stub, String function, String[] args);
+
+  <span class="hljs-annotation">@Override</span>
+  <span class="hljs-keyword">public</span> String <span class="hljs-title">run</span>(ChaincodeStub stub, String function, String[] args) {
+    String ret;
+    log.info(<span class="hljs-string">"Greetings from run(): function -&gt; "</span> + function + <span class="hljs-string">" | args -&gt; "</span> + Arrays.toString(args));
+    <span class="hljs-keyword">switch</span> (function) {
+    <span class="hljs-keyword">case</span> FUNCTION_INIT:
+      ret = handleInit(stub, args);
+      <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">case</span> FUNCTION_QUERY:
+      ret = handleQuery(stub, args);
+    <span class="hljs-keyword">default</span>:
+      ret = handleOther(stub, function, args);
+      <span class="hljs-keyword">break</span>;
+    }
+    <span class="hljs-keyword">return</span> ret;
+  }
+
+  <span class="hljs-annotation">@Override</span>
+  <span class="hljs-keyword">public</span> String <span class="hljs-title">query</span>(ChaincodeStub stub, String function, String[] args) {
+    <span class="hljs-keyword">return</span> handleQuery(stub, args);
+  }
+
+}</code></pre> 
+  <p>我想指出的第一点是，AbstractChaincode 是 ChaincodeBase 的子类，后者来自该结构的 shim 客户端（<strong>第 7、10 行</strong>）。</p> 
+  <p><strong>第 17-19 行</strong>显示了需要在 ChaincodeLog 类（AbstractChaincode 的子类）中实现的方法，这些方法分别用于实现初始化、账本查询和日志功能。</p> 
+  <p><strong>第 22-36 行</strong>显示了 ChaincodeBase 类（来自链代码 shim 客户端）的 run() 方法，我们可以在其中查看调用了哪个函数，以及该调用应委托给哪个处理函数。该类是可扩展的，因为 init 和 query 以外的其他任何函数（比如 log 函数）都由 handleOther() 处理，所以您还必须实现它。</p> 
+  <p>现在打开 com.makotojava.learn.blockchain.chaincode 包中的 ChaincodeLog 类。</p> 
+  <p>我只提供了一个框架供您填充 — 也就是说，我仅提供了编译它所需的代码。您需要编写剩余代码。您应该执行 JUnit 测试，然后会看到测试失败（因为还未编写实现）和失败的原因。换句话说，可以使用 JUnit 测试作为指导来正确地实现代码。</p> 
+  <p>现在，如果感觉难以理解，不要担心；我在 com.makotojava.learn.blockchain.chaincode.solution 中提供了解决方案，以防您遇到阻碍（或者想根据参考来帮助完成实现）。</p> 
+  <h3 id="编写-java-链代码">编写 Java 链代码</h3> 
+  <p>首先介绍一下在 ChaincodeLog 中实现链代码方法需要了解的一些背景。Java 链代码通过 ChaincodeStub 类与 Hyperledger Fabric 框架进行通信，另外需要记住，账本是区块链技术的透明性方面的核心。让智能合约（责任性）发挥其作用的是账本的状态，而链代码是通过 ChaincodeStub 来评估账本的状态。通过访问账本状态，可以实现一个智能合约（也即链代码）。</p> 
+  <p>ChaincodeStub 上有许多方法可用于在账本的当前状态中存储、检索和删除数据项，但本教程仅讨论两个方法，它们用于存储和检索账本状态：</p> 
+  <p>putState(String key, String value)— 将指定的状态值存储在账本中，该值被相应映射到指定的键。</p> 
+  <p>getState()— 获取与指定键关联的状态值，并以字符串形式返回它。</p> 
+  <p>为本教程编写代码时，只需在账本中存储或检索状态值，就会使用 putState() 或 getState() 函数。ChaincodeLog 类仅在账本中存储和检索值来实现其智能合约，所以实现这些方法只需知道该值即可。更复杂的链代码将使用 ChaincodeStub 中的其他一些方法（但这些方法不属于本教程的介绍范畴）。</p> 
+  <p>我非常喜欢测试驱动开发 (TDD)，所以按照 TDD 的方式，我首先编写单元测试。继续运行它们，并观察它们的失败过程。在这之后，编写符合规范的代码，直到单元测试得到通过。单元测试的工作是确保能够获得预期的行为，通过研究单元测试，您将获得实现这些方法所需的足够信息。</p> 
+  <p>但是，我还在每个方法顶部编写了 javadoc 注释，这可能有所帮助（以防您不熟悉 TDD 或 JUnit）。在学完本节的内容后，在 JUnit 测试中的代码与框架 ChaincodeLog 中的 javadoc 注释之间，你应该知道有实现链代码所需的所有信息。</p> 
+  <p>从 Project Explorer 视图（在 Java 透视图中），导航到 ChaincodeLogTest 类，右键单击它并选择 Run As &gt; Gradle Test。在它运行时，您会看到如图 11 所示的结果，其中显示了运行的所有 Gradle 任务的树结构。成功完成的任务在旁边会用一个复选标记进行指示。</p> 
+  <p><img src="https://www.ibm.com/developerworks/cn/java/j-chaincode-for-java-developers/Figure-11.png" alt="Eclipse：Gradle Executions 视图" title=""></p> 
+  <p>Gradle Executions 选项卡中的感叹号表示与失败的单元测试对应的 Gradle 任务（跟我们期望的一样，所有 4 个单元测试都失败了）。</p> 
+  <p>由于我们编写 JUnit 测试案例的方式，每个测试方法对应于 ChaincodeLog 中的一个方法，您需要在本教程中正确实现它们。</p> 
+  <p><strong>实现 getChaincodeID()</strong> <br> 首先，需要实现 getChaincodeID()。它的合约要求返回链代码的唯一标识符。我在 ChaincodeLog 类的顶部定义了一个名为 CHAINCODE_ID 的常量，您会用到它。可以自由更改它的值，但是，如果要更改 getChaincodeID() 返回的链代码 ID，请确保它在您的网络中是唯一的，而且不要忘记更改 JSON 消息的 ChaincodeID.name 属性。</p> 
+  <pre class="prettyprint"><code class=" hljs java"><span class="hljs-javadoc">/** * Returns the unique chaincode ID for this chaincode program. */</span>
+<span class="hljs-annotation">@Override</span>
+<span class="hljs-keyword">public</span> String <span class="hljs-title">getChaincodeID</span>() {
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;<span class="hljs-comment">// ADD YOUR CODE HERE</span>
+}</code></pre> 
+  <p>练习：完成 getChaincodeID() 方法。如果需要一个参考，请参见 com.makotojava.learn.blockchain.chaincode.solution 包。</p> 
+  <p><strong>实现 handleInit()</strong></p> 
+  <p>接下来将实现 handleInit() 方法。它的合约要求处理链代码程序的初始化，在本例中，这意味着它将向账本添加一条（由调用方指定的）消息，并在调用成功时将该消息返回给调用方。</p> 
+  <pre class="prettyprint"><code class=" hljs java"><span class="hljs-javadoc">/** * Handles initializing this chaincode program. * * Caller expects this method to: * * 1. Use args[0] as the key for logging. * 2. Use args[1] as the log message. * 3. Return the logged message. */</span>
+<span class="hljs-annotation">@Override</span>
+<span class="hljs-keyword">protected</span> String <span class="hljs-title">handleInit</span>(ChaincodeStub stub, String[] args) {
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;<span class="hljs-comment">// ADD YOUR CODE HERE</span>
+}</code></pre> 
+  <p>练习：完成 handieInit() 方法。如果需要一个参考，请参见 com.makotojava.learn.blockchain.chaincode.solution 包。</p> 
+  <p><strong>实现 handleQuery()</strong></p> 
+  <p>接下来将实现 handleQuery() 方法。它的合约要求查询账本，为此，它会获取指定的键，在账本中查询与这个（这些）键匹配的值，然后将该（这些）值返回给调用方。如果指定了多个键，应该使用逗号分隔返回的值。</p> 
+  <pre class="prettyprint"><code class=" hljs java"><span class="hljs-javadoc">/** * Handles querying the ledger. * * Caller expects this method to: * * 1. Use args[0] as the key for ledger query. * 2. Return the ledger value matching the specified key * (which should be the message that was logged using that key). */</span>
+<span class="hljs-annotation">@Override</span>
+<span class="hljs-keyword">protected</span> String <span class="hljs-title">handleQuery</span>(ChaincodeStub stub, String[] args) {
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;<span class="hljs-comment">// ADD YOUR CODE HERE</span>
+}</code></pre> 
+  <p>确保编写了代码来输出查询调用的结果，以便可以在控制台输出中查看结果（如果想了解我是如何做的，请参阅解决方案）。</p> 
+  <p>练习：完成 handleQuery() 方法。如果需要一个参考，请参见 com.makotojava.learn.blockchain.chaincode.solution 包。</p> 
+  <p><strong>实现 handleOther()</strong></p> 
+  <p>最后需要实现 handleOther() 方法，它的合约要求处理其他消息（这是完全开放的，但正因如此它才是可扩展的）。您将在这里实现 log 函数，它的合同要求将调用方指定的一条消息添加到账本中，并在调用成功时将该消息返回给调用方。这看起来与 init 函数中发生的事非常相似，所以或许您可以在该实现中利用此函数。</p> 
+  <pre class="prettyprint"><code class=" hljs java"><span class="hljs-javadoc">/** * Handles other methods applied to the ledger. * Currently, that functionality is limited to these functions: * - log * * Caller expects this method to: * Use args[0] as the key for logging. * Use args[1] as the log message. * Return the logged message. */</span>
+<span class="hljs-annotation">@Override</span>
+<span class="hljs-keyword">protected</span> String <span class="hljs-title">handleOther</span>(ChaincodeStub stub, String function, String[] args) {
+  <span class="hljs-comment">// TODO Auto-generated method stub</span>
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;<span class="hljs-comment">// ADD YOUR CODE HERE</span>
+}</code></pre> 
+  <p>练习：完成 handleOther() 方法。如果需要一个参考，请参见 com.makotojava.learn.blockchain.chaincode.solution 包。</p> 
+  <p>如果您为前面的每个练习编写的代码满足本节（以及代码注释中）为它们设定的要求，JUnit 测试应该都能通过，而且将链代码部署在本地区块链网络中并运行时，它们应该能够正常工作。</p> 
+  <p>请记住，如果遇到阻碍，我提供了一个解决方案（但是在查看解决方案之前，您必须自行实现这些方法）。</p> 
+  <h3 id="构建-java-链代码">构建 Java 链代码</h3> 
+  <p>现在您已编写 Java 链代码且通过了所有 JUnit 测试，是时候使用 Eclipse 和用于 Eclipse 的 <strong>Gradle Buildship</strong> 插件构建链代码了。通过转到 <strong>Window &gt; Show View &gt; Other…</strong> 调出 <strong>Gradle Tasks</strong> 视图，然后搜索 <strong>gradle</strong>，选择 <strong>Gradle Tasks</strong>，并单击 OK。（参见图 12。）</p> 
+  <p><img src="https://www.ibm.com/developerworks/cn/java/j-chaincode-for-java-developers/Figure-12.png" alt="Eclipse：Show View：Gradle Tasks 视图" title=""></p> 
+  <p><strong>Gradle Tasks</strong> 视图打开后，展开 <strong>ChaincodeTutorial &gt; build</strong> 节点，选择 <strong>build</strong> 和 <strong>clean</strong>。（参见图 13。）</p> 
+  <p><img src="https://www.ibm.com/developerworks/cn/java/j-chaincode-for-java-developers/Figure-13.png" alt="Eclipse：Gradle Tasks 视图" title=""></p> 
+  <p>右键单击 <strong>build</strong> 和 <strong>clean</strong>，然后选择 <strong>Run Gradle Tasks</strong>（Gradle 将确定运行它们的正确顺序）。您的 <strong>Gradle Executions</strong> 视图应该显示一个干净的构建版本，如图 14 所示，其中每项的旁边仅有一个复选标记。 <br> <img src="https://www.ibm.com/developerworks/cn/java/j-chaincode-for-java-developers/Figure-14.png" alt="Eclipse：Gradle Executions 视图：干净构建" title=""></p> 
+  <p>完成构建后，$GOPATH/ChaincodeTutorial 目录（您之前已从 GitHub 将代码克隆到这里）下有一个子目录 build/distributions，它包含您的链代码（这应该看起来很熟悉，因为本教程前面的 hello 示例中已经这么做过）。</p> 
+  <p>构建 Java 链代码后，就可以在本地区块链网络中部署和运行它，并在它之上调用交易。</p> 
+  <h3 id="部署并运行-java-链代码">部署并运行 Java 链代码</h3> 
+  <p>在本节中，将会启动并注册您的链代码，部署它，并通过 Hyperledger Fabric REST 接口在链代码之上调用交易，就像本教程前面对 hello 示例所做的一样。确保本地区块链正在运行（如想温习一下相关内容，请参阅 “<a href="https://www.ibm.com/developerworks/cn/java/j-chaincode-for-java-developers/blockchainnetwork" rel="nofollow">启动区块链网络</a>” 部分）。</p> 
+  <p>您将执行以下步骤： <br> - 注册 Java 链代码。 <br> - 部署 Java 链代码。 <br> - 在 Java 链代码上调用交易。</p> 
+  <h4 id="1注册-java-链代码">1.注册 Java 链代码</h4> 
+  <p>您需要提取 build/distributions/ChaincodeTutorial.zip 文件并运行链代码脚本，就像本教程前面运行 hello 示例时一样（参见 “<a href="https://www.ibm.com/developerworks/cn/java/j-chaincode-for-java-developers/registertheexample" rel="nofollow">注册示例</a>” 部分）。</p> 
+  <p>运行 ChaincodeTutorial 脚本时，输出应如下所示：</p> 
+  <pre class="prettyprint"><code class=" hljs avrasm">$ ./ChaincodeTutorial/bin/ChaincodeTutorial
+Feb <span class="hljs-number">28</span>, <span class="hljs-number">2017</span> <span class="hljs-number">4</span>:<span class="hljs-number">18</span>:<span class="hljs-number">16</span> PM org<span class="hljs-preprocessor">.hyperledger</span><span class="hljs-preprocessor">.java</span><span class="hljs-preprocessor">.shim</span><span class="hljs-preprocessor">.ChaincodeBase</span> newPeerClientConnection
+<span class="hljs-label">INFO:</span> Inside newPeerCLientConnection
+Feb <span class="hljs-number">28</span>, <span class="hljs-number">2017</span> <span class="hljs-number">4</span>:<span class="hljs-number">18</span>:<span class="hljs-number">16</span> PM io<span class="hljs-preprocessor">.grpc</span><span class="hljs-preprocessor">.internal</span><span class="hljs-preprocessor">.TransportSet</span>$1 <span class="hljs-keyword">call</span>
+<span class="hljs-label">INFO:</span> Created transport io<span class="hljs-preprocessor">.grpc</span><span class="hljs-preprocessor">.netty</span><span class="hljs-preprocessor">.NettyClientTransport</span><span class="hljs-localvars">@10</span>bf86d3(/<span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">7051</span>) for /<span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">7051</span>
+Feb <span class="hljs-number">28</span>, <span class="hljs-number">2017</span> <span class="hljs-number">4</span>:<span class="hljs-number">18</span>:<span class="hljs-number">21</span> PM io<span class="hljs-preprocessor">.grpc</span><span class="hljs-preprocessor">.internal</span><span class="hljs-preprocessor">.TransportSet</span>$TransportListener transportReady
+<span class="hljs-label">INFO:</span> Transport io<span class="hljs-preprocessor">.grpc</span><span class="hljs-preprocessor">.netty</span><span class="hljs-preprocessor">.NettyClientTransport</span><span class="hljs-localvars">@10</span>bf86d3(/<span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">7051</span>) for /<span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">7051</span> is ready</code></pre> 
+  <p>现在您的 Java 链代码已向本地区块链网络注册，您已准备好部署和测试链代码了。</p> 
+  <h4 id="2部署-java-链代码">2.部署 Java 链代码</h4> 
+  <p>就像对 hello 示例链代码执行的操作一样，将会使用该结构的 REST 接口部署 Java 链代码，并在它之上调用交易。</p> 
+  <p>打开 SoapUI。如果愿意的话，可以自行创建一个新 REST 项目和它的所有请求，或者可以导入我包含在之前克隆的 GitHub 项目中的 SoapUI REST 项目。该 SoapUI 项目位于 $GOPATH/ChaincodeTutorial 目录中。</p> 
+  <p>要部署链代码，可以导航到 ChaincodeLog Deploy 请求（如图 15 所示）并提交该请求。</p> 
+  <p><img src="https://www.ibm.com/developerworks/cn/java/j-chaincode-for-java-developers/Figure-15.png" alt="SoapUI：ChaincodeLog Deploy 请求" title=""></p> 
+  <p>如果没有使用来自 GitHub 的 SoapUI 项目（或者使用不同的 HTTP 客户端），那么应该提交的 JSON 请求如下所示：</p> 
+  <pre class="prettyprint"><code class=" hljs json">{
+"<span class="hljs-attribute">jsonrpc</span>": <span class="hljs-value"><span class="hljs-string">"2.0"</span></span>,
+  "<span class="hljs-attribute">method</span>": <span class="hljs-value"><span class="hljs-string">"deploy"</span></span>,
+  "<span class="hljs-attribute">params</span>": <span class="hljs-value">{ "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-number">4</span></span>, "<span class="hljs-attribute">chaincodeID</span>":<span class="hljs-value">{ "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"ChaincodeLogSmartContract"</span> </span>}</span>, "<span class="hljs-attribute">ctorMsg</span>": <span class="hljs-value">{ "<span class="hljs-attribute">args</span>": <span class="hljs-value">[<span class="hljs-string">"init"</span>, <span class="hljs-string">"KEY-1"</span>, <span class="hljs-string">"Chaincode Initialized"</span>] </span>} </span>}</span>,
+  "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1</span> </span>}</code></pre> 
+  <p>提交请求。如果请求被成功处理，您会获得以下 JSON 响应：</p> 
+  <pre class="prettyprint"><code class=" hljs json">{
+   "<span class="hljs-attribute">jsonrpc</span>": <span class="hljs-value"><span class="hljs-string">"2.0"</span></span>,
+   "<span class="hljs-attribute">result</span>":    <span class="hljs-value">{ "<span class="hljs-attribute">status</span>": <span class="hljs-value"><span class="hljs-string">"OK"</span></span>, "<span class="hljs-attribute">message</span>": <span class="hljs-value"><span class="hljs-string">"ChaincodeLogSmartContract"</span> </span>}</span>,
+   "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1</span> </span>}</code></pre> 
+  <p>现在您的链代码已部署并准备好运行。</p> 
+  <h4 id="3在-java-链代码上调用交易">3.在 Java 链代码上调用交易</h4> 
+  <p>部署并初始化 Java 链代码后，就可以在它之上调用交易了。在本节中，将会调用 log 和 query 函数作为交易。</p> 
+  <p>要调用 log 函数，可以打开 ChaincodeLog Log 请求并提交它。（参见图 16。）</p> 
+  <p><img src="https://www.ibm.com/developerworks/cn/java/j-chaincode-for-java-developers/Figure-16.png" alt="SoapUI：ChaincodeLog Log 请求" title=""></p> 
+  <p>如果没有使用来自 GitHub 的 SoapUI 项目（或者使用不同的 HTTP 客户端），那么应该提交的 JSON 请求如下所示：</p> 
+  <pre class="prettyprint"><code class=" hljs json">{
+"<span class="hljs-attribute">jsonrpc</span>": <span class="hljs-value"><span class="hljs-string">"2.0"</span></span>,
+  "<span class="hljs-attribute">method</span>": <span class="hljs-value"><span class="hljs-string">"invoke"</span></span>,
+  "<span class="hljs-attribute">params</span>": <span class="hljs-value">{ "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>, "<span class="hljs-attribute">chaincodeID</span>":<span class="hljs-value">{ "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"ChaincodeLogSmartContract"</span> </span>}</span>, "<span class="hljs-attribute">CtorMsg</span>": <span class="hljs-value">{ "<span class="hljs-attribute">args</span>": <span class="hljs-value">[<span class="hljs-string">"log"</span>, <span class="hljs-string">"KEY-2"</span>, <span class="hljs-string">"This is a log message."</span>] </span>} </span>}</span>,
+  "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">2</span> </span>}</code></pre> 
+  <p>如果请求被成功处理，您会获得以下 JSON 响应：</p> 
+  <pre class="prettyprint"><code class=" hljs json">{
+   "<span class="hljs-attribute">jsonrpc</span>": <span class="hljs-value"><span class="hljs-string">"2.0"</span></span>,
+   "<span class="hljs-attribute">result</span>":    <span class="hljs-value">{ "<span class="hljs-attribute">status</span>": <span class="hljs-value"><span class="hljs-string">"OK"</span></span>, "<span class="hljs-attribute">message</span>": <span class="hljs-value"><span class="hljs-string">"a6f7a4fc-2980-4d95-9ec2-114dd9d0e4a5"</span> </span>}</span>,
+   "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">2</span> </span>}</code></pre> 
+  <p>要调用 query 函数，可以打开 ChaincodeLog Query 请求并提交它。（参见图 17。） <br> <img src="https://www.ibm.com/developerworks/cn/java/j-chaincode-for-java-developers/Figure-17.png" alt="SoapUI：ChaincodeLog Query 请求" title=""></p> 
+  <p>如果没有使用来自 GitHub 的 SoapUI 项目（或者使用不同的 HTTP 客户端），那么应该提交的 JSON 请求如下所示：</p> 
+  <pre class="prettyprint"><code class=" hljs json">{
+"<span class="hljs-attribute">jsonrpc</span>": <span class="hljs-value"><span class="hljs-string">"2.0"</span></span>,
+  "<span class="hljs-attribute">method</span>": <span class="hljs-value"><span class="hljs-string">"invoke"</span></span>,
+  "<span class="hljs-attribute">params</span>": <span class="hljs-value">{ "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>, "<span class="hljs-attribute">chaincodeID</span>":<span class="hljs-value">{ "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"ChaincodeLogSmartContract"</span> </span>}</span>, "<span class="hljs-attribute">ctorMsg</span>": <span class="hljs-value">{ "<span class="hljs-attribute">args</span>": <span class="hljs-value">[<span class="hljs-string">"query"</span>, <span class="hljs-string">"KEY-1"</span>, <span class="hljs-string">"KEY-2"</span>] </span>} </span>}</span>,
+  "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">3</span> </span>}</code></pre> 
+  <p>如果请求被成功处理，您会获得以下 JSON 响应：</p> 
+  <pre class="prettyprint"><code class=" hljs json">{
+   "<span class="hljs-attribute">jsonrpc</span>": <span class="hljs-value"><span class="hljs-string">"2.0"</span></span>,
+   "<span class="hljs-attribute">result</span>":    <span class="hljs-value">{ "<span class="hljs-attribute">status</span>": <span class="hljs-value"><span class="hljs-string">"OK"</span></span>, "<span class="hljs-attribute">message</span>": <span class="hljs-value"><span class="hljs-string">"84cbe0e2-a83e-4edf-9ce9-71ae7289d390"</span> </span>}</span>,
+   "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">3</span> </span>}</code></pre> 
+  <p>解决方案代码的终端窗口输出类似于：</p> 
+  <pre class="prettyprint"><code class=" hljs vbnet">$ ./ChaincodeTutorial/bin/ChaincodeTutorial
+Feb <span class="hljs-number">28</span>, <span class="hljs-number">2017</span> <span class="hljs-number">4</span>:<span class="hljs-number">18</span>:<span class="hljs-number">16</span> PM org.hyperledger.java.shim.ChaincodeBase newPeerClientConnection
+INFO: Inside newPeerCLientConnection
+Feb <span class="hljs-number">28</span>, <span class="hljs-number">2017</span> <span class="hljs-number">4</span>:<span class="hljs-number">18</span>:<span class="hljs-number">16</span> PM io.grpc.internal.TransportSet$<span class="hljs-number">1</span> <span class="hljs-keyword">call</span>
+INFO: Created transport io.grpc.netty.NettyClientTransport@<span class="hljs-number">10</span>bf86d3(/<span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">7051</span>) <span class="hljs-keyword">for</span> /<span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">7051</span>
+Feb <span class="hljs-number">28</span>, <span class="hljs-number">2017</span> <span class="hljs-number">4</span>:<span class="hljs-number">18</span>:<span class="hljs-number">21</span> PM io.grpc.internal.TransportSet$TransportListener transportReady
+INFO: Transport io.grpc.netty.NettyClientTransport@<span class="hljs-number">10</span>bf86d3(/<span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">7051</span>) <span class="hljs-keyword">for</span> /<span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">7051</span> <span class="hljs-keyword">is</span> ready
+Feb <span class="hljs-number">28</span>, <span class="hljs-number">2017</span> <span class="hljs-number">4</span>:<span class="hljs-number">34</span>:<span class="hljs-number">52</span> PM com.makotojava.learn.blockchain.chaincode.AbstractChaincode run
+INFO: Greetings <span class="hljs-keyword">from</span> run(): <span class="hljs-keyword">function</span> -&gt; init | args -&gt; [<span class="hljs-keyword">KEY</span>-<span class="hljs-number">1</span>, Chaincode Initialized]
+Feb <span class="hljs-number">28</span>, <span class="hljs-number">2017</span> <span class="hljs-number">4</span>:<span class="hljs-number">34</span>:<span class="hljs-number">52</span> PM com.makotojava.learn.blockchain.chaincode.solution.ChaincodeLog handleLog
+INFO: *** Storing log message (K,V) -&gt; (ChaincodeLogSmartContract-CLSC-<span class="hljs-keyword">KEY</span>-<span class="hljs-number">1</span>,Chaincode Initialized) ***
+Feb <span class="hljs-number">28</span>, <span class="hljs-number">2017</span> <span class="hljs-number">4</span>:<span class="hljs-number">50</span>:<span class="hljs-number">27</span> PM com.makotojava.learn.blockchain.chaincode.AbstractChaincode run
+INFO: Greetings <span class="hljs-keyword">from</span> run(): <span class="hljs-keyword">function</span> -&gt; log | args -&gt; [<span class="hljs-keyword">KEY</span>-<span class="hljs-number">2</span>, This <span class="hljs-keyword">is</span> a log message.]
+Feb <span class="hljs-number">28</span>, <span class="hljs-number">2017</span> <span class="hljs-number">4</span>:<span class="hljs-number">50</span>:<span class="hljs-number">27</span> PM com.makotojava.learn.blockchain.chaincode.solution.ChaincodeLog handleLog
+INFO: *** Storing log message (K,V) -&gt; (ChaincodeLogSmartContract-CLSC-<span class="hljs-keyword">KEY</span>-<span class="hljs-number">2</span>,This <span class="hljs-keyword">is</span> a log message.) ***
+Feb <span class="hljs-number">28</span>, <span class="hljs-number">2017</span> <span class="hljs-number">5</span>:<span class="hljs-number">02</span>:<span class="hljs-number">13</span> PM com.makotojava.learn.blockchain.chaincode.AbstractChaincode run
+INFO: Greetings <span class="hljs-keyword">from</span> run(): <span class="hljs-keyword">function</span> -&gt; query | args -&gt; [<span class="hljs-keyword">KEY</span>-<span class="hljs-number">1</span>, <span class="hljs-keyword">KEY</span>-<span class="hljs-number">2</span>]
+Feb <span class="hljs-number">28</span>, <span class="hljs-number">2017</span> <span class="hljs-number">5</span>:<span class="hljs-number">02</span>:<span class="hljs-number">13</span> PM com.makotojava.learn.blockchain.chaincode.solution.ChaincodeLog handleQuery
+INFO: *** Query: <span class="hljs-keyword">For</span> <span class="hljs-keyword">key</span> <span class="hljs-comment">'ChaincodeLogSmartContract-CLSC-KEY-1, value is 'Chaincode Initialized' ***</span>
+Feb <span class="hljs-number">28</span>, <span class="hljs-number">2017</span> <span class="hljs-number">5</span>:<span class="hljs-number">02</span>:<span class="hljs-number">13</span> PM com.makotojava.learn.blockchain.chaincode.solution.ChaincodeLog handleQuery
+INFO: *** Query: <span class="hljs-keyword">For</span> <span class="hljs-keyword">key</span> <span class="hljs-comment">'ChaincodeLogSmartContract-CLSC-KEY-2, value is 'This is a log message.' ***</span>
+</code></pre> 
+  <p>恭喜您！您已向未来迈出了第一步。</p> 
+  <p>鼓励您执行以下操作：修改 ChaincodeTutorial 项目，向它添加方法，更改实现，等等。您也可以自由地编写链代码。祝您好运，编码愉快！</p> 
+  <h3 id="结束语">结束语</h3> 
+  <p>本教程简要概述了区块链技术和智能合约（实现为链代码程序），以及最新的区块链技术的发展形势。</p> 
+  <p>我们介绍了设置 Java 链代码开发环境的步骤，包括需要安装的软件，如何定义和运行本地区块链网络，以及如何部署来自 GitHub 中的 Hyperledger Fabric 项目的一个 Java 链代码示例程序并在它之上调用交易。</p> 
+  <p>您学习了如何使用 Eclipse、JUnit 和 Gradle 编写和构建第一个 Java 链代码程序，然后部署该 Java 链代码程序并在它之上调用交易。</p> 
+  <p>您亲自查看了区块链技术和智能合约，随着区块链技术发展日渐成熟和市场规模逐渐扩大，您会掌握更多的技巧来编写更复杂的 Java 链代码。</p> 
+  <p>那么您接下来会怎么做？</p> 
+  <h3 id="后续行动">后续行动</h3> 
+  <p>以下建议可帮助您在目前所学知识的基础上继续进行研究：</p> 
+  <p><a href="http://hyperledger-fabric.readthedocs.io/en/latest/arch-deep-dive.html" rel="nofollow">深入研究 Hyperledger Fabric 架构</a></p> 
+  <h4 id="致谢">致谢</h4> 
+  <p>非常感谢杜婧细心评审本文，提供建设性意见并进行校正。</p> 
+  <blockquote> 
+   <p>如果你希望<strong>高效的</strong>学习以太坊DApp开发，可以访问汇智网提供的<strong>最热门</strong>在线互动教程：</p> 
+   <ul> 
+    <li><a href="http://xc.hubwiz.com/course/5a952991adb3847553d205d1?affid=20180521csdnw" rel="nofollow">适合区块链新手的以太坊智能合约和DApp实战入门教程</a></li> 
+    <li><a href="http://xc.hubwiz.com/course/5abbb7acc02e6b6a59171dd6?affid=20180521csdnw" rel="nofollow">区块链+IPFS+Node.js+MongoDB+Express去中心化以太坊电商应用开发实战</a></li> 
+   </ul> 
+   <p>其他更多内容也可以访问<a href="http://blog.hubwiz.com" rel="nofollow">这个以太坊博客</a>。</p> 
+  </blockquote> 
+  <p>原文： <br> <a href="https://www.ibm.com/developerworks/cn/java/j-chaincode-for-java-developers/index.html" rel="nofollow">https://www.ibm.com/developerworks/cn/java/j-chaincode-for-java-developers/index.html</a></p> 
+  <p>作者： <a href="https://developer.ibm.com/author/steve.perry/" rel="nofollow">J Steven Perry</a> <br> <img src="https://www.ibm.com/developerworks/cn/java/j-chaincode-for-java-developers/setup.jpg" alt="设置开发环境" title=""></p> 
+ </div> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/markdown_views-ea0013b516.css"> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/mongo_node/article/details/80390600,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/mongo_node/article/details/80390600,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

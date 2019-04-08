@@ -1,0 +1,71 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <p>我们都知道，乙太坊中的合约其实就是一段程序，一般由solidity开发。</p>
+  <p>在这一段程序中，定义了：</p>
+  <p>一系列的变量，用来做合约本地存储，一般只在合约内部被调用，也可以声明成public的，solidity编译器会自动为其生成对应的get函数。</p>
+  <p>一个构造函数，仅在合约部署时被被自动调用一次，用来初始化合约；</p>
+  <p>很多方法，其中只有public或external的方法才可以被外界调用，用户主要面向的是这些函数。</p>
+  <p>所谓的调用合约，其实就是调用合约中的public或external方法。</p>
+  <p>下面是一个简单的合约，就是实现了一个给一个整数乘于7的函数：</p>
+  <p></p>
+  <pre style="font-family:Consolas, 'Andale Mono WT', 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Liberation Mono', 'Nimbus Mono L', Monaco, 'Courier New', Courier, monospace;line-height:normal;color:rgb(64,64,64);background-color:rgb(252,252,252);">contract Multiply7 {
+   event Print(uint);
+   function multiply(uint input) returns (uint) {
+      Print(input * 7);
+      return input * 7;
+   }
+}</pre>
+  <p></p>
+  <p>这个合约在编译后，就会生成一段二进制字节码，一个abi文件（合约描述文件，这个文件后面会用到）。</p>
+  <p>既然要调用方法，那么就需要知道合约的地址，方法名，参数列表。</p>
+  <p>我们以执行multiply(6)来举例：</p>
+  <p>合约地址：xxxxxxxxxxxxxx这个就说了</p>
+  <p>方法名: multiply</p>
+  <p>函数：6</p>
+  <p>如果通过rpc接口来调用，就是以下的语法：</p>
+  <p></p>
+  <pre style="font-family:Consolas, 'Andale Mono WT', 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Liberation Mono', 'Nimbus Mono L', Monaco, 'Courier New', Courier, monospace;line-height:normal;color:rgb(64,64,64);background-color:rgb(252,252,252);">curl --data '{"jsonrpc":"2.0","method": "eth_sendTransaction", "params": [{"from": "0xeb85a5557e5bdc18ee1934a89d8bb402398ee26a", "to": "0x6ff93b4b46b41c0c3c9baee01c255d3b4675963d", "data": "0xc6888fa10000000000000000000000000000000000000000000000000000000000000006"}], "id": 8}' localhost:8545</pre>
+  <p>我们发现，这个接口调口的参数params中，除了from代表合约调起人，to为合约地址，还有一个不知何物的data，没有出现multiply和6，这是为什么？</p>
+  <p>其实，玄机就隐藏在data中:&nbsp;</p>
+  <pre style="background-color:rgb(252,252,252);font-family:Consolas, 'Andale Mono WT', 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Liberation Mono', 'Nimbus Mono L', Monaco, 'Courier New', Courier, monospace;line-height:normal;color:rgb(64,64,64);">"data": "0xc6888fa10000000000000000000000000000000000000000000000000000000000000006"</pre>
+  <p>这是对调用数据的16进制编码，而这个16进制编码正是evm所需要的。我们先不管evm怎么处理这段编码，先来看看这段编码是怎么生成的。</p>
+  <p>说这个之前，就要先说一下合约的abi，即Application Binary Interface Specification，“接口定义说明”。</p>
+  <p>它会用json的形式描述一个合约中所有方法，以这个合约为例，它的abi就是下面的样子：</p>
+  <p>[{<br><span> </span>"constant": false,<br><span> </span>"inputs": [{<br><span> </span>"name": "input",<br><span> </span>"type": "uint256"<br><span> </span>}],<br><span> </span>"name": "multiply",<br><span> </span>"outputs": [{<br><span> </span>"name": "",<br><span> </span>"type": "uint256"<br><span> </span>}],<br><span> </span>"type": "function"<br>}, {<br><span> </span>"anonymous": false,<br><span> </span>"inputs": [{<br><span> </span>"indexed": false,<br><span> </span>"name": "",<br><span> </span>"type": "uint256"<br><span> </span>}],<br><span> </span>"name": "Print",<br><span> </span>"type": "event"<br></p>
+  <p>}]</p>
+  <p>可以看到，这个文件描述了方法multiply和事件Print，它们的方法名，输入参数和输入结果等等。</p>
+  <p>那么上面的16进制编码</p>
+  <p></p>
+  <pre style="background-color:rgb(252,252,252);font-family:Consolas, 'Andale Mono WT', 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Liberation Mono', 'Nimbus Mono L', Monaco, 'Courier New', Courier, monospace;line-height:normal;color:rgb(64,64,64);">0xc6888fa10000000000000000000000000000000000000000000000000000000000000006</pre>
+  <p>是怎么生成的呢？</p>
+  <p>（1）生成函数签名：</p>
+  <p>通过abi定义，找到multiply的方法和它的参数类型列表(unin256)，组成函数签名&nbsp;multiply(unin256)，其实这个函数签名就是类似一个函数声明的样子，只不过，只有函数名和参数类型的列表。</p>
+  <p>（2）对函数签名进行hash：</p>
+  <p></p>
+  <pre style="font-family:Consolas, 'Andale Mono WT', 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Liberation Mono', 'Nimbus Mono L', Monaco, 'Courier New', Courier, monospace;line-height:normal;color:rgb(64,64,64);background-color:rgb(252,252,252);">sha3("multiply(uint256)").substring(0, 8)</pre>该函数对hash结果取了前4个字节，也就是32位，表现出来就是8位的16进制字符串，也就是
+  <pre style="background-color:rgb(252,252,252);font-family:Consolas, 'Andale Mono WT', 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Liberation Mono', 'Nimbus Mono L', Monaco, 'Courier New', Courier, monospace;line-height:normal;color:rgb(64,64,64);">c6888fa1</pre>
+  <p>（3）对参数值进行编码：</p>
+  <p>我们的参数是6，需要将其转化为32位的字节码，表现为16进制的字符串就是：</p>
+  <p></p>
+  <pre style="background-color:rgb(252,252,252);font-family:Consolas, 'Andale Mono WT', 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Liberation Mono', 'Nimbus Mono L', Monaco, 'Courier New', Courier, monospace;line-height:normal;color:rgb(64,64,64);">0000000000000000000000000000000000000000000000000000000000000006</pre>
+  <p>（4）将2和3的结果组合起来，就完成了函数调用的编码了。</p>
+  <p><br></p>
+  <p>这段逻辑的实现，在乙太坊源码中，是如下的位置：</p>
+  <p>accounts/abi/bind/base.go的Call方法中：</p>
+  <p>（1）method和params进行编码：</p>
+  <p></p>
+  <pre style="background-color:#2b2b2b;color:#a9b7c6;font-family:Menlo;font-size:13.5pt;">input<span style="color:#cc7832;">, </span>err := c.abi.Pack(method<span style="color:#cc7832;">, </span>params...)</pre>
+  <p>（2）组装调用数据结构体：</p>
+  <p></p>
+  <pre style="background-color:#2b2b2b;color:#a9b7c6;font-family:Menlo;font-size:13.5pt;">msg    = ethereum.CallMsg{From: opts.From<span style="color:#cc7832;">, </span>To: &amp;c.address<span style="color:#cc7832;">, </span>Data: input}</pre>
+  <p>（3）调用合约：</p>
+  <p></p>
+  <pre style="background-color:#2b2b2b;color:#a9b7c6;font-family:Menlo;font-size:13.5pt;">output<span style="color:#cc7832;">, </span>err = c.caller.CallContract(ctx<span style="color:#cc7832;">, </span>msg<span style="color:#cc7832;">, </span>nil)</pre>
+  <p><br></p>
+  <p>好了，以上就是客户端发起合约调用的过程。</p> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/shixinghaha/article/details/80524004,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/shixinghaha/article/details/80524004,&quot;}">阅读更多</a> 
+</div>

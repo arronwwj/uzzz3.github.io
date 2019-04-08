@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>geth基于PoA共识机制构建联盟链 | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="geth基于PoA共识机制构建联盟链" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="1 PoA共识机制 PoW机制的缺陷 以太坊现阶段是基于PoW共识机制，PoW工作量证明机制就是区块链网络中一堆计算机通过计算随机数的Hash值，谁先找到这个随机数谁就赢的当前区块的记账权。PoW通过比拼算力，谁的算力大，谁就能够抢到记账权。这样导致网络大量算力用来计算毫无意义的随机数工作中去了，而真正用来打包和验证的算力就受到影响。 PoW机制存在51%算力共计问题。只要挖矿者掌握全网51%算力就能控制整个网络。 PoW机制消耗大量电力。 PoW机制造成了以太坊网络算力的损失，从而无法支持很高的tps。 PoA共识机制 所谓授权证明PoA(Proofof Authority），就是由一组授权节点来负责新区块的产生和区块验证。以太坊测试网（Kovan）便是采用PoA算法。以太坊源码中带有Clique共识算法即为一种PoA共识算法。 在PoA中，验证者（validator）是整个共识机制的关键。验证者不需要昂贵的显卡，也不需要足够的资产，但他必须具有已知的，并且已获得验证的身份。验证者通过放置这个身份来获得担保网络的权利，从而换取区块奖励。若是验证者在整个过程中有恶意行为，或与其他验证者勾结。那通过链上管理可以移除和替换恶意行为者。现有的法律反欺诈保障会被用于整个网络的参与者免受验证者的恶意行为。 &nbsp; PoA共识机制的特点 PoA是依靠预设好的授权节点(signers)，负责产生block.可以由已授权的signer选举(投票超过50%)加入新的signer。即使存在恶意signer,他最多只能攻击连续块(数量是&nbsp;(SIGNER_COUNT / 2) + 1)&nbsp;中的1个,期间可以由其他signer投票踢出该恶意signer。可指定产生block的时间。 2 PoA联盟链搭建 &nbsp; 准备工作 在ubuntu系统中首先安装geth客户端，这里使用geth 1.8.8版本。 然后建立三个文件夹，分别是bootdir,boot1,boot2三个文件夹。在bootdir文件夹中创建bootnode节点用来做p2p网络路由。使用命令&nbsp;sudo bootnode --genkey boot.key来创建名为boot.key的key文件。 然后使用&nbsp;sudo bootnode --nodekey boot.key 命令启动bootnode路由节点。 创建账户 &nbsp; 使用puppeth来产生创世文件 puppeth是geth自带的程序，可以引导用户创建geth的创世文件。运行puppeth" />
+<meta property="og:description" content="1 PoA共识机制 PoW机制的缺陷 以太坊现阶段是基于PoW共识机制，PoW工作量证明机制就是区块链网络中一堆计算机通过计算随机数的Hash值，谁先找到这个随机数谁就赢的当前区块的记账权。PoW通过比拼算力，谁的算力大，谁就能够抢到记账权。这样导致网络大量算力用来计算毫无意义的随机数工作中去了，而真正用来打包和验证的算力就受到影响。 PoW机制存在51%算力共计问题。只要挖矿者掌握全网51%算力就能控制整个网络。 PoW机制消耗大量电力。 PoW机制造成了以太坊网络算力的损失，从而无法支持很高的tps。 PoA共识机制 所谓授权证明PoA(Proofof Authority），就是由一组授权节点来负责新区块的产生和区块验证。以太坊测试网（Kovan）便是采用PoA算法。以太坊源码中带有Clique共识算法即为一种PoA共识算法。 在PoA中，验证者（validator）是整个共识机制的关键。验证者不需要昂贵的显卡，也不需要足够的资产，但他必须具有已知的，并且已获得验证的身份。验证者通过放置这个身份来获得担保网络的权利，从而换取区块奖励。若是验证者在整个过程中有恶意行为，或与其他验证者勾结。那通过链上管理可以移除和替换恶意行为者。现有的法律反欺诈保障会被用于整个网络的参与者免受验证者的恶意行为。 &nbsp; PoA共识机制的特点 PoA是依靠预设好的授权节点(signers)，负责产生block.可以由已授权的signer选举(投票超过50%)加入新的signer。即使存在恶意signer,他最多只能攻击连续块(数量是&nbsp;(SIGNER_COUNT / 2) + 1)&nbsp;中的1个,期间可以由其他signer投票踢出该恶意signer。可指定产生block的时间。 2 PoA联盟链搭建 &nbsp; 准备工作 在ubuntu系统中首先安装geth客户端，这里使用geth 1.8.8版本。 然后建立三个文件夹，分别是bootdir,boot1,boot2三个文件夹。在bootdir文件夹中创建bootnode节点用来做p2p网络路由。使用命令&nbsp;sudo bootnode --genkey boot.key来创建名为boot.key的key文件。 然后使用&nbsp;sudo bootnode --nodekey boot.key 命令启动bootnode路由节点。 创建账户 &nbsp; 使用puppeth来产生创世文件 puppeth是geth自带的程序，可以引导用户创建geth的创世文件。运行puppeth" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/07/30/geth%E5%9F%BA%E4%BA%8EPoA%E5%85%B1%E8%AF%86%E6%9C%BA%E5%88%B6%E6%9E%84%E5%BB%BA%E8%81%94%E7%9B%9F%E9%93%BE.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/07/30/geth%E5%9F%BA%E4%BA%8EPoA%E5%85%B1%E8%AF%86%E6%9C%BA%E5%88%B6%E6%9E%84%E5%BB%BA%E8%81%94%E7%9B%9F%E9%93%BE.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-07-30T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"1 PoA共识机制 PoW机制的缺陷 以太坊现阶段是基于PoW共识机制，PoW工作量证明机制就是区块链网络中一堆计算机通过计算随机数的Hash值，谁先找到这个随机数谁就赢的当前区块的记账权。PoW通过比拼算力，谁的算力大，谁就能够抢到记账权。这样导致网络大量算力用来计算毫无意义的随机数工作中去了，而真正用来打包和验证的算力就受到影响。 PoW机制存在51%算力共计问题。只要挖矿者掌握全网51%算力就能控制整个网络。 PoW机制消耗大量电力。 PoW机制造成了以太坊网络算力的损失，从而无法支持很高的tps。 PoA共识机制 所谓授权证明PoA(Proofof Authority），就是由一组授权节点来负责新区块的产生和区块验证。以太坊测试网（Kovan）便是采用PoA算法。以太坊源码中带有Clique共识算法即为一种PoA共识算法。 在PoA中，验证者（validator）是整个共识机制的关键。验证者不需要昂贵的显卡，也不需要足够的资产，但他必须具有已知的，并且已获得验证的身份。验证者通过放置这个身份来获得担保网络的权利，从而换取区块奖励。若是验证者在整个过程中有恶意行为，或与其他验证者勾结。那通过链上管理可以移除和替换恶意行为者。现有的法律反欺诈保障会被用于整个网络的参与者免受验证者的恶意行为。 &nbsp; PoA共识机制的特点 PoA是依靠预设好的授权节点(signers)，负责产生block.可以由已授权的signer选举(投票超过50%)加入新的signer。即使存在恶意signer,他最多只能攻击连续块(数量是&nbsp;(SIGNER_COUNT / 2) + 1)&nbsp;中的1个,期间可以由其他signer投票踢出该恶意signer。可指定产生block的时间。 2 PoA联盟链搭建 &nbsp; 准备工作 在ubuntu系统中首先安装geth客户端，这里使用geth 1.8.8版本。 然后建立三个文件夹，分别是bootdir,boot1,boot2三个文件夹。在bootdir文件夹中创建bootnode节点用来做p2p网络路由。使用命令&nbsp;sudo bootnode --genkey boot.key来创建名为boot.key的key文件。 然后使用&nbsp;sudo bootnode --nodekey boot.key 命令启动bootnode路由节点。 创建账户 &nbsp; 使用puppeth来产生创世文件 puppeth是geth自带的程序，可以引导用户创建geth的创世文件。运行puppeth","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/07/30/geth%E5%9F%BA%E4%BA%8EPoA%E5%85%B1%E8%AF%86%E6%9C%BA%E5%88%B6%E6%9E%84%E5%BB%BA%E8%81%94%E7%9B%9F%E9%93%BE.html","headline":"geth基于PoA共识机制构建联盟链","dateModified":"2018-07-30T00:00:00+08:00","datePublished":"2018-07-30T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/07/30/geth%E5%9F%BA%E4%BA%8EPoA%E5%85%B1%E8%AF%86%E6%9C%BA%E5%88%B6%E6%9E%84%E5%BB%BA%E8%81%94%E7%9B%9F%E9%93%BE.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>geth基于PoA共识机制构建联盟链</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <p><strong>1 PoA共识机制</strong></p> 
+  <p><strong>PoW机制的缺陷</strong></p> 
+  <p>以太坊现阶段是基于PoW共识机制，PoW工作量证明机制就是区块链网络中一堆计算机通过计算随机数的Hash值，谁先找到这个随机数谁就赢的当前区块的记账权。PoW通过比拼算力，谁的算力大，谁就能够抢到记账权。这样导致网络大量算力用来计算毫无意义的随机数工作中去了，而真正用来打包和验证的算力就受到影响。</p> 
+  <ul>
+   <li>PoW机制存在51%算力共计问题。只要挖矿者掌握全网51%算力就能控制整个网络。</li> 
+   <li>PoW机制消耗大量电力。</li> 
+   <li>PoW机制造成了以太坊网络算力的损失，从而无法支持很高的tps。</li> 
+  </ul>
+  <p><strong>PoA共识机制</strong></p> 
+  <p>所谓授权证明PoA(Proofof Authority），就是由一组授权节点来负责新区块的产生和区块验证。以太坊测试网（Kovan）便是采用PoA算法。以太坊源码中带有Clique共识算法即为一种PoA共识算法。</p> 
+  <p>在PoA中，验证者（validator）是整个共识机制的关键。验证者不需要昂贵的显卡，也不需要足够的资产，但他必须具有已知的，并且已获得验证的身份。验证者通过放置这个身份来获得担保网络的权利，从而换取区块奖励。若是验证者在整个过程中有恶意行为，或与其他验证者勾结。那通过链上管理可以移除和替换恶意行为者。现有的法律反欺诈保障会被用于整个网络的参与者免受验证者的恶意行为。</p> 
+  <p>&nbsp;</p> 
+  <p><strong>PoA共识机制的特点</strong></p> 
+  <p>PoA是依靠预设好的授权节点(signers)，负责产生block.可以由已授权的signer选举(投票超过50%)加入新的signer。即使存在恶意signer,他最多只能攻击连续块(数量是&nbsp;<code>(SIGNER_COUNT / 2) + 1)</code>&nbsp;中的1个,期间可以由其他signer投票踢出该恶意signer。可指定产生block的时间。</p> 
+  <p><br><strong>2 PoA联盟链搭建</strong></p> 
+  <p>&nbsp;</p> 
+  <p>准备工作</p> 
+  <p>在ubuntu系统中首先安装geth客户端，这里使用geth 1.8.8版本。<br> 然后建立三个文件夹，分别是bootdir,boot1,boot2三个文件夹。在bootdir文件夹中创建bootnode节点用来做p2p网络路由。使用命令&nbsp;sudo bootnode --genkey boot.key来创建名为boot.key的key文件。</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180623165246683?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdXpoaWp1bjMwMQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>然后使用&nbsp;sudo bootnode --nodekey boot.key 命令启动bootnode路由节点。</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180623165716177?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdXpoaWp1bjMwMQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p><strong>创建账户</strong></p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180623170833825?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdXpoaWp1bjMwMQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180623170919614?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdXpoaWp1bjMwMQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>&nbsp;</p> 
+  <p><strong>使用puppeth来产生创世文件</strong></p> 
+  <p>puppeth是geth自带的程序，可以引导用户创建geth的创世文件。运行puppeth</p> 
+  <pre>
+
+&nbsp;</pre> 
+  <ol>
+   <li> <p><code>root@lzj-VirtualBox:/home/lzj/boot1# sudo puppeth</code></p> </li> 
+   <li> <p><code>+-----------------------------------------------------------+</code></p> </li> 
+   <li> <p><code>| Welcome to puppeth, your Ethereum private network manager |</code></p> </li> 
+   <li> <p><code>| |</code></p> </li> 
+   <li> <p><code>| This tool lets you create a new Ethereum network down to |</code></p> </li> 
+   <li> <p><code>| the genesis block, bootnodes, miners and ethstats servers |</code></p> </li> 
+   <li> <p><code>| without the hassle that it would normally entail. |</code></p> </li> 
+   <li> <p><code>| |</code></p> </li> 
+   <li> <p><code>| Puppeth uses SSH to dial in to remote servers, and builds |</code></p> </li> 
+   <li> <p><code>| its network components out of Docker containers using the |</code></p> </li> 
+   <li> <p><code>| docker-compose toolset. |</code></p> </li> 
+   <li> <p><code>+-----------------------------------------------------------+</code></p> </li> 
+   <li>&nbsp;</li> 
+   <li> <p><code>Please specify a network name to administer (no spaces or hyphens, please)</code></p> </li> 
+   <li> <p><code>&gt; lzj</code></p> </li> 
+   <li>&nbsp;</li> 
+   <li> <p><code>Sweet, you can set this via --network=lzj next time!</code></p> </li> 
+   <li>&nbsp;</li> 
+   <li> <p><code>INFO [06-23|17:10:34] Administering Ethereum network name=lzj</code></p> </li> 
+   <li> <p><code>INFO [06-23|17:10:34] No remote machines to gather stats from </code></p> </li> 
+   <li>&nbsp;</li> 
+   <li> <p><code>What would you like to do? (default = stats)</code></p> </li> 
+   <li> <p><code>1. Show network stats</code></p> </li> 
+   <li> <p><code>2. Configure new genesis</code></p> </li> 
+   <li> <p><code>3. Track new remote server</code></p> </li> 
+   <li> <p><code>4. Deploy network components</code></p> </li> 
+   <li> <p><code>&gt; 2</code></p> </li> 
+   <li>&nbsp;</li> 
+   <li> <p><code>Which consensus engine to use? (default = clique)</code></p> </li> 
+   <li> <p><code>1. Ethash - proof-of-work</code></p> </li> 
+   <li> <p><code>2. Clique - proof-of-authority</code></p> </li> 
+   <li> <p><code>&gt; 2</code></p> </li> 
+   <li>&nbsp;</li> 
+   <li> <p><code>How many seconds should blocks take? (default = 15)</code></p> </li> 
+   <li> <p><code>&gt; 2</code></p> </li> 
+   <li>&nbsp;</li> 
+   <li> <p><code>Which accounts are allowed to seal? (mandatory at least one)</code></p> </li> 
+   <li> <p><code>&gt; 0xd71ad920f80e6a1e06689a720f24b335f22d557e</code></p> </li> 
+   <li> <p><code>&gt; 0x8bbc43acd355be0cecc61872e13e0a0e53c700b7</code></p> </li> 
+   <li> <p><code>&gt; 0x</code></p> </li> 
+   <li>&nbsp;</li> 
+   <li> <p><code>Which accounts should be pre-funded? (advisable at least one)</code></p> </li> 
+   <li> <p><code>&gt; 0x0xd71ad920f80e6a1e06689a720f24b335f22d557e</code></p> </li> 
+   <li> <p><code>ERROR[06-23|17:11:33] Invalid address length, please retry </code></p> </li> 
+   <li> <p><code>&gt; 0xd71ad920f80e6a1e06689a720f24b335f22d557e</code></p> </li> 
+   <li> <p><code>&gt; 0x</code></p> </li> 
+   <li>&nbsp;</li> 
+   <li> <p><code>Specify your chain/network ID if you want an explicit one (default = random)</code></p> </li> 
+   <li> <p><code>&gt; 1500</code></p> </li> 
+   <li> <p><code>INFO [06-23|17:12:05] Configured new genesis block </code></p> </li> 
+   <li>&nbsp;</li> 
+   <li> <p><code>What would you like to do? (default = stats)</code></p> </li> 
+   <li> <p><code>1. Show network stats</code></p> </li> 
+   <li> <p><code>2. Manage existing genesis</code></p> </li> 
+   <li> <p><code>3. Track new remote server</code></p> </li> 
+   <li> <p><code>4. Deploy network components</code></p> </li> 
+   <li> <p><code>&gt; 2</code></p> </li> 
+   <li>&nbsp;</li> 
+   <li> <p><code>1. Modify existing fork rules</code></p> </li> 
+   <li> <p><code>2. Export genesis configuration</code></p> </li> 
+   <li> <p><code>3. Remove genesis configuration</code></p> </li> 
+   <li> <p><code>&gt; 2</code></p> </li> 
+   <li>&nbsp;</li> 
+   <li> <p><code>Which file to save the genesis into? (default = lzj.json)</code></p> </li> 
+   <li> <p><code>&gt; genesis.json</code></p> </li> 
+   <li> <p><code>INFO [06-23|17:12:27] Exported existing genesis block </code></p> </li> 
+   <li>&nbsp;</li> 
+   <li> <p><code>What would you like to do? (default = stats)</code></p> </li> 
+   <li> <p><code>1. Show network stats</code></p> </li> 
+   <li> <p><code>2. Manage existing genesis</code></p> </li> 
+   <li> <p><code>3. Track new remote server</code></p> </li> 
+   <li> <p><code>4. Deploy network components</code></p> </li> 
+   <li> <p><code>&gt; ^C</code></p> </li> 
+   <li> <p><code>root@lzj-VirtualBox:/home/lzj/boot1# ls</code></p> </li> 
+   <li> <p><code>genesis.json keystore</code></p> </li> 
+   <li> <p><code>root@lzj-VirtualBox:/home/lzj/boot1# </code></p> </li> 
+  </ol>
+  <p>将在boot1目录下产生genesis.json文件，将这个文件拷贝到boot2目录下去</p> 
+  <p>初始化boot1和boot2俩个节点</p> 
+  <pre>
+
+&nbsp;</pre> 
+  <ol>
+   <li> <p><code>/home/lzj/boot1# sudo geth --datadir ./ init genesis.json</code></p> </li> 
+   <li> <p><code>/home/lzj/boot2# sudo geth --datadir ./ init genesis.json</code></p> </li> 
+  </ol>
+  <p><strong>启动boot1节点</strong></p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180623174730977?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdXpoaWp1bjMwMQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>boot1节点启动挖矿</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180623172902309?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdXpoaWp1bjMwMQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>boot1节点这个时候挖出了区块1，在等待其它节点加入。</p> 
+  <p><strong>启动boot2节点</strong></p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180623174856950?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdXpoaWp1bjMwMQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>因为在同一台机器上，所以要注意boot2的port端口和rpc端口跟boot1的有所不同。</p> 
+  <p><strong>boot2启动挖矿</strong></p> 
+  <p>boot1节点：</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180623175153212?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdXpoaWp1bjMwMQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>boot2节点：</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180623175239262?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdXpoaWp1bjMwMQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>可以看到俩个节点都在挖矿，每个区块产生间隔2s，每个节点挖矿间隔4s。</p> 
+  <p><strong>3 发起交易</strong></p> 
+  <p>在boot1节点再新建一个账户，从账号0给新建账号1转账：</p> 
+  <pre class="has">
+<code>&gt; eth.sendTransaction({from:eth.coinbase,to:eth.accounts[1],value:web3.toWei(100,"ether")})</code></pre> 
+  <p>查询账号1的余额：</p> 
+  <pre>
+
+&nbsp;</pre> 
+  <ol>
+   <li> <p><code>web3.fromWei(eth.getBalance(eth.accounts[1])</code></p> </li> 
+   <li> <p><code>100</code></p> </li> 
+  </ol>
+  <p>然后再boot2新建一个账号，从boot1的账号1给boot2的新建账号转账：</p> 
+  <pre class="has">
+<code>eth.sendTransaction({from:eth.accounts[1],to:"0xa114e1381cfa44d66682cbff4e7aa5f788c44a64",value:web3.toWei(10,"ether")})</code></pre> 
+  <p>查询boot1的账户余额：</p> 
+  <pre>
+
+&nbsp;</pre> 
+  <ol>
+   <li> <p><code>&gt; web3.fromWei(eth.getBalance(eth.accounts[1]))</code></p> </li> 
+   <li> <p><code>89.999622</code></p> </li> 
+  </ol>
+  <p>查询boot2的账户1余额：</p> 
+  <pre>
+
+&nbsp;</pre> 
+  <ol>
+   <li> <p><code>&gt; web3.fromWei(eth.getBalance("0xa114e1381cfa44d66682cbff4e7aa5f788c44a64"))</code></p> </li> 
+   <li> <p><code>10</code></p> </li> 
+  </ol>
+  <p>可见从从boot1的账号0给账号1转账100ether的交易成功，此时boot1的账号1有钱100ether。从boot1的账号1给boot2的账号1转账10ether的交易也成功了，boot2的账号1收到了10ether，转账后boot1的账号1只剩下89.9996222ether，说明转账是收取了gas费用。</p> 
+  <p><strong>4 新加节点并提名挖矿</strong></p> 
+  <p>新建目录boot3，拷贝创世文件genesis.json到该目录，然后按照前面的放方法启动节点</p> 
+  <p>创建新账号</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180625104745587?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdXpoaWp1bjMwMQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>初始化节点</p> 
+  <pre class="has">
+<code>lzj@lzj-VirtualBox:~/boot3$ sudo geth --datadir ./ init genesis.json</code></pre> 
+  <p>启动节点</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180625104955612?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdXpoaWp1bjMwMQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>开始同步了：</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180625105034789?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdXpoaWp1bjMwMQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>这个时候由于boot3节点的账号不在genesis.json指定的验证节点列表里，所以无法挖矿，验证一下：</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180625105206206?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdXpoaWp1bjMwMQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>报了未授权的错误：&nbsp;</p> 
+  <pre class="has">
+<code>WARN [06-25|10:45:09] Block sealing failed                     err=unauthorized</code></pre> 
+  <p>现在共有3个节点，所以需要一半以上的节点提名节点3的根账号，它才能被加入验证人列表。在boot1节点和boot2节点提名boot3的根账号：</p> 
+  <pre class="has">
+<code>&gt; clique.propose("0x5b5bb21eb5dede180d97fd014e3d4fb277b08dee",true)</code></pre> 
+  <p>这个时候boot3挖矿成功了：</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/2018062510580447?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdXpoaWp1bjMwMQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p><strong>5 踩坑记录</strong></p> 
+  <p>（1）启动节点挖矿时，需要带上标志--syncmode "full"，否则汇报错误：</p> 
+  <pre class="has">
+<code>Clique : Discarded bad propagated block#1 when syncing</code></pre> 
+  <p>（2）启动节点挖矿时，需要在启动时带上 --unlock "账号"，否则会在挖矿一定时间后会报挖矿失败，需要解锁的错误。</p> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/weixin_39634961/article/details/81283782,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/weixin_39634961/article/details/81283782,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

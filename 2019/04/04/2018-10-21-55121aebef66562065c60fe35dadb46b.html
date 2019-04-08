@@ -1,0 +1,79 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div class="markdown_views prism-atom-one-dark"> 
+  <!-- flowchart 箭头图标 勿删 --> 
+  <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+   <path stroke-linecap="round" d="M5,0 0,2.5 5,5z" id="raphael-marker-block" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></path>
+  </svg> 
+  <blockquote> 
+   <p>作者简介：董天一 ，IPFS/Filecoin中国区技术布道人 ，《IPFS指南》作者<br> 毕业于北京大学软件与微电子学院，资深区块链技术开发者，现致力于IPFS/Filecoin在中国的技术推广，本文原载微信公众号：IPFS指南(ipfs_guide)</p> 
+  </blockquote> 
+  <p>小编最近经常接到一些开发者的咨询，我想用IPFS来做开发，该怎么提供解决方案（特别是对于区块链项目）那么今天我们就来说一下开发者面对IPFS和Filecoin的时候该如何选择</p> 
+  <p><strong>小编一般都会问一些开发者:有数据分发需求么？有数据存储需求么？</strong></p> 
+  <p>小编很久以前就已经写过IPFS和Filecoin之间的联系和区别：大家可以参考这篇文章—IPFS和Filecoin之间的爱情故事</p> 
+  <p>####IPFS：数据的分发和定位（数据传输协议，类似HTTP协议）</p> 
+  <ul> 
+   <li>传输：数据在节点之间进行传输 定位：</li> 
+   <li>寻址，发现数据的存储位置</li> 
+   <li>存储：自己提供存储（可以保证存储的安全性），其它节点不保证 数据存储的安全性</li> 
+   <li>用户：下载数据免费，自己提供服务器，自己搭建节点 存储内容：只存储节点自己感兴趣的内容</li> 
+  </ul> 
+  <p>####Filecoin: 数据存储（类似一个云存储）</p> 
+  <ul> 
+   <li>存储：付费存储，用户付费，矿工和Filecoin网络保证存储的安全性</li> 
+   <li>下载：付费下载，用户付费，矿工负责发送数据</li> 
+   <li>用户：不需要自己提供存储，也不需要自己提供节点</li> 
+   <li>存储内容：收费存储一切 中，所有的样式保持一致。</li> 
+  </ul> 
+  <p><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20181021161300462?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3l1YW5mYW5neXVhbl9ibG9jaw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="1.jpg"></p> 
+  <p>从上图上我们可以看到，libp2p以前是IPFS的一个重要组件，从7月份开始，libp2p已经被调整为和IPFS和Filecoin同一级别的项目。<br> IPFS和Filecoin共同依赖libp2p项目。</p> 
+  <p><span>Filecoin是IPFS的激励层，二者互补形式一对协议。为我们的互联网提供了很好的基础设施。</span></p> 
+  <p>了解上述的基本内容后：</p> 
+  <ul> 
+   <li>如果开发者仅仅想要的是一个安全、快速的云存储，那么选择Filecoin即可。</li> 
+   <li>如果开发者除了数据存储需求，还需要分发数据，那么选择IPFS即可。</li> 
+   <li>如果开发者既有数据存储需求，又有数据的分发需求，那么可以单独选择IPFS，也可以IPFS+Filecoin一起。</li> 
+  </ul> 
+  <p>注意：IPFS可以做Filecoin的事情，存储，而filecoin并不能做IPFS的事情，数据传输</p> 
+  <p>###借助于Filecoin，一种可能的区块链数据存储方案：</p> 
+  <p>当前的所有区块链数据存储几乎都是矿工的本地存储。那么区块链的数据随着时间的增加不断的增长。存储的成本也会越来越高。对于区块链一般可能会有两种数据：区块链数据和其它数据，其他数据可能是智能合约的代码，也可能是Dapp的所需的文件。</p> 
+  <p>那么有了Filecoin以后，矿工可以将区块链数据存储到Filecoin里面，而在本地仅仅保留数据的哈希值，这样本地存储压力就会大大降低，由于使用Filecoin存储，存储的成本也会下降很多。</p> 
+  <p><strong>那么有朋友会问一个问题：存到filecoin里面的数据还是我的数据么？如果被修改了怎么办？</strong></p> 
+  <p>注意：Filecoin是一个云存储，由区块链和哈希值保证数据不会被篡改。矿工可以把Filecoin看做是一个数据库即可。至于真正的数据存在什么地方，不用关心。如果做得更进一步，在区块链里面存储共识的哈希值即可。</p> 
+  <p><strong>那么问题来了：矿工把区块数据存储到亚马逊的s3，或者是阿里云OSS，跟Filecoin有什么不同？</strong></p> 
+  <p>单独从存储角度来讲：没有不同，都是存储而已<br> 但是Filecoin提供了区块链所特有的特性，是其它云存储多不具备的，例如：数据不能被篡改，智能合约，加密等，总之你的数据你做主。从这个角度来讲，矿工把数据存储到Filecoin是更好的选择。</p> 
+  <p>由于软件架构的设计并没有一个统一的标准，还需要case by case的分析，来制定更好的方案，小编本文简单的介绍了一下开发者从什么角度去区分IPFS和Filecion使用，欢迎大家交流，提出更多的方案和建议。</p> 
+ </div> 
+ <link href="https://csdnimg.cn/release/phoenix/mdeditor/markdown_views-7f770a53f2.css" rel="stylesheet"> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/yuanfangyuan_block/article/details/83242408,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/yuanfangyuan_block/article/details/83242408,&quot;}">阅读更多</a> 
+</div> 
+<script>
+						(function(){
+							function setArticleH(btnReadmore,posi){
+								var winH = $(window).height();
+								var articleBox = $("div.article_content");
+								var artH = articleBox.height();
+								if(artH > winH*posi){
+									articleBox.css({
+										'height':winH*posi+'px',
+										'overflow':'hidden'
+									})
+									btnReadmore.click(function(){
+										articleBox.removeAttr("style");
+										$(this).parent().remove();
+									})
+								}else{
+									btnReadmore.parent().remove();
+								}
+							}
+							var btnReadmore = $("#btn-readmore");
+							if(btnReadmore.length>0){
+								if(currentUserName){
+									setArticleH(btnReadmore,3);
+								}else{
+									setArticleH(btnReadmore,1.2);
+								}
+							}
+						})()
+					</script>

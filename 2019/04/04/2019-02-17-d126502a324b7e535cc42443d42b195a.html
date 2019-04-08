@@ -1,0 +1,69 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-f57960eb32.css"> 
+ <div class="htmledit_views" id="content_views"> 
+  <div class="rich_media_content" id="js_content"> 
+   <p style="text-align:center;"><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/GNpj5fw72EoHYJ5qicVCWpek5FpxAHmGy7w7LoqkLr8yHCbTctRsWJm9y4xAZ5DEDhIdnThUibxVtlibsliajcPwkg/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p><span style="font-size:14px;color:rgb(136,136,136);"><span style="font-size:14px;font-family:'宋体';">来源：</span>CIKM’18</span></p>
+   <p style="text-align:left;"><span style="font-size:14px;color:rgb(136,136,136);"><span style="color:rgb(136,136,136);font-size:14px;font-family:'宋体';">链接：</span>http://delivery.acm.org/10.1145/3270000/3269247/p1807-jia.pdf?ip=223.3.116.39&amp;id=3269247&amp;acc=ACTIVE%20SERVICE&amp;key=BF85BBA5741FDC6E%2EEEBE655830483280%2E4D4702B0C3E38B35%2E4D4702B0C3E38B35&amp;__acm__=1547881906_e38f5a0b3bce785723b910b5c87affd7</span></p>
+   <p><span style="font-size:14px;">&nbsp;</span></p>
+   <p><span style="font-size:14px;"><span style="font-size:14px;font-family:'宋体';">本文是发表在</span>CIKM’18<span style="font-size:14px;font-family:'宋体';">的短文，关注有时间信息的复杂知识库问答工作。文章提出使用</span>TimeML(<span style="font-size:14px;font-family:'宋体';">一种时间相关的标注语言</span>)<span style="font-size:14px;font-family:'宋体';">对问题进行标注，在识别时间相关问题后，根据时间特征将复杂问题改写为多个时序相关的子问题，通过与现有的知识问答系统相关联，实现带有时间信息的复杂问答。</span></span></p>
+   <h1 style="text-align:justify;line-height:240%;"><strong><span style="line-height:240%;font-size:14px;">动机</span></strong><span style="font-family:'宋体';font-size:14px;"></span></h1>
+   <h1 style="text-align:justify;line-height:240%;"><span style="font-family:'宋体';font-size:14px;">与简单问题的处理方式不同，复杂问答一般会将原问题划分为多个子问题，而后合并问题答案。作者发现，复杂问题中一个需要解决的重要问题是时间信息的获取。以下面三个问题为例：</span></h1>
+   <p><span style="font-size:14px;">Q1: “Which teams did Neymar play for before joiningPSG?” </span></p>
+   <p><span style="font-size:14px;">Q2: “Under which coaches did Neymar play inBarcelona?”</span></p>
+   <p><span style="font-size:14px;">Q3: “After whom did Neymar’s sister choose her lastname?”</span></p>
+   <p><span style="font-size:14px;">&nbsp;</span></p>
+   <p><span style="font-size:14px;"><span style="font-size:14px;font-family:'宋体';">在</span>Q1<span style="font-size:14px;font-family:'宋体';">中，没有明确的日期或者时间被提到，我们可以识别“</span>joining PSG<span style="font-size:14px;font-family:'宋体';">”代表了一个事件，然后通过它转换为一个标准的时间信息。而句子中的“</span>before<span style="font-size:14px;font-family:'宋体';">”则提供了另一个时间相关的线索，但是类似于“</span>before<span style="font-size:14px;font-family:'宋体';">，</span> after<span style="font-size:14px;font-family:'宋体';">”这样的词并不总是在句子中承担这样的角色，比如</span>Q3<span style="font-size:14px;font-family:'宋体';">中的“</span>after<span style="font-size:14px;font-family:'宋体';">”。</span></span></p>
+   <p><span style="font-size:14px;"><span style="font-size:14px;font-family:'宋体';">在</span>Q2<span style="font-size:14px;font-family:'宋体';">中，我们看不到类似</span>Q1<span style="font-size:14px;font-family:'宋体';">的时间依赖表达，但是“</span>Neymar play in Barcelona<span style="font-size:14px;font-family:'宋体';">”中依然包含了时间信息。</span></span></p>
+   <p><span style="font-size:14px;">&nbsp;</span></p>
+   <p><span style="font-family:'宋体';font-size:14px;">因此可以发现，处理带有时序信息的复杂问题面对的第一个挑战就是：如何从问句中识别时间信息；</span></p>
+   <p><span style="font-family:'宋体';font-size:14px;">随之产生的第二个挑战则是：如何根据时间信息将问题分解为时序相关的子问题；</span><span style="font-size:14px;"> <br></span></p>
+   <h1 style="text-align:justify;line-height:240%;"><strong><span style="line-height:240%;font-size:14px;">方法</span></strong></h1>
+   <p><span style="font-size:14px;"><span style="font-size:14px;font-family:'宋体';">本文方法的关键过程是：</span>1.<span style="font-size:14px;font-family:'宋体';">分解问题；</span>2.<span style="font-size:14px;font-family:'宋体';">重写子问题</span></span></p>
+   <p><span style="font-family:'宋体';font-size:14px;">大体的目标如下：</span></p>
+   <p><span style="font-family:'宋体';font-size:14px;">还是以前面的问句为例</span></p>
+   <p><span style="font-size:14px;">Q1: “Which teams did Neymar play for before joiningPSG”</span></p>
+   <p><span style="font-size:14px;"><span style="font-size:14px;font-family:'宋体';">改写得到子问题</span>Q2.1, Q2.2 </span></p>
+   <p><span style="font-size:14px;">Q1.1: “Which teams did Neymar play for?”</span></p>
+   <p><span style="font-size:14px;">Q1.2: “When did Neymar join PSG?”</span></p>
+   <p><span style="font-size:14px;"><span style="font-size:14px;font-family:'宋体';">而后在问答过程中，通过</span>Q2.1<span style="font-size:14px;font-family:'宋体';">，从知识库中得到答案及时间范围，再与</span>Q2.2<span style="font-size:14px;font-family:'宋体';">得到的时间相匹配，从而找到</span>Q2<span style="font-size:14px;font-family:'宋体';">的答案。</span></span></p>
+   <p><span style="font-size:14px;">&nbsp;</span></p>
+   <p><span style="font-family:'宋体';font-size:14px;">为了达到上述目的，本文提出一种基于规则的四步框架：</span></p>
+   <ol style="list-style-type:decimal;" class="list-paddingleft-2">
+    <li><p><span style="font-family:'宋体';font-size:14px;">识别包含时间信息的问题</span></p></li>
+    <li><p><span style="font-family:'宋体';font-size:14px;">分解问题并重写子问题</span></p></li>
+    <li><p><span style="font-family:'宋体';font-size:14px;">获取子问题答案</span></p></li>
+    <li><p><span style="font-family:'宋体';font-size:14px;">根据时间证据自合子问题答案</span></p></li>
+   </ol>
+   <p><span style="font-size:14px;"><br></span></p>
+   <p><span style="font-family:'宋体';font-size:14px;">规则设计：</span></p>
+   <p><span style="font-size:14px;"><span style="font-size:14px;font-family:'宋体';">本文构建的规则以</span>TimeML<span style="font-size:14px;font-family:'宋体';">（一种标注语言）为理论基础，用于识别句子及文本中的时间信息。</span></span></p>
+   <p><span style="font-family:'宋体';font-size:14px;">标签提供了以下信息：</span></p>
+   <p><span style="font-size:14px;">TIMEX3 tag<span style="font-size:14px;font-family:'宋体';">，反映四类时间表达：</span></span></p>
+   <p><span style="font-size:14px;">SIGNAL tag<span style="font-size:14px;font-family:'宋体';">，反映时间表达标签之间的关系（用于切分子问题）</span></span></p>
+   <p><span style="font-size:14px;">&nbsp;</span></p>
+   <p><span style="font-family:'宋体';font-size:14px;">规则定义：</span></p>
+   <p><span style="font-family:'宋体';font-size:14px;">包含时间信息的问题：即出现了时间信息表达或时间信息关系的问句（标签能在问句中标出内容）</span></p>
+   <p><span style="font-size:14px;"><span style="font-size:14px;font-family:'宋体';">时间关系：</span>Allen(J. F.Allen. 1990. Maintaining knowledge about temporal intervals. In Readings inqualitative reasoning about physical systems. Elsevier)<span style="font-size:14px;font-family:'宋体';">定义了</span>13<span style="font-size:14px;font-family:'宋体';">种时间关系，</span>EQUAL, BEFORE,MEETS, OVERLAPS, DURING, STARTS, FINISHES<span style="font-size:14px;font-family:'宋体';">。</span></span></p>
+   <p><span style="font-size:14px;">&nbsp;</span></p>
+   <p style="text-align:center;"><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/GNpj5fw72EoHYJ5qicVCWpek5FpxAHmGyFbNNuL5easT74GvRf4l58tTM7fNGvdGuBeUqTrLRAq82tHSOFh49OA/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p><span style="font-size:14px;"><span style="font-size:14px;font-family:'宋体';">表</span>1<span style="font-size:14px;font-family:'宋体';">列举了子问题重写规则。回答子问题时，对于包含时间信息的子问题需要检索可能的时间范围</span></span></p>
+   <h1 style="text-align:justify;line-height:240%;"><strong><span style="line-height:240%;font-size:14px;">实验</span></strong></h1>
+   <p><span style="font-size:14px;"><span style="font-size:14px;font-family:'宋体';">本文实验评估基于 </span>TempQuestions benchmark<span style="font-size:14px;font-family:'宋体';">，其中包含</span>1271<span style="font-size:14px;font-family:'宋体';">个时间相关问题，并使用三个目前最好的</span>KBQA<span style="font-size:14px;font-family:'宋体';">系统作为</span>baseline<span style="font-size:14px;font-family:'宋体';">：</span>AQQU [6], QUINT [2] (code from authors for both), and Bao et al. [4]<span style="font-size:14px;font-family:'宋体';">。在实验中，作者将框架与问答系统整合到一起，构成对比模型。</span></span></p>
+   <p style="text-align:center;"><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/GNpj5fw72EoHYJ5qicVCWpek5FpxAHmGynFBVUUd2yBg0G1fbMBUWP8EXianfibc1n69PGP7G8icGkxukF6oZLBYoA/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+   <p><span style="font-size:14px;"><span style="font-size:14px;font-family:'宋体';">实验结果反映出添加框架的问答系统的提升主要表现为</span>F1<span style="font-size:14px;font-family:'宋体';">与准确率的上升。</span></span></p>
+   <h1 style="text-align:justify;line-height:240%;"><strong><span style="line-height:240%;font-size:14px;">总结</span></strong></h1>
+   <p><span style="font-family:'宋体';font-size:14px;">本文提出了一种基于时间信息标注的规则型时序复杂问答框架，主要以时间信息的规则标注概念为基础，将复杂问题的切分过程转换为序列标注问题，并对已有人工规则加以利用，构建时序信息间的关系。框架整体比较简明，从规则角度看，还需要做部分深入阅读方能较好理解该方法是否具有较好的泛化性。</span></p>
+   <p><span style="font-size:14px;">&nbsp;</span></p>
+   <p><span style="font-family:'宋体';font-size:14px;color:rgb(136,136,136);">论文笔记整理：谭亦鸣，东南大学博士生，研究兴趣：知识问答，自然语言处理，机器翻译</span></p>
+   <hr style="border-style:solid;border-width:1px 0 0;border-color:rgba(0,0,0,.1);">
+   <p><span style="font-family:'宋体';font-size:14px;color:rgb(136,136,136);"></span></p>
+   <p><span style="font-size:14px;"><strong><br></strong></span></p>
+   <p><span style="font-size:14px;"><strong>OpenKG.CN</strong><br></span></p>
+   <p><br></p>
+   <p><span style="font-size:14px;">中文开放知识图谱（简称OpenKG.CN）旨在促进中文知识图谱数据的开放与互联，促进知识图谱和语义技术的普及和广泛应用。</span></p>
+   <p style="text-align:center;"><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_jpg/GNpj5fw72EotiadhuOd6wlGaHBnEibHXIyUN9f1vq8QsMmnV71jxkmqhSLuZUNVC9LdPmC3mzD2u2s05gN2L4FOg/640?wx_fmt=jpeg" alt="640?wx_fmt=jpeg"></p>
+   <p><span style="font-size:14px;">点击<strong>阅读原文</strong>，进入 OpenKG 博客。</span></p> 
+  </div> 
+ </div> 
+</div>

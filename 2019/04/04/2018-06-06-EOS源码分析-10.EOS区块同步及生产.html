@@ -1,0 +1,498 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <blockquote style="font-size:18px;color:rgb(0,0,0);border-left-width:3px;border-left-style:solid;border-left-color:rgb(219,219,219);font-family:'Helvetica Neue', Helvetica, 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;">
+   <p style="font-size:11px;color:rgb(175,173,36);line-height:normal;clear:both;font-family:Menlo;background-color:rgb(255,255,255);"><span style="font-size:16px;color:rgb(0,128,255);">本文所有实践都是基于EOS v1.0.1，请切到该分支然后对比源码</span></p>
+   <p style="color:rgb(175,173,36);line-height:normal;clear:both;font-family:Menlo;background-color:rgb(255,255,255);"><span style="color:rgb(0,128,255);">切换命令:git checkout&nbsp;</span><span style="color:rgb(255,104,39);"><span><span style="color:rgb(0,128,255);">v1.0.1</span></span></span></p>
+  </blockquote>
+  <p style="line-height:normal;clear:both;background-color:rgb(255,255,255);"><span style="color:rgb(79,79,79);font-family:'PingFang SC', 'Microsoft YaHei', SimHei, Arial, SimSun;font-size:18px;">提到区块生产和同步，我们肯定有几个疑问？</span></p>
+  <ul>
+   <li><span style="font-weight:bold;"><span style="font-size:16px;">节点同步</span></span></li>
+  </ul>
+  <span style="font-size:16px;">&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;1）节点从哪里同步数据<br>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;节点如何知道哪些节点有最新的区块数据以同步数据<br>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;2）genesis文件不同的节点互联会怎么样？<br>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;3）节点什么时候同步数据</span>
+  <ul>
+   <li><span style="font-weight:bold;"><span style="font-size:16px;">区块生产</span></span></li>
+  </ul>
+  <span style="font-size:16px;">&nbsp; &nbsp; &nbsp; &nbsp;节点什么时候生产?节点是一启动就开始生产？还是等同步好了才生产？任何节点都可以生产？<br>&nbsp; &nbsp; 接下来我们就一一解答</span>
+  <div>
+   <br>
+  </div>
+  <h2>区块同步数据</h2>
+  <h3>节点信息获取</h3>
+  <div>
+   &nbsp; &nbsp;
+   <span style="font-size:16px;"> 节点要同步数据，必须得知道从哪里节点获取他们的区块信息。这个靠显式声明的种子节点解决，种子节点然后会发回更多节点信息。在config.ini文件里添加如下内容即可添加种子节点，这些种子节点信息一般是EOS链的创建者和运营者管理的，比如jungleTestNet测试网，我们要想加入这个测试网络就需要配置如下信息。</span>
+  </div>
+  <div>
+   <span style="font-size:16px;">&nbsp;&nbsp; &nbsp;</span>
+  </div>
+  <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;font-size:12px;color:rgb(51,51,51);background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+   <div>
+    <span style="font-family:Monaco;">p2p-peer-address = jungle.cryptolions.io:19876</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">p2p-peer-address = jungle.cryptolions.io:29876</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">p2p-peer-address = dev.cryptolions.io:39876</span>
+   </div>
+  </div>
+  <div>
+   <br>
+  </div>
+  <h3>不同genesis文件的节点互联</h3>
+  <div>
+   &nbsp; &nbsp; 
+   <span style="font-size:16px;">首先来说下genesis是什么东西</span>
+  </div>
+  <div>
+   <span style="font-size:16px;">&nbsp; &nbsp; genesis文件是一个用来描述创世块信息的文件</span>
+  </div>
+  <div>
+   <img src="https://img-blog.csdn.net/2018060610532829" alt="">
+   <br>
+  </div>
+  <div>
+   &nbsp; &nbsp; 
+   <span style="font-size:16px;">最重要的是initial_timestamp和initial_key</span>
+  </div>
+  <ul>
+   <li><span style="font-size:16px;">&nbsp; initial_timestamp跟区块生产相关，后面区块生产分析时会用到这个值</span></li>
+   <li><span style="font-size:16px;">&nbsp;&nbsp;initial_key是创建这个genesis的公钥，系统将会以这个公钥创建eosio这个系统账号，而系统的智能合约的核心操作都需要系统账号授权，也就是说initial key控制着eosio.system等智能合约。eosio.system智能合约控制整个系统的。比如生产者注册就必须使用eosio.system智能合约。</span>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</li>
+  </ul>
+  <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;font-size:12px;color:rgb(51,51,51);background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;void initialize_database() {</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;authority system_auth(</span>
+    <span style="font-family:Monaco;"><span style="color:#ff2600;">conf.genesis.initial_key</span></span>
+    <span style="font-family:Monaco;">);</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;create_native_account( config::</span>
+    <span style="font-family:Monaco;"><span style="color:#ff2600;">system_account_name</span></span>
+    <span style="font-family:Monaco;">, system_auth, system_auth, true );</span>
+   </div>
+   <div>
+    &nbsp;&nbsp; &nbsp;}
+   </div>
+  </div>
+  <div>
+   <span style="font-size:16px;"><br></span>
+  </div>
+  <div>
+   <span style="font-size:16px;">&nbsp;&nbsp; &nbsp;不同genesis文件，就代表是不同的链，这样的节点其实是不能互联的。但是由于节点服务器信息(ip, 端口)是公开的，不排除有误加的情况。所以必须有机制拒绝这样的连接，这个是连接握手节点通过检测chain_id来实现的</span>
+  </div>
+  <div>
+   &nbsp;&nbsp; &nbsp;
+  </div>
+  <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;font-size:12px;color:rgb(51,51,51);background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+   <div>
+    <span style="font-family:Monaco;">void net_plugin_impl::<span style="color:#ff2600;">handle_message</span>( connection_ptr c, const handshake_message &amp;msg) {</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (msg.generation == 1) {</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;//检测是否属于同一个链</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <span style="font-family:Monaco;color:rgb(255,38,0);">if( msg.chain_id != chain_id) {</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;elog( "Peer on a different chain. Closing connection");</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c-&gt;enqueue( go_away_message(go_away_reason::</span>
+    <span style="font-family:Monaco;"><span style="color:#ff2600;">wrong_chain</span></span>
+    <span style="font-family:Monaco;">) );</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</span>
+   </div>
+   <div>
+    &nbsp; &nbsp; }
+   </div>
+   <div>
+    }
+   </div>
+  </div>
+  <div>
+   &nbsp; &nbsp;&nbsp;
+  </div>
+  <div>
+   &nbsp;&nbsp; &nbsp;
+   <span style="font-size:16px;">chain_id不一样时，你会发现如下错误输出</span>
+  </div>
+  <div>
+   <span style="font-size:16px;"><img src="https://img-blog.csdn.net/20180606105341545" alt=""><br></span>
+  </div>
+  <div>
+   <span style="font-size:16px;">&nbsp; &nbsp; 那chain_id具体是怎么生成的呢？</span>
+  </div>
+  <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;font-size:12px;color:rgb(51,51,51);background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+   <div>
+    <span style="font-family:Monaco;">controller_impl( const controller::config&amp; cfg, controller&amp; s&nbsp;&nbsp;)</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;:</span>
+    <span style="font-family:Monaco;">chain_id( </span>
+    <a href="/" rel="nofollow" style="font-family:Monaco;color:rgb(51,51,51);">cfg.genesis.</a>
+    <a href="/" rel="nofollow" style="font-family:Monaco;"><span style="color:#ff2600;">compute_chain_id</span></a>
+    <span style="font-family:Monaco;">() )</span>
+    <span style="font-family:Monaco;">{</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">}</span>
+   </div>
+   <div>
+    <br style="font-family:Monaco;">
+   </div>
+   <div>
+    <span style="font-family:Monaco;">chain::chain_id_type genesis_state::<span style="color:#ff2600;">compute_chain_id</span>() const {</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;digest_type::encoder enc;</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;fc::raw::pack( enc, *this );</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;return </span>
+    <span style="font-family:Monaco;"><span style="color:#ff2600;">chain_id_type{enc.result()};</span></span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">}</span>
+   </div>
+  </div>
+  <div>
+   &nbsp; &nbsp; 
+   <span style="font-size:16px;">其实就是将genesis文件的数据做一次类似hash的操作</span>
+  </div>
+  <div>
+   <br>
+  </div>
+  <h3>同步时机</h3>
+  <div>
+   <br>
+  </div>
+  <div>
+   &nbsp; &nbsp;
+   <span style="font-size:16px;"> 新连接建立时握手阶段就会互相检测各自链的状态，并开始同步区块数据</span>
+  </div>
+  <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;font-size:12px;background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;void sync_manager::</span>
+    <span style="font-family:Monaco;"><span style="color:#ff2600;">recv_handshake</span></span>
+    <span style="font-family:Monaco;"> (connection_ptr c, const handshake_message &amp;msg) {</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;controller&amp; cc = chain_plug-&gt;chain();</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp; &nbsp; &nbsp; </span>
+    <span style="font-family:Monaco;"><span style="color:#0433ff;">//本地不可逆区块number</span></span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;"><span style="color:#333333;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;uint32_t </span><span style="color:#ff0000;">lib_num</span><span style="color:#333333;"> = cc.last_irreversible_block_num( );</span></span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp; &nbsp; &nbsp; </span>
+    <span style="font-family:Monaco;color:rgb(4,51,255);">//remote peer不可逆区块number</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;"><span style="color:#333333;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;uint32_t </span><span style="color:#ff0000;">peer_lib</span><span style="color:#333333;"> = msg.last_irreversible_block_num;</span></span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;reset_lib_num(c);</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c-&gt;syncing = false;</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    &nbsp; &nbsp;&nbsp; &nbsp;
+   </div>
+   <div style="color:rgb(51,51,51);">
+    &nbsp; &nbsp; &nbsp; 
+    <span style="color:#0433ff;">//接下来就是比较本地区块高度和远端节点区块高度，有如下4情况</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//--------------------------------</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// sync need checks; (lib == last irreversible block)</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// 0. my head block id == peer head id means we are all caugnt up block wise</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// 1. my head block num &lt; peer lib - start sync locally</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// 2. my lib &gt; peer head num - send an last_irr_catch_up notice if not the first generation</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// 3&nbsp;&nbsp;my head block num &lt;= peer head block num - update sync state and send a catchup request</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// 4&nbsp;&nbsp;my head block num &gt; peer block num ssend a notice catchup if this is not the first generation</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//-----------------------------</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <br style="font-family:Monaco;">
+   </div>
+   <div>
+    <span style="font-family:Monaco;"><span style="color:#333333;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;uint32_t </span><span style="color:#ff0000;">head</span><span style="color:#333333;"> = cc.head_block_num( );</span></span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp; &nbsp; &nbsp; </span>
+    <span style="font-family:Monaco;"><span style="color:#0433ff;">//本地节点的区块头num小于远端节点不可逆区块头num时，同步</span></span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;"><span style="color:#333333;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (</span><span style="color:#ff0000;">head</span><span style="color:#333333;"> &lt; </span><span style="color:#ff0000;">peer_lib</span><span style="color:#333333;">) {</span></span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fc_dlog(logger, "sync check state 1");</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// wait for receipt of a notice message before initiating sync</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (c-&gt;protocol_version &lt; proto_explicit_sync) {</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <span style="font-family:Monaco;"><span style="color:#ff2600;">start_sync</span></span>
+    <span style="font-family:Monaco;">( c, peer_lib);</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp; &nbsp; &nbsp;&nbsp;….</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    }
+   </div>
+  </div>
+  <div>
+   <br>
+  </div>
+  <h2>区块生产</h2>
+  <div>
+   &nbsp; &nbsp; 
+   <span style="font-size:16px;">一个节点要生成区块，必须满足两个条件</span>
+  </div>
+  <ul>
+   <li>
+    <div>
+     <span style="font-size:16px;">&nbsp;chain-&gt; _production_enabled==true</span>
+    </div>
+    <div>
+     <span style="font-size:16px;">&nbsp; &nbsp;_production_enabled=true有几种情况</span>
+    </div></li>
+  </ul>
+  <div>
+   <span style="font-size:16px;">&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp; 1. config.ini和或者启动时带有enable-stale-production</span>
+  </div>
+  <div>
+   <span style="font-size:16px;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;这里看到enable-stale-production这个参数的作用了吧，它的意思是哪怕本地区块头是过时的区块，也继续生产。那什么情况下需要置位这个参数呢？私有链有其他生产者之前必须赋值这个变量</span>
+  </div>
+  <div>
+   <span style="font-size:16px;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;创世块的时间戳(genesis文件中的<span style="font-size:18px;">initial_timestamp字段</span>)是一个确定的值，节点nodeos第一次启动时当前时间肯定远大于这个创世块的时间戳，因而正常情况下，系统应该已经基于这个创世块生产很多后续区块，因而需要先同步到最新再生产新块的。但是由于这个链是你自己刚建立的，你确定没有其他节点基于你本地的区块(包括创世块)生产了其他区块，因此立即基于当前区块生产的新块是合法的且也是你应该做的。</span>
+  </div>
+  <div>
+   <span style="font-size:16px;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;2.区块同步完成时</span>
+  </div>
+  <div>
+   <span style="font-size:16px;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 这个很好理解，当我们已经同步下来所有区块时，我们自然可以基于最新的区块生产新的区块</span>
+  </div>
+  <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;font-size:12px;background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp; &nbsp; void </span>
+    <span style="font-family:Monaco;"><span style="color:#ff2600;">on_incoming_block</span></span>
+    <span style="font-family:Monaco;">(const signed_block_ptr&amp; block) {</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+    <span style="color:#0433ff;">//如果下一个块的截止时间大于当前时间，意味着同步完成</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;"><span style="color:#333333;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if( chain.head_block_state()-&gt;header.timestamp.next().</span><span style="color:#ff0000;">to_time_point</span><span style="color:#333333;">() &gt;= fc::time_point::</span><span style="color:#ff0000;">now</span><span style="color:#333333;">() )</span></span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <span style="font-family:Monaco;"><span style="color:#ff2600;">_production_enabled = true;</span></span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    &nbsp;&nbsp; &nbsp;}
+   </div>
+  </div>
+  <ul>
+   <li><span style="font-size:16px;">&nbsp;节点被投票成了21个代表中的一个，且到了生产区块的turn(21个代表节点是分时生产区块的)</span></li>
+  </ul>
+  <div>
+   <span style="font-size:16px;">&nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们知道EOS采用的DPOS+BFT，一个节点要成为真正“生产者”，必须被系统其他节点投票出来成为21个超级节点中的一个。同时，被选择为超级节点后，也是和其他20个节点轮流生产。其实，这里存在一个生产者注册流程，也就说一个节点光配置为producer是不够的，还需要通过eosio.system智能合约注册生产者，这个操作权限只授予给了创世块的initial_key的持有人。</span>
+  </div>
+  <h3>源码</h3>
+  <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;font-size:12px;background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">producer_plugin_impl::start_block_result producer_plugin_impl::</span>
+    <span style="font-family:Monaco;"><span style="color:#ff2600;">start_block</span></span>
+    <span style="font-family:Monaco;">() {</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;chain::controller&amp; chain = app().get_plugin&lt;chain_plugin&gt;().chain();</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;const auto&amp; hbs = chain.head_block_state();</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;_pending_block_mode = pending_block_mode::</span>
+    <span style="font-family:Monaco;"><span style="color:#ff2600;">producing</span></span>
+    <span style="font-family:Monaco;">;</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <br style="font-family:Monaco;">
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;// Not our turn</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp; &nbsp;</span>
+    <span style="font-family:Monaco;"><span style="color:#0433ff;">//获取当前生产者</span></span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;</span>
+    <span style="font-family:Monaco;"><span style="color:#ff2600;">const auto&amp; scheduled_producer = hbs-&gt;</span><span style="color:#942192;">get_scheduled_producer</span><span style="color:#ff2600;">(block_time);</span></span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;// If the next block production opportunity is in the present or future, we're synced.</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;if( !</span>
+    <span style="font-family:Monaco;"><span style="color:#ff2600;">_production_enabled</span></span>
+    <span style="font-family:Monaco;"> ) {</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp; &nbsp; &nbsp; </span>
+    <span style="font-family:Monaco;"><span style="color:#0433ff;">//还在同步，不能生产</span></span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_pending_block_mode = pending_block_mode::speculating;</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;"><span style="color:#333333;">&nbsp;&nbsp;&nbsp;} else if(</span><span style="color:#ff6666;"> _producers.find</span><span style="color:#333333;">(scheduled_producer.producer_name) == _producers.end()) {</span></span>
+    <span style="color:rgb(51,51,51);font-family:Monaco;"><span style="color:#0433ff;">//检测当前生产者是否属于本节点的</span></span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp; &nbsp; &nbsp; </span>
+    <span style="font-family:Monaco;"><span style="color:#0433ff;">//不是自己的turn</span></span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_pending_block_mode = pending_block_mode::speculating;</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;"><span style="color:#333333;">&nbsp;&nbsp;&nbsp;} else if (</span><span style="color:#ff6666;">signature_provider_itr == _signature_providers.end()</span><span style="color:#333333;">) {</span></span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp; &nbsp; &nbsp; </span>
+    <span style="font-family:Monaco;"><span style="color:#0433ff;">//没有producer的签名,即没有producer的私钥</span></span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;elog("Not producing block because I don't have the private key for ${scheduled_key}", ("scheduled_key", scheduled_producer.block_signing_key));</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_pending_block_mode = pending_block_mode::speculating;</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;} else if ( _pause_production ) {</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp; &nbsp; &nbsp; ...</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;}</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp; try {</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;uint16_t blocks_to_confirm = 0;</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;chain.abort_block();</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp; &nbsp; &nbsp; </span>
+    <span style="font-family:Monaco;"><span style="color:#0433ff;">//轮到该节点的producer生产了，真正生产区块</span></span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <span style="font-family:Monaco;"><span style="color:#ff2600;">chain.start_block</span></span>
+    <span style="font-family:Monaco;">(block_time, blocks_to_confirm);</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    <span style="font-family:Monaco;">&nbsp;&nbsp;&nbsp;} FC_LOG_AND_DROP();</span>
+   </div>
+   <div style="color:rgb(51,51,51);">
+    }
+   </div>
+  </div>
+  <div>
+   &nbsp; &nbsp;&nbsp;
+  </div>
+  <h3>生产流程图</h3>
+  <p><img src="https://img-blog.csdn.net/20180606105022583" alt=""></p>
+  <div style="color:rgb(51,51,51);font-size:14px;">
+   <div style="background-color:rgb(255,255,255);color:rgb(69,69,69);">
+    <span style="font-family:SimSun;"><span style="font-size:16px;">/********************************</span></span>
+   </div>
+   <div style="background-color:rgb(255,255,255);color:rgb(69,69,69);">
+    <span><span style="line-height:19px;font-family:'Courier New';"><span style="font-size:16px;">* 本文来自CSDN博主"爱踢门"</span></span></span>
+   </div>
+   <div style="background-color:rgb(255,255,255);">
+    <span style="font-size:16px;"><span style="color:rgb(69,69,69);font-family:'Courier New';line-height:19px;">* 转载请标明出处</span><span style="color:rgb(69,69,69);font-family:'Courier New';line-height:19px;">:</span><a href="http://blog.csdn.net/itleaks" rel="nofollow" style="font-family:'Courier New';line-height:19px;"><span style="font-weight:700;"><span style="color:rgb(51,102,255);">http://blog.csdn.net/itleaks</span></span></a></span>
+   </div>
+   <div style="background-color:rgb(255,255,255);color:rgb(69,69,69);">
+    <span style="font-family:SimSun;line-height:19px;"><span style="font-size:16px;">******************************************/</span></span>
+   </div>
+  </div>
+  <div style="color:rgb(51,51,51);font-size:14px;">
+   <p><span>EOS技术交流群，EOS开发群，以太坊技术群:787804520<br></span></p>
+   <p><span>&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://img-blog.csdn.net/20180528111903133" alt="">&nbsp; &nbsp;&nbsp;</span></p>
+   <p><span>&nbsp; &nbsp; 公众号:<br></span></p>
+   <p><span><img src="https://img-blog.csdn.net/20180507174317244" alt="" style="color:rgb(51,51,51);font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;letter-spacing:.5440000295639038px;background-color:rgb(255,255,255);"></span></p>
+  </div>
+  <p></p>
+  <div></div> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/ITleaks/article/details/80591159,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/ITleaks/article/details/80591159,&quot;}">阅读更多</a> 
+</div>

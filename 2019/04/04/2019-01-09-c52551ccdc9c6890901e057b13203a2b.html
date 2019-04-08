@@ -1,0 +1,41 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div id="content_views" class="markdown_views prism-atom-one-dark"> 
+  <!-- flowchart 箭头图标 勿删 --> 
+  <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+   <path stroke-linecap="round" d="M5,0 0,2.5 5,5z" id="raphael-marker-block" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></path>
+  </svg> 
+  <h2><a id="MATLAB_VS_PYTHON_0"></a>MATLAB VS. PYTHON</h2> 
+  <h3><a id="MATLAB_2"></a>使用MATLAB的理由</h3> 
+  <p>MATLAB是备受推崇的软件，领先于其他竞争对手；</p> 
+  <p>Simulink没有真正的替代方案；</p> 
+  <p>它具有快速的矩阵数学，良好的调试器和便于数值分析的特殊语法：<br> 数组切片：A(:,5:10) = 33，<br> 序列创建：B = [1:3:30]，<br> 数组拼接：Brepeat = [B, B, B]; C = [B; B*2; B.*B]；</p> 
+  <p>还有，诸如SPTool（用于一般信号可视化和过滤）或FDATool（用于数字滤波器设计）的GUI工具用于高质量的专业级信号处理和控制系统设计。</p> 
+  <h3><a id="MATLAB_15"></a>不用MATLAB的原因</h3> 
+  <h4><a id="_17"></a>个人许可价格昂贵！</h4> 
+  <p>在撰写本文时，核心MATLAB的拷贝为2150美元，这在企业环境中还不算糟糕，但是需要乘上使用它的人数，而且所有其他工具箱都是单点出售的。</p> 
+  <h4><a id="_21"></a>团体许可价格昂贵！</h4> 
+  <p>网络许可版本的MATLAB或它的其任何工具箱的成本是个人PC许可的4倍。我不能说我见过一个带有两个价格的带锯或车床，一个用于个人用途，另一个如果你想在几个人之间共用它的费用是4倍。在我的旧公司，我们有7个MATLAB的网络许可证，有40个左右的人在不同的场合使用它 - 所以对于核心MATLAB程序，这是值得的。但工具箱很少使用，所以我们无法证明购买超过1个工具箱许可证的合理性。在某些情况下，我们也根本无法证明工具箱的合理性。我本来希望能够使用Matlab编译器，但网络许可证太贵了。其他软件程序提供1.25-2.0范围内倍数的网络许可证，来证明只要他们不同时使用许可证就可以在多人之间共用它的方便性，但MathWorks是我见过的需要4倍花费的唯一的一个公司。</p> 
+  <h4><a id="_25"></a>在极少数情况工具箱只使用一个功能是很昂贵的！</h4> 
+  <p>那么你一年需要两到三次曲线拟合工具吗？这还不足以证明购买价值 1000 美元的曲线配件工具箱的合理性。我觉得最困扰我的是 MathWorks 对他们工具箱的态度。他们似乎对待他们的客户，好像他们都很有钱。他们所有的网络研讨会和培训课程都会推广工具箱 - 这部分是可以接受的，但除非您提出要求，否则他们从不会提高成本，并且他们也没有提供技术人员可以与管理层一起使用的理由来支持购买 1000 美元的许可证。并且通常在工具箱中存在真正应该在核心 MATLAB 发布的普通函数。举个例子：norminv() 函数位于统计工具箱中;它可以通过使用MATLAB内置的 erfinv() 函数轻松计算出来。</p> 
+  <h4><a id="_29"></a>有时语法有点怪</h4> 
+  <p>数组编号从1开始。您可以选择具有运算结果的脚本文件 (.m) 或函数 (.m) ： 脚本文件不能包含子函数，并且可以修改全局环境;函数文件可以有子函数，不需要修改全局环境。如果你忘了用分号结束一行，虽说不是错误，但MATLAB解释器会打印出一个值。我不能说我浪费了多少个 30 分钟试图找出那该死的丢失分号的地方，所以我可以处理掉不需要的打印出来的值。 strcmp() 为不匹配返回 0，为匹配返回 1，这与一般C版本的 strcmp() 不兼容，后者返回-1,0,1，具体取决于按顺序排列的字符串。我可以继续举例，但还是算了。</p> 
+  <h4><a id="_33"></a>命名空间管理很糟糕</h4> 
+  <p>你想让你的控制系统从 Simulink 模型中获益（类似于保持 C 代码和独立的 .h 文件中的硬性常量）？这些控制系统必须进入MATLAB 基础工作区。您可以使用调用函数的工作区来破解 sim() 命令，但这个有点棘手并且与 Simulink 的其他功能不兼容。对于 MathWorks 来说，允许将结构作为参数传递给Simulink会很容易，因为Simulink是用作所有已命名常量的查找和 “From Workspace” 块的源。唉，你不能这样做。因为与 Simulink 中的 “To Workspace” 块相同，它只是将结果存放到顶层工作空间中，所以用相同的名称会破坏您可能拥有的任何变量。 MATLAB确实有 assignin() 函数，但它只有有限的工作空间选择，并且没有一流的工作空间支持。</p> 
+  <h3><a id="Python_37"></a>使用Python的理由</h3> 
+  <p>这是一种美丽、广泛使用的语言。数组编号从 0 开始，更好的考虑了语法，类（class）系统也是如此。Python 中的模块/打包系统比MATLAB的路径要好得多。我碰巧喜欢 Python 中的迭代器和生成器，并不在 MATLAB 中。</p> 
+  <p>Matplotlib 就像 MATLAB 的绘图实用程序，但被改进了并且更易于使用。</p> 
+  <p>你也可以获得所有漂亮的 Python 库。打开文件，遍历目录等都很容易。</p> 
+  <p>如果你想要一个类似 MATLAB 的环境，你可以使用 IPython ( 交互式 Python ) shell，它包括 tab-completion，error-on-error 和 “notebooks” 等好工具来记录你的使用。</p> 
+  <p>numpy / scipy / pandas 库与 MATLAB 外加一堆工具箱差不多。例如，我最近能够使用 scipy 的一些三次样条拟合函数。除非我有曲线拟合工具箱，否则我无法在 MATLAB 中做同样的事情。</p> 
+  <p>免费！</p> 
+  <h3><a id="Python_51"></a>使用Python需要放弃的一些东西</h3> 
+  <p>以下所有问题都是由于 numpy 是 Python 的附加库，而不是该语言的一流功能所导致的。</p> 
+  <p>数组表示并不那么容易，如果你想要完全的矩阵来感知数学，你必须使用 numpy.array([1,2,3]) 而不是 [1,2,3]。</p> 
+  <p>要使用 sin() 和 exp() 等基本函数对 numpy 数组进行操作，需要显式使用这些函数的numpy版本。</p> 
+  <p>数组拼接并不容易，你必须使用 numpy.hstack 和 numpy.vstack 而不是 [A，B] 或 [A; B]</p> 
+  <blockquote> 
+   <p>原文地址：<a href="https://www.dsprelated.com/showarticle/359/adventures-in-signal-processing-with-python-matlab-we-don-t-need-no-stinkin-matlab" rel="nofollow">https://www.dsprelated.com/showarticle/359/adventures-in-signal-processing-with-python-matlab-we-don-t-need-no-stinkin-matlab</a></p> 
+  </blockquote> 
+ </div> 
+ <link href="https://csdnimg.cn/release/phoenix/mdeditor/markdown_views-7b4cdcb592.css" rel="stylesheet"> 
+</div>

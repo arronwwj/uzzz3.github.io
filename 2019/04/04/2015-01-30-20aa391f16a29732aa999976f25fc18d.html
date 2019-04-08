@@ -1,0 +1,108 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <div class="siConP" style="line-height:30px;font-size:16px;font-family:Verdana, 'Microsoft YaHei';"> 
+   <h3><span><span style="font-weight:normal;">&nbsp; &nbsp; &nbsp;</span>示例过程：获取浏览器左上角头像，并实现点击操作</span></h3> 
+   <p style="text-indent:2em;"> Python调用UIA，需要使用到UIAutomationCore.dll，它所在的位置为C:\WINDOWS\system32\uiautomationcore.dll，此Dll在Windows XP以上的版本都存在，另外Python调用UIA使用到的Windows SDK位置：C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0\Include。</p> 
+   <p style="text-indent:2em;"> Python调用UIA的步骤：</p> 
+   <ol style="list-style:none;">
+    <li style="list-style:decimal inside;"><span>加载UIAutomationCore.dll</span></li>
+   </ol>
+   <p style="text-indent:2em;"> </p>
+   <pre><code class="language-python">UIAutomationClient = GetModule("UIAutomationCore.dll")</code></pre> 
+   <ol start="2" style="list-style:none;">
+    <li style="list-style:decimal inside;"><span>获取IUIAutomation对象</span></li>
+   </ol>
+   <p style="text-indent:2em;"> </p>
+   <pre><code class="language-python">IUIAutomation = CreateObject("{ff48dba4-60ef-4201-aa87-54103eef594e}", interface=UIAutomationClient.IUIAutomation)</code></pre> 
+   <ol start="3" style="list-style:none;">
+    <li style="list-style:decimal inside;"><span>获取RootElement（桌面）</span></li>
+   </ol>
+   <p style="text-indent:2em;"> </p>
+   <pre><code class="language-python">root = IUIAutomation.GetRootElement()</code></pre> 
+   <ol start="4" style="list-style:none;">
+    <li style="list-style:decimal inside;"><span>调用FindFirst，查找控件</span></li>
+   </ol>
+   <p style="text-indent:2em;"> </p>
+   <pre><code class="language-python">elm = root.FindFirst(UIAutomationClient.TreeScope_Descendants, cnd2)</code></pre> 
+   <ol start="5" style="list-style:none;">
+    <li style="list-style:decimal inside;"><span>获取Pattern，调用Invoke，实现点击操作</span></li>
+   </ol>
+   <p style="text-indent:2em;"> </p>
+   <pre><code class="language-python">ppt = elm.GetCurrentPattern(UIAutomationClient.UIA_InvokePatternId)
+    print ppt
+    testtt = cast(ppt, POINTER(UIAutomationClient.IUIAutomationInvokePattern))
+    testtt.Invoke()</code></pre> 
+   <p style="text-indent:2em;"> <strong>所有代码如下：</strong></p> 
+   <p style="text-indent:2em;"> </p>
+   <pre><code class="language-python">#coding=utf-8
+from ctypes import *
+
+#dll = CDLL("UIAutomationCore.dll")
+
+#print dll
+
+from comtypes import GUID
+from comtypes.client import CreateObject, GetModule
+
+UIAutomationClient = GetModule("UIAutomationCore.dll")
+
+IUIAutomation = CreateObject("{ff48dba4-60ef-4201-aa87-54103eef594e}", interface=UIAutomationClient.IUIAutomation)
+
+root = IUIAutomation.GetRootElement()
+
+print root
+print root.CurrentClassName
+print root.CurrentName
+print root.CurrentBoundingRectangle
+print root.CurrentProcessId
+
+### this produce uninitialized pointer
+#cnd1 = IUIAutomation.CreatePropertyConditionEx(UIAutomationClient.UIA_ControlTypePropertyId,
+                                                #'UIA_EditControlTypeId',UIAutomationClient.PropertyConditionFlags_None)
+#print cnd1
+
+cnd2 = IUIAutomation.CreatePropertyConditionEx(UIAutomationClient.UIA_NamePropertyId,
+                                                u"电影",UIAutomationClient.PropertyConditionFlags_None)
+print cnd2
+
+#cnd = IUIAutomation.CreateAndCondition(cnd1, cnd2)
+elm = root.FindFirst(UIAutomationClient.TreeScope_Descendants, cnd2)
+print elm.CurrentProcessId
+print elm.CurrentName
+
+#ppt1 = elm.GetCurrentPatternAs(UIAutomationClient.UIA_InvokePatternId, GUID("{fb377fbe-8ea6-46d5-9c73-6499642d3059}"))
+
+#print hex(ppt1)
+
+#p = POINTER(UIAutomationClient.IUIAutomationInvokePattern)
+
+#p.from_address(ppt1)
+#IUIAutomationInvokePattern
+#IUnknown
+#test = Test.from_address(ppt)
+##ppt = elm.GetCurrentPattern(UIAutomationClient.UIA_InvokePatternId)
+#print test.id
+
+####强制转换类型
+ppt = elm.GetCurrentPattern(UIAutomationClient.UIA_InvokePatternId)
+print ppt
+testtt = cast(ppt, POINTER(UIAutomationClient.IUIAutomationInvokePattern))
+testtt.Invoke()</code></pre> 
+  </div> 
+  <div class="siTag" style="line-height:32px;font-size:15px;border-top-width:1px;border-top-style:solid;border-top-color:rgb(204,204,204);border-bottom-width:1px;border-bottom-style:solid;border-bottom-color:rgb(204,204,204);font-family:Verdana, 'Microsoft YaHei';"> 
+   <span class="glyphicon glyphicon-tags"></span>&nbsp;标签：
+   <a href="http://www.sogouqa.com/?tag=python" rel="nofollow" style="text-decoration:none;color:rgb(50,142,254);display:inline-block;">python</a>，
+   <a href="http://www.sogouqa.com/?tag=uia" rel="nofollow" style="text-decoration:none;color:rgb(50,142,254);display:inline-block;">UIA</a>，
+   <a href="http://www.sogouqa.com/?tag=uiautomation" rel="nofollow" style="text-decoration:none;color:rgb(50,142,254);display:inline-block;">UIAutomation</a>，
+   <a href="http://www.sogouqa.com/?tag=uiautomationcore" rel="nofollow" style="text-decoration:none;color:rgb(50,142,254);display:inline-block;">UIAutomationCore</a>
+  </div> 
+  <div class="sinLink" style="font-family:Verdana, 'Microsoft YaHei';"> 
+   <p style="font-size:16px;">本文固定链接:&nbsp;<a href="http://www.sogouqa.com/?p=334" rel="nofollow" style="text-decoration:none;color:rgb(50,142,254);">http://www.sogouqa.com/?p=334</a></p> 
+   <p style="font-size:16px;">转载请注明: 搜狗测试 2015-1-30 于 搜狗测试发表</p> 
+  </div> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/sogouauto/article/details/43303403,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/sogouauto/article/details/43303403,&quot;}">阅读更多</a> 
+</div>

@@ -1,0 +1,39 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <p>&nbsp; &nbsp;&nbsp;CTP的相关文档告诉我们，中金所和三大商品<strong>交易所</strong>中，<strong>只有上期所区分平今仓和平昨仓</strong>。也就是说，其它交易所没有<span style="font-weight:bold;">closeToday。</span>但，有二个方面值得我们注意：</p> 
+  <p><span style="font-weight:bold;">&nbsp; &nbsp;1、这说得是交易所层次的委托，而不是CTP层次的委托，CTP层次并没有说，对上期所以外的委托不接受closeToday，或不存在CloseYesterday?</span></p> 
+  <p>&nbsp; &nbsp;2、值得注意的是CloseYesterday好象被忽略了？</p> 
+  <p>&nbsp; &nbsp;一、关于平仓委托的insert类别</p> 
+  <p>&nbsp; &nbsp;请看CTP开平的类型:<br> &nbsp; &nbsp; // &nbsp; &nbsp; TFtdcOffsetFlagType是一个开平标志类型<br> &nbsp; &nbsp; public enum EnumOffsetFlagType<br> &nbsp; &nbsp; {<br> &nbsp; &nbsp; &nbsp; &nbsp; Open = 48,<br> &nbsp; &nbsp; &nbsp; &nbsp; Close = 49,<br> &nbsp; &nbsp; &nbsp; &nbsp; ForceClose = 50,<br> &nbsp; &nbsp; &nbsp; &nbsp; CloseToday = 51,<br> &nbsp; &nbsp; &nbsp; &nbsp; CloseYesterday = 52,<br> &nbsp; &nbsp; &nbsp; &nbsp; ForceOff = 53,<br> &nbsp; &nbsp; &nbsp; &nbsp; LocalForceClose = 54,<br> &nbsp; &nbsp; }</p> 
+  <p>&nbsp; &nbsp; &nbsp;事实上，CTP层次：</p> 
+  <p><strong>&nbsp; &nbsp;<span style="font-size:12px;">&nbsp;（1）如果不是上期所，平今仓可用close或closeToday，平昨仓可用close或closeYesterday。</span></strong></p> 
+  <div>
+   <strong>&nbsp; &nbsp; （2）如果是上期所， &nbsp; 平今仓只可用closeToday，平昨仓可用close或closeYesterday。</strong>
+  </div> 
+  <div>
+   <strong><br></strong>
+  </div> 
+  <div>
+   &nbsp; &nbsp; 但有人认为，
+   <strong>在发往相关交易所之前，CloseToday或CloseYesterday在CTP后台会进行相应的转化</strong>，尽管这种说法没被得到官方文档认同，但这种说法有实证数据支持。因此
+   <strong>，上面的（1）（2）的确是可以用的。注意，上面的写法，也许不是推荐的规范的写法。</strong>
+   <br>
+  </div> 
+  <p></p> 
+  <p>&nbsp; &nbsp; 二、关于成交回报的委托类型</p> 
+  <p><span style="font-size:12px;">&nbsp; &nbsp; &nbsp;当然，我们也关心，那成交回报的流水回来的时侯，会有什么区分么？</span></p> 
+  <p>&nbsp; &nbsp; 大部分情况是：CloseYesterday=&gt; insert =&gt;CloseYesterday；CloseToday=&gt; insert =&gt;CloseToday;&nbsp;当然，好象也有其它的成交回报方式，而且每个交易所的成交回报信息，还不太稳定，存在不同的时侯，返回信息不太一致的情况。即存在:closeToday =&gt;close或closeYesterday =&gt;close的情况。</p> 
+  <p>&nbsp; &nbsp; 一个实盘测试账户的LOG数据说话：</p> 
+  <p>&nbsp; &nbsp;(下面每条记录来自于真实的交易数据！)</p> 
+  <p>2015-02-10 11:13:22,330 [5] INFO &nbsp;StrategyTrading.Logger &nbsp;- =&gt;TA505 &nbsp; &nbsp;Sell &nbsp;inputOffset: &nbsp;Open =&gt; &nbsp;tradeOffset: Open&nbsp;<br> 2015-02-10 10:00:20,906 [5] INFO &nbsp;StrategyTrading.Logger &nbsp;- =&gt;rb1505 &nbsp; Buy &nbsp; inputOffset: &nbsp;CloseYesterday =&gt; &nbsp;tradeOffset: CloseYesterday&nbsp;<br> 2015-02-10 11:13:21,909 [5] INFO &nbsp;StrategyTrading.Logger &nbsp;- =&gt;TA505 &nbsp; &nbsp;Sell &nbsp;inputOffset: &nbsp;CloseYesterday =&gt; &nbsp;tradeOffset: Close&nbsp;<br> 2015-02-10 21:59:20,021 [5] INFO &nbsp;StrategyTrading.Logger &nbsp;- =&gt;ru1505 &nbsp; &nbsp;Buy &nbsp; CloseYesterday &nbsp; －&gt; &nbsp; &nbsp;CloseYesterday &nbsp;<br> 2015-02-10 21:59:20,114 [5] INFO &nbsp;StrategyTrading.Logger &nbsp;- =&gt;TA505 &nbsp; &nbsp; Buy &nbsp; CloseYesterday &nbsp; －&gt; &nbsp; &nbsp;Close &nbsp;<br> 2015-02-11 01:54:26,377 [5] INFO &nbsp;StrategyTrading.Logger &nbsp;- =&gt; p1505 &nbsp; &nbsp;Sell &nbsp;CloseYesterday &nbsp; －&gt; &nbsp; &nbsp;Close &nbsp;<br></p> 
+  <p>&nbsp; &nbsp;规律：</p> 
+  <p>&nbsp; (1)如果是上期所，CloseYesterday &nbsp; －&gt; &nbsp; &nbsp;CloseYesterday &nbsp;。其它：CloseYesterday &nbsp; －&gt; &nbsp; &nbsp;Close &nbsp;。</p> 
+  <p>&nbsp; (2)如果是中金所：CloseToday &nbsp; －&gt; &nbsp; &nbsp;Close. 其它的，好象不变。（还需进行证实！）</p> &nbsp; &nbsp;还有没有其它的比如，closeYesterday=&gt;ForceClose 我们也不妨等待一下吧。有的话，我会收集放到这里来的。
+  <br>
+  <br> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/wowotuo/article/details/43242663,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/wowotuo/article/details/43242663,&quot;}">阅读更多</a> 
+</div>

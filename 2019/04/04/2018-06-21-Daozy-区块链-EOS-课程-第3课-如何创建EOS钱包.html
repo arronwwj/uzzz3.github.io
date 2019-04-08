@@ -1,0 +1,74 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div class="markdown_views"> 
+  <h2 id="椟夜学院-区块链-eos-课程">椟夜学院– 区块链 EOS 课程</h2> 
+  <p>官方网站：<a href="http://www.duyeyun.top/college/" rel="nofollow">http://www.duyeyun.top/college/</a></p> 
+  <h4 id="1-查看主节点是否可用">1. 查看主节点是否可用</h4> 
+  <pre class="prettyprint"><code class=" hljs ruleslanguage"><span class="hljs-array"># cleos </span>-u https:<span class="hljs-comment">//node2.liquideos.com get info</span>
+{
+  <span class="hljs-string">"server_version"</span>: <span class="hljs-string">"db031363"</span>,
+  <span class="hljs-string">"head_block_num"</span>: <span class="hljs-number">1485000</span>,
+  <span class="hljs-string">"last_irreversible_block_num"</span>: <span class="hljs-number">1484671</span>,
+  <span class="hljs-string">"last_irreversible_block_id"</span>: <span class="hljs-string">"0016a77f11ae73b1a6747458513efafa3d9b59ebebcc2c64c7e9b3f66430ca33"</span>,
+  <span class="hljs-string">"head_block_id"</span>: <span class="hljs-string">"0016a8c86b8ae9b06cae9b84f7a31fad50e1ad68b91ff343f63b19d3c9c28524"</span>,
+  <span class="hljs-string">"head_block_time"</span>: <span class="hljs-string">"2018-06-19T06:05:32"</span>,
+  <span class="hljs-string">"head_block_producer"</span>: <span class="hljs-string">"eosasia11111"</span>,
+  <span class="hljs-string">"virtual_block_cpu_limit"</span>: <span class="hljs-number">200000000</span>,
+  <span class="hljs-string">"virtual_block_net_limit"</span>: <span class="hljs-number">1048576000</span>,
+  <span class="hljs-string">"block_cpu_limit"</span>: <span class="hljs-number">199900</span>,
+  <span class="hljs-string">"block_net_limit"</span>: <span class="hljs-number">1048576</span>
+}</code></pre> 
+  <h4 id="2-创建本地钱包">2. 创建本地钱包</h4> 
+  <pre class="prettyprint"><code class=" hljs livecodeserver"><span class="hljs-comment"># cleos wallet create -n wallet_name</span>
+Creating wallet: duye
+Save password <span class="hljs-built_in">to</span> use <span class="hljs-operator">in</span> <span class="hljs-operator">the</span> future <span class="hljs-built_in">to</span> unlock this wallet.
+Without password imported <span class="hljs-built_in">keys</span> will <span class="hljs-operator">not</span> be retrievable.
+<span class="hljs-string">"PW5KjGDg19YjyrtuLfxrKJwbGpbn1KccnAxpS5WkJ1dXfZfbkBNMJ"</span></code></pre> 
+  <p>也可以“# cleos wallet create”指定钱包名字，默认名字“default”。</p> 
+  <ul> 
+   <li><p>在本地生成名字为wallet_name的钱包文件，默认在用户根目录下的eosio-wallet目录下生成钱包文件xxx.wallet。 <br> <img src="https://upload-images.jianshu.io/upload_images/4046353-96c295cca9118a05.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" title=""></p></li> 
+   <li><p>并生成钱包密码“PW5JfvMk6VNQ9acMFf7nJ19F9r1JPZGo69c45S9W4JmYQWTjeb4fJ”，记住它，以后解锁钱包的时候用。</p></li> 
+  </ul> 
+  <h6 id="查看本地所有钱包">查看本地所有钱包</h6> 
+  <pre class="prettyprint"><code class=" hljs vala"><span class="hljs-preprocessor"># cleos wallet list</span>
+Wallets:
+[
+  <span class="hljs-string">"duye *"</span>,
+  <span class="hljs-string">"test_wallet"</span>,
+  <span class="hljs-string">"wallet_name"</span>
+]</code></pre> 
+  <p>后面加了” * “星号的是打开的钱包。</p> 
+  <h4 id="3-创建密钥对">3. 创建密钥对</h4> 
+  <pre class="prettyprint"><code class=" hljs sql"> # cleos -u <span class="hljs-operator"><span class="hljs-keyword">create</span> <span class="hljs-keyword">key</span> Private <span class="hljs-keyword">key</span>: <span class="hljs-number">5</span>K1uAJLgZBbSXsVcck9oz5LUnenLfedmSEgRSrFHPVhH2xhhrKB <span class="hljs-keyword">Public</span> <span class="hljs-keyword">key</span>: EOS5bxheLsDPXDCNcve8Vm8dvG2KosHxHsBgU2DhZQ1AU2XiNbaoK</span></code></pre> 
+  <p>Private key相当于你的银行卡密码，Public key相当于你的银行卡号。密码只能自己知道，不可以外流。卡号可以告诉需要和你交易的人。在区块链上是全网可查询的。</p> 
+  <h4 id="4-导入私钥到钱包">4. 导入私钥到钱包</h4> 
+  <pre class="prettyprint"><code class=" hljs vala"><span class="hljs-preprocessor"># cleos wallet import 5K1uAJLgZBbSXsVcck9oz5LUnenLfedmSEgRSrFHPVhH2xhhrKB -n wallet_name</span>
+imported <span class="hljs-keyword">private</span> key <span class="hljs-keyword">for</span>: EOS5bxheLsDPXDCNcve8Vm8dvG2KosHxHsBgU2DhZQ1AU2XiNbaoK</code></pre> 
+  <p>EOS5bvheLsDPXDCNcve8Vm8dvG2KosHxHsBCU2DhZQ1AU2XiNbaoK是公钥。这一步相当于把银行卡和对应的密码放进了钱包。</p> 
+  <h4 id="查看钱包中的秘钥">查看钱包中的秘钥</h4> 
+  <pre class="prettyprint"><code class=" hljs vala"><span class="hljs-preprocessor"># cleos wallet keys</span>
+[[
+    <span class="hljs-string">"EOS5bxheLsDPXDCNcve8Vm8dvG2KosHxHsBgU2DhZQ1AU2XiNbaoK"</span>,
+    <span class="hljs-string">"5K1uAJLgZBbSXsVcck9oz5LUnenLfedmSEgRSrFHPVhH2xhhrKB "</span>
+  ]
+]</code></pre> 
+  <p>相当于你自己私底下打开钱包看里面有几张卡，同时可以看到密码。</p> 
+  <h4 id="锁定钱包">锁定钱包</h4> 
+  <p>我们刚创建钱包后，钱包是unlock状态，是个人都可以拿到你的钱包并打开看看。一段时候后，钱包会自动上锁，也可以手动上锁：</p> 
+  <pre class="prettyprint"><code class=" hljs vala"><span class="hljs-preprocessor"># cleos wallet lock -n wallet_name</span>
+Locked: wallet_name</code></pre> 
+  <p>锁定后cleos wallet keys就看不到东西了。</p> 
+  <h4 id="解锁钱包">解锁钱包</h4> 
+  <pre class="prettyprint"><code class=" hljs vala"><span class="hljs-preprocessor"># cleos wallet unlock -n --password PW5KjGDg19YjyrtuLfxrKJwbGpbn1KccnAxpS5WkJ1dXfZfbkBNMJ</span>
+password: Unlocked: wallet_name</code></pre> 
+  <ul> 
+   <li>–password : 钱包密码，创建钱包是生成的。</li> 
+  </ul> 
+  <p>有兴趣的朋友，请关注微信公众号，有机会获取平台代币： <br> <img src="https://upload-images.jianshu.io/upload_images/4046353-262661d35443416d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Daozy社区公众号" title=""></p> 
+  <p>进入社区开发者群微信群，有机会获取平台代币： <br> <img src="https://upload-images.jianshu.io/upload_images/4046353-4a4621aa58a9d9a8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Daozy开发者群" title=""></p> 
+  <p>进入社区贡献者微信群，有机会获取平台代币： <br> <img src="https://upload-images.jianshu.io/upload_images/4046353-6fef0147cf491821.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Daozy社区贡献者群" title=""></p> 
+ </div> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/markdown_views-ea0013b516.css"> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/tencupofkaiwater/article/details/80757802,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/tencupofkaiwater/article/details/80757802,&quot;}">阅读更多</a> 
+</div>

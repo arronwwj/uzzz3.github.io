@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>5分钟学会区块链 - 开发一条区块链 Develop BlockChain with Tendermint | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="5分钟学会区块链 - 开发一条区块链 Develop BlockChain with Tendermint" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="本文攻略：解惑区块链开发，学习 Tendermint，给自己造一条区块链 建议玩家等级：技术小白，学生党，初级码农 &nbsp; 阅读此文先解锁技能： 一点点命令行基础 一点点 GO 基础：三天包学会 一点点区块链知识：5分钟学会区块链 - 关于区块链的一切 All About Blockchain 实践此文推荐装备： 操作系统：macOS Sierra（Windows也没毛病） IDE：VSCode，并自动安装一批官方建议的GO插件 Restful API 工具：Paw（非必需，浏览器也可以） &nbsp; PART 1: Tendermint 是什么 上篇文章我们举了雷布斯、杰克马、坡尼马和强东哥打麻将共同记账的栗子，这回PO主见他们手写记账这么原始，就想给这四位写一个区块链记账APP，让他们从此告别手写账本。 既然重新造轮子这件事是不存在的，于是向大家介绍一款区块链轮子叫 Tendermint（以下简称 TM），如果有玩家听说过以太坊（Ethereum），这个什么坊有个分支 Ethermint 就是基于 TM 开发的，反正PO主只懂撸代码不懂炒币，不是很了解这到底是个什么工坊。 好了，先来了解一下 TM 的原理，因为实在没什么可以可视化的 UI 让玩家们一目了然。TM 主要包含两部分： Tendermint Core：区块链共识引擎。它负责两件事情：节点之间的数据同步有序传输，拜占庭共识机制的实现。 ABCI：区块链应用接口。它被设计成一组有接口规范的协议，目的是可以使用多种语言实现区块链应用逻辑。 那他两到底干啥用的，说了半天好像还是不太理解，没关系先记住他们，PO主刚开始看原文档的时候也和各位玩家有着同样的感受。 &nbsp; PART 2: Tendermint 安装运行 1. 官方安装指南 让我们忽略更多的理论，直接撸起袖子做程序猿最喜欢做的事情，先下载轮子，命令行输入： go get github.com/Masterminds/glide go get github.com/tendermint/tendermint/cmd/tendermint 下载过程比较长，这个轮子比较大（可能需要科学上网），下载完成后安装，命令行输入： cd $GOPATH/src/github.com/tendermint/tendermint glide install go install ./cmd/tendermint 安装过程也比较长，安装完成后验证安装是否成功，命令行输入： tendermint version abci-cli version 截止本文的发表时间，tendermint 版本 0.15.0，abci-cli 版本 0.9.0 &nbsp; 2. 运行官方栗子 官方文档提供了两个栗子，已经集成在了刚才的安装里： dummy：一个简单的键值存储区块链应用，使用起来有点像 Redis 或 ElasticSearch。 counter：一个简单的计数器区块链应用，写入区块的数字必须递增，否则将不被区块接受。 这里我们简单介绍一下 dummy 这个栗子，首先启动这个区块链应用，命令行输入： abci-cli dummy 然后启动 TM，命令行输入： tendermint init tendermint node 顺利的话，可以看到 abci 和 tendermint 两个程序连通（Connect）了，并且 tendermint 会像心跳一样每一秒提交一个空区块，我们接下来准备写入有实质内容的新区块，命令行输入： curl -s &#39;localhost:46657/broadcast_tx_commit?tx=&quot;abcd&quot;&#39; curl -s &#39;localhost:46657/broadcast_tx_commit?tx=&quot;name=satoshi&quot;&#39; 我们的区块链里就有了一个记录“abcd”的区块和另一个记录“name=satoshi”的区块，如果需要对区块链内容进行查询，命令行输入： curl -s &#39;localhost:46657/abci_query?data=&quot;name&quot;&#39; curl 是 Linux 常用工具，玩家可以通过网页浏览器直接输入 localhost:46657/abci_query?data=&quot;name&quot; &nbsp; 3. 探索官方工具 最后介绍 abci-cli 这个坑人工具登场，让我们先关闭刚才运行的 dummy 应用和 tendermint，命令行重新输入运行 dummy： abci-cli dummy 命令行再输入： abci-cli console 然后他两连通了（Connect），此时很多玩家会困惑于这两个都叫 abci 的家伙怎么也能互相连通，abci 到底是个什么东西？他又干了什么？让我们通过 PART 3 来重新梳理一下我们刚才究竟都在区块链里的什么地方做了些什么事。 &nbsp; PART 3: Tendermint 再理解 PO主先把官方文档里用的最多并容易让人混淆的名词都罗列出来： ABCI Server ABCI Client Tendermint Core ABCI Application ABCI App 然后总结了三个名词来帮助理解，下文约定统一使用这三个名词： ABCI：区块链内部，ABCI Server，启动后加载 ABCI Application/App，为 Tendermint 提供 Socket 服务，服务地址：tcp://localhost:46658 Tendermint：区块链内部，ABCI Client/Tendermint Core，启动后与 ABCI 提供的 Socket 服务创建 3 条连接（Connect），同时会提供 HTTP 服务给区块链外部客户端，服务地址：http://localhost:46657 Client：区块链外部，真正的客户端，通过 Tendermint 提供的服务对区块链进行读写访问 &nbsp; 还是把栗子举一举，假设强东哥在使用我写的的区块链记账 APP（用iOS开发的）： Client 就是区块链记账 APP，强东哥记录了一条新数据 ‘Jack Pony $10’，然后保存 Client 会发起请求 http://localhost:46657/broadcast_tx_commit?tx=&quot;Jack Pony $10&quot; Tendermint 收到 tx=&quot;Jack Pony $10&quot;，通过 Socket 向 ABCI 发出指令 CheckTx:&quot;Jack Pony $10&quot; ABCI 运行了我写的 ABCI App（用GO开发的）里的 CheckTx 方法，作用是验证 &quot;Jack Pony $10&quot; 是否符合数据规范，如果不符合就要通知 Temdermint 拒绝这条 tx 假设 ABCI CheckTx 验证通过后通知 Tendermint Tendermint 把 &quot;Jack Pony $10&quot; 暂存在内存池（mempool）里，并把这条 tx 通过 P2P 网络复制给其它 Tendermint 节点（杰克马、坡尼马和雷布斯各自运行的 Tendermint 节点） Tendermint 发起了对 &quot;Jack Pony $10&quot; 这条 tx 的拜占庭共识投票，所有4个 Tendermint 节点都参与了。投票过程分三轮，第一轮预投票（PreVote），超过 2/3 认可后进入第二轮预提交（PreCommit），超过 2/3 认可后进入最后一轮正式提交（Commit） Tendermint 提交（Commit）时依次向 ABCI 发送指令：BeginBlock -&gt; DeliverTx * n次 -&gt; EndBlock -&gt; Commit，大致意思就是：快接受新区快 -&gt; 正在接受区块内容 * n条 -&gt; 区块内容接受完了 -&gt; 提交到区块链去吧 ABCI 提交（Commit）成功后会通知 Tendermint 至此，区块链多了一个区块记录了 1 条 transaction &quot;Jack Pony $10&quot; ，当然我们也可以记录 n 条后再保存，那么一个区块就会记录 n 条 transaction &nbsp; 最后再总结几点： 说回刚才那个坑人的 abci-cli，当他运行 &#39;abci-cli dummy&#39; 时其实是运行了 ABCI，当他运行了 &#39;abci-cli console&#39; 时其实是运行了 Tendermint，所以一起运行后会进行 Socket 连接（Connect） Tendermint 和 ABCI 之间的 Socket 连接有 3 条：1 条用于验证数据（CheckTx 指令），1 条用于查询数据（Query 指令），1 条用于共识数据（BeginBlock, DeliverTx, EndBlock, Commit 指令） Tendermit 提供给 Client 的 HTTP 接口有很多，浏览器访问 http://localhost:46657 就都知道了 玩家也可以亲自拜读一下官方文档 &nbsp; PART 4: 开发一条区块链 总算到了撸代码环节，我们先把项目架构整理一下： ClientApp：区块链记账 APP，可以用任意语言任意平台实现（iOS/Android/H5/其它），这个版本里我们用 GO 做了最简单的控制台命令行实现，甚至没有 UI 界面。 TendermintApp：区块链服务程序，这个里面包括 Tendermint 和 ABCI 两部分。 ABCI：因为是接口协议，设计上可以用任何语言去实现，我们使用了 GO 语言。开发上主要是实现 CheckTx, DeliverTx, Commit 等 ABCI 指令的具体逻辑 Tendermint：几乎没有需要开发的地方，前面提到了它已经为我们做了两件事情，P2P网络同步有序传输数据和拜占庭共识引擎。我们在这里就将它运行即可。 &nbsp; 接下来正式撸代码，我们主要讲解一部分核心逻辑： 1. ClientApp 模拟了5个区块，每个区块记录10条记录，将这些记录转成 json 提交给 Tendermint blocksNumber := 5 // how many blocks transactionsPerBlock := 10 // how many transactions in each block players := []string{&quot;Lei&quot;, &quot;Jack&quot;, &quot;Pony&quot;, &quot;Richard&quot;} // 4 players random := rand.New(rand.NewSource(time.Now().UnixNano())) json := jsoniter.ConfigCompatibleWithStandardLibrary" />
+<meta property="og:description" content="本文攻略：解惑区块链开发，学习 Tendermint，给自己造一条区块链 建议玩家等级：技术小白，学生党，初级码农 &nbsp; 阅读此文先解锁技能： 一点点命令行基础 一点点 GO 基础：三天包学会 一点点区块链知识：5分钟学会区块链 - 关于区块链的一切 All About Blockchain 实践此文推荐装备： 操作系统：macOS Sierra（Windows也没毛病） IDE：VSCode，并自动安装一批官方建议的GO插件 Restful API 工具：Paw（非必需，浏览器也可以） &nbsp; PART 1: Tendermint 是什么 上篇文章我们举了雷布斯、杰克马、坡尼马和强东哥打麻将共同记账的栗子，这回PO主见他们手写记账这么原始，就想给这四位写一个区块链记账APP，让他们从此告别手写账本。 既然重新造轮子这件事是不存在的，于是向大家介绍一款区块链轮子叫 Tendermint（以下简称 TM），如果有玩家听说过以太坊（Ethereum），这个什么坊有个分支 Ethermint 就是基于 TM 开发的，反正PO主只懂撸代码不懂炒币，不是很了解这到底是个什么工坊。 好了，先来了解一下 TM 的原理，因为实在没什么可以可视化的 UI 让玩家们一目了然。TM 主要包含两部分： Tendermint Core：区块链共识引擎。它负责两件事情：节点之间的数据同步有序传输，拜占庭共识机制的实现。 ABCI：区块链应用接口。它被设计成一组有接口规范的协议，目的是可以使用多种语言实现区块链应用逻辑。 那他两到底干啥用的，说了半天好像还是不太理解，没关系先记住他们，PO主刚开始看原文档的时候也和各位玩家有着同样的感受。 &nbsp; PART 2: Tendermint 安装运行 1. 官方安装指南 让我们忽略更多的理论，直接撸起袖子做程序猿最喜欢做的事情，先下载轮子，命令行输入： go get github.com/Masterminds/glide go get github.com/tendermint/tendermint/cmd/tendermint 下载过程比较长，这个轮子比较大（可能需要科学上网），下载完成后安装，命令行输入： cd $GOPATH/src/github.com/tendermint/tendermint glide install go install ./cmd/tendermint 安装过程也比较长，安装完成后验证安装是否成功，命令行输入： tendermint version abci-cli version 截止本文的发表时间，tendermint 版本 0.15.0，abci-cli 版本 0.9.0 &nbsp; 2. 运行官方栗子 官方文档提供了两个栗子，已经集成在了刚才的安装里： dummy：一个简单的键值存储区块链应用，使用起来有点像 Redis 或 ElasticSearch。 counter：一个简单的计数器区块链应用，写入区块的数字必须递增，否则将不被区块接受。 这里我们简单介绍一下 dummy 这个栗子，首先启动这个区块链应用，命令行输入： abci-cli dummy 然后启动 TM，命令行输入： tendermint init tendermint node 顺利的话，可以看到 abci 和 tendermint 两个程序连通（Connect）了，并且 tendermint 会像心跳一样每一秒提交一个空区块，我们接下来准备写入有实质内容的新区块，命令行输入： curl -s &#39;localhost:46657/broadcast_tx_commit?tx=&quot;abcd&quot;&#39; curl -s &#39;localhost:46657/broadcast_tx_commit?tx=&quot;name=satoshi&quot;&#39; 我们的区块链里就有了一个记录“abcd”的区块和另一个记录“name=satoshi”的区块，如果需要对区块链内容进行查询，命令行输入： curl -s &#39;localhost:46657/abci_query?data=&quot;name&quot;&#39; curl 是 Linux 常用工具，玩家可以通过网页浏览器直接输入 localhost:46657/abci_query?data=&quot;name&quot; &nbsp; 3. 探索官方工具 最后介绍 abci-cli 这个坑人工具登场，让我们先关闭刚才运行的 dummy 应用和 tendermint，命令行重新输入运行 dummy： abci-cli dummy 命令行再输入： abci-cli console 然后他两连通了（Connect），此时很多玩家会困惑于这两个都叫 abci 的家伙怎么也能互相连通，abci 到底是个什么东西？他又干了什么？让我们通过 PART 3 来重新梳理一下我们刚才究竟都在区块链里的什么地方做了些什么事。 &nbsp; PART 3: Tendermint 再理解 PO主先把官方文档里用的最多并容易让人混淆的名词都罗列出来： ABCI Server ABCI Client Tendermint Core ABCI Application ABCI App 然后总结了三个名词来帮助理解，下文约定统一使用这三个名词： ABCI：区块链内部，ABCI Server，启动后加载 ABCI Application/App，为 Tendermint 提供 Socket 服务，服务地址：tcp://localhost:46658 Tendermint：区块链内部，ABCI Client/Tendermint Core，启动后与 ABCI 提供的 Socket 服务创建 3 条连接（Connect），同时会提供 HTTP 服务给区块链外部客户端，服务地址：http://localhost:46657 Client：区块链外部，真正的客户端，通过 Tendermint 提供的服务对区块链进行读写访问 &nbsp; 还是把栗子举一举，假设强东哥在使用我写的的区块链记账 APP（用iOS开发的）： Client 就是区块链记账 APP，强东哥记录了一条新数据 ‘Jack Pony $10’，然后保存 Client 会发起请求 http://localhost:46657/broadcast_tx_commit?tx=&quot;Jack Pony $10&quot; Tendermint 收到 tx=&quot;Jack Pony $10&quot;，通过 Socket 向 ABCI 发出指令 CheckTx:&quot;Jack Pony $10&quot; ABCI 运行了我写的 ABCI App（用GO开发的）里的 CheckTx 方法，作用是验证 &quot;Jack Pony $10&quot; 是否符合数据规范，如果不符合就要通知 Temdermint 拒绝这条 tx 假设 ABCI CheckTx 验证通过后通知 Tendermint Tendermint 把 &quot;Jack Pony $10&quot; 暂存在内存池（mempool）里，并把这条 tx 通过 P2P 网络复制给其它 Tendermint 节点（杰克马、坡尼马和雷布斯各自运行的 Tendermint 节点） Tendermint 发起了对 &quot;Jack Pony $10&quot; 这条 tx 的拜占庭共识投票，所有4个 Tendermint 节点都参与了。投票过程分三轮，第一轮预投票（PreVote），超过 2/3 认可后进入第二轮预提交（PreCommit），超过 2/3 认可后进入最后一轮正式提交（Commit） Tendermint 提交（Commit）时依次向 ABCI 发送指令：BeginBlock -&gt; DeliverTx * n次 -&gt; EndBlock -&gt; Commit，大致意思就是：快接受新区快 -&gt; 正在接受区块内容 * n条 -&gt; 区块内容接受完了 -&gt; 提交到区块链去吧 ABCI 提交（Commit）成功后会通知 Tendermint 至此，区块链多了一个区块记录了 1 条 transaction &quot;Jack Pony $10&quot; ，当然我们也可以记录 n 条后再保存，那么一个区块就会记录 n 条 transaction &nbsp; 最后再总结几点： 说回刚才那个坑人的 abci-cli，当他运行 &#39;abci-cli dummy&#39; 时其实是运行了 ABCI，当他运行了 &#39;abci-cli console&#39; 时其实是运行了 Tendermint，所以一起运行后会进行 Socket 连接（Connect） Tendermint 和 ABCI 之间的 Socket 连接有 3 条：1 条用于验证数据（CheckTx 指令），1 条用于查询数据（Query 指令），1 条用于共识数据（BeginBlock, DeliverTx, EndBlock, Commit 指令） Tendermit 提供给 Client 的 HTTP 接口有很多，浏览器访问 http://localhost:46657 就都知道了 玩家也可以亲自拜读一下官方文档 &nbsp; PART 4: 开发一条区块链 总算到了撸代码环节，我们先把项目架构整理一下： ClientApp：区块链记账 APP，可以用任意语言任意平台实现（iOS/Android/H5/其它），这个版本里我们用 GO 做了最简单的控制台命令行实现，甚至没有 UI 界面。 TendermintApp：区块链服务程序，这个里面包括 Tendermint 和 ABCI 两部分。 ABCI：因为是接口协议，设计上可以用任何语言去实现，我们使用了 GO 语言。开发上主要是实现 CheckTx, DeliverTx, Commit 等 ABCI 指令的具体逻辑 Tendermint：几乎没有需要开发的地方，前面提到了它已经为我们做了两件事情，P2P网络同步有序传输数据和拜占庭共识引擎。我们在这里就将它运行即可。 &nbsp; 接下来正式撸代码，我们主要讲解一部分核心逻辑： 1. ClientApp 模拟了5个区块，每个区块记录10条记录，将这些记录转成 json 提交给 Tendermint blocksNumber := 5 // how many blocks transactionsPerBlock := 10 // how many transactions in each block players := []string{&quot;Lei&quot;, &quot;Jack&quot;, &quot;Pony&quot;, &quot;Richard&quot;} // 4 players random := rand.New(rand.NewSource(time.Now().UnixNano())) json := jsoniter.ConfigCompatibleWithStandardLibrary" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/07/30/5%E5%88%86%E9%92%9F%E5%AD%A6%E4%BC%9A%E5%8C%BA%E5%9D%97%E9%93%BE-%E5%BC%80%E5%8F%91%E4%B8%80%E6%9D%A1%E5%8C%BA%E5%9D%97%E9%93%BE-Develop-BlockChain-with-Tendermint.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/07/30/5%E5%88%86%E9%92%9F%E5%AD%A6%E4%BC%9A%E5%8C%BA%E5%9D%97%E9%93%BE-%E5%BC%80%E5%8F%91%E4%B8%80%E6%9D%A1%E5%8C%BA%E5%9D%97%E9%93%BE-Develop-BlockChain-with-Tendermint.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-07-30T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"本文攻略：解惑区块链开发，学习 Tendermint，给自己造一条区块链 建议玩家等级：技术小白，学生党，初级码农 &nbsp; 阅读此文先解锁技能： 一点点命令行基础 一点点 GO 基础：三天包学会 一点点区块链知识：5分钟学会区块链 - 关于区块链的一切 All About Blockchain 实践此文推荐装备： 操作系统：macOS Sierra（Windows也没毛病） IDE：VSCode，并自动安装一批官方建议的GO插件 Restful API 工具：Paw（非必需，浏览器也可以） &nbsp; PART 1: Tendermint 是什么 上篇文章我们举了雷布斯、杰克马、坡尼马和强东哥打麻将共同记账的栗子，这回PO主见他们手写记账这么原始，就想给这四位写一个区块链记账APP，让他们从此告别手写账本。 既然重新造轮子这件事是不存在的，于是向大家介绍一款区块链轮子叫 Tendermint（以下简称 TM），如果有玩家听说过以太坊（Ethereum），这个什么坊有个分支 Ethermint 就是基于 TM 开发的，反正PO主只懂撸代码不懂炒币，不是很了解这到底是个什么工坊。 好了，先来了解一下 TM 的原理，因为实在没什么可以可视化的 UI 让玩家们一目了然。TM 主要包含两部分： Tendermint Core：区块链共识引擎。它负责两件事情：节点之间的数据同步有序传输，拜占庭共识机制的实现。 ABCI：区块链应用接口。它被设计成一组有接口规范的协议，目的是可以使用多种语言实现区块链应用逻辑。 那他两到底干啥用的，说了半天好像还是不太理解，没关系先记住他们，PO主刚开始看原文档的时候也和各位玩家有着同样的感受。 &nbsp; PART 2: Tendermint 安装运行 1. 官方安装指南 让我们忽略更多的理论，直接撸起袖子做程序猿最喜欢做的事情，先下载轮子，命令行输入： go get github.com/Masterminds/glide go get github.com/tendermint/tendermint/cmd/tendermint 下载过程比较长，这个轮子比较大（可能需要科学上网），下载完成后安装，命令行输入： cd $GOPATH/src/github.com/tendermint/tendermint glide install go install ./cmd/tendermint 安装过程也比较长，安装完成后验证安装是否成功，命令行输入： tendermint version abci-cli version 截止本文的发表时间，tendermint 版本 0.15.0，abci-cli 版本 0.9.0 &nbsp; 2. 运行官方栗子 官方文档提供了两个栗子，已经集成在了刚才的安装里： dummy：一个简单的键值存储区块链应用，使用起来有点像 Redis 或 ElasticSearch。 counter：一个简单的计数器区块链应用，写入区块的数字必须递增，否则将不被区块接受。 这里我们简单介绍一下 dummy 这个栗子，首先启动这个区块链应用，命令行输入： abci-cli dummy 然后启动 TM，命令行输入： tendermint init tendermint node 顺利的话，可以看到 abci 和 tendermint 两个程序连通（Connect）了，并且 tendermint 会像心跳一样每一秒提交一个空区块，我们接下来准备写入有实质内容的新区块，命令行输入： curl -s &#39;localhost:46657/broadcast_tx_commit?tx=&quot;abcd&quot;&#39; curl -s &#39;localhost:46657/broadcast_tx_commit?tx=&quot;name=satoshi&quot;&#39; 我们的区块链里就有了一个记录“abcd”的区块和另一个记录“name=satoshi”的区块，如果需要对区块链内容进行查询，命令行输入： curl -s &#39;localhost:46657/abci_query?data=&quot;name&quot;&#39; curl 是 Linux 常用工具，玩家可以通过网页浏览器直接输入 localhost:46657/abci_query?data=&quot;name&quot; &nbsp; 3. 探索官方工具 最后介绍 abci-cli 这个坑人工具登场，让我们先关闭刚才运行的 dummy 应用和 tendermint，命令行重新输入运行 dummy： abci-cli dummy 命令行再输入： abci-cli console 然后他两连通了（Connect），此时很多玩家会困惑于这两个都叫 abci 的家伙怎么也能互相连通，abci 到底是个什么东西？他又干了什么？让我们通过 PART 3 来重新梳理一下我们刚才究竟都在区块链里的什么地方做了些什么事。 &nbsp; PART 3: Tendermint 再理解 PO主先把官方文档里用的最多并容易让人混淆的名词都罗列出来： ABCI Server ABCI Client Tendermint Core ABCI Application ABCI App 然后总结了三个名词来帮助理解，下文约定统一使用这三个名词： ABCI：区块链内部，ABCI Server，启动后加载 ABCI Application/App，为 Tendermint 提供 Socket 服务，服务地址：tcp://localhost:46658 Tendermint：区块链内部，ABCI Client/Tendermint Core，启动后与 ABCI 提供的 Socket 服务创建 3 条连接（Connect），同时会提供 HTTP 服务给区块链外部客户端，服务地址：http://localhost:46657 Client：区块链外部，真正的客户端，通过 Tendermint 提供的服务对区块链进行读写访问 &nbsp; 还是把栗子举一举，假设强东哥在使用我写的的区块链记账 APP（用iOS开发的）： Client 就是区块链记账 APP，强东哥记录了一条新数据 ‘Jack Pony $10’，然后保存 Client 会发起请求 http://localhost:46657/broadcast_tx_commit?tx=&quot;Jack Pony $10&quot; Tendermint 收到 tx=&quot;Jack Pony $10&quot;，通过 Socket 向 ABCI 发出指令 CheckTx:&quot;Jack Pony $10&quot; ABCI 运行了我写的 ABCI App（用GO开发的）里的 CheckTx 方法，作用是验证 &quot;Jack Pony $10&quot; 是否符合数据规范，如果不符合就要通知 Temdermint 拒绝这条 tx 假设 ABCI CheckTx 验证通过后通知 Tendermint Tendermint 把 &quot;Jack Pony $10&quot; 暂存在内存池（mempool）里，并把这条 tx 通过 P2P 网络复制给其它 Tendermint 节点（杰克马、坡尼马和雷布斯各自运行的 Tendermint 节点） Tendermint 发起了对 &quot;Jack Pony $10&quot; 这条 tx 的拜占庭共识投票，所有4个 Tendermint 节点都参与了。投票过程分三轮，第一轮预投票（PreVote），超过 2/3 认可后进入第二轮预提交（PreCommit），超过 2/3 认可后进入最后一轮正式提交（Commit） Tendermint 提交（Commit）时依次向 ABCI 发送指令：BeginBlock -&gt; DeliverTx * n次 -&gt; EndBlock -&gt; Commit，大致意思就是：快接受新区快 -&gt; 正在接受区块内容 * n条 -&gt; 区块内容接受完了 -&gt; 提交到区块链去吧 ABCI 提交（Commit）成功后会通知 Tendermint 至此，区块链多了一个区块记录了 1 条 transaction &quot;Jack Pony $10&quot; ，当然我们也可以记录 n 条后再保存，那么一个区块就会记录 n 条 transaction &nbsp; 最后再总结几点： 说回刚才那个坑人的 abci-cli，当他运行 &#39;abci-cli dummy&#39; 时其实是运行了 ABCI，当他运行了 &#39;abci-cli console&#39; 时其实是运行了 Tendermint，所以一起运行后会进行 Socket 连接（Connect） Tendermint 和 ABCI 之间的 Socket 连接有 3 条：1 条用于验证数据（CheckTx 指令），1 条用于查询数据（Query 指令），1 条用于共识数据（BeginBlock, DeliverTx, EndBlock, Commit 指令） Tendermit 提供给 Client 的 HTTP 接口有很多，浏览器访问 http://localhost:46657 就都知道了 玩家也可以亲自拜读一下官方文档 &nbsp; PART 4: 开发一条区块链 总算到了撸代码环节，我们先把项目架构整理一下： ClientApp：区块链记账 APP，可以用任意语言任意平台实现（iOS/Android/H5/其它），这个版本里我们用 GO 做了最简单的控制台命令行实现，甚至没有 UI 界面。 TendermintApp：区块链服务程序，这个里面包括 Tendermint 和 ABCI 两部分。 ABCI：因为是接口协议，设计上可以用任何语言去实现，我们使用了 GO 语言。开发上主要是实现 CheckTx, DeliverTx, Commit 等 ABCI 指令的具体逻辑 Tendermint：几乎没有需要开发的地方，前面提到了它已经为我们做了两件事情，P2P网络同步有序传输数据和拜占庭共识引擎。我们在这里就将它运行即可。 &nbsp; 接下来正式撸代码，我们主要讲解一部分核心逻辑： 1. ClientApp 模拟了5个区块，每个区块记录10条记录，将这些记录转成 json 提交给 Tendermint blocksNumber := 5 // how many blocks transactionsPerBlock := 10 // how many transactions in each block players := []string{&quot;Lei&quot;, &quot;Jack&quot;, &quot;Pony&quot;, &quot;Richard&quot;} // 4 players random := rand.New(rand.NewSource(time.Now().UnixNano())) json := jsoniter.ConfigCompatibleWithStandardLibrary","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/07/30/5%E5%88%86%E9%92%9F%E5%AD%A6%E4%BC%9A%E5%8C%BA%E5%9D%97%E9%93%BE-%E5%BC%80%E5%8F%91%E4%B8%80%E6%9D%A1%E5%8C%BA%E5%9D%97%E9%93%BE-Develop-BlockChain-with-Tendermint.html","headline":"5分钟学会区块链 - 开发一条区块链 Develop BlockChain with Tendermint","dateModified":"2018-07-30T00:00:00+08:00","datePublished":"2018-07-30T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/07/30/5%E5%88%86%E9%92%9F%E5%AD%A6%E4%BC%9A%E5%8C%BA%E5%9D%97%E9%93%BE-%E5%BC%80%E5%8F%91%E4%B8%80%E6%9D%A1%E5%8C%BA%E5%9D%97%E9%93%BE-Develop-BlockChain-with-Tendermint.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>5分钟学会区块链 - 开发一条区块链 Develop BlockChain with Tendermint</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <p>本文攻略：解惑区块链开发，学习 Tendermint，给自己造一条区块链</p> 
+  <p>建议玩家等级：技术小白，学生党，初级码农</p> 
+  <p>&nbsp;</p> 
+  <p>阅读此文先解锁技能：</p> 
+  <ol>
+   <li>一点点命令行基础</li> 
+   <li>一点点 GO 基础：<a href="https://link.zhihu.com/?target=http%3A//www.runoob.com/go/go-tutorial.html" rel="nofollow">三天包学会</a></li> 
+   <li>一点点区块链知识：<a href="https://zhuanlan.zhihu.com/p/33081515" rel="nofollow">5分钟学会区块链 - 关于区块链的一切 All About Blockchain</a></li> 
+  </ol>
+  <p>实践此文推荐装备：</p> 
+  <ol>
+   <li>操作系统：macOS Sierra（Windows也没毛病）</li> 
+   <li>IDE：VSCode，并自动安装一批官方建议的GO插件</li> 
+   <li>Restful API 工具：Paw（非必需，浏览器也可以）</li> 
+  </ol>
+  <p>&nbsp;</p> 
+  <h2><strong>PART 1: Tendermint 是什么</strong></h2> 
+  <p><a href="https://zhuanlan.zhihu.com/p/33081515" rel="nofollow">上篇文章</a>我们举了雷布斯、杰克马、坡尼马和强东哥打麻将共同记账的栗子，这回PO主见他们手写记账这么原始，就想给这四位写一个区块链记账APP，让他们从此告别手写账本。</p> 
+  <p>既然重新造轮子这件事是不存在的，于是向大家介绍一款区块链轮子叫 <strong><a href="https://link.zhihu.com/?target=https%3A//tendermint.com/" rel="nofollow">Tendermint</a>（以下简称 TM）</strong>，如果有玩家听说过以太坊（Ethereum），这个什么坊有个分支 Ethermint 就是基于 TM 开发的，反正PO主只懂撸代码不懂炒币，不是很了解这到底是个什么工坊。</p> 
+  <p>好了，先来了解一下 TM 的原理，因为实在没什么可以可视化的 UI 让玩家们一目了然。TM 主要包含两部分：</p> 
+  <ol>
+   <li>Tendermint Core：区块链共识引擎。它负责两件事情：节点之间的数据同步有序传输，拜占庭共识机制的实现。</li> 
+   <li>ABCI：区块链应用接口。它被设计成一组有接口规范的协议，目的是可以使用多种语言实现区块链应用逻辑。</li> 
+  </ol>
+  <p>那他两到底干啥用的，说了半天好像还是不太理解，没关系先记住他们，PO主刚开始看原文档的时候也和各位玩家有着同样的感受。</p> 
+  <p>&nbsp;</p> 
+  <h2><strong>PART 2: Tendermint 安装运行</strong></h2> 
+  <p><strong>1. 官方安装指南</strong></p> 
+  <p>让我们忽略更多的理论，直接撸起袖子做程序猿最喜欢做的事情，先下载轮子，命令行输入：</p> 
+  <pre class="has">
+<code>go get github.com/Masterminds/glide
+go get github.com/tendermint/tendermint/cmd/tendermint
+</code></pre> 
+  <p>下载过程比较长，这个轮子比较大（可能需要科学上网），下载完成后安装，命令行输入：</p> 
+  <pre class="has">
+<code>cd $GOPATH/src/github.com/tendermint/tendermint
+glide install
+go install ./cmd/tendermint
+</code></pre> 
+  <p>安装过程也比较长，安装完成后验证安装是否成功，命令行输入：</p> 
+  <pre class="has">
+<code>tendermint version
+abci-cli version
+</code></pre> 
+  <p>截止本文的发表时间，tendermint 版本 0.15.0，abci-cli 版本 0.9.0</p> 
+  <p>&nbsp;</p> 
+  <p><strong>2. 运行官方栗子</strong></p> 
+  <p>官方文档提供了两个栗子，已经集成在了刚才的安装里：</p> 
+  <ol>
+   <li>dummy：一个简单的键值存储区块链应用，使用起来有点像 Redis 或 ElasticSearch。</li> 
+   <li>counter：一个简单的计数器区块链应用，写入区块的数字必须递增，否则将不被区块接受。</li> 
+  </ol>
+  <p>这里我们简单介绍一下 dummy 这个栗子，首先启动这个区块链应用，命令行输入：</p> 
+  <pre class="has">
+<code>abci-cli dummy
+</code></pre> 
+  <p>然后启动 TM，命令行输入：</p> 
+  <pre class="has">
+<code>tendermint init
+tendermint node
+</code></pre> 
+  <p>顺利的话，可以看到 abci 和 tendermint 两个程序连通（Connect）了，并且 tendermint 会像心跳一样每一秒提交一个空区块，我们接下来准备写入有实质内容的新区块，命令行输入：</p> 
+  <pre class="has">
+<code>curl -s 'localhost:46657/broadcast_tx_commit?tx="abcd"'
+curl -s 'localhost:46657/broadcast_tx_commit?tx="name=satoshi"'
+</code></pre> 
+  <p>我们的区块链里就有了一个记录“abcd”的区块和另一个记录“name=satoshi”的区块，如果需要对区块链内容进行查询，命令行输入：</p> 
+  <pre class="has">
+<code>curl -s 'localhost:46657/abci_query?data="name"'
+</code></pre> 
+  <blockquote>
+   <em>curl 是 Linux 常用工具，玩家可以通过网页浏览器直接输入 localhost:46657/abci_query?data="name"</em>
+  </blockquote> 
+  <p>&nbsp;</p> 
+  <p><strong>3. 探索官方工具</strong></p> 
+  <p>最后介绍 abci-cli 这个坑人工具登场，让我们先关闭刚才运行的 dummy 应用和 tendermint，命令行重新输入运行 dummy：</p> 
+  <pre class="has">
+<code>abci-cli dummy
+</code></pre> 
+  <p>命令行再输入：</p> 
+  <pre class="has">
+<code>abci-cli console
+</code></pre> 
+  <p>然后他两连通了（Connect），此时很多玩家会困惑于这两个都叫 abci 的家伙怎么也能互相连通，abci 到底是个什么东西？他又干了什么？让我们通过 PART 3 来重新梳理一下我们刚才究竟都在区块链里的什么地方做了些什么事。</p> 
+  <p>&nbsp;</p> 
+  <h2><strong>PART 3: Tendermint 再理解</strong></h2> 
+  <p>PO主先把官方文档里用的最多并容易让人混淆的名词都罗列出来：</p> 
+  <ol>
+   <li>ABCI Server</li> 
+   <li>ABCI Client</li> 
+   <li>Tendermint Core</li> 
+   <li>ABCI Application</li> 
+   <li>ABCI App</li> 
+  </ol>
+  <p>然后总结了三个名词来帮助理解，下文约定统一使用这三个名词：</p> 
+  <ol>
+   <li><strong>ABCI</strong>：区块链内部，ABCI Server，启动后加载 ABCI Application/App，为 Tendermint 提供 Socket 服务，服务地址：tcp://localhost:46658</li> 
+   <li><strong>Tendermint</strong>：区块链内部，ABCI Client/Tendermint Core，启动后与 ABCI 提供的 Socket 服务创建 3 条连接（Connect），同时会提供 HTTP 服务给区块链外部客户端，服务地址：http://localhost:46657</li> 
+   <li><strong>Client</strong>：区块链外部，真正的客户端，通过 Tendermint 提供的服务对区块链进行读写访问</li> 
+  </ol>
+  <p>&nbsp;</p> 
+  <p>还是把栗子举一举，假设强东哥在使用我写的的区块链记账 APP（用iOS开发的）：</p> 
+  <ol>
+   <li>Client 就是区块链记账 APP，强东哥记录了一条新数据 ‘Jack Pony $10’，然后保存</li> 
+   <li>Client 会发起请求 http://localhost:46657/broadcast_tx_commit?tx="Jack Pony $10"</li> 
+   <li>Tendermint 收到 tx="Jack Pony $10"，通过 Socket 向 ABCI 发出指令 CheckTx:"Jack Pony $10"</li> 
+   <li>ABCI 运行了我写的 ABCI App（用GO开发的）里的 CheckTx 方法，作用是验证 "Jack Pony $10" 是否符合数据规范，如果不符合就要通知 Temdermint 拒绝这条 tx</li> 
+   <li>假设 ABCI CheckTx 验证通过后通知 Tendermint</li> 
+   <li>Tendermint 把 "Jack Pony $10" 暂存在内存池（mempool）里，并把这条 tx 通过 P2P 网络复制给其它 Tendermint 节点（杰克马、坡尼马和雷布斯各自运行的 Tendermint 节点）</li> 
+   <li>Tendermint 发起了对 "Jack Pony $10" 这条 tx 的拜占庭共识投票，所有4个 Tendermint 节点都参与了。投票过程分三轮，第一轮预投票（PreVote），超过 2/3 认可后进入第二轮预提交（PreCommit），超过 2/3 认可后进入最后一轮正式提交（Commit）</li> 
+   <li>Tendermint 提交（Commit）时依次向 ABCI 发送指令：BeginBlock -&gt; DeliverTx * n次 -&gt; EndBlock -&gt; Commit，大致意思就是：快接受新区快 -&gt; 正在接受区块内容 * n条 -&gt; 区块内容接受完了 -&gt; 提交到区块链去吧</li> 
+   <li>ABCI 提交（Commit）成功后会通知 Tendermint</li> 
+   <li>至此，区块链多了一个区块记录了 1 条 transaction "Jack Pony $10" ，当然我们也可以记录 n 条后再保存，那么一个区块就会记录 n 条 transaction</li> 
+  </ol>
+  <p>&nbsp;</p> 
+  <p>最后再总结几点：</p> 
+  <ol>
+   <li>说回刚才那个坑人的 abci-cli，当他运行 'abci-cli dummy' 时其实是运行了 ABCI，当他运行了 'abci-cli console' 时其实是运行了 Tendermint，所以一起运行后会进行 Socket 连接（Connect）</li> 
+   <li>Tendermint 和 ABCI 之间的 Socket 连接有 3 条：1 条用于验证数据（CheckTx 指令），1 条用于查询数据（Query 指令），1 条用于共识数据（BeginBlock, DeliverTx, EndBlock, Commit 指令）</li> 
+   <li>Tendermit 提供给 Client 的 HTTP 接口有很多，浏览器访问 http://localhost:46657 就都知道了</li> 
+   <li>玩家也可以亲自拜读一下<a href="https://link.zhihu.com/?target=https%3A//tendermint.readthedocs.io/en/master/index.html" rel="nofollow">官方文档</a></li> 
+  </ol>
+  <p>&nbsp;</p> 
+  <h2><strong>PART 4: 开发一条区块链</strong></h2> 
+  <p>总算到了撸代码环节，我们先把项目架构整理一下：</p> 
+  <ol>
+   <li>ClientApp：区块链记账 APP，可以用任意语言任意平台实现（iOS/Android/H5/其它），这个版本里我们用 GO 做了最简单的控制台命令行实现，甚至没有 UI 界面。</li> 
+   <li>TendermintApp：区块链服务程序，这个里面包括 Tendermint 和 ABCI 两部分。</li> 
+   <li>ABCI：因为是接口协议，设计上可以用任何语言去实现，我们使用了 GO 语言。开发上主要是实现 CheckTx, DeliverTx, Commit 等 ABCI 指令的具体逻辑</li> 
+   <li>Tendermint：几乎没有需要开发的地方，前面提到了它已经为我们做了两件事情，P2P网络同步有序传输数据和拜占庭共识引擎。我们在这里就将它运行即可。</li> 
+  </ol>
+  <p>&nbsp;</p> 
+  <p>接下来正式撸代码，我们主要讲解一部分核心逻辑：</p> 
+  <p><strong>1. ClientApp</strong></p> 
+  <p>模拟了5个区块，每个区块记录10条记录，将这些记录转成 json 提交给 Tendermint</p> 
+  <pre class="has">
+<code>blocksNumber := 5                                     // how many blocks
+transactionsPerBlock := 10                            // how many transactions in each block
+players := []string{"Lei", "Jack", "Pony", "Richard"} // 4 players
+random := rand.New(rand.NewSource(time.Now().UnixNano()))
+json := jsoniter.ConfigCompatibleWithStandardLibrary
+
+for i := 0; i &lt; blocksNumber; i++ {
+    time.Sleep(time.Second * 1)
+    transactions := []controllers.Transaction{}
+
+    for j := 0; j &lt; transactionsPerBlock; j++ {
+        from := players[random.Intn(len(players))]
+        to := players[random.Intn(len(players))]
+        for from == to {
+            to = players[random.Intn(len(players))]
+        }
+        btc := float32(random.Intn(10) + 1)
+
+        tran := controllers.Transaction{
+            From:    from,
+            To:      to,
+            Bitcoin: btc,
+        }
+        _, _ = tran.Create()
+        transactions = append(transactions, tran)
+    }
+
+    bytes, _ := json.Marshal(&amp;transactions)
+    data := strings.Replace(string(bytes), "\"", "'", -1)
+
+    tx := data
+    // tmAsync(tx)
+    tmCommit(tx)
+}
+</code></pre> 
+  <p>&nbsp;</p> 
+  <pre class="has">
+<code>func tmCommit(tx string) {
+	url := "http://localhost:46657/broadcast_tx_async?tx=\"" + tx + "\""
+	txHandle(url)
+}
+</code></pre> 
+  <p>&nbsp;</p> 
+  <p><strong>2. Tendermint</strong></p> 
+  <p>通过命令行运行一个定义好的 Shell 脚本，并且把运行结果打印到控制台和日志文件中去</p> 
+  <pre class="has">
+<code>f, err := os.Create("logs/tendermint.log")
+if err != nil {
+    fmt.Println("Tendermint log init error:", err)
+}
+multiWriter := io.MultiWriter(f, os.Stdout)
+
+go func() {
+    cmd := exec.Command("bash", "-c", "sh run-tm.sh")
+    cmd.Stdout = multiWriter
+    cmd.Start()
+}()
+</code></pre> 
+  <p>run-tm.sh 脚本内容：</p> 
+  <pre class="has">
+<code>echo tendermint start
+tendermint init
+tendermint unsafe_reset_all
+tendermint node --consensus.create_empty_blocks=false
+echo tendermint end
+</code></pre> 
+  <blockquote>
+   <em>unsafe_reset_all 作用是每次重置本机的区块链数据，仅供开发使用</em> 
+   <em>consensus.create_empty_blocks 作用是关闭 Tendermint 自带的每秒生成新的空区块功能</em>
+  </blockquote> 
+  <p>&nbsp;</p> 
+  <p><strong>3. ABCI</strong></p> 
+  <p>实现 ABCI 指令接口，这里我们直接使用了官方栗子 dummy 应用，来保存提交的 json 记录，并且在每个实现接口里做了日志打印（因篇幅有限，省略了长长的代码）</p> 
+  <pre class="has">
+<code>func (app *DummyApplication) CheckTx(tx []byte) types.ResponseCheckTx {
+	lib.Log.Debug("CheckTx")
+	lib.Log.Notice(string(tx))
+	return types.ResponseCheckTx{Code: code.CodeTypeOK}
+}
+
+func (app *DummyApplication) DeliverTx(tx []byte) types.ResponseDeliverTx {
+	lib.Log.Debug("DeliverTx")
+	lib.Log.Notice(string(tx))
+	// ...
+	return types.ResponseDeliverTx{Code: code.CodeTypeOK, Tags: tags}
+}
+
+func (app *DummyApplication) Commit() types.ResponseCommit {
+	lib.Log.Debug("Commit")
+	// ...
+	lib.Log.Debug("Commit Hash", hash)
+	return types.ResponseCommit{Code: code.CodeTypeOK, Data: hash}
+}
+
+func (app *DummyApplication) Query(reqQuery types.RequestQuery) (resQuery types.ResponseQuery) {
+	lib.Log.Debug("Query")
+	// ...
+}
+</code></pre> 
+  <p>&nbsp;</p> 
+  <p><strong>4. 编译</strong></p> 
+  <p>我们写好了编译脚本，命令行输入：</p> 
+  <pre class="has">
+<code>sh make.sh
+</code></pre> 
+  <p>编译脚本本质就是把三个运行程序编译出来：</p> 
+  <pre class="has">
+<code>go build ./TendermintApp/ABCIServer/
+go build ./TendermintApp/ABCIClient/
+go build  -o Client ./ClientApp/
+</code></pre> 
+  <p>&nbsp;</p> 
+  <p><strong>5. 测试</strong></p> 
+  <p>到了激动人心的一刻，我们已经离一条自造的区块链很接近了。</p> 
+  <p>先运行 ABCI，命令行输入:</p> 
+  <pre class="has">
+<code>./ABCIServer
+</code></pre> 
+  <p>再运行 Tendermint，命令行输入：</p> 
+  <pre class="has">
+<code>./ABCIClient
+</code></pre> 
+  <p>可以看到 Tendermint 和 ABCI 已经有 3 个连接（Connect） Socket 握手了，表示整个区块链服务已经准备就绪，最后我们只需要使用 Client 往区块链里写数据就行了，命令行输入：</p> 
+  <pre class="has">
+<code>./Client
+</code></pre> 
+  <p>把条命令理解成使用记账 APP 记录了 5 页，每页 10 条记录，然后点击保存后送去了区块链。</p> 
+  <p>&nbsp;</p> 
+  <p>附上一张运行结果图，大致能观察到三个程序都已成功运行</p> 
+  <p><img alt="" class="has" src="https://pic1.zhimg.com/80/v2-35e2aa72a40d5c59dfb291a0dde3316e_hd.jpg"></p> 
+  <p>&nbsp;</p> 
+  <p>最终我们创造了一条区块链，一共有 7 个区块，2~6 号区块各自写有 10 条账本记录，第 1 和第 7 号区块是系统创建的空区块。</p> 
+  <blockquote>
+   <em>空区块是怎么回事？原先 PO 主也以为是 BUG，去了官方的开发 <a href="https://link.zhihu.com/?target=https%3A//github.com/tendermint/ethermint/issues/308" rel="nofollow">issue</a> 里了解到 Tendermint 每次收到新的 tx 或者区块链 hash 值变化的时候（就是区块链状态变了）会产生一个新区块去接受 mempool 里未被提交的新 tx，这是 Tendermint 用于正常自检工作产生的。</em>
+  </blockquote> 
+  <p>&nbsp;</p> 
+  <p>来看看这条区块链长什么样子，这里展示了 2, 3, 4 号区块的账本记录</p> 
+  <p><img alt="" class="has" src="https://pic4.zhimg.com/80/v2-fd990f15cd6771f07f07279865d8bdb2_hd.jpg"></p> 
+  <p><img alt="" class="has" src="https://pic1.zhimg.com/80/v2-224d681b63714eff735fe0dc799d9e02_hd.jpg"></p> 
+  <p><img alt="" class="has" src="https://pic4.zhimg.com/80/v2-acac8915aa3a7420735377e31fca08e2_hd.jpg"></p> 
+  <p>&nbsp;</p> 
+  <p>感觉有好多$$在这小小的几个区块里，最后献上<a href="https://link.zhihu.com/?target=https%3A//github.com/fengjihua/DemoBlockChain/releases/tag/v0.1.0" rel="nofollow">本文代码</a>，希望各位玩家也创造一条属于自己的区块链。PO 主也默默去写未完成的账本 APP了。</p> 
+  <p><a href="https://zhuanlan.zhihu.com/p/33154604" rel="nofollow">https://zhuanlan.zhihu.com/p/33154604</a></p> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/omnispace/article/details/81278529,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/omnispace/article/details/81278529,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

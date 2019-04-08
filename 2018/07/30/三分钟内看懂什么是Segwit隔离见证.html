@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>三分钟内看懂什么是Segwit隔离见证？ | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="三分钟内看懂什么是Segwit隔离见证？" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="三分钟内看懂什么是Segwit隔离见证？ 霸道先生 百家号03-0523:40 比特币如何扩容，一直是社群最关心的议题。隔离见证是比特币扩容的其中一个方案，此方案已经于2017年8月在比特币网络上被采用。 市场上越来越普遍地采用了Segregated Witness（隔离见证），在今年二月， Coinbase和Bitfinex这样的大型交易所都宣布他们开始支持SegWit。隔离见证也是针对比特币一直以来过高的手续费提出的解决方案。 SegWit降低了交易费用并为区块链增加了更多空间，但它仍然没有被广泛采用，所以很难说它实际上有多大帮助。 SegWit不会减少交易次数，但它会使每一笔交易更便宜。 最近比特币正在朝着下一个扩容方案努力，闪电网络Lightning Network。闪电网路的启动必须基于更多的用户使用隔离见证地址。 总上原因所述，因此社群对于隔离见证的接受度提升是至关重要的。 1. 背景： 中本聪之前的代码中写到，在审核统计区块大小的时候，每一个区块大小不超过1M。他在Github的代码中定义了区块大小：中本聪对区块大小定义的源代码（Github commitment）。 目前社群致力于，在使用现有的区块审核模型下如何缓解现在比特币拥堵问题？ 而块大小需要保持在1MB的原因牵涉到所有节点对整个网路的安全性议题，牵扯的范围之广十分复杂，这也是为什么Bitcoins的Altcoin如彼特币现金、比特币无限的推出并没有改变比特币本身试图解决的方向。 2. 隔离见证做了什么改动？ 隔离见证就是把脚本签名(scriptSig)信息从基本结构(base block) 里拿出来，放在一个新的数据结构当中。做验证工作的节点和矿工也会验证这个新的数据结构里的脚本签名，以确保交易是有效的。 当审核统计区块的容量不能超过1M的时候，透过隔离见证，独立出脚本签名，脚本签的大小便不会被计算在内。 以下图示以火车车厢运送货物，来清楚的表达隔离见证： 图中上半部分是未采用Segwit的一个区块，以火车的一节车厢作为比喻，而每一笔交易则是以黄色与蓝色的货物做为代表，分别是脚本签名（认证资料），以及交易的基本结构（包含交易地址和金额） 藉由把脚本签名从每一笔交易中独立出来，原先只能载三个货物的车厢，便可以容纳七个货物了。 也就是说，原先只能容纳三笔交易的一个区块，透过Segwit，便可以一次传输七笔交易，很好的解决的比特币的扩容问题。 Q1： 脚本签名是不是和每笔交易绑定在一起？ 如图：车厢内的方块(脚本签名ScripSig)是属于车的一部分。验证交易的时候签名将会被一起验证。 Q2：见证是不是发生在区块链上？ Segwit只是改变了车的结构，而且整个车厢仍然行驶在轨道上。因此与原有的链并不冲突。 阅读更多" />
+<meta property="og:description" content="三分钟内看懂什么是Segwit隔离见证？ 霸道先生 百家号03-0523:40 比特币如何扩容，一直是社群最关心的议题。隔离见证是比特币扩容的其中一个方案，此方案已经于2017年8月在比特币网络上被采用。 市场上越来越普遍地采用了Segregated Witness（隔离见证），在今年二月， Coinbase和Bitfinex这样的大型交易所都宣布他们开始支持SegWit。隔离见证也是针对比特币一直以来过高的手续费提出的解决方案。 SegWit降低了交易费用并为区块链增加了更多空间，但它仍然没有被广泛采用，所以很难说它实际上有多大帮助。 SegWit不会减少交易次数，但它会使每一笔交易更便宜。 最近比特币正在朝着下一个扩容方案努力，闪电网络Lightning Network。闪电网路的启动必须基于更多的用户使用隔离见证地址。 总上原因所述，因此社群对于隔离见证的接受度提升是至关重要的。 1. 背景： 中本聪之前的代码中写到，在审核统计区块大小的时候，每一个区块大小不超过1M。他在Github的代码中定义了区块大小：中本聪对区块大小定义的源代码（Github commitment）。 目前社群致力于，在使用现有的区块审核模型下如何缓解现在比特币拥堵问题？ 而块大小需要保持在1MB的原因牵涉到所有节点对整个网路的安全性议题，牵扯的范围之广十分复杂，这也是为什么Bitcoins的Altcoin如彼特币现金、比特币无限的推出并没有改变比特币本身试图解决的方向。 2. 隔离见证做了什么改动？ 隔离见证就是把脚本签名(scriptSig)信息从基本结构(base block) 里拿出来，放在一个新的数据结构当中。做验证工作的节点和矿工也会验证这个新的数据结构里的脚本签名，以确保交易是有效的。 当审核统计区块的容量不能超过1M的时候，透过隔离见证，独立出脚本签名，脚本签的大小便不会被计算在内。 以下图示以火车车厢运送货物，来清楚的表达隔离见证： 图中上半部分是未采用Segwit的一个区块，以火车的一节车厢作为比喻，而每一笔交易则是以黄色与蓝色的货物做为代表，分别是脚本签名（认证资料），以及交易的基本结构（包含交易地址和金额） 藉由把脚本签名从每一笔交易中独立出来，原先只能载三个货物的车厢，便可以容纳七个货物了。 也就是说，原先只能容纳三笔交易的一个区块，透过Segwit，便可以一次传输七笔交易，很好的解决的比特币的扩容问题。 Q1： 脚本签名是不是和每笔交易绑定在一起？ 如图：车厢内的方块(脚本签名ScripSig)是属于车的一部分。验证交易的时候签名将会被一起验证。 Q2：见证是不是发生在区块链上？ Segwit只是改变了车的结构，而且整个车厢仍然行驶在轨道上。因此与原有的链并不冲突。 阅读更多" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/07/30/%E4%B8%89%E5%88%86%E9%92%9F%E5%86%85%E7%9C%8B%E6%87%82%E4%BB%80%E4%B9%88%E6%98%AFSegwit%E9%9A%94%E7%A6%BB%E8%A7%81%E8%AF%81.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/07/30/%E4%B8%89%E5%88%86%E9%92%9F%E5%86%85%E7%9C%8B%E6%87%82%E4%BB%80%E4%B9%88%E6%98%AFSegwit%E9%9A%94%E7%A6%BB%E8%A7%81%E8%AF%81.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-07-30T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"三分钟内看懂什么是Segwit隔离见证？ 霸道先生 百家号03-0523:40 比特币如何扩容，一直是社群最关心的议题。隔离见证是比特币扩容的其中一个方案，此方案已经于2017年8月在比特币网络上被采用。 市场上越来越普遍地采用了Segregated Witness（隔离见证），在今年二月， Coinbase和Bitfinex这样的大型交易所都宣布他们开始支持SegWit。隔离见证也是针对比特币一直以来过高的手续费提出的解决方案。 SegWit降低了交易费用并为区块链增加了更多空间，但它仍然没有被广泛采用，所以很难说它实际上有多大帮助。 SegWit不会减少交易次数，但它会使每一笔交易更便宜。 最近比特币正在朝着下一个扩容方案努力，闪电网络Lightning Network。闪电网路的启动必须基于更多的用户使用隔离见证地址。 总上原因所述，因此社群对于隔离见证的接受度提升是至关重要的。 1. 背景： 中本聪之前的代码中写到，在审核统计区块大小的时候，每一个区块大小不超过1M。他在Github的代码中定义了区块大小：中本聪对区块大小定义的源代码（Github commitment）。 目前社群致力于，在使用现有的区块审核模型下如何缓解现在比特币拥堵问题？ 而块大小需要保持在1MB的原因牵涉到所有节点对整个网路的安全性议题，牵扯的范围之广十分复杂，这也是为什么Bitcoins的Altcoin如彼特币现金、比特币无限的推出并没有改变比特币本身试图解决的方向。 2. 隔离见证做了什么改动？ 隔离见证就是把脚本签名(scriptSig)信息从基本结构(base block) 里拿出来，放在一个新的数据结构当中。做验证工作的节点和矿工也会验证这个新的数据结构里的脚本签名，以确保交易是有效的。 当审核统计区块的容量不能超过1M的时候，透过隔离见证，独立出脚本签名，脚本签的大小便不会被计算在内。 以下图示以火车车厢运送货物，来清楚的表达隔离见证： 图中上半部分是未采用Segwit的一个区块，以火车的一节车厢作为比喻，而每一笔交易则是以黄色与蓝色的货物做为代表，分别是脚本签名（认证资料），以及交易的基本结构（包含交易地址和金额） 藉由把脚本签名从每一笔交易中独立出来，原先只能载三个货物的车厢，便可以容纳七个货物了。 也就是说，原先只能容纳三笔交易的一个区块，透过Segwit，便可以一次传输七笔交易，很好的解决的比特币的扩容问题。 Q1： 脚本签名是不是和每笔交易绑定在一起？ 如图：车厢内的方块(脚本签名ScripSig)是属于车的一部分。验证交易的时候签名将会被一起验证。 Q2：见证是不是发生在区块链上？ Segwit只是改变了车的结构，而且整个车厢仍然行驶在轨道上。因此与原有的链并不冲突。 阅读更多","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/07/30/%E4%B8%89%E5%88%86%E9%92%9F%E5%86%85%E7%9C%8B%E6%87%82%E4%BB%80%E4%B9%88%E6%98%AFSegwit%E9%9A%94%E7%A6%BB%E8%A7%81%E8%AF%81.html","headline":"三分钟内看懂什么是Segwit隔离见证？","dateModified":"2018-07-30T00:00:00+08:00","datePublished":"2018-07-30T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/07/30/%E4%B8%89%E5%88%86%E9%92%9F%E5%86%85%E7%9C%8B%E6%87%82%E4%BB%80%E4%B9%88%E6%98%AFSegwit%E9%9A%94%E7%A6%BB%E8%A7%81%E8%AF%81.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>三分钟内看懂什么是Segwit隔离见证？</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <h2>三分钟内看懂什么是Segwit隔离见证？</h2> 
+  <p><img alt="" class="has" src="https://timgmb.bdimg.com/timg?searchbox_feed&amp;sec=0&amp;di=885e8e717c45d363400fc94e1298f1c3&amp;src=http%3A%2F%2Ftimg01.bdimg.com%2Ftimg%3Fpacompress%26imgtype%3D0%26sec%3D1439619614%26di%3D48b88be29ded6dc9bedac3a69c4d53a2%26quality%3D90%26size%3Db870_10000%26src%3Dhttp%3A%2F%2Fbos.nj.bpc.baidu.com%2Fv1%2Fmediaspot%2Fd14fc475f8be001a80b79c83f4e9592a.jpeg"></p> 
+  <p>霸道先生</p> 
+  <p>百家号03-0523:40</p> 
+  <p>比特币如何扩容，一直是社群最关心的议题。隔离见证是比特币扩容的其中一个方案，此方案已经于2017年8月在比特币网络上被采用。</p> 
+  <p>市场上越来越普遍地采用了Segregated Witness（隔离见证），在今年二月， Coinbase和Bitfinex这样的大型交易所都宣布他们开始支持SegWit。隔离见证也是针对比特币一直以来过高的手续费提出的解决方案。</p> 
+  <p>SegWit降低了交易费用并为区块链增加了更多空间，但它仍然没有被广泛采用，所以很难说它实际上有多大帮助。</p> 
+  <p>SegWit不会减少交易次数，但它会使每一笔交易更便宜。</p> 
+  <p>最近比特币正在朝着下一个扩容方案努力，闪电网络Lightning Network。闪电网路的启动必须基于更多的用户使用隔离见证地址。</p> 
+  <p>总上原因所述，因此社群对于隔离见证的接受度提升是至关重要的。</p> 
+  <p>1. 背景：</p> 
+  <p>中本聪之前的代码中写到，在审核统计区块大小的时候，每一个区块大小不超过1M。他在Github的代码中定义了区块大小：中本聪对区块大小定义的源代码（Github commitment）。</p> 
+  <p>目前社群致力于，在使用现有的区块审核模型下如何缓解现在比特币拥堵问题？</p> 
+  <p>而块大小需要保持在1MB的原因牵涉到所有节点对整个网路的安全性议题，牵扯的范围之广十分复杂，这也是为什么Bitcoins的Altcoin如彼特币现金、比特币无限的推出并没有改变比特币本身试图解决的方向。</p> 
+  <p>2. 隔离见证做了什么改动？</p> 
+  <p>隔离见证就是把脚本签名(scriptSig)信息从基本结构(base block) 里拿出来，放在一个新的数据结构当中。做验证工作的节点和矿工也会验证这个新的数据结构里的脚本签名，以确保交易是有效的。</p> 
+  <p>当审核统计区块的容量不能超过1M的时候，透过隔离见证，独立出脚本签名，脚本签的大小便不会被计算在内。</p> 
+  <p>以下图示以火车车厢运送货物，来清楚的表达隔离见证：</p> 
+  <p>图中上半部分是未采用Segwit的一个区块，以火车的一节车厢作为比喻，而每一笔交易则是以黄色与蓝色的货物做为代表，分别是脚本签名（认证资料），以及交易的基本结构（包含交易地址和金额）</p> 
+  <p><img alt="" class="has" src="https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=1102867822,375083957&amp;fm=173&amp;s=4AA03562706962AC05F1815F0300A0E0&amp;w=640&amp;h=452&amp;img.JPEG"></p> 
+  <p>藉由把脚本签名从每一笔交易中独立出来，原先只能载三个货物的车厢，便可以容纳七个货物了。</p> 
+  <p>也就是说，原先只能容纳三笔交易的一个区块，透过Segwit，便可以一次传输七笔交易，很好的解决的比特币的扩容问题。</p> 
+  <p>Q1： 脚本签名是不是和每笔交易绑定在一起？</p> 
+  <p>如图：车厢内的方块(脚本签名ScripSig)是属于车的一部分。验证交易的时候签名将会被一起验证。</p> 
+  <p>Q2：见证是不是发生在区块链上？</p> 
+  <p>Segwit只是改变了车的结构，而且整个车厢仍然行驶在轨道上。因此与原有的链并不冲突。</p> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/jfkidear/article/details/81280129,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/jfkidear/article/details/81280129,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

@@ -1,0 +1,34 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <h1>原文翻译</h1> 
+  <h2>2. Transactions</h2> 
+  <p>We define an electronic coin as a chain of digital signatures. Each owner transfers the coin to the next by digitally signing a hash of the previous transaction and the public key of the next owner and adding these to the end of the coin. A payee can verify the signatures to verify the chain of ownership.</p> 
+  <p><img alt="" class="has" src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180811164922425?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NDY3MzY1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>The problem of course is the payee can't verify that one of the owners did not double-spend the coin. A common solution is to introduce a trusted central authority, or mint, that checks every transaction for double spending. After each transaction, the coin must be returned to the mint to issue a new coin, and only coins issued directly from the mint are trusted not to be double-spent. The problem with this solution is that the fate of the entire money system depends on the company running the mint, with every transaction having to go through them, just like a bank.</p> 
+  <p>We need a way for the payee to know that the previous owners did not sign any earlier transactions. For our purposes, the earliest transaction is the one that counts, so we don't care about later attempts to double-spend. The only way to confirm the absence of a transaction is to be aware of all transactions. In the mint based model, the mint was aware of all transactions and decided which arrived first. To accomplish this without a trusted party, transactions must be publicly announced [1], and we need a system for participants to agree on a single history of the order in which they were received. The payee needs proof that at the time of each transaction, the majority of nodes agreed it was the first received.</p> 
+  <h2>2.交易</h2> 
+  <p>我们定义了一种由<strong>数字签名</strong>[1]组成的链为基础的数字货币。每一个币的拥有者可以通过对上一笔交易和下一个人的公匙进行签名并把这两个签名添加到币的末端的方式来把币支付给下一个人。收款人可以通过验证签名来验证对付款者的所有权进行验证。</p> 
+  <p>当然，问题是收款者还是没办法确定付款者是否把他的比特币花了两次。一个通常的解决方案是引入一个可信的中心权威机构，或者铸币厂，来检查每一笔交易是否存在双重支付问题。在每笔交易之后，必须将币退回铸币厂来产生新的币，只有直接由铸币厂发行的币才被认为不存在双重支付问题。这种解决方案的问题是这整个货币体系的命运都取决于负责运营铸币厂的公司，每一笔交易都得通过他们，就像一个银行。</p> 
+  <p>我们需要一种方法来让收款人知道之前的持有者没有签过任何更早的交易。为了这个目标，最早的交易就是算数的那个，所以我们不关心晚一点的试图双重支付的企图。只有一个办法来确认缺失的交易那就是知道所有的交易。在一个基于铸币厂的模型里，铸币厂知道所有的交易它决定哪些更早发生。为了在不引入可信方的前提下来实现相同的效果，交易必须被公开广播，同时我们还需要一套系统让参与者认同他们收到的是同一个交易次序的历史收款人需要证明在每次交易的时候，大多数节点认同它是首先到达的。</p> 
+  <h1>细节解读</h1> 
+  <h2>What is 'Digital signatures'</h2> 
+  <p>Please refer to my other blog post《Study notes of Bitcoin and blockchain basic principles 03(about&nbsp;Digital signatures )》&nbsp;</p> 
+  <p><a href="https://blog.csdn.net/qq_27467365/article/details/80009839" rel="nofollow">https://blog.csdn.net/qq_27467365/article/details/80009839</a></p> 
+  <h2><a name="t7"></a>什么是数字签名</h2> 
+  <p>请参考我的另一篇博文《比特币与区块链基本原理学习笔记03(关于数字签名)》</p> 
+  <p><a href="https://blog.csdn.net/qq_27467365/article/details/80009839" rel="nofollow">https://blog.csdn.net/qq_27467365/article/details/80009839</a></p> 
+  <h2>&nbsp;</h2> 
+  <p>&nbsp;</p> 
+  <hr>
+  <p>《Bitcoin: A Peer-to-Peer Electronic Cash System》论文原文地址如下：<a href="https://bitcoin.org/bitcoin.pdf" rel="nofollow">https://bitcoin.org/bitcoin.pdf</a></p> 
+  <hr>
+  <p>版权所有声明</p> 
+  <p>版权所有归属作者，未经允许不得转载、复制或用作它途。否则作者将具有追究法律责任的权利。</p> 
+  <p>Copyright Clarify</p> 
+  <p>Copyright ownership belongs to the author, shall not be reproduced, copied, or used in other ways without permission. Otherwise, the author will have the right to pursue legal responsibilities.</p> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/qq_27467365/article/details/81571869,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/qq_27467365/article/details/81571869,&quot;}">阅读更多</a> 
+</div>

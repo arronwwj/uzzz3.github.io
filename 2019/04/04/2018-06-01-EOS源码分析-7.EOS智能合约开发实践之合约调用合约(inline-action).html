@@ -1,0 +1,249 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <div>
+   <span style="font-size:16px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先，目前dawn-4.1, dawn-4.2使用inline action是会报如下错误</span>
+  </div>
+  <div>
+   &nbsp; &nbsp;
+   <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;font-size:12px;color:rgb(51,51,51);background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+    <span style="color:rgb(106,115,125);font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';font-size:14px;">transaction declares authority '{"actor":"hello.code","permission":"active"}', but does not have signatures for it under a provided delay of 0 ms</span>
+   </div>
+   <div>
+    <br>
+   </div>
+  </div>
+  <div>
+   <span style="font-size:16px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这个问题是4.0以后inline action的权限发生变化导致的。这个改动在eos官网的<a href="https://github.com/EOSIO/eos/issues/3013" rel="nofollow">#3013</a>这个issue讨论BM有提到过<br></span>
+  </div>
+  <div>
+   <img src="https://img-blog.csdn.net/20180601105510152" alt="">
+   <br>
+  </div>
+  <div>
+   <span style="font-size:16px;"><img src="https://img-blog.csdn.net/20180601180215843" alt="">&nbsp;&nbsp;&nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;</span>
+  </div>
+  <div>
+   <span style="font-size:16px;">核心是为智能合约账号添加eosio.code permission,比如hello.code调用hello.target智能合约，需要添加如下permission</span>
+  </div>
+  <div>
+   <div>
+    &nbsp; &nbsp;
+    <span style="color:#ff6666;">&nbsp;&nbsp;</span>
+    <div></div>
+    <div style="text-align:left;font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;font-size:12px;background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+     <span style="font-family:Monaco;"><span style="color:#333333;">cleos set account permission </span><span style="color:#ff6666;">args.user</span><span style="color:#333333;"> </span><span style="color:#ff6666;">active</span><span style="color:#333333;"> '{"threshold": 1,"keys": [{"key":"EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV", "weight":1}],"accounts": [{"permission":{</span><span style="color:#ff6666;">"actor":"hello.code","permission":"eosio.code"</span><span style="color:#333333;">},"weight":1}]}' owner -p args.user@owner</span></span>
+    </div>
+    <div>
+     &nbsp;&nbsp;
+    </div>
+   </div>
+  </div>
+  <h2>代码</h2>
+  <div>
+   &nbsp; &nbsp; 
+   <span style="font-size:16px;">新建两个contract: &nbsp;hello.code和hello.target<br></span>
+  </div>
+  <div>
+   <span style="font-size:16px;">&nbsp; &nbsp; &nbsp;&nbsp; &nbsp;hello.target代码如下<br></span>
+  </div>
+  <div>
+   <span style="font-size:16px;">&nbsp; &nbsp;&nbsp;<img src="https://img-blog.csdn.net/20180601113101809" alt=""></span>
+  </div>
+  <div>
+   <span style="font-size:16px;">&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;</span>
+  </div>
+  <div>
+   <span style="font-size:16px;">&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;hello.code的代码：</span>
+  </div>
+  <div>
+   <span style="font-size:16px;"></span>
+   <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;font-size:12px;color:rgb(51,51,51);background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+    <div>
+     <span style="background-color:rgb(255,255,255);"><span style="font-family:Monaco;"></span><span style="line-height:normal;color:rgb(0,0,0);font-family:Monaco;">class hello : public eosio::contract {</span></span>
+    </div>
+    <div>
+     <span style="line-height:normal;color:rgb(0,0,0);font-family:Monaco;">&nbsp; public:</span>
+    </div>
+    <div>
+     <span style="line-height:normal;color:rgb(0,0,0);font-family:Monaco;">&nbsp;&nbsp;&nbsp; using contract::contract;</span>
+    </div>
+    <div>
+     <span style="line-height:normal;color:rgb(0,0,0);font-family:Monaco;"></span>
+    </div>
+    <div>
+     <span style="line-height:normal;color:rgb(0,0,0);font-family:Monaco;">&nbsp;&nbsp;&nbsp; /// @abi action </span>
+    </div>
+    <div>
+     <span style="line-height:normal;color:rgb(0,0,0);font-family:Monaco;">&nbsp;&nbsp;&nbsp; void hi( account_name from, account_name to) {</span>
+    </div>
+    <div>
+     <span style="line-height:normal;color:rgb(0,0,0);font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; require_auth(from);</span>
+    </div>
+    <div>
+     <span style="line-height:normal;color:rgb(0,0,0);font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; print( "Hello, from:", name{from}, ", to:", name{to});</span>
+    </div>
+    <div>
+     <span style="line-height:normal;color:rgb(0,0,0);font-family:Monaco;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+     <span style="line-height:normal;font-family:Monaco;"><span style="color:#ff2600;">action(</span></span>
+    </div>
+    <div>
+     <span style="line-height:normal;font-family:Monaco;"><span style="color:#ff2600;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color:#0433ff;">//这里{to, active}必须授权给{_self, eosio.code}</span></span>
+    </div>
+    <div>
+     <span style="line-height:normal;font-family:Monaco;"><span style="color:#ff2600;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; permission_level{to, N(active)},</span></span>
+    </div>
+    <div>
+     <span style="line-height:normal;font-family:Monaco;"><span style="color:#ff2600;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color:#0433ff;">//调用 hello.target合约 的'callme' action</span></span>
+    </div>
+    <div>
+     <span style="line-height:normal;font-family:Monaco;"><span style="color:#ff2600;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; N(hello.target), N(callme),</span></span>
+    </div>
+    <div>
+     <span style="line-height:normal;font-family:Monaco;"><span style="color:#ff2600;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; std::make_tuple(to)</span></span>
+    </div>
+    <div>
+     <span style="line-height:normal;font-family:Monaco;"><span style="color:#ff2600;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ).send();</span></span>
+    </div>
+    <div>
+     <span style="line-height:normal;color:rgb(0,0,0);font-family:Monaco;">&nbsp;&nbsp;&nbsp; }</span>
+    </div>
+    <div>
+     <span style="line-height:normal;color:rgb(0,0,0);font-family:Monaco;">};</span>
+    </div>
+   </div>
+  </div>
+  <div>
+   <span style="font-size:16px;">&nbsp;&nbsp; &nbsp;</span>
+  </div>
+  <div>
+   <span style="font-size:16px;">&nbsp;&nbsp;&nbsp;&nbsp;核心就是上面的红色字体的内容action(xx).send()，具体参数的含义是：</span>
+  </div>
+  <div>
+   &nbsp;&nbsp; &nbsp;
+   <br>
+  </div>
+  <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;font-size:12px;color:rgb(51,51,51);background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+   <span style="font-family:Monaco;">Action(permssion_level, other_contract_account_name, method, args)</span>
+   <br>
+  </div>
+  <div>
+   <br>
+  </div>
+  <div>
+   <span style="font-size:16px;">所以:</span>
+  </div>
+  <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;font-size:12px;color:rgb(51,51,51);background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+   <div>
+    <span style="font-family:Monaco;">action(</span>
+    <span style="font-family:Monaco;">permission_level{<span style="color:rgb(255,38,0);font-family:Monaco;font-size:12px;background-color:rgb(251,250,248);">to</span>, N(active)},</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp; &nbsp;N(hello.target), N(callme),&nbsp;</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;std::make_tuple(<span style="color:rgb(255,38,0);font-family:Monaco;font-size:12px;background-color:rgb(251,250,248);">to</span>)</span>
+   </div>
+   <div>
+    <span style="font-family:Monaco;">).send();</span>
+   </div>
+  </div>
+  <div>
+   &nbsp;&nbsp; &nbsp;
+   <br>
+  </div>
+  <div>
+   <span style="font-size:16px;">这个等价于如下命令</span>
+  </div>
+  <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;font-size:12px;color:rgb(51,51,51);background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+   <span style="font-family:Monaco;">$cleos push action hello.target&nbsp;callme '["<span style="color:rgb(255,38,0);font-family:Monaco;font-size:12px;background-color:rgb(251,250,248);">to</span>"]' -p <span style="color:rgb(255,38,0);font-family:Monaco;font-size:12px;background-color:rgb(251,250,248);">to</span></span>
+  </div>
+  <div>
+   &nbsp;
+   <span style="font-size:16px;">&nbsp;&nbsp;</span>
+  </div>
+  <h2><span style="font-size:18px;">编译</span></h2>
+  <div>
+   <span style="font-size:16px;">&nbsp; &nbsp; 请参考我的博文<a href="https://blog.csdn.net/itleaks/article/details/80461917" rel="nofollow"><span style="color:#3366ff;">【<span style="font-family:'SF Pro Display', Roboto, Noto, Arial, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;">EOS编写HelloWorld智能合约</span></span></a></span>
+   <span style="color:#3366ff;"><a href="https://blog.csdn.net/itleaks/article/details/80461917" rel="nofollow">】</a></span>
+  </div>
+  <div>
+   <br>
+  </div>
+  <h2>测试</h2>
+  <div>
+   &nbsp; &nbsp;&nbsp;
+   <div></div>
+   <div style="font-family:Monaco, Menlo, Consolas, 'Courier New', monospace;background-color:rgb(251,250,248);border:1px solid rgba(0,0,0,.14902);">
+    <div style="color:rgb(51,51,51);font-size:12px;text-align:left;">
+     <span style="font-family:Monaco;"><span style="font-size:12px;color:#666666;"></span></span>
+    </div>
+    <div style="text-align:left;">
+     <span style="font-size:12px;color:#666666;">$cleos create account eosio hello.code $KEY_PUB_1 $KEY_PUB_1</span>
+    </div>
+    <div style="text-align:left;">
+     <span style="font-size:12px;color:#666666;">$cleos set contract hello.code ./hello -p hello.code</span>
+    </div>
+    <div style="text-align:left;">
+     <span style="font-size:12px;color:#666666;">$cleos create account eosio args.user $KEY_PUB_2 $KEY_PUB_2</span>
+    </div>
+    <div style="text-align:left;">
+     <span style="font-size:12px;color:#666666;">$cleos create account eosio hello.target $KEY_PUB_3 $KEY_PUB_3</span>
+    </div>
+    <div style="text-align:left;">
+     <span style="font-size:12px;color:#666666;">$cleos create account eosio args.user1 $KEY_PUB_4 $KEY_PUB_4</span>
+    </div>
+    <div style="text-align:left;">
+     <span style="font-size:12px;color:#666666;">$cleos set contract hello.target ./hello.target -p hello.target</span>
+    </div>
+    <div style="text-align:left;">
+     <span style="font-size:12px;color:#666666;">$cleos set account permission args.user1 active '{"threshold": 1,"keys": [],"accounts": [{"permission":{"actor":"hello.code","permission":"eosio.code"},"weight":1}]}' owner -p args.user1@owner</span>
+    </div>
+    <p><span style="font-size:12px;color:#666666;">$cleos push action hello.code hi '["args.user", "args.user1"]' -p args.user</span></p>
+    <div style="text-align:left;">
+     <span style="font-family:Monaco;"><span style="font-size:12px;color:#666666;"></span></span>
+    </div>
+   </div>
+  </div>
+  <h2><span style="line-height:32px;"><span style="font-size:18px;"><br></span></span></h2>
+  <h2><span style="line-height:32px;"><span style="font-size:18px;">源码一键实践</span></span></h2>
+  <div style="line-height:26px;">
+   <span style="line-height:26px;">&nbsp;</span>
+   <span style="line-height:26px;"><span style="font-size:16px;">&nbsp;&nbsp; 从以下github网页下载源码，即可一键实践执行该智能合约</span></span>
+   <span style="line-height:26px;"></span>
+  </div>
+  <div>
+   <span style="line-height:26px;">&nbsp;&nbsp;&nbsp;</span>
+   <span style="line-height:26px;font-weight:bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+   <a href="https://github.com/itleaks/eos-contract/tree/master/callcontract-exp" rel="nofollow" style="color:rgb(255,0,0);line-height:26px;font-weight:bold;background-color:rgb(51,204,0);">https://github.com/itleaks/eos-contract/tree/master/callcontract-exp/</a>
+  </div>
+  <div>
+   <br>
+  </div>
+  <div>
+   <div style="font-size:14px;background-color:rgb(255,255,255);color:rgb(69,69,69);">
+    <span style="font-size:18px;font-family:SimSun;">/********************************</span>
+   </div>
+   <div style="font-size:14px;background-color:rgb(255,255,255);color:rgb(69,69,69);">
+    <span style="font-size:18px;"><span style="line-height:19px;font-family:'Courier New';">* 本文来自CSDN博主"爱踢门"</span></span>
+   </div>
+   <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+    <span style="color:rgb(69,69,69);font-size:18px;font-family:'Courier New';line-height:19px;">* 转载请标明出处</span>
+    <span style="color:rgb(69,69,69);font-size:18px;font-family:'Courier New';line-height:19px;">:</span>
+    <a href="http://blog.csdn.net/itleaks" rel="nofollow" style="font-family:'Courier New';line-height:19px;"><span style="font-weight:700;"><span style="color:rgb(51,102,255);">http://blog.csdn.net/itleaks</span></span></a>
+   </div>
+   <div style="font-size:14px;background-color:rgb(255,255,255);color:rgb(69,69,69);">
+    <span style="font-family:SimSun;line-height:19px;">******************************************/</span>
+   </div>
+  </div>
+  <div>
+   <p><span>EOS技术交流群，EOS开发群，以太坊技术群:787804520<br></span></p>
+   <p><span>&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://img-blog.csdn.net/20180528111903133" alt="">&nbsp; &nbsp;&nbsp;</span></p>
+   <p><span>&nbsp; &nbsp; 公众号:<br></span></p>
+   <p><img src="https://img-blog.csdn.net/20180507174317244" alt="" style="color:rgb(51,51,51);font-family:'-apple-system-font', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif;font-size:17px;letter-spacing:.5440000295639038px;background-color:rgb(255,255,255);"></p>
+  </div> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/ITleaks/article/details/80535318,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/ITleaks/article/details/80535318,&quot;}">阅读更多</a> 
+</div>

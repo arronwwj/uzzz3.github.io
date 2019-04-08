@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>区块链学习之Fabric的环境搭建-手动搭建 | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="区块链学习之Fabric的环境搭建-手动搭建" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="借鉴博客 深蓝居 步骤的话也是基于上一篇从第7步开始换成下面的具体步骤。 1. 1生成cryptogen cd ~/go/src/github.com/hyperledger/fabric make cryptogen dell@dell-OptiPlex-3050:~/go/src/github.com/hyperledger/fabric$ make cryptogen build/bin/cryptogen CGO_CFLAGS=&quot; &quot; GOBIN=/home/dell/go/src/github.com/hyperledger/fabric/build/bin go install -tags &quot;&quot; -ldflags &quot;-X github.com/hyperledger/fabric/common/tools/cryptogen/metadata.Version=1.0.0&quot; github.com/hyperledger/fabric/common/tools/cryptogen # github.com/hyperledger/fabric/vendor/github.com/miekg/pkcs11 vendor/github.com/miekg/pkcs11/pkcs11.go:29:18: fatal error: ltdl.h: No such file or directory compilation terminated. Makefile:227: recipe for target &#39;build/bin/cryptogen&#39; failed make: *** [build/bin/cryptogen] Error 2 如果出现上述问题，是缺少文件 apt-get install libtool libltdl-dev 1.2 配置crypto-config.yaml 搭建环境时此处是默认值就行。 1.3 生成公私钥和证书，这些命令一般不会出现问题 cd examples/e2e_cli/ ../../build/bin/cryptogen generate --config=./crypto-config.yaml 2.1 编译生成configtxgen（不清楚是干嘛的） cd ~/go/src/github.com/hyperledger/fabric" />
+<meta property="og:description" content="借鉴博客 深蓝居 步骤的话也是基于上一篇从第7步开始换成下面的具体步骤。 1. 1生成cryptogen cd ~/go/src/github.com/hyperledger/fabric make cryptogen dell@dell-OptiPlex-3050:~/go/src/github.com/hyperledger/fabric$ make cryptogen build/bin/cryptogen CGO_CFLAGS=&quot; &quot; GOBIN=/home/dell/go/src/github.com/hyperledger/fabric/build/bin go install -tags &quot;&quot; -ldflags &quot;-X github.com/hyperledger/fabric/common/tools/cryptogen/metadata.Version=1.0.0&quot; github.com/hyperledger/fabric/common/tools/cryptogen # github.com/hyperledger/fabric/vendor/github.com/miekg/pkcs11 vendor/github.com/miekg/pkcs11/pkcs11.go:29:18: fatal error: ltdl.h: No such file or directory compilation terminated. Makefile:227: recipe for target &#39;build/bin/cryptogen&#39; failed make: *** [build/bin/cryptogen] Error 2 如果出现上述问题，是缺少文件 apt-get install libtool libltdl-dev 1.2 配置crypto-config.yaml 搭建环境时此处是默认值就行。 1.3 生成公私钥和证书，这些命令一般不会出现问题 cd examples/e2e_cli/ ../../build/bin/cryptogen generate --config=./crypto-config.yaml 2.1 编译生成configtxgen（不清楚是干嘛的） cd ~/go/src/github.com/hyperledger/fabric" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/07/26/%E5%8C%BA%E5%9D%97%E9%93%BE%E5%AD%A6%E4%B9%A0%E4%B9%8BFabric%E7%9A%84%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA-%E6%89%8B%E5%8A%A8%E6%90%AD%E5%BB%BA.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/07/26/%E5%8C%BA%E5%9D%97%E9%93%BE%E5%AD%A6%E4%B9%A0%E4%B9%8BFabric%E7%9A%84%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA-%E6%89%8B%E5%8A%A8%E6%90%AD%E5%BB%BA.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-07-26T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"借鉴博客 深蓝居 步骤的话也是基于上一篇从第7步开始换成下面的具体步骤。 1. 1生成cryptogen cd ~/go/src/github.com/hyperledger/fabric make cryptogen dell@dell-OptiPlex-3050:~/go/src/github.com/hyperledger/fabric$ make cryptogen build/bin/cryptogen CGO_CFLAGS=&quot; &quot; GOBIN=/home/dell/go/src/github.com/hyperledger/fabric/build/bin go install -tags &quot;&quot; -ldflags &quot;-X github.com/hyperledger/fabric/common/tools/cryptogen/metadata.Version=1.0.0&quot; github.com/hyperledger/fabric/common/tools/cryptogen # github.com/hyperledger/fabric/vendor/github.com/miekg/pkcs11 vendor/github.com/miekg/pkcs11/pkcs11.go:29:18: fatal error: ltdl.h: No such file or directory compilation terminated. Makefile:227: recipe for target &#39;build/bin/cryptogen&#39; failed make: *** [build/bin/cryptogen] Error 2 如果出现上述问题，是缺少文件 apt-get install libtool libltdl-dev 1.2 配置crypto-config.yaml 搭建环境时此处是默认值就行。 1.3 生成公私钥和证书，这些命令一般不会出现问题 cd examples/e2e_cli/ ../../build/bin/cryptogen generate --config=./crypto-config.yaml 2.1 编译生成configtxgen（不清楚是干嘛的） cd ~/go/src/github.com/hyperledger/fabric","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/07/26/%E5%8C%BA%E5%9D%97%E9%93%BE%E5%AD%A6%E4%B9%A0%E4%B9%8BFabric%E7%9A%84%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA-%E6%89%8B%E5%8A%A8%E6%90%AD%E5%BB%BA.html","headline":"区块链学习之Fabric的环境搭建-手动搭建","dateModified":"2018-07-26T00:00:00+08:00","datePublished":"2018-07-26T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/07/26/%E5%8C%BA%E5%9D%97%E9%93%BE%E5%AD%A6%E4%B9%A0%E4%B9%8BFabric%E7%9A%84%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA-%E6%89%8B%E5%8A%A8%E6%90%AD%E5%BB%BA.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>区块链学习之Fabric的环境搭建-手动搭建</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <p>借鉴博客</p> 
+  <p><a href="https://www.cnblogs.com/studyzy/p/7451276.html" rel="nofollow">深蓝居</a></p> 
+  <p>步骤的话也是基于上一篇从第7步开始换成下面的具体步骤。</p> 
+  <p>1. 1生成cryptogen</p> 
+  <pre class="has">
+<code class="language-java">cd ~/go/src/github.com/hyperledger/fabric
+make cryptogen</code></pre> 
+  <pre class="has">
+<code class="language-java">dell@dell-OptiPlex-3050:~/go/src/github.com/hyperledger/fabric$ make cryptogen
+build/bin/cryptogen
+CGO_CFLAGS=" " GOBIN=/home/dell/go/src/github.com/hyperledger/fabric/build/bin go install -tags "" -ldflags "-X github.com/hyperledger/fabric/common/tools/cryptogen/metadata.Version=1.0.0" github.com/hyperledger/fabric/common/tools/cryptogen
+# github.com/hyperledger/fabric/vendor/github.com/miekg/pkcs11
+vendor/github.com/miekg/pkcs11/pkcs11.go:29:18: fatal error: ltdl.h: No such file or directory
+compilation terminated.
+Makefile:227: recipe for target 'build/bin/cryptogen' failed
+make: *** [build/bin/cryptogen] Error 2</code></pre> 
+  <p>如果出现上述问题，是缺少文件</p> 
+  <pre class="has">
+<code class="language-java">apt-get install libtool libltdl-dev</code></pre> 
+  <p>1.2 配置crypto-config.yaml</p> 
+  <p>搭建环境时此处是默认值就行。</p> 
+  <p>1.3 生成公私钥和证书，这些命令一般不会出现问题</p> 
+  <pre class="has">
+<code class="language-java">cd examples/e2e_cli/
+../../build/bin/cryptogen generate --config=./crypto-config.yaml</code></pre> 
+  <p>2.1 编译生成configtxgen（不清楚是干嘛的）</p> 
+  <pre class="has">
+<code class="language-java">cd ~/go/src/github.com/hyperledger/fabric
+
+make configtxgen</code></pre> 
+  <p>2.2 配置configtx.yaml</p> 
+  <p>搭建环境时默认值就行，后续的生产环境估计会来修改。</p> 
+  <p>2.3 生成创世区块，配置CHannel区块，以及锚节点更新。</p> 
+  <pre class="has">
+<code>cd examples/e2e_cli/
+
+../../build/bin/configtxgen -profile TwoOrgsOrdererGenesis -outputBlock ./channel-artifacts/genesis.block
+
+../../build/bin/configtxgen -profile TwoOrgsChannel -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID mychannel
+
+../../build/bin/configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate ./channel-artifacts/Org1MSPanchors.tx -channelID mychannel -asOrg Org1MSP
+
+../../build/bin/configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate ./channel-artifacts/Org2MSPanchors.tx -channelID mychannel -asOrg Org2MSP</code></pre> 
+  <p>2.4 文件在e2e目录中的channel-artifacts中，存在4个文件，如果是前一篇的话此处的文件是fabric帮我们生成的。（猜测）。</p> 
+  <p>3.1 配置orderer</p> 
+  <p>base/docker-compose-base.yaml 文件中，搭建环境时默认值。</p> 
+  <p>3.2 配置peer</p> 
+  <p>base/docker-compose-base.yaml和peer-base.yaml 文件中，默认值。</p> 
+  <p>3.3 配置CLI</p> 
+  <p>docker-compose-cli.yaml文件中，需要注释掉自动运行的 command那一行（在前面加 #）</p> 
+  <pre class="has">
+<code class="language-java"> command: /bin/bash -c './scripts/script.sh ${CHANNEL_NAME}; sleep $TIMEOUT' </code></pre> 
+  <p>4. 启动Fabric环境（此处出现较多问题）</p> 
+  <p>4.1 将Fabric Docker环境配置放在docker-compose-cli.yaml后面，主要是让后台运行。</p> 
+  <pre class="has">
+<code class="language-java">docker-compose -f docker-compose-cli.yaml up -d</code></pre> 
+  <p>docker ps 可以看见运行的情况。正常情况是orderer和peer都有运行，还有一个tools也运行（如果它没运行后续继续不下去）</p> 
+  <pre class="has">
+<code class="language-java">436f6f0d70e4        hyperledger/fabric-tools              "/bin/bash"              28 minutes ago      Up 28 minutes                                                                                   cli
+afb11e8d7cf6        hyperledger/fabric-orderer            "orderer"                29 minutes ago      Up 28 minutes       0.0.0.0:7050-&gt;7050/tcp                                                      orderer.example.com
+e7f3ea4b3520        hyperledger/fabric-peer               "peer node start"        29 minutes ago      Up 29 minutes       0.0.0.0:10051-&gt;7051/tcp, 0.0.0.0:10052-&gt;7052/tcp, 0.0.0.0:10053-&gt;7053/tcp   peer1.org2.example.com
+6e4c40b8feae        hyperledger/fabric-peer               "peer node start"        29 minutes ago      Up 28 minutes       0.0.0.0:9051-&gt;7051/tcp, 0.0.0.0:9052-&gt;7052/tcp, 0.0.0.0:9053-&gt;7053/tcp      peer0.org2.example.com
+04db32690344        hyperledger/fabric-peer               "peer node start"        29 minutes ago      Up 28 minutes       0.0.0.0:7051-7053-&gt;7051-7053/tcp                                            peer0.org1.example.com
+fa1ac260a3e3        hyperledger/fabric-peer               "peer node start"        29 minutes ago      Up 29 minutes       0.0.0.0:8051-&gt;7051/tcp, 0.0.0.0:8052-&gt;7052/tcp, 0.0.0.0:8053-&gt;7053/tcp      peer1.org1.example.com
+</code></pre> 
+  <p>4.2 进入cli容器。</p> 
+  <pre class="has">
+<code class="language-java">docker exec -it cli bash</code></pre> 
+  <p>4.3 创建Channel</p> 
+  <pre class="has">
+<code class="language-java">ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+
+peer channel create -o orderer.example.com:7050 -c mychannel -f ./channel-artifacts/channel.tx --tls true --cafile $ORDERER_CA</code></pre> 
+  <p>这边是出问题最多的地方，我大概列一下我碰到的：</p> 
+  <p>4.3.1</p> 
+  <p><span style="color:#f33b45;"><em><strong>2018-07-26 06:13:15.796 UTC [grpc] Printf -&gt; DEBU 003 grpc: addrConn.resetTransport failed to create client transport: connection error: desc = "transport: Error while dialing dial tcp: lookup orderer.example.com on 127.0.0.11:53: no such host"; Reconnecting to {orderer.example.com:7050 &lt;nil&gt;}<br> Error: Error connecting due to&nbsp; rpc error: code = Unavailable desc = grpc: the connection is unavailable</strong></em></span></p> 
+  <p>这个问题主要是你orderer没有正常启动导致找不到，就是上面的docker ps看的时候要确保orderer在启动行列。</p> 
+  <p>4.3.2</p> 
+  <p><span style="color:#f33b45;"><em><strong>Failed to dial orderer.example.com:7050: connection error: desc = "transport: authentication handshake failed: x509: certificate signed by unknown authority (possibly because of \"x509: ECDSA verification failure\" while trying to verify candidate authority certificate \"tlsca.example.com\")"; please retry.<br> Error: Error connecting due to&nbsp; rpc error: code = Internal desc = connection error: desc = "transport: authentication handshake failed: x509: certificate signed by unknown authority (possibly because of \"x509: ECDSA verification failure\" while trying to verify candidate authority certificate \"tlsca.example.com\")"</strong></em></span></p> 
+  <p>这个主要是脏数据问题，我部署的时候因为出现了很多次失败，所以最终重新来过。</p> 
+  <p>4.3.3</p> 
+  <p><span style="color:#f33b45;"><em><strong>Error: Got unexpected status: BAD_REQUEST</strong></em></span></p> 
+  <p>主要是channel重名导致的问题，把docker关闭掉重新来过就行。</p> 
+  <pre class="has">
+<code class="language-java">docker rm -f $(docker ps -aq)</code></pre> 
+  <p>4.3.4</p> 
+  <p><span style="color:#f33b45;"><em><strong>fabric 报Error: Error endorsing query: rpc error: code = Unknown desc = Error executing chaincode: Timeout expired while starting chaincode</strong></em></span></p> 
+  <pre class="has">
+<code class="language-java">docker rmi -f $(docker images |grep "dev-" |awk '{print $3}')</code></pre> 
+  <p>4.4 将peer加入到Channel,如果上面一切顺利，那么这边也就没什么问题了。（此处默认链接的是peer0.org1）</p> 
+  <pre class="has">
+<code class="language-java">peer channel join -b mychannel.block
+
+</code></pre> 
+  <p>4.5 加入peer1.org1</p> 
+  <pre class="has">
+<code class="language-java">CORE_PEER_LOCALMSPID="Org1MSP" 
+CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt 
+CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp 
+CORE_PEER_ADDRESS=peer1.org1.example.com:7051
+
+peer channel join -b mychannel.block</code></pre> 
+  <p>4.6 加入peer0.org2</p> 
+  <pre class="has">
+<code class="language-java">CORE_PEER_LOCALMSPID="Org2MSP" 
+CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt 
+CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp 
+CORE_PEER_ADDRESS=peer0.org2.example.com:7051
+
+peer channel join -b mychannel.block</code></pre> 
+  <p>4.7 加入peer1.org2</p> 
+  <pre class="has">
+<code class="language-java">CORE_PEER_LOCALMSPID="Org2MSP" 
+CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer1.org2.example.com/tls/ca.crt 
+CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp 
+CORE_PEER_ADDRESS=peer1.org2.example.com:7051
+
+peer channel join -b mychannel.block</code></pre> 
+  <p>4.8 更新Org1的锚节点peer0.org1</p> 
+  <pre class="has">
+<code class="language-java">CORE_PEER_LOCALMSPID="Org1MSP" 
+CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt 
+CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp 
+CORE_PEER_ADDRESS=peer0.org1.example.com:7051
+
+peer channel update -o orderer.example.com:7050 -c mychannel -f ./channel-artifacts/Org1MSPanchors.tx --tls true --cafile $ORDERER_CA</code></pre> 
+  <p>4.8 更新Org2的锚节点peer0.org2</p> 
+  <pre class="has">
+<code class="language-java">CORE_PEER_LOCALMSPID="Org2MSP" 
+CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt 
+CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp 
+CORE_PEER_ADDRESS=peer0.org2.example.com:7051
+
+peer channel update -o orderer.example.com:7050 -c mychannel -f ./channel-artifacts/Org2MSPanchors.tx --tls true --cafile $ORDERER_CA</code></pre> 
+  <p>5. ChainCode运行</p> 
+  <p>5.1 切换到peer0.org1</p> 
+  <pre class="has">
+<code class="language-java">CORE_PEER_LOCALMSPID="Org1MSP" 
+CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt 
+CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp 
+CORE_PEER_ADDRESS=peer0.org1.example.com:7051</code></pre> 
+  <p>5.2 安装ChainCode</p> 
+  <pre class="has">
+<code class="language-java">peer chaincode install -n mycc -v 1.0 -p github.com/hyperledger/fabric/examples/chaincode/go/chaincode_example02</code></pre> 
+  <p>5.3 实例化链上代码（将来的SDK也是通过这个对象来操作链）</p> 
+  <pre class="has">
+<code class="language-java">peer chaincode instantiate -o orderer.example.com:7050 --tls true --cafile $ORDERER_CA -C mychannel -n mycc -v 1.0 -c '{"Args":["init","a","100","b","200"]}' -P "OR      ('Org1MSP.member','Org2MSP.member')"</code></pre> 
+  <p>5.4 查询</p> 
+  <pre class="has">
+<code class="language-java">peer chaincode query -C mychannel -n mycc -c '{"Args":["query","a"]}'</code></pre> 
+  <pre class="has">
+<code class="language-java">返回结果：Query Result: 100</code></pre> 
+  <p>5.5 转账</p> 
+  <pre class="has">
+<code class="language-java">peer chaincode invoke -o orderer.example.com:7050  --tls true --cafile $ORDERER_CA -C mychannel -n mycc -c '{"Args":["invoke","a","b","10"]}'</code></pre> 
+  <p>6. 在另一个节点查询交易，给peer0.org2安装ChainCode</p> 
+  <pre class="has">
+<code class="language-java">CORE_PEER_LOCALMSPID="Org2MSP" 
+CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt 
+CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp 
+CORE_PEER_ADDRESS=peer0.org2.example.com:7051
+
+peer chaincode install -n mycc -v 1.0 -p github.com/hyperledger/fabric/examples/chaincode/go/chaincode_example02</code></pre> 
+  <p>6.1 查询</p> 
+  <pre class="has">
+<code class="language-java">peer chaincode query -C mychannel -n mycc -c '{"Args":["query","a"]}'</code></pre> 
+  <pre class="has">
+<code class="language-java">Query Result: 90</code></pre> 
+  <p>当我们将两个节点都安装上ChainCode时，就启动了两个Docker镜像。</p> 
+  <pre class="has">
+<code class="language-java">dell@dell-OptiPlex-3050:~$ docker ps
+CONTAINER ID        IMAGE                                 COMMAND                  CREATED             STATUS              PORTS                                                                       NAMES
+0bda162b8c01        dev-peer0.org2.example.com-mycc-1.0   "chaincode -peer.add…"   19 minutes ago      Up 19 minutes                                                                                   dev-peer0.org2.example.com-mycc-1.0
+7a724b3060c3        dev-peer0.org1.example.com-mycc-1.0   "chaincode -peer.add…"   22 minutes ago      Up 22 minutes                                                                                   dev-peer0.org1.example.com-mycc-1.0
+436f6f0d70e4        hyperledger/fabric-tools              "/bin/bash"              28 minutes ago      Up 28 minutes                                                                                   cli
+afb11e8d7cf6        hyperledger/fabric-orderer            "orderer"                29 minutes ago      Up 28 minutes       0.0.0.0:7050-&gt;7050/tcp                                                      orderer.example.com
+e7f3ea4b3520        hyperledger/fabric-peer               "peer node start"        29 minutes ago      Up 29 minutes       0.0.0.0:10051-&gt;7051/tcp, 0.0.0.0:10052-&gt;7052/tcp, 0.0.0.0:10053-&gt;7053/tcp   peer1.org2.example.com
+6e4c40b8feae        hyperledger/fabric-peer               "peer node start"        29 minutes ago      Up 28 minutes       0.0.0.0:9051-&gt;7051/tcp, 0.0.0.0:9052-&gt;7052/tcp, 0.0.0.0:9053-&gt;7053/tcp      peer0.org2.example.com
+04db32690344        hyperledger/fabric-peer               "peer node start"        29 minutes ago      Up 28 minutes       0.0.0.0:7051-7053-&gt;7051-7053/tcp                                            peer0.org1.example.com
+fa1ac260a3e3        hyperledger/fabric-peer               "peer node start"        29 minutes ago      Up 29 minutes       0.0.0.0:8051-&gt;7051/tcp, 0.0.0.0:8052-&gt;7052/tcp, 0.0.0.0:8053-&gt;7053/tcp      peer1.org1.example.com
+</code></pre> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/qq_32924343/article/details/81219363,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/qq_32924343/article/details/81219363,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

@@ -1,0 +1,34 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <p><span style="font-size:13px;">通常由于某些原因：</span></p> 
+  <p><span style="font-size:13px;">单位成本不准确，或者干脆是负数？那如何调回去呢？</span></p> 
+  <p><span style="font-size:13px;">单位成本是怎么算的呢？ 公司的成本计算方式是：加权平均</span></p> 
+  <p><span style="font-size:13px;">---维护品号每月统计信息：F1帮组信息中:</span></p> 
+  <p><span style="font-size:13px;">作业目的<span lang="en-us" xml:lang="en-us">: </span>本信息由「月底存货结转」而生成<span lang="en-us" xml:lang="en-us">,</span>可查询品号每月各仓库<span lang="en-us" xml:lang="en-us">,</span>各种交易统计信息<span lang="en-us" xml:lang="en-us">.</span>属于系统汇总信息<span lang="en-us" xml:lang="en-us">,</span>信息有误时<span lang="en-us" xml:lang="en-us">,</span>应透批处理中的「现有库存重计」来重算<span lang="en-us" xml:lang="en-us">,</span>不应直接从数据库或本作业中调整<span lang="en-us" xml:lang="en-us">.</span></span></p> 
+  <p><span lang="en-us" xml:lang="en-us"><span lang="en-us" xml:lang="en-us"><span style="font-size:13px;">作业重点<span lang="en-us" xml:lang="en-us">:</span></span></span></span></p> 
+  <span lang="en-us" xml:lang="en-us"><span lang="en-us" xml:lang="en-us"><span style="font-family:'宋体';letter-spacing:.2pt;font-size:12pt;"></span></span></span> 
+  <p><span style="font-size:13px;">1.&nbsp; 本信息乃透过「月底存货结转作业」而生成,若发现信息异常时请按循下列原则处理:<br> (1).找不到某一月份的月档信息==&gt;请检查是不是还没有运行月底存货结转作业.<br> (2).发觉库存「进耗存统计表」的交易数量或金额与本信息不合时,经检验后若为原始凭证信息有误时,请于现行年月进行调整作业.若发觉本文档信息有误,请运行「现有库存重计作业」,重新生成本文档信息即可.<br> 2.&nbsp; 为确保本信息与原始凭证及「交易明细维护」信息的一致性,请勿由人工进行信息维护 (新增,更改及删除).<br> 3.&nbsp; 关于信息处理逻辑请详月结作业.<br> 4.&nbsp; 本档生成时有一条件:若期初为零,且本期完全无交易时,本月份的本品号的本文档不会生成.<br> 5.&nbsp; 单身的所有数量,金额字段输入或更改时皆须重新计算「期末数量,期末成本」.<br> &nbsp;&nbsp; &nbsp;<span style="color:#ff6666;">期末成本=月初成本+本月入库金额-本月销货金额-本月领料金额+本月调拨(入)金额+本月调整(入)金额-本月出库金额+本月销退金额+本月退料金额-本月调拨(出)金额-本月调整(出)金额.</span></span></p> 
+  <p>总结公式:</p> 
+  <p><span style="font-size:13px;">期初成本+本期净金额(影响成本码为Y)</span></p> 
+  <p><span style="font-size:13px;">--------------------------------------------=单位成本</span></p> 
+  <p><span style="font-size:13px;">期初数量+本期净数量(影响成本码为Y的交易数量)</span></p> 
+  <p><span style="font-size:13px;">那就设置需要调整的金额为X,单位成本Y(调整目标)</span></p> 
+  <p><span style="font-size:13px;">期初成本+本期净金额(影响成本码为Y)+X</span></p> 
+  <p><span style="font-size:13px;">---------------------------------------------=Y</span></p> 
+  <p><span style="font-size:13px;">期初数量+本期净数量(影响成本码为Y的交易数量)</span></p> 
+  <p><span style="font-size:13px;">解方程为:M元，做单据调整(影响成本码为Y),数量为0</span></p> 
+  <p><span style="font-size:13px;">第二步：重计算库存</span></p> 
+  <p><span style="font-size:13px;">第三步：月底成本计价</span></p> 
+  <p><span style="font-size:13px;"></span>&nbsp;</p> 
+  <p>&nbsp;</p> 
+  <p>&nbsp;</p> 
+  <p>&nbsp;</p> 
+  <p><span style="font-size:13px;">&nbsp;</span></p> 
+  <p><br clear="all"><span style="font-family:'宋体';letter-spacing:.2pt;font-size:12pt;"><br clear="all"></span>&nbsp;</p> 
+  <img src="http://img.my.csdn.net/uploads/201209/20/1348118583_4652.jpg" alt="1348118583_4652.jpg"> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/david_520042/article/details/7239673,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/david_520042/article/details/7239673,&quot;}">阅读更多</a> 
+</div>

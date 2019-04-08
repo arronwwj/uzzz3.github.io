@@ -1,0 +1,122 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div id="content_views" class="markdown_views prism-tomorrow-night-eighties"> 
+  <!-- flowchart 箭头图标 勿删 --> 
+  <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+   <path stroke-linecap="round" d="M5,0 0,2.5 5,5z" id="raphael-marker-block" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></path>
+  </svg> 
+  <h2><a id="NO1_0"></a>NO.1前言</h2> 
+  <p><strong>近几年，基于区块链技术和密码学的数字货币行业，迎来爆发式增长。作为数字货币产业链中最重要的环节之⼀，区块链资产交易所无疑拥有举⾜轻重的地位。</strong> 它连接着区块链投资的⼀⼆级市场，也连接着项目方和普通投资者。</p> 
+  <p><img src="https://user-gold-cdn.xitu.io/2018/10/31/166c8e05a230346c?w=800&amp;h=453&amp;f=jpeg&amp;s=38412" alt="区块链资产交易所"></p> 
+  <br> 
+  <p>据统计，目前被非小号平台收录的交易所已超过300家，未被收录的甚至有数千家之多。即便如此，入局者依然乐此不疲。在人人都来做交易所的背景下，<strong>几乎每家交易所多达几十甚至上百个交易标的</strong> ，那么存量有限的市场，中小型区块链资产和交易所将面临流量匮乏，无价无市的境地。</p> 
+  <br> 
+  <h2><a id="NO2_11"></a>NO.2</h2> 
+  <p><strong>为什么市商策略是刚需</strong></p> 
+  <p>市商机器人的出现改变了这一局面，通过在市场中参与做市，遏制因信息和资源不对称性，导致的市场过度投机行为，维护交易平台的良好运行。并减少传统交易方式中，所谓庄家暗中操纵价格的现象，来增强市场吸引力，提高流动性和成交量，满足普通投资者的买卖需求，稳定市场信心。</p> 
+  <p><img src="https://user-gold-cdn.xitu.io/2018/10/31/166c8e1471c015fc?w=1080&amp;h=338&amp;f=jpeg&amp;s=26201" alt="市商"></p> 
+  <p>在今天，为了使新交易所和新币种更好的建立与普通投资者之间的连接，并解决其上市初期面临的诸多问题，不管是中小交易所还是区块链项目方，都不得不依靠市商机器人。</p> 
+  <br> 
+  <h2><a id="NO3_22"></a>NO.3</h2> 
+  <p><strong>市商策略原理</strong></p> 
+  <p>市商策略通过做市制度，跟踪价格变化，不断地提供买、卖的双向报价。通过高频大量的买入、卖出交易，逐渐积累每笔交易价格和理论价格的差价，并根据持仓头寸特征，动态调整价差。</p> 
+  <p><img src="https://user-gold-cdn.xitu.io/2018/10/31/166c8e25888558f0?w=900&amp;h=500&amp;f=jpeg&amp;s=30605" alt="市商策略"></p> 
+  <br> 
+  <p><strong>一般交易所常见的市商策略有两种：</strong></p> 
+  <ol> 
+   <li>被动做市：市商策略跟踪主流交易所深度数据和成交数据，不做较大的主动选择，而是被动跟随市场，追求的就是最大程度的紧密跟踪和完全复制，试图达到和主流交易所同样的K线数据。</li> 
+  </ol> 
+  <br> 
+  <ol start="2"> 
+   <li>自由做市：这种做市模式不参考其他交易标的，而是根据自己的成本和设定挂单做市。这种模式适合相关币种定价权相对集中的环境，如：小型区块链资产或交易所自己发行的币种。</li> 
+  </ol> 
+  <br> 
+  <h2><a id="NO4_41"></a>NO.4</h2> 
+  <p><strong>市商策略漏洞</strong></p> 
+  <p>无论是被动做市，还是自由做市，不仅需要解决交易标的价格问题，还需要解决流动性问题。所以为了活跃市场，就需要市商策略可以自买自卖，否则很难形成像样的K线。</p> 
+  <br> 
+  <p>常见的方法是，在盘口附近随机指定一个价格卖出，立即同价格买入。或者根据随机价格，先买入后卖出。通常由于买卖间隔的时间很短，在深度数据中往往找不到相应挂单，但是在历史数据中却能留下成交记录，K线就是通过这种做市方法绘制而成的。</p> 
+  <br> 
+  <p><strong>请注意！漏洞就是这样出现的。</strong></p> 
+  <p>**市商策略为了产生连续的K线，在盘口附近自买自卖挂单，却隐藏了一个漏洞。**虽然策略的买单卖单是同时发出的，但是由于网络问题和撮合速度并不是理想状态，也不可能是理想状态，这就造成市商策略的订单，有一定几率被其他人成交。</p> 
+  <br> 
+  <p>设想一下，假如市场上存在另一个高频刷单策略，它总是以更低的价格成交市商策略的卖单，又以更高的价格成交市商策略的买单，只要这个高频刷单策略获得的差价，能覆盖手续费就会产生盈利。<strong>这就造成市商策略低卖高买，细思极恐！</strong></p> 
+  <br> 
+  <h2><a id="NO5_66"></a>NO.5</h2> 
+  <p><strong>实战演示</strong></p> 
+  <p>经过观察，某交易所的ETHUSDT交易对存在做市现象，参考对象可能是币安ETHUSDT数据，通过观察其盘口订单薄数据，发现存在自成交刷单，买卖方向随机，下图为当天该做市策略产生的K线。</p> 
+  <p><img src="https://user-gold-cdn.xitu.io/2018/10/31/166c8e3cda1ab0cc?w=1032&amp;h=475&amp;f=jpeg&amp;s=59957" alt="市策略K线"></p> 
+  <br> 
+  <p>通常高频刷单策略并不是在盘口随机定价，而是参考市商策略的上次成交价格随机变动的。这样实际上，成交价很难触及盘口低价和高价，再加上获取做市策略订单的成功率有限，几乎没有利润空间。</p> 
+  <br> 
+  <p>甚至还要承担单边持仓风险。这看似无懈可击，但是如果我们利用做市订单必须在盘口中挂单的Bug，即可轻易破解交易所的市商策略，并牟取暴利。</p> 
+  <br> 
+  <h2><a id="NO6_87"></a>NO.6</h2> 
+  <p><strong>具体步骤如下：</strong></p> 
+  <p>当期望低价成交时，就在买一价的基础上加一定的价格挂卖单。当买一价是200，就挂200.1的卖单，然后不停的挂200.09的买单，并立即撤销。当成交后，立即反向操作，将成交的币高价卖出，如此完成一个循环。</p> 
+  <br> 
+  <p>虽然这样的成功率并不多，但通过大量频繁挂撤单交易，使得捕捉到这种机会将大大增加，利润依然十分可观。</p> 
+  <p><img src="https://user-gold-cdn.xitu.io/2018/10/31/166c8e54855b5a19?w=1080&amp;h=363&amp;f=jpeg&amp;s=22045" alt=""></p> 
+  <p><strong>如上图所示，通过发明者量化交易平台（FMZ）写了一个高频刷单策略，实盘运行几乎没有回撤。</strong> 只用一个晚上的时间，就从1000USDT，刷到了4000USDT的利润。</p> 
+  <br> 
+  <p>这还是温和的刷，如果用上多账户、多合约、多线程会跟加暴利。高频刷单策略利用这个漏洞后，窃取的是巨额资金，留下的是糟粕的K线，如下图：</p> 
+  <p><img src="https://user-gold-cdn.xitu.io/2018/10/31/166c8e5cefa75bf3?w=988&amp;h=488&amp;f=jpeg&amp;s=69643" alt="漏洞"></p> 
+  <br> 
+  <h2><a id="NO7_108"></a>NO.7</h2> 
+  <p><strong>基于交易所市商漏洞的刷单策略源码</strong></p> 
+  <p><img src="https://user-gold-cdn.xitu.io/2018/10/31/166c8e66637681ce?w=1000&amp;h=1426&amp;f=jpeg&amp;s=148265" alt="刷单策略源码"><br> 以上策略源码基于发明者量化平台(<a href="www.fmz.com" rel="nofollow">www.fmz.com</a>)</p> 
+  <br> 
+  <h2><a id="NO8_116"></a>NO.8</h2> 
+  <p><strong>防范的方法</strong></p> 
+  <p><strong>针对这种做市策略，知道原理后解决起来就简单了，</strong> 如做市策略的自成交价格在低位时只先挂买单然后挂卖单，反之亦然，这样就不会被别人低买高卖。或者将所有的成交和挂单都放在可以在其它交易所对冲的范围内。</p> 
+  <br> 
+  <p><strong>写在后面的话</strong></p> 
+  <p>尽管交易所身处整个区块链产业的顶端，但它就像一个置身在外的巨人，透露了更多的攻击面和可利用的漏洞点。</p> 
+  <br> 
+  <p>客观的说，能通过订单薄反推出来的不合理，都可能存在更隐蔽的Bug。就比如利用上文明显的交易所市商策略漏洞，攻击者可巧妙地设计出各种隐匿攻击策略，还能做到不知不觉。</p> 
+  <br> 
+  <p><strong>如今，数字货币已成为投资新靶标，交易所也成为众多黑客的角斗场。</strong> 隐匿在暗处的黑客如饿狼一般，伺机而动，紧盯着交易所的破绽，准备一击致命 <strong>。区块链中心化交易所只能加强自身防御部署，让客户真正做到交易无忧。</strong><br> <br></p> 
+  <p><a href="https://quant.la/Article/View/1871/%5B%E6%BC%8F%E6%B4%9E%E9%A2%84%E8%AD%A6%5D%E4%BA%A4%E6%98%93%E6%89%80%E6%BC%8F%E6%B4%9E%E4%B9%8B%E2%80%9C%E8%96%85%E7%BE%8A%E6%AF%9B%E2%80%9C%E5%88%86%E6%9E%90.html" rel="nofollow">阅读原文</a></p> 
+ </div> 
+ <link href="https://csdnimg.cn/release/phoenix/mdeditor/markdown_views-a47e74522c.css" rel="stylesheet"> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/weixin_42633269/article/details/83584192,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/weixin_42633269/article/details/83584192,&quot;}">阅读更多</a> 
+</div> 
+<script>
+						(function(){
+							function setArticleH(btnReadmore,posi){
+								var winH = $(window).height();
+								var articleBox = $("div.article_content");
+								var artH = articleBox.height();
+								if(artH > winH*posi){
+									articleBox.css({
+										'height':winH*posi+'px',
+										'overflow':'hidden'
+									})
+									btnReadmore.click(function(){
+										if(typeof window.localStorage === "object" && typeof window.csdn.anonymousUserLimit === "object"){
+											if(!window.csdn.anonymousUserLimit.judgment()){
+												window.csdn.anonymousUserLimit.Jumplogin();
+												return false;
+											}else if(!currentUserName){
+												window.csdn.anonymousUserLimit.updata();
+											}
+										}
+										
+										articleBox.removeAttr("style");
+										$(this).parent().remove();
+									})
+								}else{
+									btnReadmore.parent().remove();
+								}
+							}
+							var btnReadmore = $("#btn-readmore");
+							if(btnReadmore.length>0){
+								if(currentUserName){
+									setArticleH(btnReadmore,3);
+								}else{
+									setArticleH(btnReadmore,1.2);
+								}
+							}
+						})()
+					</script>

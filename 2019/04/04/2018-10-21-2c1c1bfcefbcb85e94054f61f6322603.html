@@ -1,0 +1,122 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div class="markdown_views prism-atom-one-dark"> 
+  <!-- flowchart 箭头图标 勿删 --> 
+  <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+   <path stroke-linecap="round" d="M5,0 0,2.5 5,5z" id="raphael-marker-block" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></path>
+  </svg> 
+  <blockquote> 
+   <p>作者简介：董天一 ，IPFS/Filecoin中国区技术布道人 ，《IPFS指南》作者<br> 毕业于北京大学软件与微电子学院，资深区块链技术开发者，现致力于IPFS/Filecoin在中国的技术推广，本文原载微信公众号：IPFS指南(ipfs_guide)</p> 
+  </blockquote> 
+  <p>先上两张图：Filecoin的经济结构：<br> <img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20181021164827408?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3l1YW5mYW5neXVhbl9ibG9jaw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="在这里插入图片描述"><br> <img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20181021164841905?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3l1YW5mYW5neXVhbl9ibG9jaw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="在这里插入图片描述"></p> 
+  <p>众所周知，Filecoin的矿工分为两种：</p> 
+  <ul> 
+   <li>检索矿工</li> 
+   <li>存储矿工</li> 
+  </ul> 
+  <p><strong>前提：矿工既可以单独参与检索矿工，也可以单独参与存储矿工。但是小编觉得，一起参与才是正道</strong></p> 
+  <p>今天我们来讲一下两种矿工是如何获取FIL，即挖矿<br> 在Filecoin体系里面，矿工贡献的资源分为两种：存储空间和流量（BTC体系里面，矿工贡献的资源是计算哈希的能力）与BTC相比较，Filecoin的经济体系和资源体系稍微复杂一些：</p> 
+  <ul> 
+   <li>Filecoin矿工贡献的两类资源，存储和流量组成了价值交换市场</li> 
+   <li>Filecoin区块链的的共识协议形成了新币分发市场</li> 
+  </ul> 
+  <p><strong>系统参与者：</strong><br> 用户：有存储需求，或者有数据下载需求的用户，或者持有Filecoin代币的持币人</p> 
+  <ul> 
+   <li>矿工：Filecoin矿工，贡献存储和流量资源</li> 
+   <li>交易所：Filecoin代币和法币之间的交换</li> 
+  </ul> 
+  <p><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20181021164932719?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3l1YW5mYW5neXVhbl9ibG9jaw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="在这里插入图片描述"></p> 
+  <p>Filecoin经济体系价值交换和新币分发<br> 小编画了一张图来说明Filecoin体系里面价值和代币是如何转移的（请忽略小编的长的奇丑无比的字）</p> 
+  <p><strong>价值交换市场：</strong></p> 
+  <ul> 
+   <li>用户和交易所：用户购买FIL，以备使用</li> 
+   <li>矿工和交易所：矿工出售FIL，换取法币</li> 
+   <li>用户和检索矿工：交换流量，用户付费下载数据，矿工发送数据并获取用户支付的FIL</li> 
+   <li>用户和存储矿工：交换存储空间，用户付费存储数据，矿工帮用户存储数据并获取用户的FIL</li> 
+  </ul> 
+  <p><em>Note：<br> 在这个流程里面，没有新币（新的FIL）分发，只有已有代币之间的价值交换，称为价值交换市场。</em></p> 
+  <p><strong>共识协议市场：</strong></p> 
+  <ul> 
+   <li>存储矿工和Filecoin协议：存储矿工使用已存储的数据，参与共识协议，获取新币的分发。这个过程跟BTC的挖矿过程一样</li> 
+   <li>存储矿工和FIlecoin协议：存储矿工需抵押一定量FIL代币，以此来出售自己的存储空间</li> 
+  </ul> 
+  <p><em>Note：<br> 检索矿工不参与新币分发，即不参与共识协议</em></p> 
+  <p><strong>存储矿工收益：</strong></p> 
+  <ul> 
+   <li>存储收益：帮用户存储数据，获取用户支付的存储费用（价值交换）</li> 
+   <li>新币分发：参与共识协议，获取新币分发（上帝发币）</li> 
+   <li>交易手续费：参与共识协议，获取交易手续费</li> 
+  </ul> 
+  <p><strong>检索矿工收益：</strong></p> 
+  <ul> 
+   <li>检索收益：用户下载数据，获取用户支付的下载数据费用（FIL）</li> 
+  </ul> 
+  <p><strong>存储矿工的数据来源：</strong></p> 
+  <ul> 
+   <li>用户付费存储数据。</li> 
+  </ul> 
+  <p><strong>检索矿工的数据来源：</strong></p> 
+  <ul> 
+   <li>自己作为存储矿工，存储的用户数据</li> 
+   <li>自己从其他矿工那里购买下载的数据</li> 
+   <li>自己找的一些数据</li> 
+   <li></li> 
+  </ul> 
+  <p><em>Note:<br> 作为存储矿工，存储的数据只能由Filecoin区块链分发一种方式。<br> 作为检索矿工，可以有多种数据来源，自己作为存储矿工存储的数据，自己找的一些数据，自己还可以从其他矿工那里付费下载一些数据。</em></p> 
+  <p><strong>存储矿工的收益影响因素：努力让更多的用户把数据存储到你这里</strong></p> 
+  <ul> 
+   <li>网络速度</li> 
+   <li>存储数据的定价，甚至可以为0，当然如果为0，就无法获取到存储收益了</li> 
+  </ul> 
+  <p><strong>存储矿工所需的调优：</strong></p> 
+  <ul> 
+   <li>动态调整存储的价格，以获取更多的收益</li> 
+  </ul> 
+  <p><strong>检索矿工的收益影响因素：努力给更多的用户提供数据</strong></p> 
+  <ul> 
+   <li>网络带宽</li> 
+   <li>网络时延</li> 
+   <li>存储的数据用户的需求度</li> 
+   <li>检索数据的定价</li> 
+  </ul> 
+  <p><strong>检索矿工所需的调优：</strong></p> 
+  <ul> 
+   <li>动态调整检索数据价格，以获取更多的收益</li> 
+   <li>努力找到更多的用户感兴趣的数据</li> 
+   <li>提高网络的带宽和降低网络的延时</li> 
+  </ul> 
+  <p><strong>不管是检索市场还是存储市场都符合经济学里面的供需曲线，想要获取最大收益，需要找到最大收益的价格点，如下如所示：</strong><br> <img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20181021165028660?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3l1YW5mYW5neXVhbl9ibG9jaw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="在这里插入图片描述"><br> <strong>小编还接到过一个问的比较多的问题：我存的数据，下载也要付费吗？<br> 答案是：是的！！！</strong><br> 下图是一张阿里云OSS云存储的截图，上面显示存储数据量79.28G，本月的数据下载量1.6TB。存储要付费，流量也是要付费的。<br> 这听起来跟我们的感受貌似不一样？我手机里的app都不需要我付费？实际上，网络上的所有数据都是有人付费的，只是很多时候作为终端用户感受不到而已。<br> <img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20181021165010521?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3l1YW5mYW5neXVhbl9ibG9jaw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="在这里插入图片描述"><br> 最后，Filecoin的经济体系略微复杂了一些，但是整个经济体系是经过慎重思考制定的协议，实际运行中影响矿工收益的因素可能还会有一些其它因素。</p> 
+ </div> 
+ <link href="https://csdnimg.cn/release/phoenix/mdeditor/markdown_views-7f770a53f2.css" rel="stylesheet"> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/yuanfangyuan_block/article/details/83242846,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/yuanfangyuan_block/article/details/83242846,&quot;}">阅读更多</a> 
+</div> 
+<script>
+						(function(){
+							function setArticleH(btnReadmore,posi){
+								var winH = $(window).height();
+								var articleBox = $("div.article_content");
+								var artH = articleBox.height();
+								if(artH > winH*posi){
+									articleBox.css({
+										'height':winH*posi+'px',
+										'overflow':'hidden'
+									})
+									btnReadmore.click(function(){
+										articleBox.removeAttr("style");
+										$(this).parent().remove();
+									})
+								}else{
+									btnReadmore.parent().remove();
+								}
+							}
+							var btnReadmore = $("#btn-readmore");
+							if(btnReadmore.length>0){
+								if(currentUserName){
+									setArticleH(btnReadmore,3);
+								}else{
+									setArticleH(btnReadmore,1.2);
+								}
+							}
+						})()
+					</script>

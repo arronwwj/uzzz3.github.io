@@ -1,0 +1,49 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div class="markdown_views"> 
+  <p>1904: 小火山的股票交易</p> 
+  <p>Time Limit: 1 Sec Memory Limit: 128 MB <br> Submit: 69 Solved: 29</p> 
+  <p>SubmitStatusWeb Board <br> Description</p> 
+  <p>“股市有风险，入市需谨慎”，小火山经历了之前买卖一次或者两次的股票♂交易，对于股票买卖已经很有经验了， <br> 现在的他最多可以进行K次买卖，身为一个聪明的acmer，已经准确的知道了某只股票在未来N天的价格，每一次买入必须 <br> 卖出后才能进行下次买卖。现在，小火山想知道他最多可以获得多少利润？ <br> Input</p> 
+  <p>输入第一行是一个整数T（T &lt;= 50), 表示一共有T组数据。 <br> 每一组数据， 第一行是两个个整数N， K（1 &lt;= N, K &lt;= 1000), 表示一共有N天，买卖K次。 第二行是N个数， <br> 表示连续N天该股票的价格(0 &lt;= A1, A2, A3,…,An &lt;= 1000000) <br> Output</p> 
+  <p>对于每一组数据， 输出一个整数， 表示小火山能够获得的最大的利润。</p> 
+  <p>Sample Input</p> 
+  <p>2</p> 
+  <p>2 1 <br> 1 2</p> 
+  <p>3 2 <br> 1 2 3 <br> Sample Output</p> 
+  <p>1 <br> 2</p> 
+  <p>DP题目 <br> dp[i][j]代表着i次交易到第j支股票所赚到的钱 <br> dp[i][j]=max(dp[i][j-1], max(dp[i-1][j-1]+a[j]-a[r]) r&lt;=j <br> a[j]就是第j个股票 a[r]就是第j个股票之前那个最小的股票了 <br> 不能三重循环所以 在循环j的时候加一个判断条件就好了 <br> maxx=（dp[i-1][j]-a[j],maxx) 买入a[j]前面的最小值 <br> dp[i][j]=maxx(dp[i][j-1],dp[i][j-1]+a[j])卖出a[j]；</p> 
+  <pre class="prettyprint"><code class=" hljs cpp"><span class="hljs-preprocessor">#include &lt;cstdio&gt;</span>
+<span class="hljs-preprocessor">#include &lt;iostream&gt;</span>
+<span class="hljs-preprocessor">#include &lt;cstring&gt;</span>
+<span class="hljs-preprocessor">#include &lt;algorithm&gt;</span>
+<span class="hljs-preprocessor">#include &lt;queue&gt;</span>
+<span class="hljs-preprocessor">#include &lt;stack&gt;</span>
+
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> <span class="hljs-built_in">std</span>;
+<span class="hljs-keyword">int</span> a[<span class="hljs-number">1010</span>];
+<span class="hljs-keyword">int</span> dp[<span class="hljs-number">1010</span>][<span class="hljs-number">1010</span>];<span class="hljs-comment">//表示第i次交易所到第j个时的最大利润</span>
+<span class="hljs-keyword">int</span> main(){
+    <span class="hljs-keyword">int</span> T,n,k; <span class="hljs-built_in">scanf</span>(<span class="hljs-string">"%d"</span>, &amp;T);
+    <span class="hljs-keyword">while</span>(T--){
+        <span class="hljs-built_in">memset</span>(dp,<span class="hljs-number">0</span>,<span class="hljs-keyword">sizeof</span>(<span class="hljs-number">0</span>));
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">"%d %d"</span>, &amp;n, &amp;k);
+        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> i = <span class="hljs-number">1</span>; i &lt;= n; i++ )
+            <span class="hljs-built_in">scanf</span>(<span class="hljs-string">"%d"</span>, &amp;a[i]);
+        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> i = <span class="hljs-number">1</span>; i &lt;= k; i++ ){
+            <span class="hljs-keyword">int</span> maxx=-a[<span class="hljs-number">1</span>];
+            <span class="hljs-keyword">for</span>( <span class="hljs-keyword">int</span> j=<span class="hljs-number">2</span>; j &lt;= n; j++ ){
+                maxx=max(dp[i-<span class="hljs-number">1</span>][j-<span class="hljs-number">1</span>]-a[j],maxx);<span class="hljs-comment">//在地j个之前买入的最小股票所剩的钱</span>
+                dp[i][j]=max(dp[i][j-<span class="hljs-number">1</span>],a[j]+maxx);<span class="hljs-comment">//第j天卖出所赚的钱</span>
+            }
+        }
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">"%d\n"</span>,dp[k][n]);
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre> 
+ </div> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/markdown_views-ea0013b516.css"> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/wjhuihuii/article/details/52247713,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/wjhuihuii/article/details/52247713,&quot;}">阅读更多</a> 
+</div>

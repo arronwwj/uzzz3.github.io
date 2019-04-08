@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>GPU 挖矿：从零开始，拥有自己的比特币 | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="GPU 挖矿：从零开始，拥有自己的比特币" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="原文地址：https://yq.aliyun.com/articles/444906 摘要：&nbsp;以比特币为代表的数字货币作为区块链技术的重要应用，正在慢慢进入人们的视野，拥有自己的数字资产也是一件很酷的事情，如果你不想买，那么最好的获取方法就是挖矿。 挖矿之前，我需要作几个简单的说明，以澄清潜在的误区： 首先，是不是数字货币只有比特币呢？ 答案显然是否定的。 以比特币为代表的数字货币作为区块链技术的重要应用，正在慢慢进入人们的视野，拥有自己的数字资产也是一件很酷的事情，如果你不想买，那么最好的获取方法就是挖矿。 挖矿之前，我需要作几个简单的说明，以澄清潜在的误区： 首先，是不是数字货币只有比特币呢？ 答案显然是否定的。数字货币行情分析网站非小号目前共收录了 1700+ 种数字货币，其中市值前十名的为（2018 年 1 月 21 日）： 除比特币之外的数字货币一般被称为“山寨币”（altcoin)。这个词并不是一个贬义词，因为在山寨币中有很多优秀的项目比如以太坊（ETH）、EOS 等等，但多数山寨币仍是空气币这个现象确实是存在的，所以不少人制作了&nbsp;SB 币、懵币等网站调侃。 第二个误区是，“比特币这么贵了，我一个都买不起呀？” 实际上，比特币最小单位并不是 1，而是“聪”，没错，就是中本聪的“聪”。1 BTC = 1 亿聪，也就是说最小单位是十的负八次方。但是人们习惯了货币的整数交易，对小数点后这么多零有天生的认知障碍，因此很多人认为这是影响比特币在现实世界中流通的重要原因之一。 最后，我们并不是要直接挖比特币（再看一眼标题，还真没说挖比特币！！），而是挖山寨币然后换成比特币，最后也可以换成法币。 为什么不直接挖比特币呢？ 这里有一张比特币挖矿的难度变化图，显示其呈指数级上涨。也就是说在机器配置不变的情况下，你的 BTC 产出是越来越少的，同时由于 BTC 的设计机制，每个区块产出的 BTC 也是在不断减少的（当然 BTC 本身也是在不断增值）。作为个人玩家娱乐挖矿的话，山寨币是一个较好的选择。如果把挖矿当做投资的话，还是推荐 BTC、ETH 这种主流的货币，也可以参考&nbsp;whattomine&nbsp;的收益估算。 挖矿算法 目前的挖矿机理都是基于 PoW（proof-of-work, 工作量证明）的，它通过大量简单的重复运算产出一个符合要求的结果，并且这个结果很容易验证。 举个例子，为了通过考试不挂科，你需要不断地大量练习，才能解出一道题，然而对于阅卷而言只需和标准答案对比一下就完了，几乎不需要成本。PoW 的技术原理主要通过 hash 实现，这里先不讨论。 挖矿设备 挖矿设备主要经历了从 CPU -&gt; GPU -&gt; FPGA -&gt; ASIC 的变化，挖矿效率也是越来越强大。 与 GPU 相比，CPU 包含多数（对于挖矿计算而言）无用的控制单元等结构，因此性价比很低。这就好比让两个大学教授和 100 个小学生一起计算一些 10 以内的加减法，显然小学生们计算的更快，教授就是大材小用了。 FPGA 的芯片生产困难，因此生存时间很短。在将 FPGA 中不需要的逻辑实现删掉后， ASIC 矿机问世。 ASIC 矿机（也就是目前我们所说的矿机）是为挖矿量身定制的，因此挖矿速度非常快（价格也比较高），除了挖矿什么都做不了。一旦遇上“矿难”，那你面对的就是一堆废铁，而显卡至少还有其他用处。 钱包 挖矿前需要准备一个钱包，存放自己的数字资产。这里推荐使用比特派，它支持的币种比较多，你也可以选择其他钱包，但无论如何一定要保存好私钥，这是验证使用者身份的唯一凭证。 除此之外你也可以选择使用交易所的充值地址，这样挖到的币直接被转入到交易所中，可以随时卖了它，否则你需要先从钱包转入交易所，这个过程会收取矿工费。 矿池 加入矿池相当于选择组队挖矿，因为一个人可能很难挖到一个币，但是在矿池中就可以按照你的算力占全矿池的算力比例来给你分配收益。这就好比一个人买彩票几乎没啥希望，但是如果规定一亿个人一起买，中奖的平分的话，这样收益就稳定多了。当然，矿池会收取一定的费用。 我们在&nbsp;https://blockchain.info/pools&nbsp;可以看到比特币全球矿池的算力分布。其中最大的矿池 btc.com 只支持比特币和比特币现金（BCH）两个币种，为了能够挖到更小众的山寨币，我们可以选择其他矿池。 接下来我用两个矿池来挖两个币种，并分别使用开源和闭源挖矿软件。 蜜蜂矿池&nbsp;——&nbsp;HSR 蜜蜂矿池支持三个 GPU 挖矿币种，以 HSR 为例进入&nbsp;http://hcash.beepool.org&nbsp;中，这里有一份矿池的教程，我们还需要一个挖矿软件，这里我们使用开源挖矿软件&nbsp;ccminer。 首先默认你已经安装好了显卡驱动和 CUDA。 以 ubuntu 为例，先安装依赖： sudo apt-get install libcurl4-openssl-dev libssl-dev libjansson-dev automake autotools-dev build-essential 切换到 gcc/g++ 5 (CUDA 的要求)，并 clone 仓库： sudo apt-get install gcc-5 g++-5 sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 1 git clone https://github.com/tpruvot/ccminer 在开始编译前，你需要检查&nbsp;nvcc_ARCH&nbsp;以确保它和你的显卡型号是兼容的： 在&nbsp;wiki&nbsp;中找到显卡对应 Compatibility 和与之对应的&nbsp;nvcc_ARCH，然后按照说明修改&nbsp;Makefile.am，最后编译并运行： ./build.sh ./ccminer --version ./ccminer -a hsr -o stratum+tcp://hcash-pool.beepool.org:9509 -u HCHSsFEuYqkGsyJZTDfetomyPb8AYkCNwB.livc -p x -d 0,2,3 其中， -a 为算法，这里对应的是 hsr，也就是我们要挖的 -o 为矿池服务器地址 -u 为你的钱包地址，你需要把这个地址替换成你自己的（hsr）地址，其中 livc 为矿工名字 -p 密码，默认即可 -d 指定 GPU 设备，默认全部 这时你的矿工已经开始工作了，你可以在&nbsp;http://hcash.beepool.org/miner/你的hsr地址&nbsp;查到实时的状态和收益。更多细节可以参考 ccminer 的&nbsp;README&nbsp;和&nbsp;INSTALL。 UUPool&nbsp;——&nbsp;BTW BTW 是 BTC 最近分叉的一个币，因此挖的人比较少。我们可以按照矿池的教程（http://uupool.cn/course/btw）直接下载挖矿软件。 以 N 卡为例，矿池提供的 EWBF’s Zcash CUDA miner 是一个闭源挖矿软件，其项目主页发布在&nbsp;bitcointalk。可见它实际上是一个 Zcash(ZEC)的挖矿软件，但因为 BTW 和 ZEC 的加密算法完全一致，我们可以直接拿来用。 编辑 miner.cfg 配置文件： [server] server btw.uupool.cn port 3600 user WY6MG5aAubs7E3xsjErgYh3ggAzSkow2QH(你的 BTW 地址) pass x 然后把下面两个 additional server 删掉即可，这是防止一个矿池连接出错保证连接到备用矿池上，默认的两个备用矿池应该是作者的钱包地址。 最后运行程序， ./miner --config miner.cfg 在&nbsp;http://uupool.cn/btw/你的btw地址&nbsp;上可以查到实时的状态和收益。 值得一提的是，闭源软件由于作者的优化可能带来更多的收益，但软件作者也会收取一定的 dev fee， EWBF’s Zcash CUDA miner 默认收取开发者费用 2%，当然这个是可选的，你也可以通过&nbsp;—fee&nbsp;来调控比例甚至拒绝支付这笔费用，也可以通过一些方法 hack 掉开发者费用，当然我并不推荐这么做，因为你只是损失了 1% 或 2% 的收益，而软件的作者损失的是全部的收益。 挖矿部分到此结束，每天矿池会给你的钱包中转入收益，比如： 今天我收到了 3761 个 BTW，在&nbsp;coinegg&nbsp;上目前是三毛钱一个，那我昨天的收益就是 3761*0.3 = 1128 元！！哈哈，其实对于 BTW 还并不能这么算，因为 BTW 目前只上了这一个交易所，而且还没有开放充值，也就是有大量的像我一样的 BTW 矿工无法将 BTW 转入到交易所卖掉，所以当开放充值时一定会被严重砸盘的。 对于 HSR，可以将它转入到交易所换成 BTC（类似于股票交易），再通过场外交易卖成人民币。有人问为什么不直接卖成 RMB 呢？因为现在的交易所都是以 BTC 为单位的币币交易，这样就可以跟法币撇清关系，或者你也可以直接找人进行点对点的交易，这样风险比较大。 币币交易所推荐币安和火币，币安是世界交易量第一的交易所，上面的币都比较靠谱，而火币自带法币交易，方便变现。这两个都是中国人搞的，减少潜在的风险。 最后，不要指着自己的几块卡能挖出多少钱来，如果自己娱乐的话，找几个看好的币挖着玩玩，几年后升值了也许能赚一点，如果将挖矿视为投资的话，你需要做充分的调研：对比不同的矿机、不同的挖矿软件、不同的矿池、选择最有发展前景的币种，这样才能获取最大的收益。 阅读更多" />
+<meta property="og:description" content="原文地址：https://yq.aliyun.com/articles/444906 摘要：&nbsp;以比特币为代表的数字货币作为区块链技术的重要应用，正在慢慢进入人们的视野，拥有自己的数字资产也是一件很酷的事情，如果你不想买，那么最好的获取方法就是挖矿。 挖矿之前，我需要作几个简单的说明，以澄清潜在的误区： 首先，是不是数字货币只有比特币呢？ 答案显然是否定的。 以比特币为代表的数字货币作为区块链技术的重要应用，正在慢慢进入人们的视野，拥有自己的数字资产也是一件很酷的事情，如果你不想买，那么最好的获取方法就是挖矿。 挖矿之前，我需要作几个简单的说明，以澄清潜在的误区： 首先，是不是数字货币只有比特币呢？ 答案显然是否定的。数字货币行情分析网站非小号目前共收录了 1700+ 种数字货币，其中市值前十名的为（2018 年 1 月 21 日）： 除比特币之外的数字货币一般被称为“山寨币”（altcoin)。这个词并不是一个贬义词，因为在山寨币中有很多优秀的项目比如以太坊（ETH）、EOS 等等，但多数山寨币仍是空气币这个现象确实是存在的，所以不少人制作了&nbsp;SB 币、懵币等网站调侃。 第二个误区是，“比特币这么贵了，我一个都买不起呀？” 实际上，比特币最小单位并不是 1，而是“聪”，没错，就是中本聪的“聪”。1 BTC = 1 亿聪，也就是说最小单位是十的负八次方。但是人们习惯了货币的整数交易，对小数点后这么多零有天生的认知障碍，因此很多人认为这是影响比特币在现实世界中流通的重要原因之一。 最后，我们并不是要直接挖比特币（再看一眼标题，还真没说挖比特币！！），而是挖山寨币然后换成比特币，最后也可以换成法币。 为什么不直接挖比特币呢？ 这里有一张比特币挖矿的难度变化图，显示其呈指数级上涨。也就是说在机器配置不变的情况下，你的 BTC 产出是越来越少的，同时由于 BTC 的设计机制，每个区块产出的 BTC 也是在不断减少的（当然 BTC 本身也是在不断增值）。作为个人玩家娱乐挖矿的话，山寨币是一个较好的选择。如果把挖矿当做投资的话，还是推荐 BTC、ETH 这种主流的货币，也可以参考&nbsp;whattomine&nbsp;的收益估算。 挖矿算法 目前的挖矿机理都是基于 PoW（proof-of-work, 工作量证明）的，它通过大量简单的重复运算产出一个符合要求的结果，并且这个结果很容易验证。 举个例子，为了通过考试不挂科，你需要不断地大量练习，才能解出一道题，然而对于阅卷而言只需和标准答案对比一下就完了，几乎不需要成本。PoW 的技术原理主要通过 hash 实现，这里先不讨论。 挖矿设备 挖矿设备主要经历了从 CPU -&gt; GPU -&gt; FPGA -&gt; ASIC 的变化，挖矿效率也是越来越强大。 与 GPU 相比，CPU 包含多数（对于挖矿计算而言）无用的控制单元等结构，因此性价比很低。这就好比让两个大学教授和 100 个小学生一起计算一些 10 以内的加减法，显然小学生们计算的更快，教授就是大材小用了。 FPGA 的芯片生产困难，因此生存时间很短。在将 FPGA 中不需要的逻辑实现删掉后， ASIC 矿机问世。 ASIC 矿机（也就是目前我们所说的矿机）是为挖矿量身定制的，因此挖矿速度非常快（价格也比较高），除了挖矿什么都做不了。一旦遇上“矿难”，那你面对的就是一堆废铁，而显卡至少还有其他用处。 钱包 挖矿前需要准备一个钱包，存放自己的数字资产。这里推荐使用比特派，它支持的币种比较多，你也可以选择其他钱包，但无论如何一定要保存好私钥，这是验证使用者身份的唯一凭证。 除此之外你也可以选择使用交易所的充值地址，这样挖到的币直接被转入到交易所中，可以随时卖了它，否则你需要先从钱包转入交易所，这个过程会收取矿工费。 矿池 加入矿池相当于选择组队挖矿，因为一个人可能很难挖到一个币，但是在矿池中就可以按照你的算力占全矿池的算力比例来给你分配收益。这就好比一个人买彩票几乎没啥希望，但是如果规定一亿个人一起买，中奖的平分的话，这样收益就稳定多了。当然，矿池会收取一定的费用。 我们在&nbsp;https://blockchain.info/pools&nbsp;可以看到比特币全球矿池的算力分布。其中最大的矿池 btc.com 只支持比特币和比特币现金（BCH）两个币种，为了能够挖到更小众的山寨币，我们可以选择其他矿池。 接下来我用两个矿池来挖两个币种，并分别使用开源和闭源挖矿软件。 蜜蜂矿池&nbsp;——&nbsp;HSR 蜜蜂矿池支持三个 GPU 挖矿币种，以 HSR 为例进入&nbsp;http://hcash.beepool.org&nbsp;中，这里有一份矿池的教程，我们还需要一个挖矿软件，这里我们使用开源挖矿软件&nbsp;ccminer。 首先默认你已经安装好了显卡驱动和 CUDA。 以 ubuntu 为例，先安装依赖： sudo apt-get install libcurl4-openssl-dev libssl-dev libjansson-dev automake autotools-dev build-essential 切换到 gcc/g++ 5 (CUDA 的要求)，并 clone 仓库： sudo apt-get install gcc-5 g++-5 sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 1 git clone https://github.com/tpruvot/ccminer 在开始编译前，你需要检查&nbsp;nvcc_ARCH&nbsp;以确保它和你的显卡型号是兼容的： 在&nbsp;wiki&nbsp;中找到显卡对应 Compatibility 和与之对应的&nbsp;nvcc_ARCH，然后按照说明修改&nbsp;Makefile.am，最后编译并运行： ./build.sh ./ccminer --version ./ccminer -a hsr -o stratum+tcp://hcash-pool.beepool.org:9509 -u HCHSsFEuYqkGsyJZTDfetomyPb8AYkCNwB.livc -p x -d 0,2,3 其中， -a 为算法，这里对应的是 hsr，也就是我们要挖的 -o 为矿池服务器地址 -u 为你的钱包地址，你需要把这个地址替换成你自己的（hsr）地址，其中 livc 为矿工名字 -p 密码，默认即可 -d 指定 GPU 设备，默认全部 这时你的矿工已经开始工作了，你可以在&nbsp;http://hcash.beepool.org/miner/你的hsr地址&nbsp;查到实时的状态和收益。更多细节可以参考 ccminer 的&nbsp;README&nbsp;和&nbsp;INSTALL。 UUPool&nbsp;——&nbsp;BTW BTW 是 BTC 最近分叉的一个币，因此挖的人比较少。我们可以按照矿池的教程（http://uupool.cn/course/btw）直接下载挖矿软件。 以 N 卡为例，矿池提供的 EWBF’s Zcash CUDA miner 是一个闭源挖矿软件，其项目主页发布在&nbsp;bitcointalk。可见它实际上是一个 Zcash(ZEC)的挖矿软件，但因为 BTW 和 ZEC 的加密算法完全一致，我们可以直接拿来用。 编辑 miner.cfg 配置文件： [server] server btw.uupool.cn port 3600 user WY6MG5aAubs7E3xsjErgYh3ggAzSkow2QH(你的 BTW 地址) pass x 然后把下面两个 additional server 删掉即可，这是防止一个矿池连接出错保证连接到备用矿池上，默认的两个备用矿池应该是作者的钱包地址。 最后运行程序， ./miner --config miner.cfg 在&nbsp;http://uupool.cn/btw/你的btw地址&nbsp;上可以查到实时的状态和收益。 值得一提的是，闭源软件由于作者的优化可能带来更多的收益，但软件作者也会收取一定的 dev fee， EWBF’s Zcash CUDA miner 默认收取开发者费用 2%，当然这个是可选的，你也可以通过&nbsp;—fee&nbsp;来调控比例甚至拒绝支付这笔费用，也可以通过一些方法 hack 掉开发者费用，当然我并不推荐这么做，因为你只是损失了 1% 或 2% 的收益，而软件的作者损失的是全部的收益。 挖矿部分到此结束，每天矿池会给你的钱包中转入收益，比如： 今天我收到了 3761 个 BTW，在&nbsp;coinegg&nbsp;上目前是三毛钱一个，那我昨天的收益就是 3761*0.3 = 1128 元！！哈哈，其实对于 BTW 还并不能这么算，因为 BTW 目前只上了这一个交易所，而且还没有开放充值，也就是有大量的像我一样的 BTW 矿工无法将 BTW 转入到交易所卖掉，所以当开放充值时一定会被严重砸盘的。 对于 HSR，可以将它转入到交易所换成 BTC（类似于股票交易），再通过场外交易卖成人民币。有人问为什么不直接卖成 RMB 呢？因为现在的交易所都是以 BTC 为单位的币币交易，这样就可以跟法币撇清关系，或者你也可以直接找人进行点对点的交易，这样风险比较大。 币币交易所推荐币安和火币，币安是世界交易量第一的交易所，上面的币都比较靠谱，而火币自带法币交易，方便变现。这两个都是中国人搞的，减少潜在的风险。 最后，不要指着自己的几块卡能挖出多少钱来，如果自己娱乐的话，找几个看好的币挖着玩玩，几年后升值了也许能赚一点，如果将挖矿视为投资的话，你需要做充分的调研：对比不同的矿机、不同的挖矿软件、不同的矿池、选择最有发展前景的币种，这样才能获取最大的收益。 阅读更多" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/04/21/GPU-%E6%8C%96%E7%9F%BF-%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B-%E6%8B%A5%E6%9C%89%E8%87%AA%E5%B7%B1%E7%9A%84%E6%AF%94%E7%89%B9%E5%B8%81.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/04/21/GPU-%E6%8C%96%E7%9F%BF-%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B-%E6%8B%A5%E6%9C%89%E8%87%AA%E5%B7%B1%E7%9A%84%E6%AF%94%E7%89%B9%E5%B8%81.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-04-21T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"原文地址：https://yq.aliyun.com/articles/444906 摘要：&nbsp;以比特币为代表的数字货币作为区块链技术的重要应用，正在慢慢进入人们的视野，拥有自己的数字资产也是一件很酷的事情，如果你不想买，那么最好的获取方法就是挖矿。 挖矿之前，我需要作几个简单的说明，以澄清潜在的误区： 首先，是不是数字货币只有比特币呢？ 答案显然是否定的。 以比特币为代表的数字货币作为区块链技术的重要应用，正在慢慢进入人们的视野，拥有自己的数字资产也是一件很酷的事情，如果你不想买，那么最好的获取方法就是挖矿。 挖矿之前，我需要作几个简单的说明，以澄清潜在的误区： 首先，是不是数字货币只有比特币呢？ 答案显然是否定的。数字货币行情分析网站非小号目前共收录了 1700+ 种数字货币，其中市值前十名的为（2018 年 1 月 21 日）： 除比特币之外的数字货币一般被称为“山寨币”（altcoin)。这个词并不是一个贬义词，因为在山寨币中有很多优秀的项目比如以太坊（ETH）、EOS 等等，但多数山寨币仍是空气币这个现象确实是存在的，所以不少人制作了&nbsp;SB 币、懵币等网站调侃。 第二个误区是，“比特币这么贵了，我一个都买不起呀？” 实际上，比特币最小单位并不是 1，而是“聪”，没错，就是中本聪的“聪”。1 BTC = 1 亿聪，也就是说最小单位是十的负八次方。但是人们习惯了货币的整数交易，对小数点后这么多零有天生的认知障碍，因此很多人认为这是影响比特币在现实世界中流通的重要原因之一。 最后，我们并不是要直接挖比特币（再看一眼标题，还真没说挖比特币！！），而是挖山寨币然后换成比特币，最后也可以换成法币。 为什么不直接挖比特币呢？ 这里有一张比特币挖矿的难度变化图，显示其呈指数级上涨。也就是说在机器配置不变的情况下，你的 BTC 产出是越来越少的，同时由于 BTC 的设计机制，每个区块产出的 BTC 也是在不断减少的（当然 BTC 本身也是在不断增值）。作为个人玩家娱乐挖矿的话，山寨币是一个较好的选择。如果把挖矿当做投资的话，还是推荐 BTC、ETH 这种主流的货币，也可以参考&nbsp;whattomine&nbsp;的收益估算。 挖矿算法 目前的挖矿机理都是基于 PoW（proof-of-work, 工作量证明）的，它通过大量简单的重复运算产出一个符合要求的结果，并且这个结果很容易验证。 举个例子，为了通过考试不挂科，你需要不断地大量练习，才能解出一道题，然而对于阅卷而言只需和标准答案对比一下就完了，几乎不需要成本。PoW 的技术原理主要通过 hash 实现，这里先不讨论。 挖矿设备 挖矿设备主要经历了从 CPU -&gt; GPU -&gt; FPGA -&gt; ASIC 的变化，挖矿效率也是越来越强大。 与 GPU 相比，CPU 包含多数（对于挖矿计算而言）无用的控制单元等结构，因此性价比很低。这就好比让两个大学教授和 100 个小学生一起计算一些 10 以内的加减法，显然小学生们计算的更快，教授就是大材小用了。 FPGA 的芯片生产困难，因此生存时间很短。在将 FPGA 中不需要的逻辑实现删掉后， ASIC 矿机问世。 ASIC 矿机（也就是目前我们所说的矿机）是为挖矿量身定制的，因此挖矿速度非常快（价格也比较高），除了挖矿什么都做不了。一旦遇上“矿难”，那你面对的就是一堆废铁，而显卡至少还有其他用处。 钱包 挖矿前需要准备一个钱包，存放自己的数字资产。这里推荐使用比特派，它支持的币种比较多，你也可以选择其他钱包，但无论如何一定要保存好私钥，这是验证使用者身份的唯一凭证。 除此之外你也可以选择使用交易所的充值地址，这样挖到的币直接被转入到交易所中，可以随时卖了它，否则你需要先从钱包转入交易所，这个过程会收取矿工费。 矿池 加入矿池相当于选择组队挖矿，因为一个人可能很难挖到一个币，但是在矿池中就可以按照你的算力占全矿池的算力比例来给你分配收益。这就好比一个人买彩票几乎没啥希望，但是如果规定一亿个人一起买，中奖的平分的话，这样收益就稳定多了。当然，矿池会收取一定的费用。 我们在&nbsp;https://blockchain.info/pools&nbsp;可以看到比特币全球矿池的算力分布。其中最大的矿池 btc.com 只支持比特币和比特币现金（BCH）两个币种，为了能够挖到更小众的山寨币，我们可以选择其他矿池。 接下来我用两个矿池来挖两个币种，并分别使用开源和闭源挖矿软件。 蜜蜂矿池&nbsp;——&nbsp;HSR 蜜蜂矿池支持三个 GPU 挖矿币种，以 HSR 为例进入&nbsp;http://hcash.beepool.org&nbsp;中，这里有一份矿池的教程，我们还需要一个挖矿软件，这里我们使用开源挖矿软件&nbsp;ccminer。 首先默认你已经安装好了显卡驱动和 CUDA。 以 ubuntu 为例，先安装依赖： sudo apt-get install libcurl4-openssl-dev libssl-dev libjansson-dev automake autotools-dev build-essential 切换到 gcc/g++ 5 (CUDA 的要求)，并 clone 仓库： sudo apt-get install gcc-5 g++-5 sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 1 git clone https://github.com/tpruvot/ccminer 在开始编译前，你需要检查&nbsp;nvcc_ARCH&nbsp;以确保它和你的显卡型号是兼容的： 在&nbsp;wiki&nbsp;中找到显卡对应 Compatibility 和与之对应的&nbsp;nvcc_ARCH，然后按照说明修改&nbsp;Makefile.am，最后编译并运行： ./build.sh ./ccminer --version ./ccminer -a hsr -o stratum+tcp://hcash-pool.beepool.org:9509 -u HCHSsFEuYqkGsyJZTDfetomyPb8AYkCNwB.livc -p x -d 0,2,3 其中， -a 为算法，这里对应的是 hsr，也就是我们要挖的 -o 为矿池服务器地址 -u 为你的钱包地址，你需要把这个地址替换成你自己的（hsr）地址，其中 livc 为矿工名字 -p 密码，默认即可 -d 指定 GPU 设备，默认全部 这时你的矿工已经开始工作了，你可以在&nbsp;http://hcash.beepool.org/miner/你的hsr地址&nbsp;查到实时的状态和收益。更多细节可以参考 ccminer 的&nbsp;README&nbsp;和&nbsp;INSTALL。 UUPool&nbsp;——&nbsp;BTW BTW 是 BTC 最近分叉的一个币，因此挖的人比较少。我们可以按照矿池的教程（http://uupool.cn/course/btw）直接下载挖矿软件。 以 N 卡为例，矿池提供的 EWBF’s Zcash CUDA miner 是一个闭源挖矿软件，其项目主页发布在&nbsp;bitcointalk。可见它实际上是一个 Zcash(ZEC)的挖矿软件，但因为 BTW 和 ZEC 的加密算法完全一致，我们可以直接拿来用。 编辑 miner.cfg 配置文件： [server] server btw.uupool.cn port 3600 user WY6MG5aAubs7E3xsjErgYh3ggAzSkow2QH(你的 BTW 地址) pass x 然后把下面两个 additional server 删掉即可，这是防止一个矿池连接出错保证连接到备用矿池上，默认的两个备用矿池应该是作者的钱包地址。 最后运行程序， ./miner --config miner.cfg 在&nbsp;http://uupool.cn/btw/你的btw地址&nbsp;上可以查到实时的状态和收益。 值得一提的是，闭源软件由于作者的优化可能带来更多的收益，但软件作者也会收取一定的 dev fee， EWBF’s Zcash CUDA miner 默认收取开发者费用 2%，当然这个是可选的，你也可以通过&nbsp;—fee&nbsp;来调控比例甚至拒绝支付这笔费用，也可以通过一些方法 hack 掉开发者费用，当然我并不推荐这么做，因为你只是损失了 1% 或 2% 的收益，而软件的作者损失的是全部的收益。 挖矿部分到此结束，每天矿池会给你的钱包中转入收益，比如： 今天我收到了 3761 个 BTW，在&nbsp;coinegg&nbsp;上目前是三毛钱一个，那我昨天的收益就是 3761*0.3 = 1128 元！！哈哈，其实对于 BTW 还并不能这么算，因为 BTW 目前只上了这一个交易所，而且还没有开放充值，也就是有大量的像我一样的 BTW 矿工无法将 BTW 转入到交易所卖掉，所以当开放充值时一定会被严重砸盘的。 对于 HSR，可以将它转入到交易所换成 BTC（类似于股票交易），再通过场外交易卖成人民币。有人问为什么不直接卖成 RMB 呢？因为现在的交易所都是以 BTC 为单位的币币交易，这样就可以跟法币撇清关系，或者你也可以直接找人进行点对点的交易，这样风险比较大。 币币交易所推荐币安和火币，币安是世界交易量第一的交易所，上面的币都比较靠谱，而火币自带法币交易，方便变现。这两个都是中国人搞的，减少潜在的风险。 最后，不要指着自己的几块卡能挖出多少钱来，如果自己娱乐的话，找几个看好的币挖着玩玩，几年后升值了也许能赚一点，如果将挖矿视为投资的话，你需要做充分的调研：对比不同的矿机、不同的挖矿软件、不同的矿池、选择最有发展前景的币种，这样才能获取最大的收益。 阅读更多","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/04/21/GPU-%E6%8C%96%E7%9F%BF-%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B-%E6%8B%A5%E6%9C%89%E8%87%AA%E5%B7%B1%E7%9A%84%E6%AF%94%E7%89%B9%E5%B8%81.html","headline":"GPU 挖矿：从零开始，拥有自己的比特币","dateModified":"2018-04-21T00:00:00+08:00","datePublished":"2018-04-21T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/04/21/GPU-%E6%8C%96%E7%9F%BF-%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B-%E6%8B%A5%E6%9C%89%E8%87%AA%E5%B7%B1%E7%9A%84%E6%AF%94%E7%89%B9%E5%B8%81.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>GPU 挖矿：从零开始，拥有自己的比特币</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <p>原文地址：<a href="https://yq.aliyun.com/articles/444906" rel="nofollow">https://yq.aliyun.com/articles/444906</a></p>
+  <p></p>
+  <p class="blog-summary" style="background:rgb(249,249,249);font-size:12px;color:rgb(115,119,122);line-height:24px;text-align:left;font-family:PingFangSC, 'helvetica neue', 'hiragino sans gb', arial, 'microsoft yahei ui', 'microsoft yahei', simsun, sans-serif;"><span style="font-weight:700;color:rgb(55,61,65);">摘要：</span>&nbsp;以比特币为代表的数字货币作为区块链技术的重要应用，正在慢慢进入人们的视野，拥有自己的数字资产也是一件很酷的事情，如果你不想买，那么最好的获取方法就是挖矿。 挖矿之前，我需要作几个简单的说明，以澄清潜在的误区： 首先，是不是数字货币只有比特币呢？ 答案显然是否定的。</p>
+  <div class="content-detail markdown-body" style="line-height:32px;color:rgb(51,51,51);font-family:PingFangSC, 'helvetica neue', 'hiragino sans gb', arial, 'microsoft yahei ui', 'microsoft yahei', simsun, sans-serif;">
+   <div class="img" style="text-align:center;color:rgb(84,84,84);font-family:'Lantinghei SC', 'Helvetica Neue', 'Microsoft YaHei', '微软雅黑', Arial, STHeiti, 'WenQuanYi Micro Hei', SimSun, sans-serif;font-size:14px;background-color:rgb(255,255,255);">
+    <img src="https://img-blog.csdn.net/20180421092520516" alt="">
+    <br>
+   </div>
+   <div class="content editor" style="line-height:30px;font-size:14px;color:rgb(56,72,90);font-family:'Lantinghei SC', 'Helvetica Neue', 'Microsoft YaHei', '微软雅黑', Arial, STHeiti, 'WenQuanYi Micro Hei', SimSun, sans-serif;background-color:rgb(255,255,255);">
+    <p>以比特币为代表的数字货币作为区块链技术的重要应用，正在慢慢进入人们的视野，拥有自己的数字资产也是一件很酷的事情，如果你不想买，那么最好的获取方法就是挖矿。</p>
+    <p>挖矿之前，我需要作几个简单的说明，以澄清潜在的误区：</p>
+    <p>首先，是不是数字货币只有比特币呢？</p>
+    <p>答案显然是否定的。数字货币行情分析网站<a href="https://www.feixiaohao.com/" rel="nofollow" style="background-color:transparent;color:rgb(0,182,241);border-bottom:2px solid rgb(223,223,223);font-weight:600;">非小号</a>目前共收录了 1700+ 种数字货币，其中市值前十名的为（2018 年 1 月 21 日）：</p>
+    <p><img src="https://img-blog.csdn.net/20180421092540592" alt=""><br></p>
+    <p>除比特币之外的数字货币一般被称为“山寨币”（altcoin)。这个词并不是一个贬义词，因为在山寨币中有很多优秀的项目比如以太坊（ETH）、EOS 等等，但多数山寨币仍是空气币这个现象确实是存在的，所以不少人制作了&nbsp;<a href="http://www.stupidcoin.cn/" rel="nofollow" style="background-color:transparent;color:rgb(0,182,241);border-bottom:2px solid rgb(223,223,223);font-weight:600;">SB 币</a>、<a href="http://www.mengbi.org/" rel="nofollow" style="background-color:transparent;color:rgb(0,182,241);border-bottom:2px solid rgb(223,223,223);font-weight:600;">懵币</a>等网站调侃。</p>
+    <p><img src="https://img-blog.csdn.net/20180421092559516" alt=""><br></p>
+    <p>第二个误区是，“比特币这么贵了，我一个都买不起呀？”</p>
+    <p>实际上，比特币最小单位并不是 1，而是“聪”，没错，就是中本聪的“聪”。1 BTC = 1 亿聪，也就是说最小单位是十的负八次方。但是人们习惯了货币的整数交易，对小数点后这么多零有天生的认知障碍，因此很多人认为这是影响比特币在现实世界中流通的重要原因之一。</p>
+    <p>最后，我们并不是要直接挖比特币（再看一眼标题，还真没说挖比特币！！），而是挖山寨币然后换成比特币，最后也可以换成法币。</p>
+    <p>为什么不直接挖比特币呢？</p>
+    <p><img src="https://img-blog.csdn.net/20180421092620215" alt=""><br></p>
+    <p>这里有一张比特币挖矿的<a href="https://btc.com/stats/diff" rel="nofollow" style="background-color:transparent;color:rgb(0,182,241);border-bottom:2px solid rgb(223,223,223);font-weight:600;">难度变化图</a>，显示其呈指数级上涨。也就是说在机器配置不变的情况下，你的 BTC 产出是越来越少的，同时由于 BTC 的设计机制，每个区块产出的 BTC 也是在不断减少的（当然 BTC 本身也是在不断增值）。作为个人玩家娱乐挖矿的话，山寨币是一个较好的选择。如果把挖矿当做投资的话，还是推荐 BTC、ETH 这种主流的货币，也可以参考&nbsp;<a href="https://whattomine.com/" rel="nofollow" style="background-color:transparent;color:rgb(0,182,241);border-bottom:2px solid rgb(223,223,223);font-weight:600;">whattomine</a>&nbsp;的收益估算。</p>
+    <h2 style="font-family:inherit;font-weight:500;line-height:1.1;color:inherit;font-size:18px;">挖矿算法</h2>
+    <p>目前的挖矿机理都是基于 PoW（proof-of-work, 工作量证明）的，它通过大量简单的重复运算产出一个符合要求的结果，并且这个结果很容易验证。</p>
+    <p>举个例子，为了通过考试不挂科，你需要不断地大量练习，才能解出一道题，然而对于阅卷而言只需和标准答案对比一下就完了，几乎不需要成本。PoW 的技术原理主要通过 hash 实现，这里先不讨论。</p>
+    <h2 style="font-family:inherit;font-weight:500;line-height:1.1;color:inherit;font-size:18px;">挖矿设备</h2>
+    <p>挖矿设备主要经历了从 CPU -&gt; GPU -&gt; FPGA -&gt; ASIC 的变化，挖矿效率也是越来越强大。</p>
+    <p>与 GPU 相比，CPU 包含多数（对于挖矿计算而言）无用的控制单元等结构，因此性价比很低。这就好比让两个大学教授和 100 个小学生一起计算一些 10 以内的加减法，显然小学生们计算的更快，教授就是大材小用了。</p>
+    <p>FPGA 的芯片生产困难，因此生存时间很短。在将 FPGA 中不需要的逻辑实现删掉后， ASIC 矿机问世。</p>
+    <p>ASIC 矿机（也就是目前我们所说的矿机）是为挖矿量身定制的，因此挖矿速度非常快（价格也比较高），除了挖矿什么都做不了。一旦遇上“矿难”，那你面对的就是一堆废铁，而显卡至少还有其他用处。</p>
+    <p><img src="https://img-blog.csdn.net/2018042109264049" alt=""><br></p>
+    <h2 style="font-family:inherit;font-weight:500;line-height:1.1;color:inherit;font-size:18px;">钱包</h2>
+    <p>挖矿前需要准备一个钱包，存放自己的数字资产。这里推荐使用<a href="http://bitpie.com/" rel="nofollow" style="background-color:transparent;color:rgb(0,182,241);border-bottom:2px solid rgb(223,223,223);font-weight:600;">比特派</a>，它支持的币种比较多，你也可以选择其他钱包，但无论如何一定要保存好私钥，这是验证使用者身份的唯一凭证。</p>
+    <p>除此之外你也可以选择使用交易所的充值地址，这样挖到的币直接被转入到交易所中，可以随时卖了它，否则你需要先从钱包转入交易所，这个过程会收取矿工费。</p>
+    <h2 style="font-family:inherit;font-weight:500;line-height:1.1;color:inherit;font-size:18px;">矿池</h2>
+    <p>加入矿池相当于选择组队挖矿，因为一个人可能很难挖到一个币，但是在矿池中就可以按照你的算力占全矿池的算力比例来给你分配收益。这就好比一个人买彩票几乎没啥希望，但是如果规定一亿个人一起买，中奖的平分的话，这样收益就稳定多了。当然，矿池会收取一定的费用。</p>
+    <p>我们在&nbsp;<a href="https://blockchain.info/pools" rel="nofollow" style="background-color:transparent;color:rgb(0,182,241);border-bottom:2px solid rgb(223,223,223);font-weight:600;">https://blockchain.info/pools</a>&nbsp;可以看到比特币全球矿池的算力分布。其中最大的矿池 btc.com 只支持比特币和比特币现金（BCH）两个币种，为了能够挖到更小众的山寨币，我们可以选择其他矿池。</p>
+    <p><img src="https://img-blog.csdn.net/20180421092704214" alt=""><br></p>
+    <p>接下来我用两个矿池来挖两个币种，并分别使用<span style="font-weight:600;">开源</span>和<span style="font-weight:600;">闭源</span>挖矿软件。</p>
+    <h2 style="font-family:inherit;font-weight:500;line-height:1.1;color:inherit;font-size:18px;"><a href="http://www.beepool.org/" rel="nofollow" style="background-color:transparent;color:rgb(0,182,241);border-bottom:2px solid rgb(223,223,223);">蜜蜂矿池</a>&nbsp;——&nbsp;<a href="https://www.feixiaohao.com/currencies/hshare/" rel="nofollow" style="background-color:transparent;color:rgb(0,182,241);border-bottom:2px solid rgb(223,223,223);">HSR</a></h2>
+    <p>蜜蜂矿池支持三个 GPU 挖矿币种，以 HSR 为例进入&nbsp;<a href="http://hcash.beepool.org/" rel="nofollow" style="background-color:transparent;color:rgb(0,182,241);border-bottom:2px solid rgb(223,223,223);font-weight:600;">http://hcash.beepool.org</a>&nbsp;中，这里有一份矿池的教程，我们还需要一个挖矿软件，这里我们使用开源挖矿软件&nbsp;<a href="https://github.com/tpruvot/ccminer?spm=a2c4e.11153940.blogcont444906.15.6808743bjLYTlf" rel="nofollow" style="background-color:transparent;color:rgb(0,182,241);border-bottom:2px solid rgb(223,223,223);font-weight:600;">ccminer</a>。</p>
+    <p>首先默认你已经安装好了显卡驱动和 CUDA。</p>
+    <p>以 ubuntu 为例，先安装依赖：</p>
+    <pre style="font-family:Menlo, Monaco, Consolas, 'Courier New', monospace;font-size:13px;line-height:1.42857;color:rgb(51,51,51);background-color:rgb(245,245,245);border:1px solid rgb(204,204,204);"><code class="hljs bash" style="font-family:monospace, monospace;font-size:1em;color:rgb(131,148,150);background-color:rgb(35,36,31);"><span class="nb" style="border:none;color:rgb(0,128,0);"><span class="hljs-built_in" style="color:rgb(38,139,210);">sudo</span> </span>apt-get install libcurl4-openssl-dev libssl-dev libjansson-dev automake autotools-dev build-essential
+</code></pre>
+    <p>切换到 gcc/g++ 5 (CUDA 的要求)，并 clone 仓库：</p>
+    <pre style="font-family:Menlo, Monaco, Consolas, 'Courier New', monospace;font-size:13px;line-height:1.42857;color:rgb(51,51,51);background-color:rgb(245,245,245);border:1px solid rgb(204,204,204);"><code class="hljs bash" style="font-family:monospace, monospace;font-size:1em;color:rgb(131,148,150);background-color:rgb(35,36,31);"><span class="nb" style="border:none;color:rgb(0,128,0);"><span class="hljs-built_in" style="color:rgb(38,139,210);">sudo</span> </span>apt-get install gcc-<span class="hljs-number" style="color:rgb(42,161,152);">5</span> g++-<span class="hljs-number" style="color:rgb(42,161,152);">5</span>
+<span class="nb" style="border:none;color:rgb(0,128,0);"><span class="hljs-built_in" style="color:rgb(38,139,210);">sudo</span> </span>update-alternatives <span class="nt" style="border:none;color:rgb(0,128,0);font-weight:bold;">--install</span> /usr/bin/gcc gcc /usr/bin/gcc-<span class="hljs-number" style="color:rgb(42,161,152);">5</span> <span class="hljs-number" style="color:rgb(42,161,152);">1</span>
+git <span class="hljs-built_in" style="color:rgb(230,219,116);">clone</span> https://github.com/tpruvot/ccminer
+</code></pre>
+    <p>在开始编译前，你需要检查&nbsp;nvcc_ARCH&nbsp;以确保它和你的显卡型号是兼容的：</p>
+    <p>在&nbsp;<a href="https://github.com/tpruvot/ccminer/wiki/nvcc_ARCH-=--gencode=arch=compute_20,code=%22sm_21,compute_20%22" rel="nofollow" style="background-color:transparent;color:rgb(0,182,241);border-bottom:2px solid rgb(223,223,223);font-weight:600;">wiki</a>&nbsp;中找到显卡对应 Compatibility 和与之对应的&nbsp;nvcc_ARCH，然后按照说明修改&nbsp;Makefile.am，最后编译并运行：</p>
+    <pre style="font-family:Menlo, Monaco, Consolas, 'Courier New', monospace;font-size:13px;line-height:1.42857;color:rgb(51,51,51);background-color:rgb(245,245,245);border:1px solid rgb(204,204,204);"><code class="hljs bash" style="font-family:monospace, monospace;font-size:1em;color:rgb(131,148,150);background-color:rgb(35,36,31);">./build.sh
+./ccminer <span class="nt" style="border:none;color:rgb(0,128,0);font-weight:bold;">--version</span>
+./ccminer <span class="nt" style="border:none;color:rgb(0,128,0);font-weight:bold;">-a</span> hsr <span class="nt" style="border:none;color:rgb(0,128,0);font-weight:bold;">-o</span> stratum+tcp://hcash-pool.beepool.org:<span class="hljs-number" style="color:rgb(42,161,152);">9509</span> <span class="nt" style="border:none;color:rgb(0,128,0);font-weight:bold;">-u</span> HCHSsFEuYqkGsyJZTDfetomyPb8AYkCNwB.livc <span class="nt" style="border:none;color:rgb(0,128,0);font-weight:bold;">-p</span> x <span class="nt" style="border:none;color:rgb(0,128,0);font-weight:bold;">-d</span> <span class="hljs-number" style="color:rgb(42,161,152);">0</span>,<span class="hljs-number" style="color:rgb(42,161,152);">2</span>,<span class="hljs-number" style="color:rgb(42,161,152);">3</span>
+</code></pre>
+    <p>其中，</p>
+    <ul style="list-style:none;border-left:4px solid rgb(61,169,247);">
+     <li style="margin-left:0px;list-style:inside;">-a 为算法，这里对应的是 hsr，也就是我们要挖的</li>
+     <li style="margin-left:0px;list-style:inside;">-o 为矿池服务器地址</li>
+     <li style="margin-left:0px;list-style:inside;">-u 为你的钱包地址，你需要把这个地址替换成你自己的（hsr）地址，其中 livc 为矿工名字</li>
+     <li style="margin-left:0px;list-style:inside;">-p 密码，默认即可</li>
+     <li style="margin-left:0px;list-style:inside;">-d 指定 GPU 设备，默认全部</li>
+    </ul>
+    <p>这时你的矿工已经开始工作了，你可以在&nbsp;<a href="http://hcash.beepool.org/miner/%E4%BD%A0%E7%9A%84hsr%E5%9C%B0%E5%9D%80" rel="nofollow" style="background-color:transparent;color:rgb(0,182,241);border-bottom:2px solid rgb(223,223,223);font-weight:600;">http://hcash.beepool.org/miner/你的hsr地址</a>&nbsp;查到实时的状态和收益。更多细节可以参考 ccminer 的&nbsp;<a href="https://github.com/tpruvot/ccminer/blob/windows/README.txt" rel="nofollow" style="background-color:transparent;color:rgb(0,182,241);border-bottom:2px solid rgb(223,223,223);font-weight:600;">README</a>&nbsp;和&nbsp;<a href="https://github.com/tpruvot/ccminer/blob/linux/INSTALL" rel="nofollow" style="background-color:transparent;color:rgb(0,182,241);border-bottom:2px solid rgb(223,223,223);font-weight:600;">INSTALL</a>。</p>
+    <h2 style="font-family:inherit;font-weight:500;line-height:1.1;color:inherit;font-size:18px;"><a href="http://uupool.cn/" rel="nofollow" style="background-color:transparent;color:rgb(0,182,241);border-bottom:2px solid rgb(223,223,223);">UUPool</a>&nbsp;——&nbsp;<a href="https://www.feixiaohao.com/currencies/bitcoinworld/" rel="nofollow" style="background-color:transparent;color:rgb(0,182,241);border-bottom:2px solid rgb(223,223,223);">BTW</a></h2>
+    <p>BTW 是 BTC 最近分叉的一个币，因此挖的人比较少。我们可以按照矿池的教程（<a href="http://uupool.cn/course/btw" rel="nofollow" style="background-color:transparent;color:rgb(0,182,241);border-bottom:2px solid rgb(223,223,223);font-weight:600;">http://uupool.cn/course/btw</a>）直接下载挖矿软件。</p>
+    <p>以 N 卡为例，矿池提供的 EWBF’s Zcash CUDA miner 是一个闭源挖矿软件，其项目主页发布在&nbsp;<a href="https://bitcointalk.org/index.php?topic=1707546.msg17108283#msg17108283" rel="nofollow" style="background-color:transparent;color:rgb(0,182,241);border-bottom:2px solid rgb(223,223,223);font-weight:600;">bitcointalk</a>。可见它实际上是一个 Zcash(<a href="https://www.feixiaohao.com/currencies/zcash/" rel="nofollow" style="background-color:transparent;color:rgb(0,182,241);border-bottom:2px solid rgb(223,223,223);font-weight:600;">ZEC</a>)的挖矿软件，但因为 BTW 和 ZEC 的加密算法完全一致，我们可以直接拿来用。</p>
+    <p>编辑 miner.cfg 配置文件：</p>
+    <pre style="font-family:Menlo, Monaco, Consolas, 'Courier New', monospace;font-size:13px;line-height:1.42857;color:rgb(51,51,51);background-color:rgb(245,245,245);border:1px solid rgb(204,204,204);"><code class="hljs css" style="font-family:monospace, monospace;font-size:1em;color:rgb(131,148,150);background-color:rgb(35,36,31);"><span class="o" style="border:none;color:rgb(102,102,102);"><span class="hljs-attr_selector" style="color:rgb(203,75,22);"><span class="hljs-selector-attr" style="color:rgb(230,219,116);">[</span></span></span><span class="hljs-attr_selector" style="color:rgb(203,75,22);"><span class="hljs-selector-attr" style="color:rgb(230,219,116);">server]</span></span>
+<span class="hljs-tag" style="color:rgb(133,153,0);"><span class="hljs-selector-tag" style="color:rgb(249,38,114);">server</span></span> <span class="hljs-tag" style="color:rgb(133,153,0);"><span class="hljs-selector-tag" style="color:rgb(249,38,114);">btw</span></span><span class="hljs-class"><span class="hljs-selector-class" style="color:rgb(166,226,46);">.uupool</span></span><span class="hljs-class"><span class="hljs-selector-class" style="color:rgb(166,226,46);">.cn</span></span>
+<span class="hljs-tag" style="color:rgb(133,153,0);"><span class="hljs-selector-tag" style="color:rgb(249,38,114);">port</span></span>   3600
+<span class="hljs-tag" style="color:rgb(133,153,0);"><span class="hljs-selector-tag" style="color:rgb(249,38,114);">user</span></span>   <span class="hljs-tag" style="color:rgb(133,153,0);"><span class="hljs-selector-tag" style="color:rgb(249,38,114);">WY6MG5aAubs7E3xsjErgYh3ggAzSkow2QH</span></span><span class="o" style="border:none;color:rgb(102,102,102);">(</span>你的 <span class="hljs-tag" style="color:rgb(133,153,0);"><span class="hljs-selector-tag" style="color:rgb(249,38,114);">BTW</span></span> 地址<span class="o" style="border:none;color:rgb(102,102,102);">)</span>
+<span class="hljs-tag" style="color:rgb(133,153,0);"><span class="hljs-selector-tag" style="color:rgb(249,38,114);">pass</span></span>   <span class="hljs-tag" style="color:rgb(133,153,0);"><span class="hljs-selector-tag" style="color:rgb(249,38,114);">x</span></span>
+</code></pre>
+    <p>然后把下面两个 additional server 删掉即可，这是防止一个矿池连接出错保证连接到备用矿池上，默认的两个备用矿池应该是作者的钱包地址。</p>
+    <p>最后运行程序，</p>
+    <pre style="font-family:Menlo, Monaco, Consolas, 'Courier New', monospace;font-size:13px;line-height:1.42857;color:rgb(51,51,51);background-color:rgb(245,245,245);border:1px solid rgb(204,204,204);"><code class="hljs sql" style="font-family:monospace, monospace;font-size:1em;color:rgb(131,148,150);background-color:rgb(35,36,31);">./miner <span class="nt" style="border:none;color:rgb(0,128,0);font-weight:bold;"><span class="hljs-comment" style="color:rgb(88,110,117);"><span class="hljs-comment" style="color:rgb(117,113,94);">--config</span></span></span><span class="hljs-comment" style="color:rgb(88,110,117);"><span class="hljs-comment" style="color:rgb(117,113,94);"> miner.cfg</span></span>
+</code></pre>
+    <p>在&nbsp;<a href="http://uupool.cn/btw/%E4%BD%A0%E7%9A%84btw%E5%9C%B0%E5%9D%80" rel="nofollow" style="background-color:transparent;color:rgb(0,182,241);border-bottom:2px solid rgb(223,223,223);font-weight:600;">http://uupool.cn/btw/你的btw地址</a>&nbsp;上可以查到实时的状态和收益。</p>
+    <p>值得一提的是，闭源软件由于作者的优化可能带来更多的收益，但软件作者也会收取一定的 dev fee， EWBF’s Zcash CUDA miner 默认收取开发者费用 2%，当然这个是可选的，你也可以通过&nbsp;—fee&nbsp;来调控比例甚至拒绝支付这笔费用，也可以通过一些方法 hack 掉开发者费用，当然我并不推荐这么做，因为你只是损失了 1% 或 2% 的收益，而软件的作者损失的是全部的收益。</p>
+    <p>挖矿部分到此结束，每天矿池会给你的钱包中转入收益，比如：</p>
+    <p><img src="https://img-blog.csdn.net/20180421092741814" alt=""><br></p>
+    <p>今天我收到了 3761 个 BTW，在&nbsp;<a href="http://www.coinegg.com/user/register?inv=104eb6" rel="nofollow" style="background-color:transparent;color:rgb(0,182,241);border-bottom:2px solid rgb(223,223,223);font-weight:600;">coinegg</a>&nbsp;上目前是三毛钱一个，那我昨天的收益就是 3761*0.3 = 1128 元！！哈哈，其实对于 BTW 还并不能这么算，因为 BTW 目前只上了这一个交易所，而且还没有开放充值，也就是有大量的像我一样的 BTW 矿工无法将 BTW 转入到交易所卖掉，所以当开放充值时一定会被严重砸盘的。</p>
+    <p>对于 HSR，可以将它转入到交易所换成 BTC（类似于股票交易），再通过场外交易卖成人民币。有人问为什么不直接卖成 RMB 呢？因为现在的交易所都是以 BTC 为单位的币币交易，这样就可以跟法币撇清关系，或者你也可以直接找人进行点对点的交易，这样风险比较大。</p>
+    <p>币币交易所推荐<a href="https://www.binance.com/?ref=11592137" rel="nofollow" style="background-color:transparent;color:rgb(0,182,241);border-bottom:2px solid rgb(223,223,223);font-weight:600;">币安</a>和<a href="https://www.huobi.pro/?inviter_id=11129060" rel="nofollow" style="background-color:transparent;color:rgb(0,182,241);border-bottom:2px solid rgb(223,223,223);font-weight:600;">火币</a>，币安是世界交易量第一的交易所，上面的币都比较靠谱，而火币自带法币交易，方便变现。这两个都是中国人搞的，减少潜在的风险。</p>
+    <p>最后，不要指着自己的几块卡能挖出多少钱来，如果自己娱乐的话，找几个看好的币挖着玩玩，几年后升值了也许能赚一点，如果将挖矿视为投资的话，你需要做充分的调研：对比不同的矿机、不同的挖矿软件、不同的矿池、选择最有发展前景的币种，这样才能获取最大的收益。</p>
+    <p><br></p>
+   </div>
+  </div> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/Metal1/article/details/80026353,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/Metal1/article/details/80026353,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

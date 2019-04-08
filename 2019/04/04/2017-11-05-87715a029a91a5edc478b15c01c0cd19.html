@@ -1,0 +1,174 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div class="article-copyright">
+   版权声明：本文为博主原创文章，未经博主允许不得转载。 https://blog.csdn.net/teaspring/article/details/78350888 
+ </div> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <p>以太坊作为一种数字货币以太币的运行系统，显然它也会有类似于钱包的客户端程序，用来提供管理账户余额等功能。我们知道，存放(或者绑定，挂靠)以太币的账户，在代码中以Address类型变量存在，所以能够管理多个以太坊账户应该属于客户端程序基本功能之一。本文会从管理账户信息的代码包开始，自底向上的介绍以太坊客户端程序的一些主要模块。</p> 
+  <h1>1. 管理账户信息的代码包accounts</h1> 
+  <p>在以太坊源代码的accounts代码包中，呈现账户地址的最小结构体叫Account{}，它的主要成员就是一个common.Address类型变量；管理Account的接口类叫Wallet，类如其名，&lt;Wallet&gt;声明了诸如缓存Account对象及解析Account对象等操作，管理多个&lt;Wallet&gt;对象的结构体叫Manager，这些类型的UML关系如下图所示：</p> 
+  <p><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171104180125938?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br></p> 
+  <p>在accounts代码包内部的各种结构体/接口中，<strong>accounts.Manager</strong>在相互调用关系上无疑是处于顶端的，它本身是公共类，向外暴露包括查询单个Account，返回单个或多个Wallet对象，订阅Wallet更新事件等方法。在其内部它维持一个Wallet列表，通过每个Wallet实现类持有一组Account账户对象，并通过一个event.Feed成员变量来管理所有向它订阅Wallet更新事件的需求。</p> 
+  <h2>Manager订阅Wallet的更新事件<br></h2> 
+  <p>着重介绍一下这里的订阅(subscribe)操作，Manager的Subscribe()函数定义如下:</p> 
+  <p></p> 
+  <pre><code class="language-plain">// /accounts/manager.go
+func (am *Manager) Subscribe(sink chan&lt;- WallletEvent) event.Subscription {
+&nbsp; &nbsp; return am.feed.Subscribe(sink)
+}</code></pre>首先注意
+  <strong>这个Subscribe()函数是让外部调用对象 向该Manager作订阅</strong>的操作，事实上该Manager本身也是通过相同的订阅机制去获知新添的Wallet对象，它的成员变量updates就是该Manager本身得到所订阅事件的通道。其次，Manager.Subscribe()函数只有一个chan参数，由于golang语言中channel机制的强大，
+  <strong>订阅操作仅仅需要一个chan对象</strong>就足够了，真是简单之极，根本不必知道背后是谁发起了订阅。尽管如此，这里依然值得思考的是，究竟是什么对象向Manager发起了订阅呢？其实，向某个Manager对象订阅Wallet更新事件的，
+  <strong>正是另外一个Manager对象</strong>，也就是&lt;Backend&gt;的实现类。 
+  <p></p> 
+  <p>得出以上这个结论，是很有意义的。后面可以了解到，accounts.Manager主要作为eth.Ethereum(或者les.Ethereum)的一个成员存在，而这个eth.Ethereum是以太坊客户端程序中最主要的部分，它以服务的形式提供几乎所有以太坊系统运行所需的功能，所以一个以太坊客户端可视为一个accounts.Manager的存在，那么真相就是，<strong>所有以太坊客户端之间在通过accouts.Manager相互订阅Wallet更新事件</strong>。</p> 
+  <p><br></p> 
+  <p>除Manager之外，这里其他几个重要的结构体还包括：<br></p> 
+  <ul>
+   <li><strong>event.Feed{}</strong>：它可以管理一对多的订阅模式，每个调用者提供一个chan对象，用以发送所订阅的内容。Feed{}处理的订阅内容是类型泛化的，而每一个Feed{}对象，在其生命周期内，只能处理一种类型的订阅内容，即向chan对象发送的value。Feed.Subscribe()方法返回&lt;Subscription&gt;接口的实现体feedSub{}，Feed.Subscribe()帮助Manager实现了&lt;Backend&gt;所声明的方法Subscribe()。在Feed结构体内部，CaseList被用来管理所有订阅者发过来的chan对象。</li>
+  </ul>
+  <ul>
+   <li><strong>accounts.Account{}</strong>：它的成员除了一个common.Address类型，即20bytes长的地址变量外，还有一个可选成员URL，可以是网址，也可以是本地存储的路径+文件全名。在以网址形式存在时，URL.Scheme就是网络协议名，而作为本地存储文件时，URL.Scheme是字符串常量"keystore"。</li>
+  </ul>
+  <ul>
+   <li><strong>accounts.&lt;Wallet&gt;</strong>：它很像一般意义上的“钱包”，其管理的多个Account，恰似个人用户在现实中拥有的多个银行账户，每个Account上的Ether余额，可从数据库(core.state.StateDB)中查询。&lt;Wallet&gt;接口声明的函数中，尤其需要注意的是SignXXX()，其中SignTx()是对一个Transaction(tx)对象进行数字签名，SignHash()是对一个Hash值进行数字签名，由于任何一个对象(只要可序列化)可以作Hash运算，所以这里SignHash()其实是针对任何一个对象，尤其是Block区块作数字签名。</li>
+  </ul>
+  <p>&lt;Wallet&gt;是接口类型，它的实现体包括软件钱包(keystore.keystoreWallet)和硬件钱包(usbwallet.wallet)，注意这里的硬件钱包是有实物的。&lt;Wallet&gt;之下的代码体系对于外部都不是公共的，所有向外暴露的“钱包”对象以及相关更新事件，都是以&lt;Wallet&gt;形式存在。<br></p> 
+  <h2>软件实现的Wallet - keystore<br></h2> 
+  <p>软件实现Wallet主要通过<strong>本地存储文件的方式来管理账户地址</strong>。同时，&lt;Wallet&gt;对象需要对交易或区块对象提供数字签名，这需要用到椭圆曲线数字签名(ECDSA)中的公钥+密钥，而每个公钥也是某个账户地址(Address)的来源，所以我们也需要<strong>本地存储ECDSA的公钥密钥信息</strong>。以太坊中这个通过本地存储文件的方案实现accounts.&lt;Wallet&gt;功能的机制被成为keystore。</p> 
+  <p>&lt;Wallet&gt;的软件钱包实现的相关代码都处于/accounts/keystore/路径下，这组代码的主要UML关系如下图：<br></p> 
+  <p><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171104164944637?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br></p> 
+  <p><strong>keystoreWallet{}</strong>：它是accounts.&lt;Wallet&gt;的实现类，它有一个Account对象，用来表示自身的地址，并通过Account.URL()方法，来实现上层接口&lt;Wallet&gt;.URL()方法；另外有一个KeyStore{}对象，这是这组代码中的核心类。</p> 
+  <p><strong>KeyStore{}</strong>：它为keystoreWallet结构体提供所有与Account相关的实质性的数据和操作。KeyStore{}内部有两个作数据缓存用的成员：</p> 
+  <ul>
+   <li>accountCache类型的成员cache，是所有待查找的地址信息(Account{}类型)集合；</li>
+  </ul>
+  <ul>
+   <li>map[Address]unlocked{}形式的成员unlocked，由于unlocked{}结构体仅仅简单封装了Key{}对象(Key{}中显式含有数字签名公钥密钥对)，所以map[]中可通过Address变量查找到该地址对应的原始公钥以及密钥。</li>
+  </ul>
+  <p>另外，KeyStore{}中有一个&lt;keyStore&gt;接口类型的成员storage，用来对存储在本地文件中的公钥信息Key做操作。<br></p> 
+  <p><strong>Unlocked{}</strong>：公钥密钥数据类Key{}的封装类，其内部成员除了Key{}之外，还提供了一个chan类型变量abort，它会在KeyStore对于公钥密钥信息的管理机制中发挥作用。</p> 
+  <p><strong>Key{}</strong>：存放数字签名公钥密钥的数据类，其内部显式存储了一个<strong>ecdsa.PrivateKey{}</strong>类型的成员变量，前文介绍过，Golang原生代码包中的ecdsa.PrivateKey{}中含有<strong>PublicKey{}</strong>类型的成员。而Key{}中同时携带Address类型成员变量，也可以避免公钥向地址类型转化的操作重复发生。<br></p> 
+  <p><strong>&lt;keyStore&gt;</strong>：这个接口类型声明了操作Key的函数，注意它与KeyStore{}在名字上仅有一个字母大小写的差异。</p> 
+  <p><strong>keyStorePassphrase{}</strong>：&lt;keyStore&gt;接口的实现类，它实现了以Web3 Secret Storage加密方法为公钥密钥信息进行加密管理。<br></p> 
+  <p><strong>accountCache{}</strong>：在内存中缓存keystore中某个已知路径下所有Account对象，可提供由Address类型查找到对应Account对象的操作。</p> 
+  <p><strong>fileCache{}</strong>：keystore中可观察到的文件的缓存，它可对某个路径下存放的文件进行扫描，分别返回新增文件，缺失文件，改动文件的集合。<br></p> 
+  <p><strong>watcher{}</strong>：用来监测某个路径中存储的账户文件的变化，可以定时调用accountCache的方法对文件进行扫描。</p> 
+  <h3>本地文件显式存储账户信息</h3> 
+  <p>accountCache缓存的帐号信息，均来自于某个已知路径下存储的本地文件集合。每个文件都是JSON格式，以显式存放Address： {Address: "@Address"}，所以accountCache在读取文件后，可以直接转化成Account{}对象，在代码中使用。这里以显式文件存储Address信息没有任何问题，既不用担心Address信息泄露造成危害(无法从Address反向解析出源头的ECDSA所用公钥)，又可以方便代码调用。</p> 
+  <p>在使用中，watcher对象会维护一个定时器，不断的通知accountCache扫描某个给定的路径；accountCache会调用fileCache对象去扫描该路径下的文件，并根据fileCache返回的三种文件集合：新添文件、缺失文件、改动文件，在自身维护的Account集合中作相应操作。<br></p> 
+  <h3>以本地加密文件存储公钥密钥</h3> 
+  <p>Key{}通过ecdsa.PrivateKey对象从而同时携带ECDSA所用的公钥密钥，所以这里涉及到公钥密钥部分，都是针对Key对象做的操作。keystore机制中，在本地存储的是经过加密的Key对象的JSON格式，所用的加密方法被称为Web3 Secret Storage，其实现细节可在ethereum git wiki上找到。下图是该存储方式的简单示意图：<br></p> 
+  <p align="left"><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171105101657607?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br></p> 
+  <p>对一个加密存储的Key对象做操作时，总共需要三个参数，包括调用方提供一个名为passphrase的任意字符串，以及keyStorePassphrase{}中给定的两个整型数scryptN，scryptP，这两个整型参数在keyStorePassphrase对象生命周期内部是固定不变的，只能在创建时赋值。这样不管是每次新存储一个Key对象，还是取出一个已存的Key对象，调用方都必须传入正确的参数passphrase，所以在实际应用中，以太坊钱包的客户必须自行记忆该字符串。实际上，<strong>客户为每个账户创建的密码password，程序中正是这个加密参数passphrase。</strong></p> 
+  <h3>取出的公钥密钥，在内存中限时公开</h3> 
+  <p>Key{}对象从加密过的本地文件中取出后，会被封装成unlocked{}对象，并被KeyStore放进其map[Address]*unlocked类型成员中。由于公钥密钥的重要性，显然keystore中存有的unlocked对象也应该控制公开时长。对于不同的时限需求，KeyStore{}提供了如下两个函数：</p> 
+  <p></p> 
+  <pre><code class="language-plain">// accounts/keystore/keystore.go
+func (ks *KeyStore) Unlock(a accounts.Account, passphrase string) error {
+&nbsp; &nbsp; return ks.TimedUnlock(a, passphrase, timeout:0)
+}
+func (ks *KeyStore) TimedUnlock(a accounts.Account, passphrase string, timeout time.Duration) error 
+</code></pre>TimedUnlock()函数会在给定的时限到达后，立即将已知Account对应的unlocked对象中的PrivateKey的私钥销毁(逐个bit清0)，并将该unlocked对象从KeyStore成员中删除。而Unlock()函数会将该unlocked对象一直公开，直到程序退出。注意，这里的清理工作仅仅是针对内存中的Key对象，而以加密方式存在本地的key文件不受影响。
+  <br>
+  <br>
+  <p></p> 
+  <p>keystore机制以本地文件的形式提供对账户信息和数字签名公钥私钥的存储和读取，从而以软件方式实现了accounts.&lt;Wallet&gt;的功能。它的两套独立的本地存储文件，既考虑了公钥私钥的加密又兼顾了账户信息的快速读取，体现出很全面的设计思路。<br></p> 
+  <h2>硬件设备实现的Wallet</h2> 
+  <p>以太坊除了提供软件实现的钱包之外，还有硬件实现的钱包。当然，对于硬件钱包，以太坊代码中肯定有上层代码对此进行封装。这些代码都处于/accounts/usbwallet/下，它们的UML关系如下图所示：<br></p> 
+  <p><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171105120856082?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br></p> 
+  <p>pkg accounts/usbwallet中 主要的结构包括wallet{}， Hub{}以及&lt;driver&gt;接口。<strong><br></strong></p> 
+  <ul>
+   <li><strong>wallet{}</strong>结构体实现了上层接口accounts.&lt;Wallet&gt;，向外提供accounts.&lt;Wallet&gt;的函数实现；</li>
+   <li><strong>&lt;driver&gt; </strong>接口从命名就看得出来，它用来封装下层硬件实现钱包的代码。尽管严格来说，这个接口及其实现体跟一般意义上的"驱动程序"没什么关系。</li>
+   <li><strong>ledgerDriver{}</strong>，<strong>trezorDriver{}</strong> 分别对应于两家供应商发布的硬件数字货币钱包，Ledger 和 Trezor 分别是品牌名。它们都可以支持包括以太币在内的多种数字货币。<br></li>
+   <li><strong>&lt;Hub&gt;</strong> 结构体，它实现了上层accounts.&lt;Backend&gt;接口，地位相当于account.Manager。从代码来看，所有硬件实现的&lt;Wallet&gt;部分，都会由这个Hub对象来管理。Hub{}向外以&lt;Backend&gt;接口的形式暴露，这样更上层的代码就不必区分下层钱包的具体实现是软件还是硬件了。<br></li>
+  </ul>
+  <p>需要注意的是，在目前以太坊的主干代码中，硬件实现钱包有关数字签名部分，目前只能提供针对交易进行原生的数字签名功能，即仅仅&lt;Wallet&gt;.SignTx()函数可用，其他签名功能包括SignHash()，以及SignXXXWithPassphrase()均不支持，不知道其他分支代码是否有所不同。<br></p> 
+  <h1>2. Ethereum服务</h1> 
+  <p>在了解accounts代码包之后，我们就可以来看看以太坊源代码中最著名的类型，同时也是客户端程序中最核心的部分 - <strong>eth.Ethereum</strong>。能够以整个系统名命名的结构体类型，想必功能应该非常强大，下图是它的一个简单UML图：<br></p> 
+  <p><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171104162639819?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br></p> 
+  <p>上图中央就是eth.Ethereum类型，四周都是它的成员变量类型，我们来看看其中哪些是已经了解过的：</p> 
+  <ul>
+   <li>ethdb.&lt;Database&gt; 是对应于core.state.StateDB{}的函数接口，有了&lt;Database&gt;接口类型的成员变量，可以在使用中调用StateDB{}</li>
+   <li>consensus.&lt;Engine&gt; 是共识算法代码包向外暴露的函数接口，其实现包括基于PoW的Ethash算法，和基于PoA的Clique算法。</li>
+   <li>accounts.Manager 是管理账户信息和数字签名公钥密钥信息的代码。</li>
+   <li>miner.Miner 是挖掘新区块的代码，它可以管理挖掘新区块的整个流程，调用consensus.&lt;Engine&gt;完成新区块的授勋/认证，并向外广播 新区块事件。</li>
+   <li>core.TxPool 是积累新交易(Transaction, tx)对象的代码，每个新挖掘区块，都需要从TxPool中监听Tx更新事件并获取新交易集合以组装成新区块。</li>
+   <li>core.BlockChain 是管理整个区块链数据结构的结构体。</li>
+  </ul>
+  <p><br></p> 
+  <p>以上这些都是前文中都已经具体介绍过的代码部分，接着再来看看那些新的类型：</p> 
+  <ul>
+   <li>node.&lt;Service&gt;，这是客户端程序用以对节点进行功能抽象的接口。每个客户端都把自身视为网络中的一个节点(node)，这个节点向外所提供的所有功能，由&lt;Service&gt;接口来定义。</li>
+   <li>&lt;LesServer&gt;：实现LES协议的函数接口，eth.&lt;LesServer&gt;其实是为了调用les.LesServer{}而专门创建的本地函数接口。</li>
+   <li>EthApiBackend, 它是帮助Ethereum把各项功能以RPC 服务(service)的方式暴露出去的模块，外部调用方以API的方式调用这些功能/服务。<br></li>
+   <li><strong>ProtocolManager</strong>，用来管理p2p通信。以太坊内部把每个个体(peer)与其他个体群之间的通信协议称为一种基于p2p通信协议的新协议。考虑到eth.Ethereum提供功能的全面性，它也被称为全节点服务的通信协议。</li>
+   <li>ProtocolManager的成员变量中，Fetcher用以接收其他个体发来的宣布挖掘出新区块的消息并决定向对方获取需要的部分，Downloader负责整个区块链结构的同步(下载)。<br></li>
+  </ul>
+  <p>特别介绍下LES：<strong>Light Ethereum Subprotocol(LES) </strong>是为轻量级客户端专门设计的子协议。相比于eth.Ethereum提供全节点服务的客户端，那些轻量级客户端不参与挖掘新区块，在与其他节点的通信中仅仅下载每个区快的头部(Block.Header)，对于区块链的其他部分仅仅按需对部分同步。eth.Ehereum同时也支持LES，这样一个提供全节点服务的客户端就可以与其他轻量级客户端以相同的协议通信了。</p> 
+  <p><br></p> 
+  <p>对数字货币稍有了解的人应该都清楚p2p通信协议对于此类“去中心化”系统的重大意义。的确，把p2p通信协议称为以太坊系统的基石之一都不为过，从代码角度考虑， ProtocolManager及其代码族 也属于eth代码包的一部分，不过由于这部分代码比较复杂，会在下一篇文章中专门介绍这些通信协议的实现细节。</p> 
+  <h1>3.以太坊客户端程序</h1> 
+  <p>在了解eth.Ethereum这个核心服务之后，客户端执行程序也就呼之欲出了。首先有一个node.Node{}作为承载类似eth,Ethereum这样服务模块的容器：</p> 
+  <p><img src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20171105200828850?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGVhc3ByaW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""></p> 
+  <p>Node{}对象内部有一个Service列表，所有实现了node.&lt;Service&gt;接口的对象都可以存放在Node里，比如eth.Ethereum。</p> 
+  <p>接着，go-ethereum的客户端程序geth的代码就很简单了：</p> 
+  <p></p>
+  <pre><code class="language-plain">// /cmd/geth/main.go
+func main() {
+    if err := app.Run(os.Args); err != nil {
+        fmt.Fprintln(os.Stderr, err)
+        os.Exit(1)
+    }
+}
+func geth(ctx *cil.Context) error {
+&nbsp; &nbsp; node := makeFullNode(ctx)
+&nbsp; &nbsp; startNode(ctx, node)
+&nbsp; &nbsp; node.Wait()
+&nbsp; &nbsp; return nil
+}
+...
+</code></pre>从命令行启动geth客户端的程序就是以上，创建一个node.Node对象，从配置中读出想要注册的服务名，然后一一创建相应的服务对象，Node去启动它们。 
+  <p>geth是go-ethereum自带的命令行客户端程序，目前市场上也存在许多种其他的以太坊客户端程序，有兴趣的读者可以去找来看看，有源代码就最好了可以比较一下。<br></p> 
+  <h1>小结：</h1> 
+  <p>以太坊的客户端程序，原本应该是刚接触以太坊的初学者最早遇到的部分之一。因为下载完整个源代码包之后，按照相应语言的提示进行编译，就会得到一个客户端的可执行程序。我最初首先看的客户端的代码，当追溯到eth.Ethereum{}结构体，看到那么多模块的成员变量时，就一下子明白了，整个以太坊系统运行起来的基础模块是哪些部分。</p> 
+  <ol>
+   <li>以太坊中代码中，<strong>accounts.Manager是管理账户信息的模块</strong>。Manager可以管理多个&lt;Wallet&gt;的实现，每个&lt;Wallet&gt;实现拥有多个Account账户，每个Account对应一个Address地址，而以太币Ether存放于每个Address上。以太坊同时提供软件版和硬件版的&lt;Wallet&gt;实现。</li>
+   <li>以太坊中，每个Address类型变量均来自于椭圆曲线数字签名算法(ECDSA)所用的公钥，因此<strong>钱包程序还必须提供管理数字签名公钥密钥的功能</strong>。软件版accounts.&lt;Wallet&gt;实现叫keystore，通过在本地文件系统中分别显式存储账户信息和加密存储公钥密钥的方式，提供以上功能。<br></li>
+   <li>以太坊客户端程序之间，会<strong>通过accounts.Manager模块相互订阅Wallet更新事件</strong>，以保证每个客户端个体(peer)，都能及时更新全网络中的完整Wallet列表。</li>
+   <li><strong>客户端程序的核心是eth.Ethereum</strong>，它以RPC service的形式，向外提供内部各模块的功能，诸如挖掘区块, 数据库读写，p2p下载等。</li>
+  </ol> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/teaspring/article/details/78350888,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/teaspring/article/details/78350888,&quot;}">阅读更多</a> 
+</div> 
+<script>
+						(function(){
+							function setArticleH(btnReadmore,posi){
+								var winH = $(window).height();
+								var articleBox = $("div.article_content");
+								var artH = articleBox.height();
+								if(artH > winH*posi){
+									articleBox.css({
+										'height':winH*posi+'px',
+										'overflow':'hidden'
+									})
+									btnReadmore.click(function(){
+										articleBox.removeAttr("style");
+										$(this).parent().remove();
+									})
+								}else{
+									btnReadmore.parent().remove();
+								}
+							}
+							var btnReadmore = $("#btn-readmore");
+							if(btnReadmore.length>0){
+								if(currentUserName){
+									setArticleH(btnReadmore,3);
+								}else{
+									setArticleH(btnReadmore,1.2);
+								}
+							}
+						})()
+					</script>

@@ -1,0 +1,342 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div class="markdown_views"> 
+  <p>这里结合上一节的简单加密货币讲一讲，比特币的工作原理，其实主要就是比特币如何实现<strong>去中心化</strong>(decentralization). 如果你看过上一节<a href="https://blog.csdn.net/Dylan_Frank/article/details/80211095" rel="nofollow">1.5 ScroogeCoin 一个简单的加密货币设计实现</a>，你会发现我们已经实现了一个可以工作的加密货币，唯一的缺点是他是有一个中心机构<code>Scrooge</code>控制的, 所以这一节讲一讲比特币的去中心化原理，你可以将其当做如何对Scrooge 实现去中心化。<strong>当然没有看过上一节并没有关系</strong>.</p> 
+  <p>这里我们主要解决如下几个问题:</p> 
+  <ul> 
+   <li>谁维持交易仓库</li> 
+   <li>谁去验证交易的正确性(双花，签名)</li> 
+   <li>谁创建新的比特币</li> 
+  </ul> 
+  <p></p>
+  <div class="toc"> 
+   <ul> 
+    <li><a href="#回顾" rel="nofollow">回顾</a></li> 
+    <li><a href="#比特币交易机制" rel="nofollow">比特币交易机制</a>
+     <ul> 
+      <li><a href="#安全性" rel="nofollow">安全性</a></li> 
+     </ul> </li> 
+    <li><a href="#激励与工作量证明proof-of-work" rel="nofollow">激励与工作量证明(proof-of-work)</a>
+     <ul> 
+      <li><a href="#区块奖励" rel="nofollow">区块奖励</a></li> 
+      <li><a href="#btc-mining" rel="nofollow">BTC mining</a></li> 
+      <li><a href="#transaction-feee" rel="nofollow">transaction feee</a></li> 
+     </ul> </li> 
+    <li><a href="#总结" rel="nofollow">总结</a>
+     <ul> 
+      <li><a href="#51-攻击" rel="nofollow">51% 攻击</a></li> 
+     </ul> </li> 
+   </ul> 
+  </div> 
+  <p></p> 
+  <h1 id="回顾">回顾</h1> 
+  <p>我们知道上一节的简单的加密货币系统是这样的，首先他有一个区块链，是交易仓库: <br> <img src="https://img-blog.csdn.net/20180514171440234?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0R5bGFuX0ZyYW5r/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述" title=""></p> 
+  <p>每一个区块(block) 都包含了许多次交易，每个区块都是形如 <br> <img src="https://img-blog.csdn.net/20180505234107890?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0R5bGFuX0ZyYW5r/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="" title=""></p> 
+  <p>包含接受者的公钥,和货币(称为<code>out</code>)和消费者的货币来源(称为<code>in</code>)以及签名。消费的货币是合法的，意味着他肯定是没有花过的，我们怎么知道他没有花过呢？ 简单的，会有一个为交易的货币的池子 <strong>unTxPool</strong>, 里面存放了未使用过的货币的来源区块和数目，以及所有者ID。，也就是说每个in都来自于一个为消费过的货币:</p> 
+  <p><img src="https://img-blog.csdn.net/20180505234528479?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0R5bGFuX0ZyYW5r/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="" title=""></p> 
+  <p>我们根据这个指针就能找到in的ID，也就是公钥，从而验证签名。然而谁来验证这笔交易的有效性呢？这是我们要在比特币中解决的问题。也就是比特币的去中心化</p> 
+  <h1 id="比特币交易机制">比特币交易机制</h1> 
+  <p>首先我们要说简要说说<strong>分布式共识</strong> (decentralization)，也就是一种机制，在纯粹去中心化网络中能够同步数据，我们说这里是没有一种方法设计一种这样的机制的，现行的分布式系统都不是纯粹去中心化的。都是一种结合，所以如你所料，比特币系统中安全机制也不完全是技术的，而是一部分是<strong>技术</strong>，而另外一部分是<strong>激励(incentive)</strong></p> 
+  <p>为什么 这种共识在去中心化的系统中这么难呢？下面是一些原因</p> 
+  <p><img src="https://img-blog.csdn.net/20180514191303321?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0R5bGFuX0ZyYW5r/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述" title=""></p> 
+  <p>当然这对于我们了解BTC的交易机制并不是很重要</p> 
+  <p>比特币的交易机制简单来说是这样的，首先P2P网络中的每个节点都有如下数据，一个是共有的区块链，也就是我们前面回顾的简单货币的区块链(下称为共识链(consensus chain))，这对每个节点都一样，还有一个就是每个节点都维系着他所监听到的未完成的交易信息（也就是还没有加入到区块链上去的）</p> 
+  <p>然后每一次交易的过程满足下图的协议(简化版，并不完全是): <br> <img src="https://img-blog.csdn.net/20180514191510108?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0R5bGFuX0ZyYW5r/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述" title=""></p> 
+  <ol> 
+   <li>首先新的交易比如说， Alice -&gt; bob 付款，这个消息会被广播到全网 并且附上他的签名。由于网络并不是完全图，再加上网络有延迟，等等，有些节点能听到这个消息而有的不能。 </li> 
+  </ol> 
+  <p><img src="https://img-blog.csdn.net/2018051419214683?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0R5bGFuX0ZyYW5r/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述" title=""> <br> 2. 每个节点都将其收到的新的交易加到他自己做区块(还没有添加到共识链)中 <br> 3. 每一轮，（BTC中大概10分钟）会选择一个随机的节点（，这里我们先假定我们有一种方式能够随机的以不低于 <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-1-Frame" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><mn>50</mn><mi mathvariant=&quot;normal&quot;>&amp;#x0025;</mi></math>" role="presentation" style="position: relative;">
+    <nobr aria-hidden="true">
+     <span class="math" id="MathJax-Span-1" style="width: 2.19em; display: inline-block;"><span style="display: inline-block; position: relative; width: 1.826em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.305em, 1001.77em, 2.398em, -999.997em); top: -2.185em; left: 0em;"><span class="mrow" id="MathJax-Span-2"><span class="mn" id="MathJax-Span-3" style="font-family: MathJax_Main;">50</span><span class="mi" id="MathJax-Span-4" style="font-family: MathJax_Main;">%</span></span><span style="display: inline-block; width: 0px; height: 2.19em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.122em; border-left: 0px solid; width: 0px; height: 1.066em;"></span></span>
+    </nobr><span class="MJX_Assistive_MathML" role="presentation">
+     <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mn>
+       50
+      </mn>
+      <mi mathvariant="normal">
+       %
+      </mi>
+     </math></span></span><script type="math/tex" id="MathJax-Element-1">50\%</script> 的概率找到一个诚实的节点(服从BTC协议)，其实后面我们看到这和BTC挖矿有关。）提议下一个区块，也就是将他做好的这个区块广播到全网 <br> 4. 其他节点接受这个区块当且仅当其中的所有的交易都是有效的。 <br> 5. 节点表达他们的接受仅仅是将这个区块的hash添加他所创建的下一个区块中去。</p> 
+  <p>有以下两个地方需要注意：</p> 
+  <ol> 
+   <li>可以看到，BTC系统中，只会将最长的链作为共识链，也就是说只有交易的区块在最长的链中，才会被最后确认为是一个有效交易。</li> 
+   <li>区块的提交完全是匿名的，也就是提交节点没必要公布他的，位置或者说是 IP地址。整个系统来说都是无身份的，如前面所说，你仅需要创建一对公钥私钥对就可以交易了。二将公钥发布个别人就能收到比人给你的会款。</li> 
+  </ol> 
+  <p>我们看一看这个系统是否安全</p> 
+  <h2 id="安全性">安全性</h2> 
+  <p>我们做如下假设，假设有一个敌手，我们来看一看他所能做的攻击手段。</p> 
+  <ol> 
+   <li><strong>偷币</strong> ，假设alice要偷走别人的比特币，比如说bob，他唯一能做的手段就是，广播，bob付钱给Alice这条交易信息，然而，我们知道，这条消息上一定要有bob的签名，这个签名是不可伪造的，所以交易是无效的，会被诚实的节点拒绝。</li> 
+   <li><strong>拒绝服务攻击</strong> 假设Alice和bob 有仇，那他听到关于bob的交易信息之后他能拒绝将其加入到Alice所创建的区块中吗？ 答案是肯定的。 然而我们说，这是没有意义的，应为，网络中的其他人也会受到这条消息，只要在下一轮遇到一个诚实的节点提交区块就好了，然而基于我们的假设，这是 <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-2-Frame" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><mn>50</mn><mi mathvariant=&quot;normal&quot;>&amp;#x0025;</mi></math>" role="presentation" style="position: relative;">
+     <nobr aria-hidden="true">
+      <span class="math" id="MathJax-Span-5" style="width: 2.225em; display: inline-block;"><span style="display: inline-block; position: relative; width: 1.836em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.336em, 1001.78em, 2.447em, -999.997em); top: -2.219em; left: 0em;"><span class="mrow" id="MathJax-Span-6"><span class="mn" id="MathJax-Span-7" style="font-family: MathJax_Main;">50</span><span class="mi" id="MathJax-Span-8" style="font-family: MathJax_Main;">%</span></span><span style="display: inline-block; width: 0px; height: 2.225em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.13em; border-left: 0px solid; width: 0px; height: 1.137em;"></span></span>
+     </nobr><span class="MJX_Assistive_MathML" role="presentation">
+      <math xmlns="http://www.w3.org/1998/Math/MathML">
+       <mn>
+        50
+       </mn>
+       <mi mathvariant="normal">
+        %
+       </mi>
+      </math></span></span><script type="math/tex" id="MathJax-Element-2">50\%</script> 的概率存在的。所以这虽然能成功，然而却是没有意义的</li> 
+   <li><p><strong>double-spent</strong> 这是BTC系统最大的问题。也就是说我们假设现在Alice 向bob开的网站买一个软件，用BTC付款，然后，他又将这个BTC用于支付到其他的地方，这能成功吗？</p> <p><img src="https://img-blog.csdn.net/20180514194812648?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0R5bGFuX0ZyYW5r/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述" title=""></p></li> 
+  </ol> 
+  <p>也就是说如上图所示，同一个BTC，用于两次支付。这能成功吗？从密码学的观点来说这两次支付由于没有任何先后顺序(可理解为基于网络延迟或者其他原因)，而且都具有Alice 自身的签名，显然是有效的，也就是这两次支付在密码学验证上来说是完全有效的。关键最终是否有效是看那个区块能最终进入共识链。下面我们从Bob 作为商人的角度来看待这个问题。</p> 
+  <p><img src="https://img-blog.csdn.net/20180514195341187?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0R5bGFuX0ZyYW5r/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述" title=""></p> 
+  <p>Bob 可以等待，等他发现包含给他BTC的交易进入共识链，然后在让Alice下载，由于共识链是最长的那条链，他只需要等待，等到足够多的确认(后面又多了几块)之后，他认为肯定能进入共识链了才会让Alice下载，BTC系统中选择，6次确认作为交易完成。 也就是说，BTC没有一种技术手段来保证双花，问题，然而随着确认的增加，最终没有进入共识链的概率也会随着指数级递减，所以这还是一个不错的保证。</p> 
+  <p>接下来我们谈谈，刚才所做的假设，随机挑选一个节点，如何随机挑选的，这里面涉及激励措施。</p> 
+  <h1 id="激励与工作量证明proof-of-work">激励与工作量证明(proof-of-work)</h1> 
+  <p>前面我们曾提到，BTC是一部分靠技术，一部分靠激励政策。这一节我们就好好讲讲BTC的激励</p> 
+  <h2 id="区块奖励">区块奖励</h2> 
+  <p><img src="https://img-blog.csdn.net/20180514201822499?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0R5bGFuX0ZyYW5r/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述" title=""> <br> 怎么去激励这些节点都按照bTC协议规定的方式做呢？ 惩罚那些错误提交的节点吗？这肯定不可能，因为我们并不知道，他们的地址。同理奖励那些正确操作的节点也会存在这样一个问题，我们也不清楚他们的地址。BTC系统是这样做的，每创建一个区块，会产生一个区块奖励 (block reward), 这笔钱（就是BTC） 会发个一个创建者填入的地址。而且这是系统唯一产生新的货币的方式。这笔钱不是一直不变的，每210000 个区块（大约4年）会减半，所以BTC最多有 21million个(在当前规则不变的前提下)。</p> 
+  <p>下面是btc补给图</p> 
+  <p><img src="https://img-blog.csdn.net/20180514202210546?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0R5bGFuX0ZyYW5r/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述" title=""></p> 
+  <p>当然这就产生一个问题？那所有人都想要这个区块奖励，被挑选为提议下一个区块的节点岂不是咱了很大的便宜？这太不健康了。所以这就产生了BTC挖矿系统。</p> 
+  <h2 id="btc-mining">BTC mining</h2> 
+  <p>不同的加密货币系统所采取的工作方式不一样，有的采取，按货币占有量的方式，而有的则是采用工作量方式，也就是谁的计算能力强，谁就更有可能获得下一个区块的提议权。 <br> BTC 系统中采用了我们之前提到的 Hash Puzzle，也就是提交者需要去无脑算一个随机数。</p> 
+  <p>具体来说，每个提议下一个区块的人需要计算一个随机数使其满足:</p> 
+  <p><span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-3-Frame" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><mi>H</mi><mo stretchy=&quot;false&quot;>(</mo><mi>n</mi><mi>o</mi><mi>n</mi><mi>c</mi><mi>e</mi><mrow class=&quot;MJX-TeXAtom-ORD&quot;><mo stretchy=&quot;false&quot;>|</mo></mrow><mrow class=&quot;MJX-TeXAtom-ORD&quot;><mo stretchy=&quot;false&quot;>|</mo></mrow><mi>p</mi><mi>r</mi><mi>e</mi><mi>v</mi><mi>H</mi><mi>a</mi><mi>s</mi><mi>h</mi><mrow class=&quot;MJX-TeXAtom-ORD&quot;><mo stretchy=&quot;false&quot;>|</mo></mrow><mrow class=&quot;MJX-TeXAtom-ORD&quot;><mo stretchy=&quot;false&quot;>|</mo></mrow><mi>t</mi><mi>x</mi><mrow class=&quot;MJX-TeXAtom-ORD&quot;><mo stretchy=&quot;false&quot;>|</mo></mrow><mrow class=&quot;MJX-TeXAtom-ORD&quot;><mo stretchy=&quot;false&quot;>|</mo></mrow><mo>&amp;#x2026;</mo><mrow class=&quot;MJX-TeXAtom-ORD&quot;><mo stretchy=&quot;false&quot;>|</mo></mrow><mrow class=&quot;MJX-TeXAtom-ORD&quot;><mo stretchy=&quot;false&quot;>|</mo></mrow><mi>t</mi><mi>x</mi><mo stretchy=&quot;false&quot;>)</mo><mo>&amp;lt;</mo><mi>t</mi><mi>a</mi><mi>r</mi><mi>g</mi><mi>e</mi><mi>t</mi></math>" role="presentation" style="position: relative;">
+    <nobr aria-hidden="true">
+     <span class="math" id="MathJax-Span-9" style="width: 21.773em; display: inline-block;"><span style="display: inline-block; position: relative; width: 18.128em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.305em, 1018.08em, 2.607em, -999.997em); top: -2.185em; left: 0em;"><span class="mrow" id="MathJax-Span-10"><span class="mi" id="MathJax-Span-11" style="font-family: MathJax_Math-italic;">H<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.055em;"></span></span><span class="mo" id="MathJax-Span-12" style="font-family: MathJax_Main;">(</span><span class="mi" id="MathJax-Span-13" style="font-family: MathJax_Math-italic;">n</span><span class="mi" id="MathJax-Span-14" style="font-family: MathJax_Math-italic;">o</span><span class="mi" id="MathJax-Span-15" style="font-family: MathJax_Math-italic;">n</span><span class="mi" id="MathJax-Span-16" style="font-family: MathJax_Math-italic;">c</span><span class="mi" id="MathJax-Span-17" style="font-family: MathJax_Math-italic;">e</span><span class="texatom" id="MathJax-Span-18"><span class="mrow" id="MathJax-Span-19"><span class="mo" id="MathJax-Span-20" style="font-family: MathJax_Main;">|</span></span></span><span class="texatom" id="MathJax-Span-21"><span class="mrow" id="MathJax-Span-22"><span class="mo" id="MathJax-Span-23" style="font-family: MathJax_Main;">|</span></span></span><span class="mi" id="MathJax-Span-24" style="font-family: MathJax_Math-italic;">p</span><span class="mi" id="MathJax-Span-25" style="font-family: MathJax_Math-italic;">r</span><span class="mi" id="MathJax-Span-26" style="font-family: MathJax_Math-italic;">e</span><span class="mi" id="MathJax-Span-27" style="font-family: MathJax_Math-italic;">v</span><span class="mi" id="MathJax-Span-28" style="font-family: MathJax_Math-italic;">H<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.055em;"></span></span><span class="mi" id="MathJax-Span-29" style="font-family: MathJax_Math-italic;">a</span><span class="mi" id="MathJax-Span-30" style="font-family: MathJax_Math-italic;">s</span><span class="mi" id="MathJax-Span-31" style="font-family: MathJax_Math-italic;">h</span><span class="texatom" id="MathJax-Span-32"><span class="mrow" id="MathJax-Span-33"><span class="mo" id="MathJax-Span-34" style="font-family: MathJax_Main;">|</span></span></span><span class="texatom" id="MathJax-Span-35"><span class="mrow" id="MathJax-Span-36"><span class="mo" id="MathJax-Span-37" style="font-family: MathJax_Main;">|</span></span></span><span class="mi" id="MathJax-Span-38" style="font-family: MathJax_Math-italic;">t</span><span class="mi" id="MathJax-Span-39" style="font-family: MathJax_Math-italic;">x</span><span class="texatom" id="MathJax-Span-40"><span class="mrow" id="MathJax-Span-41"><span class="mo" id="MathJax-Span-42" style="font-family: MathJax_Main;">|</span></span></span><span class="texatom" id="MathJax-Span-43"><span class="mrow" id="MathJax-Span-44"><span class="mo" id="MathJax-Span-45" style="font-family: MathJax_Main;">|</span></span></span><span class="mo" id="MathJax-Span-46" style="font-family: MathJax_Main; padding-left: 0.159em;">…</span><span class="texatom" id="MathJax-Span-47" style="padding-left: 0.159em;"><span class="mrow" id="MathJax-Span-48"><span class="mo" id="MathJax-Span-49" style="font-family: MathJax_Main;">|</span></span></span><span class="texatom" id="MathJax-Span-50"><span class="mrow" id="MathJax-Span-51"><span class="mo" id="MathJax-Span-52" style="font-family: MathJax_Main;">|</span></span></span><span class="mi" id="MathJax-Span-53" style="font-family: MathJax_Math-italic;">t</span><span class="mi" id="MathJax-Span-54" style="font-family: MathJax_Math-italic;">x</span><span class="mo" id="MathJax-Span-55" style="font-family: MathJax_Main;">)</span><span class="mo" id="MathJax-Span-56" style="font-family: MathJax_Main; padding-left: 0.263em;">&lt;</span><span class="mi" id="MathJax-Span-57" style="font-family: MathJax_Math-italic; padding-left: 0.263em;">t</span><span class="mi" id="MathJax-Span-58" style="font-family: MathJax_Math-italic;">a</span><span class="mi" id="MathJax-Span-59" style="font-family: MathJax_Math-italic;">r</span><span class="mi" id="MathJax-Span-60" style="font-family: MathJax_Math-italic;">g<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="mi" id="MathJax-Span-61" style="font-family: MathJax_Math-italic;">e</span><span class="mi" id="MathJax-Span-62" style="font-family: MathJax_Math-italic;">t</span></span><span style="display: inline-block; width: 0px; height: 2.19em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.372em; border-left: 0px solid; width: 0px; height: 1.316em;"></span></span>
+    </nobr><span class="MJX_Assistive_MathML" role="presentation">
+     <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mi>
+       H
+      </mi>
+      <mo stretchy="false">
+       (
+      </mo>
+      <mi>
+       n
+      </mi>
+      <mi>
+       o
+      </mi>
+      <mi>
+       n
+      </mi>
+      <mi>
+       c
+      </mi>
+      <mi>
+       e
+      </mi>
+      <mrow class="MJX-TeXAtom-ORD">
+       <mo stretchy="false">
+        |
+       </mo>
+      </mrow>
+      <mrow class="MJX-TeXAtom-ORD">
+       <mo stretchy="false">
+        |
+       </mo>
+      </mrow>
+      <mi>
+       p
+      </mi>
+      <mi>
+       r
+      </mi>
+      <mi>
+       e
+      </mi>
+      <mi>
+       v
+      </mi>
+      <mi>
+       H
+      </mi>
+      <mi>
+       a
+      </mi>
+      <mi>
+       s
+      </mi>
+      <mi>
+       h
+      </mi>
+      <mrow class="MJX-TeXAtom-ORD">
+       <mo stretchy="false">
+        |
+       </mo>
+      </mrow>
+      <mrow class="MJX-TeXAtom-ORD">
+       <mo stretchy="false">
+        |
+       </mo>
+      </mrow>
+      <mi>
+       t
+      </mi>
+      <mi>
+       x
+      </mi>
+      <mrow class="MJX-TeXAtom-ORD">
+       <mo stretchy="false">
+        |
+       </mo>
+      </mrow>
+      <mrow class="MJX-TeXAtom-ORD">
+       <mo stretchy="false">
+        |
+       </mo>
+      </mrow>
+      <mo>
+       …
+      </mo>
+      <mrow class="MJX-TeXAtom-ORD">
+       <mo stretchy="false">
+        |
+       </mo>
+      </mrow>
+      <mrow class="MJX-TeXAtom-ORD">
+       <mo stretchy="false">
+        |
+       </mo>
+      </mrow>
+      <mi>
+       t
+      </mi>
+      <mi>
+       x
+      </mi>
+      <mo stretchy="false">
+       )
+      </mo>
+      <mo>
+       &lt;
+      </mo>
+      <mi>
+       t
+      </mi>
+      <mi>
+       a
+      </mi>
+      <mi>
+       r
+      </mi>
+      <mi>
+       g
+      </mi>
+      <mi>
+       e
+      </mi>
+      <mi>
+       t
+      </mi>
+     </math></span></span><script type="math/tex" id="MathJax-Element-3">H(nonce||prevHash||tx||\dots||tx) <target</script>，也就是说基于Hash函数的可靠性，找到这样一个随机数的概率大概是 <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-4-Frame" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><mfrac><mrow><mi>t</mi><mi>a</mi><mi>r</mi><mi>g</mi><mi>e</mi><mi>t</mi></mrow><mrow><mi>o</mi><mi>u</mi><mi>t</mi><mi>S</mi><mi>i</mi><mi>z</mi><mi>e</mi></mrow></mfrac></math>" role="presentation" style="position: relative;">
+    <nobr aria-hidden="true">
+     <span class="math" id="MathJax-Span-63" style="width: 3.284em; display: inline-block;"><span style="display: inline-block; position: relative; width: 2.711em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(0.992em, 1002.71em, 2.711em, -999.997em); top: -2.133em; left: 0em;"><span class="mrow" id="MathJax-Span-64"><span class="mfrac" id="MathJax-Span-65"><span style="display: inline-block; position: relative; width: 2.503em; height: 0px; margin-right: 0.107em; margin-left: 0.107em;"><span style="position: absolute; clip: rect(3.44em, 1001.88em, 4.326em, -999.997em); top: -4.581em; left: 50%; margin-left: -0.935em;"><span class="mrow" id="MathJax-Span-66"><span class="mi" id="MathJax-Span-67" style="font-size: 70.7%; font-family: MathJax_Math-italic;">t</span><span class="mi" id="MathJax-Span-68" style="font-size: 70.7%; font-family: MathJax_Math-italic;">a</span><span class="mi" id="MathJax-Span-69" style="font-size: 70.7%; font-family: MathJax_Math-italic;">r</span><span class="mi" id="MathJax-Span-70" style="font-size: 70.7%; font-family: MathJax_Math-italic;">g<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="mi" id="MathJax-Span-71" style="font-size: 70.7%; font-family: MathJax_Math-italic;">e</span><span class="mi" id="MathJax-Span-72" style="font-size: 70.7%; font-family: MathJax_Math-italic;">t</span></span><span style="display: inline-block; width: 0px; height: 4.013em;"></span></span><span style="position: absolute; clip: rect(3.336em, 1002.35em, 4.169em, -999.997em); top: -3.591em; left: 50%; margin-left: -1.195em;"><span class="mrow" id="MathJax-Span-73"><span class="mi" id="MathJax-Span-74" style="font-size: 70.7%; font-family: MathJax_Math-italic;">o</span><span class="mi" id="MathJax-Span-75" style="font-size: 70.7%; font-family: MathJax_Math-italic;">u</span><span class="mi" id="MathJax-Span-76" style="font-size: 70.7%; font-family: MathJax_Math-italic;">t</span><span class="mi" id="MathJax-Span-77" style="font-size: 70.7%; font-family: MathJax_Math-italic;">S<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="mi" id="MathJax-Span-78" style="font-size: 70.7%; font-family: MathJax_Math-italic;">i</span><span class="mi" id="MathJax-Span-79" style="font-size: 70.7%; font-family: MathJax_Math-italic;">z<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="mi" id="MathJax-Span-80" style="font-size: 70.7%; font-family: MathJax_Math-italic;">e</span></span><span style="display: inline-block; width: 0px; height: 4.013em;"></span></span><span style="position: absolute; clip: rect(0.836em, 1002.5em, 1.201em, -999.997em); top: -1.247em; left: 0em;"><span style="display: inline-block; overflow: hidden; vertical-align: 0em; border-top: 1.3px solid; width: 2.503em; height: 0px;"></span><span style="display: inline-block; width: 0px; height: 1.044em;"></span></span></span></span></span><span style="display: inline-block; width: 0px; height: 2.138em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.559em; border-left: 0px solid; width: 0px; height: 1.816em;"></span></span>
+    </nobr><span class="MJX_Assistive_MathML" role="presentation">
+     <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mfrac>
+       <mrow>
+        <mi>
+         t
+        </mi>
+        <mi>
+         a
+        </mi>
+        <mi>
+         r
+        </mi>
+        <mi>
+         g
+        </mi>
+        <mi>
+         e
+        </mi>
+        <mi>
+         t
+        </mi>
+       </mrow>
+       <mrow>
+        <mi>
+         o
+        </mi>
+        <mi>
+         u
+        </mi>
+        <mi>
+         t
+        </mi>
+        <mi>
+         S
+        </mi>
+        <mi>
+         i
+        </mi>
+        <mi>
+         z
+        </mi>
+        <mi>
+         e
+        </mi>
+       </mrow>
+      </mfrac>
+     </math></span></span><script type="math/tex" id="MathJax-Element-4">\frac{target}{outSize}</script>.</p> 
+  <p><img src="https://img-blog.csdn.net/20180514202625279?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0R5bGFuX0ZyYW5r/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述" title=""> <br> 并且这个<span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-5-Frame" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><mi>t</mi><mi>a</mi><mi>r</mi><mi>g</mi><mi>e</mi><mi>t</mi></math>" role="presentation" style="position: relative;">
+    <nobr aria-hidden="true">
+     <span class="math" id="MathJax-Span-81" style="width: 3.232em; display: inline-block;"><span style="display: inline-block; position: relative; width: 2.659em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.357em, 1002.61em, 2.503em, -999.997em); top: -2.133em; left: 0em;"><span class="mrow" id="MathJax-Span-82"><span class="mi" id="MathJax-Span-83" style="font-family: MathJax_Math-italic;">t</span><span class="mi" id="MathJax-Span-84" style="font-family: MathJax_Math-italic;">a</span><span class="mi" id="MathJax-Span-85" style="font-family: MathJax_Math-italic;">r</span><span class="mi" id="MathJax-Span-86" style="font-family: MathJax_Math-italic;">g<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="mi" id="MathJax-Span-87" style="font-family: MathJax_Math-italic;">e</span><span class="mi" id="MathJax-Span-88" style="font-family: MathJax_Math-italic;">t</span></span><span style="display: inline-block; width: 0px; height: 2.138em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.309em; border-left: 0px solid; width: 0px; height: 1.128em;"></span></span>
+    </nobr><span class="MJX_Assistive_MathML" role="presentation">
+     <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mi>
+       t
+      </mi>
+      <mi>
+       a
+      </mi>
+      <mi>
+       r
+      </mi>
+      <mi>
+       g
+      </mi>
+      <mi>
+       e
+      </mi>
+      <mi>
+       t
+      </mi>
+     </math></span></span><script type="math/tex" id="MathJax-Element-5">target</script>是与整个 P2P的hash算力有关的，也就是说每两周自动调整这个target，使得，你说占地hash算力越强，你就能越有机会找到这个随机数。这就是BTC mining 而参与者称为miner。</p> 
+  <h2 id="transaction-feee">transaction feee</h2> 
+  <p>然而由前面的知识我们知道，这个BTC是会产生完的，大概到 2140年就没了，没了之后怎么运行呢，这里还有一个激励措施，就是交易费用，也就是你付给别人的钱和支出的钱的差值也会成为，miner的收入</p> 
+  <h1 id="总结">总结</h1> 
+  <p>首先我们要说BTC是一个自举(bootstrap)的系统</p> 
+  <p><img src="https://img-blog.csdn.net/20180514203405788?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0R5bGFuX0ZyYW5r/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述" title=""></p> 
+  <p>首先我们看什么情况下，有人会傻到干这种消耗资源的事情呢？必须得满足，挖矿的花费要有利可图才行。也就是以BTC衡量的美元价值，要大于挖矿所花费的价值 <br> <img src="https://img-blog.csdn.net/20180514203905375?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0R5bGFuX0ZyYW5r/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述" title=""></p> 
+  <p>也就是BTC的货币价值决定了挖矿系统的稳定性，而什么让人们认为BTC有价值呢，当然，BTC越安全，价值就越高了；显然，越多的人投入挖矿，BTC就越安全。因此这是一个自举的系统。</p> 
+  <h2 id="51-攻击">51% 攻击</h2> 
+  <p>我们看看如果有人占有 <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-6-Frame" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><mn>50</mn><mi mathvariant=&quot;normal&quot;>&amp;#x0025;</mi></math>" role="presentation" style="position: relative;">
+    <nobr aria-hidden="true">
+     <span class="math" id="MathJax-Span-89" style="width: 2.19em; display: inline-block;"><span style="display: inline-block; position: relative; width: 1.826em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.305em, 1001.77em, 2.398em, -999.997em); top: -2.185em; left: 0em;"><span class="mrow" id="MathJax-Span-90"><span class="mn" id="MathJax-Span-91" style="font-family: MathJax_Main;">50</span><span class="mi" id="MathJax-Span-92" style="font-family: MathJax_Main;">%</span></span><span style="display: inline-block; width: 0px; height: 2.19em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.122em; border-left: 0px solid; width: 0px; height: 1.066em;"></span></span>
+    </nobr><span class="MJX_Assistive_MathML" role="presentation">
+     <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mn>
+       50
+      </mn>
+      <mi mathvariant="normal">
+       %
+      </mi>
+     </math></span></span><script type="math/tex" id="MathJax-Element-6">50\%</script> 的挖矿资源他能干什么。</p> 
+  <ul> 
+   <li><strong>偷币</strong> 这是不可能的，我们知道这一环是基于密码学安全的，他不可能办到。诚实节点不承认这个交易就行了。</li> 
+   <li><strong>阻止某些交易</strong> 从区块链的角度来说，这是可能的，他有更多的机会提议下一个区块，他都能控制这个共识的过程了，显然这是可能的。然而从P2P网络来说，他不可能阻止，这个交易信息传播到其他节点。</li> 
+   <li><strong>摧毁掉BTC系统的信用</strong>, 显然这是可能的，因为大部分节点被他控制，相当于中心化，这样估计就没跟他玩这个BTC游戏了吧。所以从这个角度来说BTC肯定贬值，那这个攻击还有意义吗？更别说要占据 <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-7-Frame" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><mn>50</mn><mi mathvariant=&quot;normal&quot;>&amp;#x0025;</mi></math>" role="presentation" style="position: relative;">
+     <nobr aria-hidden="true">
+      <span class="math" id="MathJax-Span-93" style="width: 2.225em; display: inline-block;"><span style="display: inline-block; position: relative; width: 1.836em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.336em, 1001.78em, 2.447em, -999.997em); top: -2.219em; left: 0em;"><span class="mrow" id="MathJax-Span-94"><span class="mn" id="MathJax-Span-95" style="font-family: MathJax_Main;">50</span><span class="mi" id="MathJax-Span-96" style="font-family: MathJax_Main;">%</span></span><span style="display: inline-block; width: 0px; height: 2.225em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.13em; border-left: 0px solid; width: 0px; height: 1.137em;"></span></span>
+     </nobr><span class="MJX_Assistive_MathML" role="presentation">
+      <math xmlns="http://www.w3.org/1998/Math/MathML">
+       <mn>
+        50
+       </mn>
+       <mi mathvariant="normal">
+        %
+       </mi>
+      </math></span></span><script type="math/tex" id="MathJax-Element-7">50\%</script> 的计算资源是多么困难了</li> 
+  </ul> 
+ </div> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/markdown_views-ea0013b516.css"> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/Dylan_Frank/article/details/80315064,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/Dylan_Frank/article/details/80315064,&quot;}">阅读更多</a> 
+</div>

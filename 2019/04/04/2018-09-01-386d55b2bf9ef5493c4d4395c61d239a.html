@@ -1,0 +1,578 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div class="article-copyright">
+   版权声明：本文为博主原创文章，未经博主允许不得转载。 https://blog.csdn.net/langzxz/article/details/82194921 
+ </div> 
+ <div class="markdown_views"> 
+  <p>该教程来自 <a href="https://cryptozombies.io/zh/course/" rel="nofollow">CryptoZombies</a> <br> 网址：<a href="https://cryptozombies.io/zh/course/" rel="nofollow">https://cryptozombies.io/zh/course/</a> <br> CryptoZombies 是个在编游戏的过程中学习 Solidity 智能协议语言的互动教程。编游戏的同时学习以太坊的智能协议。关键是它免费。</p> 
+  <h3 id="1-智能协议的永固性">1. 智能协议的永固性</h3> 
+  <p>到现在为止，我们讲的 Solidity 和其他语言没有质的区别，它长得也很像 JavaScript.</p> 
+  <p>但是，在有几点以太坊上的 DApp 跟普通的应用程序有着天壤之别。</p> 
+  <p>第一个例子，在你把智能协议传上以太坊之后，它就变得不可更改, 这种永固性意味着你的代码永远不能被调整或更新。</p> 
+  <p>你编译的程序会一直，永久的，不可更改的，存在以太网上。这就是Solidity代码的安全性如此重要的一个原因。如果你的智能协议有任何漏洞，即使你发现了也无法补救。你只能让你的用户们放弃这个智能协议，然后转移到一个新的修复后的合约上。</p> 
+  <p>但这恰好也是智能合约的一大优势。 代码说明一切。 如果你去读智能合约的代码，并验证它，你会发现， 一旦函数被定义下来，每一次的运行，程序都会严格遵照函数中原有的代码逻辑一丝不苟地执行，完全不用担心函数被人篡改而得到意外的结果。</p> 
+  <h4 id="外部依赖关系">外部依赖关系</h4> 
+  <p>在第2课中，我们将加密小猫（CryptoKitties）合约的地址硬编码到DApp中去了。有没有想过，如果加密小猫出了点问题，比方说，集体消失了会怎么样？ 虽然这种事情几乎不可能发生，但是，如果小猫没了，我们的 DApp 也会随之失效 – 因为我们在 DApp 的代码中用“硬编码”的方式指定了加密小猫的地址，如果这个根据地址找不到小猫，我们的僵尸也就吃不到小猫了，而按照前面的描述，我们却没法修改合约去应付这个变化！</p> 
+  <p>因此，我们不能硬编码，而要采用“函数”，以便于 DApp 的关键部分可以以参数形式修改。</p> 
+  <p>比方说，我们不再一开始就把猎物地址给写入代码，而是写个函数 <code>setKittyContractAddress</code>, 运行时再设定猎物的地址，这样我们就可以随时去锁定新的猎物，也不用担心加密小猫集体消失了。</p> 
+  <p>修改第2课 zombieFeeding.sol 文件代码，使得可以通过程序更改CryptoKitties合约地址 <br> 原代码</p> 
+  <pre class="prettyprint"><code class=" hljs r">contract ZombieFeeding is ZombieFactory {
+
+  // <span class="hljs-number">1.</span> 移除这一行:
+  address ckAddress = <span class="hljs-number">0x06012c8cf97BEaD5deAe237070F9587f8E7A266d</span>;
+  // <span class="hljs-number">2.</span> 只声明变量:
+  KittyInterface kittyContract = KittyInterface(ckAddress);
+
+  // <span class="hljs-number">3.</span> 增加 setKittyContractAddress 方法
+
+  <span class="hljs-keyword">function</span> feedAndMultiply(uint _zombieId
+  <span class="hljs-keyword">...</span>
+}</code></pre> 
+  <ol> 
+   <li><p>删除采用硬编码 方式的 ckAddress 代码行。</p></li> 
+   <li><p>之前创建 kittyContract 变量的那行代码，修改为对 kittyContract 变量的声明 – 暂时不给它指定具体的实例。</p></li> 
+   <li><p>创建名为 setKittyContractAddress 的函数， 它带一个参数 _address（address类型）， 可见性设为external。</p></li> 
+   <li><p>在函数内部，添加一行代码，将 kittyContract 变量设置为返回值：KittyInterface（_address）</p></li> 
+  </ol> 
+  <p>修改后的代码：</p> 
+  <pre class="prettyprint"><code class=" hljs actionscript">contract ZombieFeeding <span class="hljs-keyword">is</span> ZombieFactory {
+
+  KittyInterface kittyContract;
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">setKittyContractAddress</span><span class="hljs-params">(address _address)</span> <span class="hljs-title">external</span> {</span>
+    kittyContract = KittyInterface(_address);
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">feedAndMultiply</span><span class="hljs-params">(uint _zombieId, uint _targetDna, string species)</span> <span class="hljs-title">public</span> {</span>
+  ..
+}</code></pre> 
+  <h3 id="2-ownable-contracts">2. Ownable Contracts</h3> 
+  <p>您有没有发现任何安全漏洞呢？</p> 
+  <p>呀！<code>setKittyContractAddress</code> 可见性居然申明为“外部的”（<code>external</code>），岂不是任何人都可以调用它！ 也就是说，任何调用该函数的人都可以更改 CryptoKitties 合约的地址，使得其他人都没法再运行我们的程序了。</p> 
+  <p>我们确实是希望这个地址能够在合约中修改，但我可没说让每个人去改它呀。</p> 
+  <p>要对付这样的情况，通常的做法是指定合约的“所有权” - 就是说，给它指定一个主人（没错，就是您），只有主人对它享有特权。</p> 
+  <h4 id="openzeppelin库的ownable-合约">OpenZeppelin库的<code>Ownable</code> 合约</h4> 
+  <p>下面是一个 Ownable 合约的例子： 来自 OpenZeppelin Solidity 库的 Ownable 合约。 OpenZeppelin 是主打安保和社区审查的智能合约库，您可以在自己的 DApps中引用。等把这一课学完，您不要催我们发布下一课，最好利用这个时间把 OpenZeppelin 的网站看看，保管您会学到很多东西！</p> 
+  <p>把楼下这个合约读读通，是不是还有些没见过代码？别担心，我们随后会解释。 <br> Ownable.sol</p> 
+  <pre class="prettyprint"><code class=" hljs java"><span class="hljs-javadoc">/** *<span class="hljs-javadoctag"> @title</span> Ownable *<span class="hljs-javadoctag"> @dev</span> The Ownable contract has an owner address, and provides basic authorization control * functions, this simplifies the implementation of "user permissions". */</span>
+contract Ownable {
+  address <span class="hljs-keyword">public</span> owner;
+
+  event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+
+  <span class="hljs-javadoc">/** *<span class="hljs-javadoctag"> @dev</span> The Ownable constructor sets the original `owner` of the contract to the sender * account. */</span>
+  function Ownable() <span class="hljs-keyword">public</span> {
+    owner = msg.sender;
+  }
+
+
+  <span class="hljs-javadoc">/** *<span class="hljs-javadoctag"> @dev</span> Throws if called by any account other than the owner. */</span>
+  modifier onlyOwner() {
+    require(msg.sender == owner);
+    _;
+  }
+
+
+  <span class="hljs-javadoc">/** *<span class="hljs-javadoctag"> @dev</span> Allows the current owner to transfer control of the contract to a newOwner. *<span class="hljs-javadoctag"> @param</span> newOwner The address to transfer ownership to. */</span>
+  function transferOwnership(address newOwner) <span class="hljs-keyword">public</span> onlyOwner {
+    require(newOwner != address(<span class="hljs-number">0</span>));
+    OwnershipTransferred(owner, newOwner);
+    owner = newOwner;
+  }
+
+}</code></pre> 
+  <p>下面有没有您没学过的东东？</p> 
+  <ul> 
+   <li><p>构造函数：<code>function Ownable()</code>是一个 <code>constructor</code> (构造函数)，构造函数不是必须的，它与合约同名，构造函数一生中唯一的一次执行，就是在合约最初被创建的时候。</p></li> 
+   <li><p>函数修饰符：<code>modifier onlyOwner()</code>。 修饰符跟函数很类似，不过是用来修饰其他已有函数用的， 在其他语句执行前，为它检查下先验条件。 在这个例子中，我们就可以写个修饰符 <code>onlyOwner</code> 检查下调用者，确保只有合约的主人才能运行本函数。我们下一章中会详细讲述修饰符，以及那个奇怪的<code>_</code>;。</p></li> 
+   <li><p><code>indexed</code> 关键字：别担心，我们还用不到它。 </p></li> 
+  </ul> 
+  <p>所以<code>Ownable</code> 合约基本都会这么干：</p> 
+  <p>合约创建，构造函数先行，将其 <code>owner</code> 设置为<code>msg.sender</code>（其部署者）</p> 
+  <p>为它加上一个修饰符 <code>onlyOwner</code>，它会限制陌生人的访问，将访问某些函数的权限锁定在 <code>owner</code> 上。</p> 
+  <p>允许将合约所有权转让给他人。</p> 
+  <p><code>onlyOwner</code> 简直人见人爱，大多数人开发自己的 Solidity DApps，都是从复制/粘贴 <code>Ownable</code> 开始的，从它再继承出的子类，并在之上进行功能开发。</p> 
+  <p>既然我们想把 <code>setKittyContractAddress</code> 限制为 <code>onlyOwner</code> ，我们也要做同样的事情。</p> 
+  <p>首先，将 Ownable 合约的代码复制一份到新文件 ownable.sol 中。 接下来，创建一个 ZombieFactory，继承 <code>Ownable</code></p> 
+  <pre class="prettyprint"><code class=" hljs r">pragma solidity ^<span class="hljs-number">0.4</span><span class="hljs-number">.19</span>;
+
+import <span class="hljs-string">"./ownable.sol"</span>;
+
+contract ZombieFactory is Ownable{
+<span class="hljs-keyword">...</span>
+}</code></pre> 
+  <h3 id="3-onlyowner-函数修饰符">3. onlyOwner 函数修饰符</h3> 
+  <p>现在我们有了个基本版的合约 <code>ZombieFactory</code> 了，它继承自 <code>Ownable</code> 接口，我们也可以给 <code>ZombieFeeding</code> 加上 <code>onlyOwner</code> 函数修饰符。</p> 
+  <p>这就是合约继承的工作原理。记得： <br> <code>ZombieFeeding</code> 是个 <code>ZombieFactory</code> <br> <code>ZombieFactory</code> 是个 <code>Ownable</code> <br> 因此 <code>ZombieFeeding</code> 也是个 <code>Ownable</code>, 并可以通过 <code>Ownable</code> 接口访问父类中的函数/事件/修饰符。往后，<code>ZombieFeeding</code> 的继承者合约们同样也可以这么延续下去。</p> 
+  <h4 id="函数修饰符">函数修饰符</h4> 
+  <p>函数修饰符看起来跟函数没什么不同，不过关键字<code>modifier</code> 告诉编译器，这是个<code>modifier(修饰符)</code>，而不是个<code>function(函数)</code>。它不能像函数那样被直接调用，只能被添加到函数定义的末尾，用以改变函数的行为。</p> 
+  <p>咱们仔细读读 <code>onlyOwner</code>:</p> 
+  <pre class="prettyprint"><code class=" hljs java"><span class="hljs-javadoc">/** *<span class="hljs-javadoctag"> @dev</span> 调用者不是‘主人’，就会抛出异常 */</span>
+modifier onlyOwner() {
+  require(msg.sender == owner);
+  _;
+}</code></pre> 
+  <p><code>onlyOwner</code> 函数修饰符是这么用的：</p> 
+  <pre class="prettyprint"><code class=" hljs actionscript">contract MyContract <span class="hljs-keyword">is</span> Ownable {
+  event LaughManiacally(string laughter);
+
+  <span class="hljs-comment">//注意！ `onlyOwner`上场 :</span>
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">likeABoss</span><span class="hljs-params">()</span> <span class="hljs-title">external</span> <span class="hljs-title">onlyOwner</span> {</span>
+    LaughManiacally(<span class="hljs-string">"Muahahahaha"</span>);
+  }
+}</code></pre> 
+  <p>注意 <code>likeABoss</code> 函数上的 <code>onlyOwner</code> 修饰符。 当你调用 <code>likeABoss</code> 时，首先执行 <code>onlyOwner</code> 中的代码， 执行到 <code>onlyOwner</code> 中的 <code>_</code>; 语句时，程序再返回并执行 <code>likeABoss</code> 中的代码。</p> 
+  <p>可见，尽管函数修饰符也可以应用到各种场合，但最常见的还是放在函数执行之前添加快速的 <code>require</code>检查。</p> 
+  <p>因为给函数添加了修饰符 <code>onlyOwner</code>，使得唯有合约的主人（也就是部署者）才能调用它。</p> 
+  <blockquote> 
+   <p>注意：主人对合约享有的特权当然是正当的，不过也可能被恶意使用。比如，万一，主人添加了个后门，允许他偷走别人的僵尸呢？ <br> 所以非常重要的是，部署在以太坊上的 DApp，并不能保证它真正做到去中心，你需要阅读并理解它的源代码，才能防止其中没有被部署者恶意植入后门；作为开发人员，如何做到既要给自己留下修复 bug 的余地，又要尽量地放权给使用者，以便让他们放心你，从而愿意把数据放在你的 DApp 中，这确实需要个微妙的平衡。</p> 
+  </blockquote> 
+  <p>现在我们可以限制第三方对 <code>setKittyContractAddress</code>的访问，除了我们自己，谁都无法去修改它。 <br> 1. 将 onlyOwner 函数修饰符添加到 setKittyContractAddress 中</p> 
+  <pre class="prettyprint"><code class=" hljs javascript"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">setKittyContractAddress</span><span class="hljs-params">(address _address)</span> <span class="hljs-title">external</span> <span class="hljs-title">onlyOwner</span> {</span>
+    kittyContract = KittyInterface(_address);
+  }</code></pre> 
+  <h3 id="4-gas-驱动以太坊dapps的能源">4. Gas - 驱动以太坊DApps的能源</h3> 
+  <p>省 gas 的招数：结构封装 （Struct packing) <br> 在第1课中，我们提到除了基本版的 <code>uint</code> 外，还有其他变种 <code>uint</code>：<code>uint8</code>，<code>uint16</code>，<code>uint32</code>等。</p> 
+  <p>通常情况下我们不会考虑使用 <code>uint</code> 变种，因为无论如何定义 <code>uint</code>的大小，Solidity 为它保留256位的存储空间。例如，使用 uint8 而不是<code>uint</code>（<code>uint256</code>）不会为你节省任何 gas。</p> 
+  <p>除非，把 <code>uint</code> 绑定到<code>struct</code>里面。</p> 
+  <p>如果一个 <code>struct</code> 中有多个 <code>uint</code>，则尽可能使用较小的 <code>uint</code>, Solidity 会将这些 <code>uint</code> 打包在一起，从而占用较少的存储空间 <br> 如：</p> 
+  <pre class="prettyprint"><code class=" hljs vala"><span class="hljs-keyword">struct</span> NormalStruct {
+  <span class="hljs-keyword">uint</span> a;
+  <span class="hljs-keyword">uint</span> b;
+  <span class="hljs-keyword">uint</span> c;
+}
+
+<span class="hljs-keyword">struct</span> MiniMe {
+  <span class="hljs-keyword">uint32</span> a;
+  <span class="hljs-keyword">uint32</span> b;
+  <span class="hljs-keyword">uint</span> c;
+}
+
+<span class="hljs-comment">// 因为使用了结构打包，`mini` 比 `normal` 占用的空间更少</span>
+NormalStruct normal = NormalStruct(<span class="hljs-number">10</span>, <span class="hljs-number">20</span>, <span class="hljs-number">30</span>);
+MiniMe mini = MiniMe(<span class="hljs-number">10</span>, <span class="hljs-number">20</span>, <span class="hljs-number">30</span>);</code></pre> 
+  <p>所以，当 <code>uint</code>定义在一个 <code>struct</code> 中的时候，尽量使用最小的整数子类型以节约空间。 并且把同样类型的变量放一起（即在<code>struct</code> 中将把变量按照类型依次放置），这样 Solidity 可以将存储空间最小化。例如，有两个 struct：</p> 
+  <p><code>uint c; uint32 a; uint32 b;</code> 和 <code>uint32 a; uint c; uint32 b;</code></p> 
+  <p>前者比后者需要的gas更少，因为前者把<code>uint32</code>放一起了。</p> 
+  <p>现在 咱们给僵尸添2个新功能：<code>le​​vel</code> 和 <code>readyTime</code> - 后者是用来实现一个“冷却定时器”，以限制僵尸猎食的频率。</p> 
+  <p>让我们回到 <code>zombiefactory.sol</code>。</p> 
+  <ol> 
+   <li>为 <code>Zombie</code> 结构体 添加两个属性：<code>level</code>（<code>uint32</code>）和<code>readyTime</code>（<code>uint32</code>）。因为希望同类型数据打成一个包，所以把它们放在结构体的末尾。</li> 
+  </ol> 
+  <p>32位足以保存僵尸的级别和时间戳了，这样比起使用普通的uint（256位），可以更紧密地封装数据，从而为我们省点 gas。</p> 
+  <pre class="prettyprint"><code class=" hljs vala"><span class="hljs-keyword">struct</span> Zombie {
+        <span class="hljs-keyword">string</span> name;
+        <span class="hljs-keyword">uint</span> dna;
+        <span class="hljs-keyword">uint32</span> level;
+        <span class="hljs-keyword">uint32</span> readyTime;
+    }</code></pre> 
+  <p>level 属性表示僵尸的级别。以后，在我们创建的战斗系统中，打胜仗的僵尸会逐渐升级并获得更多的能力。</p> 
+  <p>readyTime 稍微复杂点。我们希望增加一个“冷却周期”，表示僵尸在两次猎食或攻击之之间必须等待的时间。如果没有它，僵尸每天可能会攻击和繁殖1,000次，这样游戏就太简单了。</p> 
+  <p>为了记录僵尸在下一次进击前需要等待的时间，我们使用了 Solidity 的时间单位。</p> 
+  <h3 id="5-时间单位">5. 时间单位</h3> 
+  <p>Solidity 使用自己的本地时间单位。</p> 
+  <p>变量 <code>now</code> 将返回当前的unix时间戳（自1970年1月1日以来经过的秒数）。我写这句话时 unix 时间是 <code>1515527488</code>。</p> 
+  <blockquote> 
+   <p>注意：Unix时间传统用一个32位的整数进行存储。这会导致“2038年”问题，当这个32位的unix时间戳不够用，产生溢出，使用这个时间的遗留系统就麻烦了。所以，如果我们想让我们的 DApp 跑够20年，我们可以使用64位整数表示时间，但为此我们的用户又得支付更多的 gas。真是个两难的设计啊！</p> 
+  </blockquote> 
+  <p>Solidity 还包含秒(<code>seconds</code>)，分钟(<code>minutes</code>)，小时(<code>hours</code>)，天(<code>days</code>)，周(<code>weeks</code>) 和 年(<code>years</code>) 等时间单位。它们都会转换成对应的秒数放入 <code>uint</code> 中。所以 <code>1分钟</code> 就是 <code>60</code>，<code>1小时</code>是 <code>3600</code>（60秒×60分钟），<code>1天</code>是<code>86400</code>（24小时×60分钟×60秒），以此类推。</p> 
+  <p>下面是一些使用时间单位的实用案例</p> 
+  <pre class="prettyprint"><code class=" hljs cs"><span class="hljs-keyword">uint</span> lastUpdated;
+
+<span class="hljs-comment">// 将‘上次更新时间’ 设置为 ‘现在’</span>
+function updateTimestamp() <span class="hljs-keyword">public</span> {
+  lastUpdated = now;
+}
+
+<span class="hljs-comment">// 如果到上次`updateTimestamp` 超过5分钟，返回 'true'</span>
+<span class="hljs-comment">// 不到5分钟返回 'false'</span>
+function fiveMinutesHavePassed() <span class="hljs-keyword">public</span> view <span class="hljs-title">returns</span> (<span class="hljs-keyword">bool</span>) {
+  <span class="hljs-keyword">return</span> (now &gt;= (lastUpdated + <span class="hljs-number">5</span> minutes));
+}</code></pre> 
+  <p>有了这些工具，我们可以为僵尸设定”冷静时间“功能 <br> 现在咱们给DApp添加一个“冷却周期”的设定，让僵尸两次攻击或捕猎之间必须等待 1天。</p> 
+  <ol> 
+   <li><p>声明一个名为 <code>cooldownTime</code> 的<code>uint</code>，并将其设置为 <code>1 days</code>。（没错，”1 days“使用了复数， 否则通不过编译器）</p></li> 
+   <li><p>因为在上一章中我们给 <code>Zombie</code> 结构体中添加 <code>level</code> 和 <code>readyTime</code> 两个参数，所以现在创建一个新的 <code>Zombie</code> 结构体时，需要修改 <code>_createZombie()</code>，在其中把新旧参数都初始化一下。 <br> 修改 <code>zombies.push</code> 那一行， 添加加2个参数：<code>1</code>（表示当前的 <code>level</code> ）和<code>uint32</code>（<code>now + cooldownTime</code> 现在+冷静时间）（表示下次允许攻击的时间 <code>readyTime</code>）。</p></li> 
+  </ol> 
+  <blockquote> 
+   <p>注意：必须使用 uint32（…） 进行强制类型转换，因为 now 返回类型 uint256。所以我们需要明确将它转换成一个 uint32 类型的变量。</p> 
+  </blockquote> 
+  <p><code>now + cooldownTime</code> 将等于当前的unix时间戳（以秒为单位）加上”1天“里的秒数 - 这将等于从现在起1天后的unix时间戳。然后我们就比较，看看这个僵尸的 <code>readyTime</code>是否大于<code>now</code>，以决定再次启用僵尸的时机有没有到来。 <br> zombiefactory.sol</p> 
+  <pre class="prettyprint"><code class=" hljs r">uint cooldownTime = <span class="hljs-number">1</span> days;
+<span class="hljs-keyword">...</span>
+<span class="hljs-keyword">function</span> _createZombie(string _name, uint _dna) internal {
+    uint id = zombies.push(Zombie(_name, _dna, <span class="hljs-number">1</span>, uint32(now + cooldownTime))) - <span class="hljs-number">1</span>;
+<span class="hljs-keyword">...</span>
+}
+<span class="hljs-keyword">...</span></code></pre> 
+  <h3 id="6-将结构体作为参数传入">6. 将结构体作为参数传入</h3> 
+  <p>由于结构体的存储指针可以以参数的方式传递给一个 <code>private</code>或<code>internal</code>的函数，因此结构体可以在多个函数之间相互传递。</p> 
+  <p>遵循这样的语法：</p> 
+  <pre class="prettyprint"><code class=" hljs javascript"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">_doStuff</span><span class="hljs-params">(Zombie storage _zombie)</span> <span class="hljs-title">internal</span> {</span>
+  <span class="hljs-comment">// do stuff with _zombie</span>
+}</code></pre> 
+  <p>现在，<code>Zombie</code> 结构体中定义好了一个 <code>readyTime</code> 属性，让我们跳到 <code>zombiefeeding.sol</code>， 去实现一个”冷却周期定时器“。</p> 
+  <p>按照以下步骤修改 <code>feedAndMultiply</code>：</p> 
+  <ol> 
+   <li><p>”捕猎“行为会触发僵尸的”冷却周期“</p></li> 
+   <li><p>僵尸在这段”冷却周期“结束前不可再捕猎小猫</p></li> 
+  </ol> 
+  <p>这将限制僵尸，防止其无限制地捕猎小猫或者整天不停地繁殖。将来，当我们增加战斗功能时，我们同样用”冷却周期“限制僵尸之间打斗的频率。</p> 
+  <p>首先，我们要定义一些辅助函数，设置并检查僵尸的 <code>readyTime</code>。</p> 
+  <ol> 
+   <li><p>先定义一个 _triggerCooldown 函数。它要求一个参数，_zombie，表示一某个僵尸的存储指针。这个函数可见性设置为 internal。</p></li> 
+   <li><p>在函数中，把 _zombie.readyTime 设置为 uint32（now + cooldownTime）。</p></li> 
+   <li><p>接下来，创建一个名为 _isReady 的函数。这个函数的参数也是名为 _zombie 的 Zombie storage。这个功能只具有 internal 可见性，并返回一个 bool 值。</p></li> 
+   <li><p>函数计算返回(_zombie.readyTime &lt;= now)，值为 true 或 false。这个功能的目的是判断下次允许猎食的时间是否已经到了。</p></li> 
+  </ol> 
+  <pre class="prettyprint"><code class=" hljs javascript"> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">_triggerCooldown</span><span class="hljs-params">(Zombie storage _zombie)</span> <span class="hljs-title">internal</span> {</span>
+    _zombie.readyTime = uint32(now + cooldownTime);
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">_isReady</span><span class="hljs-params">(Zombie storage _zombie)</span> <span class="hljs-title">internal</span> <span class="hljs-title">view</span> <span class="hljs-title">returns</span> <span class="hljs-params">(bool)</span> {</span>
+      <span class="hljs-keyword">return</span> (_zombie.readyTime &lt;= now);
+  }</code></pre> 
+  <h3 id="7-公有函数和安全性">7. 公有函数和安全性</h3> 
+  <p>现在来修改 <code>feedAndMultiply</code> ，实现冷却周期。</p> 
+  <p>回顾一下这个函数，前一课上我们将其可见性设置为<code>public</code>。你必须仔细地检查所有声明为 <code>public</code> 和 <code>external</code>的函数，一个个排除用户滥用它们的可能，谨防安全漏洞。请记住，如果这些函数没有类似 <code>onlyOwner</code> 这样的函数修饰符，用户能利用各种可能的参数去调用它们。</p> 
+  <p>检查完这个函数，用户就可以直接调用这个它，并传入他们所希望的 <code>_targetDna</code> 或 <code>species</code> 。打个游戏还得遵循这么多的规则，还能不能愉快地玩耍啊！</p> 
+  <p>仔细观察，这个函数只需被 <code>feedOnKitty()</code> 调用，因此，想要防止漏洞，最简单的方法就是设其可见性为<code>internal</code>。 <br> 1. 目前函数 <code>feedAndMultiply</code> 可见性为 <code>public</code>。我们将其改为 <code>internal</code>以保障合约安全。因为我们不希望用户调用它的时候塞进一堆乱七八糟的 DNA。 <br> 2. <code>feedAndMultiply</code> 过程需要参考 <code>cooldownTime</code>。首先，在找到 <code>myZombie</code> 之后，添加一个 <code>require</code> 语句来检查<code>_isReady()</code> 并将 <code>myZombie</code> 传递给它。这样用户必须等到僵尸的 冷却周期 结束后才能执行 <code>feedAndMultiply</code> 功能。 <br> 3. 在函数结束时，调用 <code>_triggerCooldown(myZombie)</code>，标明捕猎行为触发了僵尸新的冷却周期。</p> 
+  <pre class="prettyprint"><code class=" hljs cs">function feedAndMultiply(<span class="hljs-keyword">uint</span> _zombieId, <span class="hljs-keyword">uint</span> _targetDna, <span class="hljs-keyword">string</span> species) <span class="hljs-keyword">internal</span> {
+    require(msg.sender == zombieToOwner[_zombieId]);
+    Zombie storage myZombie = zombies[_zombieId];
+    require(_isReady(myZombie));
+    _targetDna = _targetDna % dnaModulus;
+    <span class="hljs-keyword">uint</span> newDna = (myZombie.dna + _targetDna) / <span class="hljs-number">2</span>;
+    <span class="hljs-keyword">if</span> (keccak256(species) == keccak256(<span class="hljs-string">"kitty"</span>)) {
+      newDna = newDna - newDna % <span class="hljs-number">100</span> + <span class="hljs-number">99</span>;
+    }
+    _createZombie(<span class="hljs-string">"NoName"</span>, newDna);
+    _triggerCooldown(myZombie);
+  }</code></pre> 
+  <h3 id="8-带参数的函数修饰符">8. 带参数的函数修饰符</h3> 
+  <p>之前我们已经读过一个简单的函数修饰符了：<code>onlyOwner</code>。函数修饰符也可以带参数。例如：</p> 
+  <pre class="prettyprint"><code class=" hljs cs"><span class="hljs-comment">// 存储用户年龄的映射</span>
+mapping (<span class="hljs-keyword">uint</span> =&gt; <span class="hljs-keyword">uint</span>) <span class="hljs-keyword">public</span> age;
+
+<span class="hljs-comment">// 限定用户年龄的修饰符</span>
+modifier olderThan(<span class="hljs-keyword">uint</span> _age, <span class="hljs-keyword">uint</span> _userId) {
+  require(age[_userId] &gt;= _age);
+  _;
+}
+
+<span class="hljs-comment">// 必须年满16周岁才允许开车 (至少在美国是这样的).</span>
+<span class="hljs-comment">// 我们可以用如下参数调用`olderThan` 修饰符:</span>
+function driveCar(<span class="hljs-keyword">uint</span> _userId) <span class="hljs-keyword">public</span> <span class="hljs-title">olderThan</span>(16, _userId) {
+  <span class="hljs-comment">// 其余的程序逻辑</span>
+}</code></pre> 
+  <p>看到了吧，<code>olderThan</code> 修饰符可以像函数一样接收参数，是“宿主”函数 <code>driveCar</code> 把参数传递给它的修饰符的。</p> 
+  <p>来，我们自己生产一个修饰符，通过传入的<code>level</code>参数来限制僵尸使用某些特殊功能。</p> 
+  <p>我们的僵尸现在有了“冷却定时器”功能。</p> 
+  <p>接下来，我们将添加一些辅助方法。我们为您创建了一个名为 <code>zombiehelper.sol</code> 的新文件，并且将 <code>zombiefeeding.sol</code> 导入其中，这让我们的代码更整洁。</p> 
+  <p>我们打算让僵尸在达到一定水平后，获得特殊能力 <br> 1. 在ZombieHelper 中，创建一个名为 aboveLevel 的modifier，它接收2个参数， _level (uint类型) 以及 _zombieId (uint类型)。 <br> 2. 运用函数逻辑确保僵尸 zombies[_zombieId].level 大于或等于 _level。 <br> 3. 记住，修饰符的最后一行为 _;，表示修饰符调用结束后返回，并执行调用函数余下的部分。 <br> zombiehelper.sol</p> 
+  <pre class="prettyprint"><code class=" hljs d"><span class="hljs-keyword">pragma</span> solidity ^<span class="hljs-number">0.4</span>.19;
+
+<span class="hljs-keyword">import</span> <span class="hljs-string">"./zombiefeeding.sol"</span>;
+
+contract ZombieHelper <span class="hljs-keyword">is</span> ZombieFeeding {
+
+  modifier aboveLevel(<span class="hljs-built_in">uint</span> _level, <span class="hljs-built_in">uint</span> _zombieId) {
+    require(zombies[_zombieId].level &gt;= _level);
+    _;
+  }
+}</code></pre> 
+  <p>现在让我们设计一些使用 aboveLevel 修饰符的函数。</p> 
+  <p>作为游戏，您得有一些措施激励玩家们去升级他们的僵尸：</p> 
+  <ul> 
+   <li>2级以上的僵尸，玩家可给他们改名。</li> 
+   <li>20级以上的僵尸，玩家能给他们定制的 DNA。 <br> 是实现这些功能的时候了。</li> 
+  </ul> 
+  <pre class="prettyprint"><code class=" hljs javascript">  modifier aboveLevel(uint _level, uint _zombieId) {
+    <span class="hljs-built_in">require</span>(zombies[_zombieId].level &gt;= _level);
+    _;
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">changeName</span><span class="hljs-params">(uint _zombieId, string _newName)</span> <span class="hljs-title">external</span> <span class="hljs-title">aboveLevel</span><span class="hljs-params">(2, _zombieId)</span> {</span>
+    <span class="hljs-built_in">require</span>(msg.sender == zombieToOwner[_zombieId]);
+    zombies[_zombieId].name = _newName;
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">changeDna</span><span class="hljs-params">(uint _zombieId, uint _newDna)</span> <span class="hljs-title">external</span> <span class="hljs-title">aboveLevel</span><span class="hljs-params">(20, _zombieId)</span> {</span>
+    <span class="hljs-built_in">require</span>(msg.sender == zombieToOwner[_zombieId]);
+    zombies[_zombieId].dna = _newDna;
+  }</code></pre> 
+  <h3 id="9-view-函数不花-gas">9. “view” 函数不花 “gas”</h3> 
+  <p>当玩家从外部调用一个<code>view</code>函数，是不需要支付一分 gas 的。</p> 
+  <p>这是因为 <code>view</code> 函数不会真正改变区块链上的任何数据 - 它们只是读取。因此用 <code>view</code> 标记一个函数，意味着告诉 web3.js，运行这个函数只需要查询你的本地以太坊节点，而不需要在区块链上创建一个事务（事务需要运行在每个节点上，因此花费 gas）。</p> 
+  <p>稍后我们将介绍如何在自己的节点上设置 web3.js。但现在，你关键是要记住，在所能只读的函数上标记上表示“只读”的“<code>external view</code> 声明，就能为你的玩家减少在 DApp 中 gas 用量。</p> 
+  <blockquote> 
+   <p>注意：如果一个 view 函数在另一个函数的内部被调用，而调用函数与 view 函数的不属于同一个合约，也会产生调用成本。这是因为如果主调函数在以太坊创建了一个事务，它仍然需要逐个节点去验证。所以标记为 view 的函数只有在外部调用时才是免费的。</p> 
+  </blockquote> 
+  <p>现在需要添加的一个功能是：我们的 DApp 需要一个方法来查看某玩家的整个僵尸军团 - 我们称之为 getZombiesByOwner。</p> 
+  <p>实现这个功能只需从区块链中读取数据，所以它可以是一个 view 函数.</p> 
+  <p>我们来写一个”返回某玩家的整个僵尸军团“的函数。当我们从 web3.js 中调用它，即可显示某一玩家的个人资料页。</p> 
+  <p>这个函数的逻辑有点复杂，我们需要好几个章节来描述它的实现。</p> 
+  <ol> 
+   <li><p>创建一个名为 getZombiesByOwner 的新函数。它有一个名为 _owner 的 address 类型的参数。</p></li> 
+   <li><p>将其申明为 external view 函数，这样当玩家从 web3.js 中调用它时，不需要花费任何 gas。</p></li> 
+   <li><p>函数需要返回一个uint []（uint数组）。</p></li> 
+  </ol> 
+  <p>先这么声明着，我们将在下一章中填充函数体。</p> 
+  <pre class="prettyprint"><code class=" hljs javascript">  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getZombiesByOwner</span><span class="hljs-params">(address _owner)</span> <span class="hljs-title">external</span> <span class="hljs-title">view</span> <span class="hljs-title">returns</span><span class="hljs-params">(uint[])</span> {</span>
+    <span class="hljs-comment">// 在这里开始</span>
+  }</code></pre> 
+  <h3 id="10-存储非常昂贵">10. 存储非常昂贵</h3> 
+  <p>Solidity 使用<code>storage</code>(存储)是相当昂贵的，”写入“操作尤其贵。</p> 
+  <p>这是因为，无论是写入还是更改一段数据， 这都将永久性地写入区块链。”永久性“啊！需要在全球数千个节点的硬盘上存入这些数据，随着区块链的增长，拷贝份数更多，存储量也就越大。这是需要成本的！</p> 
+  <p>为了降低成本，不到万不得已，避免将数据写入存储。这也会导致效率低下的编程逻辑 - 比如每次调用一个函数，都需要在 <code>memory</code>(内存) 中重建一个数组，而不是简单地将上次计算的数组给存储下来以便快速查找。</p> 
+  <p>在大多数编程语言中，遍历大数据集合都是昂贵的。但是在 Solidity 中，使用一个标记了<code>external view</code>的函数，遍历比 <code>storage</code> 要便宜太多，因为 <code>view</code> 函数不会产生任何花销。 （gas可是真金白银啊！）。</p> 
+  <p>我们将在下一章讨论<code>for</code>循环，现在我们来看一下看如何如何在内存中声明数组。</p> 
+  <h4 id="在内存中声明数组">在内存中声明数组</h4> 
+  <p>在数组后面加上 memory关键字， 表明这个数组是仅仅在内存中创建，不需要写入外部存储，并且在函数调用结束时它就解散了。与在程序结束时把数据保存进 storage 的做法相比，内存运算可以大大节省gas开销 – 把这数组放在view里用，完全不用花钱。</p> 
+  <p>以下是申明一个内存数组的例子：</p> 
+  <pre class="prettyprint"><code class=" hljs markdown">function getArray() external pure returns(uint[]) {
+  // 初始化一个长度为3的内存数组
+  uint[<span class="hljs-link_label"></span>] memory values = new uint[](3);
+  // 赋值
+  values.push(1);
+  values.push(2);
+  values.push(3);
+  // 返回数组
+  return values;
+}</code></pre> 
+  <p>这个小例子展示了一些语法规则，下一章中，我们将通过一个实际用例，展示它和 for 循环结合的做法。</p> 
+  <p>注意：内存数组 必须 用长度参数（在本例中为3）创建。目前不支持 <code>array.push()</code>之类的方法调整数组大小，在未来的版本可能会支持长度修改。</p> 
+  <p>我们要要创建一个名为 <code>getZombiesByOwner</code> 的函数，它以<code>uint []</code>数组的形式返回某一用户所拥有的所有僵尸。</p> 
+  <ol> 
+   <li><p>声明一个名为result的uint [] memory’ （内存变量数组）</p></li> 
+   <li><p>将其设置为一个新的 uint 类型数组。数组的长度为该 <em>owner 所拥有的僵尸数量，这可通过调用 ownerZombieCount [</em> owner] 来获取。</p></li> 
+   <li><p>函数结束，返回 result 。目前它只是个空数列，我们到下一章去实现它。</p></li> 
+  </ol> 
+  <pre class="prettyprint"><code class=" hljs javascript">  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getZombiesByOwner</span><span class="hljs-params">(address _owner)</span> <span class="hljs-title">external</span> <span class="hljs-title">view</span> <span class="hljs-title">returns</span><span class="hljs-params">(uint[])</span> {</span>
+    uint[] memory result = <span class="hljs-keyword">new</span> uint[](ownerZombieCount[_owner]);
+
+    <span class="hljs-keyword">return</span> result;
+  }</code></pre> 
+  <h3 id="11-for-循环">11. For 循环</h3> 
+  <p>在之前的章节中，我们提到过，函数中使用的数组是运行时在内存中通过<code>for</code>循环实时构建，而不是预先建立在存储中的。</p> 
+  <p>为什么要这样做呢？</p> 
+  <p>为了实现 <code>getZombiesByOwner</code> 函数，一种“无脑式”的解决方案是在 <code>ZombieFactory</code> 中存入”主人“和”僵尸军团“的映射。</p> 
+  <pre class="prettyprint"><code class=" hljs cs">mapping (address =&gt; <span class="hljs-keyword">uint</span>[]) <span class="hljs-keyword">public</span> ownerToZombies</code></pre> 
+  <p>然后我们每次创建新僵尸时，执行 <code>ownerToZombies [owner] .push（zombieId）</code> 将其添加到主人的僵尸数组中。而 <code>getZombiesByOwner</code> 函数也非常简单：</p> 
+  <pre class="prettyprint"><code class=" hljs javascript"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getZombiesByOwner</span><span class="hljs-params">(address _owner)</span> <span class="hljs-title">external</span> <span class="hljs-title">view</span> <span class="hljs-title">returns</span> <span class="hljs-params">(uint[])</span> {</span>
+  <span class="hljs-keyword">return</span> ownerToZombies[_owner];
+}</code></pre> 
+  <p>这个做法有问题 <br> 做法倒是简单。可是如果我们需要一个函数来把一头僵尸转移到另一个主人名下（我们一定会在后面的课程中实现的），又会发生什么？</p> 
+  <p>这个“换主”函数要做到：</p> 
+  <p>1.将僵尸push到新主人的 <code>ownerToZombies</code> 数组中， 2.从旧主的 <code>ownerToZombies</code> 数组中移除僵尸， 3.将旧主僵尸数组中“换主僵尸”之后的的每头僵尸都往前挪一位，把挪走“换主僵尸”后留下的“空槽”填上， 4.将数组长度减1。</p> 
+  <p>但是第三步实在是太贵了！因为每挪动一头僵尸，我们都要执行一次写操作。如果一个主人有20头僵尸，而第一头被挪走了，那为了保持数组的顺序，我们得做19个写操作。</p> 
+  <p>由于写入存储是 Solidity 中最费 gas 的操作之一，使得换主函数的每次调用都非常昂贵。更糟糕的是，每次调用的时候花费的 gas 都不同！具体还取决于用户在原主军团中的僵尸头数，以及移走的僵尸所在的位置。以至于用户都不知道应该支付多少 gas。</p> 
+  <blockquote> 
+   <p>注意：当然，我们也可以把数组中最后一个僵尸往前挪来填补空槽，并将数组长度减少一。但这样每做一笔交易，都会改变僵尸军团的秩序。</p> 
+  </blockquote> 
+  <p>由于从外部调用一个 <code>view</code> 函数是免费的，我们也可以在 <code>getZombiesByOwner</code> 函数中用一个for循环遍历整个僵尸数组，把属于某个主人的僵尸挑出来构建出僵尸数组。那么我们的 <code>transfer</code> 函数将会便宜得多，因为我们不需要挪动存储里的僵尸数组重新排序，总体上这个方法会更便宜，虽然有点反直觉。</p> 
+  <p>使用 <code>for</code> 循环 <br> <code>for</code>循环的语法在 Solidity 和 JavaScript 中类似。</p> 
+  <p>来看一个创建偶数数组的例子：</p> 
+  <pre class="prettyprint"><code class=" hljs d"><span class="hljs-built_in">function</span> getEvens() <span class="hljs-keyword">pure</span> external returns(<span class="hljs-built_in">uint</span>[]) {
+  <span class="hljs-built_in">uint</span>[] memory evens = <span class="hljs-keyword">new</span> <span class="hljs-built_in">uint</span>[](<span class="hljs-number">5</span>);
+  <span class="hljs-comment">// 在新数组中记录序列号</span>
+  <span class="hljs-built_in">uint</span> counter = <span class="hljs-number">0</span>;
+  <span class="hljs-comment">// 在循环从1迭代到10：</span>
+  <span class="hljs-keyword">for</span> (<span class="hljs-built_in">uint</span> i = <span class="hljs-number">1</span>; i &lt;= <span class="hljs-number">10</span>; i++) {
+    <span class="hljs-comment">// 如果 `i` 是偶数...</span>
+    <span class="hljs-keyword">if</span> (i % <span class="hljs-number">2</span> == <span class="hljs-number">0</span>) {
+      <span class="hljs-comment">// 把它加入偶数数组</span>
+      evens[counter] = i;
+      <span class="hljs-comment">//索引加一， 指向下一个空的‘even’</span>
+      counter++;
+    }
+  }
+  <span class="hljs-keyword">return</span> evens;
+}</code></pre> 
+  <p>这个函数将返回一个形为 <code>[2,4,6,8,10]</code> 的数组。</p> 
+  <p>我们回到 <code>getZombiesByOwner</code> 函数， 通过一条 <code>for</code> 循环来遍历 DApp 中所有的僵尸， 将给定的‘用户id’与每头僵尸的‘主人’进行比较，并在函数返回之前将它们推送到我们的<code>result</code> 数组中。</p> 
+  <ol> 
+   <li><p>声明一个变量 <code>counter</code>，属性为 <code>uint</code>，设其值为 <code>0</code> 。我们用这个变量作为 <code>result</code> 数组的索引。</p></li> 
+   <li><p>声明一个 <code>for</code> 循环， 从 <code>uint i = 0</code> 到 <code>i &lt;zombies.length</code>。它将遍历数组中的每一头僵尸。</p></li> 
+   <li><p>在每一轮 <code>for</code> 循环中，用一个 <code>if</code> 语句来检查 <code>zombieToOwner [i]</code>是否等于 <code>_owner</code>。这会比较两个地址是否匹配。</p></li> 
+   <li><p>在 <code>if</code> 语句中：</p> 
+    <ol>
+     <li>通过将 <code>result [counter]</code> 设置为 <code>i</code>，将僵尸ID添加到 result 数组中。</li> 
+     <li>将<code>counter</code>加1（参见上面的for循环示例）。 <br> 就是这样 - 这个函数能返回 <code>_owner</code> 所拥有的僵尸数组，不花一分钱 gas。</li>
+    </ol></li> 
+  </ol> 
+  <pre class="prettyprint"><code class=" hljs matlab">  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getZombiesByOwner</span><span class="hljs-params">(address _owner)</span> <span class="hljs-title">external</span> <span class="hljs-title">view</span> <span class="hljs-title">returns</span><span class="hljs-params">(uint[])</span> {</span>
+    uint<span class="hljs-matrix">[]</span> memory result = new uint<span class="hljs-matrix">[]</span>(ownerZombieCount<span class="hljs-matrix">[_owner]</span>);
+    uint counter = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span> (uint <span class="hljs-built_in">i</span> = <span class="hljs-number">0</span>; <span class="hljs-built_in">i</span> &lt; <span class="hljs-transposed_variable">zombies.</span><span class="hljs-built_in">length</span>; <span class="hljs-built_in">i</span>++) <span class="hljs-cell">{ if (zombieToOwner[i] == _owner) { result[counter] = i; counter++; }</span>
+    }
+    <span class="hljs-keyword">return</span> result;
+  }</code></pre> 
+  <p>让我们回顾一下：</p> 
+  <ul> 
+   <li>添加了一种新方法来修改CryptoKitties合约</li> 
+   <li>学会使用 onlyOwner 进行调用权限限制</li> 
+   <li>了解了 gas 和 gas 的优化</li> 
+   <li>为僵尸添加了 “级别” 和 “冷却周期”属性</li> 
+   <li>当僵尸达到一定级别时，允许修改僵尸的名字和 DNA</li> 
+   <li>最后，定义了一个函数，用以返回某个玩家的僵尸军团</li> 
+  </ul> 
+  <p>目前所有的合约文件</p> 
+  <p>ownable.sol</p> 
+  <pre class="prettyprint"><code class=" hljs java"><span class="hljs-javadoc">/** *<span class="hljs-javadoctag"> @title</span> Ownable *<span class="hljs-javadoctag"> @dev</span> The Ownable contract has an owner address, and provides basic authorization control * functions, this simplifies the implementation of "user permissions". */</span>
+contract Ownable {
+  address <span class="hljs-keyword">public</span> owner;
+
+  event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+
+  <span class="hljs-javadoc">/** *<span class="hljs-javadoctag"> @dev</span> The Ownable constructor sets the original `owner` of the contract to the sender * account. */</span>
+  function Ownable() <span class="hljs-keyword">public</span> {
+    owner = msg.sender;
+  }
+
+
+  <span class="hljs-javadoc">/** *<span class="hljs-javadoctag"> @dev</span> Throws if called by any account other than the owner. */</span>
+  modifier onlyOwner() {
+    require(msg.sender == owner);
+    _;
+  }
+
+
+  <span class="hljs-javadoc">/** *<span class="hljs-javadoctag"> @dev</span> Allows the current owner to transfer control of the contract to a newOwner. *<span class="hljs-javadoctag"> @param</span> newOwner The address to transfer ownership to. */</span>
+  function transferOwnership(address newOwner) <span class="hljs-keyword">public</span> onlyOwner {
+    require(newOwner != address(<span class="hljs-number">0</span>));
+    OwnershipTransferred(owner, newOwner);
+    owner = newOwner;
+  }
+
+}
+</code></pre> 
+  <p>zombiefactory.sol</p> 
+  <pre class="prettyprint"><code class=" hljs cs">pragma solidity ^<span class="hljs-number">0.4</span><span class="hljs-number">.19</span>;
+
+import <span class="hljs-string">"./ownable.sol"</span>;
+
+contract ZombieFactory <span class="hljs-keyword">is</span> Ownable {
+
+    <span class="hljs-keyword">event</span> NewZombie(<span class="hljs-keyword">uint</span> zombieId, <span class="hljs-keyword">string</span> name, <span class="hljs-keyword">uint</span> dna);
+
+    <span class="hljs-keyword">uint</span> dnaDigits = <span class="hljs-number">16</span>;
+    <span class="hljs-keyword">uint</span> dnaModulus = <span class="hljs-number">10</span> ** dnaDigits;
+    <span class="hljs-keyword">uint</span> cooldownTime = <span class="hljs-number">1</span> days;
+
+    <span class="hljs-keyword">struct</span> Zombie {
+      <span class="hljs-keyword">string</span> name;
+      <span class="hljs-keyword">uint</span> dna;
+      uint32 level;
+      uint32 readyTime;
+    }
+
+    Zombie[] <span class="hljs-keyword">public</span> zombies;
+
+    mapping (<span class="hljs-keyword">uint</span> =&gt; address) <span class="hljs-keyword">public</span> zombieToOwner;
+    mapping (address =&gt; <span class="hljs-keyword">uint</span>) ownerZombieCount;
+
+    function _createZombie(<span class="hljs-keyword">string</span> _name, <span class="hljs-keyword">uint</span> _dna) <span class="hljs-keyword">internal</span> {
+        <span class="hljs-keyword">uint</span> id = zombies.push(Zombie(_name, _dna, <span class="hljs-number">1</span>, uint32(now + cooldownTime))) - <span class="hljs-number">1</span>;
+        zombieToOwner[id] = msg.sender;
+        ownerZombieCount[msg.sender]++;
+        NewZombie(id, _name, _dna);
+    }
+
+    function _generateRandomDna(<span class="hljs-keyword">string</span> _str) <span class="hljs-keyword">private</span> view <span class="hljs-title">returns</span> (<span class="hljs-keyword">uint</span>) {
+        <span class="hljs-keyword">uint</span> rand = <span class="hljs-keyword">uint</span>(keccak256(_str));
+        <span class="hljs-keyword">return</span> rand % dnaModulus;
+    }
+
+    function createRandomZombie(<span class="hljs-keyword">string</span> _name) <span class="hljs-keyword">public</span> {
+        require(ownerZombieCount[msg.sender] == <span class="hljs-number">0</span>);
+        <span class="hljs-keyword">uint</span> randDna = _generateRandomDna(_name);
+        randDna = randDna - randDna % <span class="hljs-number">100</span>;
+        _createZombie(_name, randDna);
+    }
+
+}
+</code></pre> 
+  <p>zombiefeeding.sol</p> 
+  <pre class="prettyprint"><code class=" hljs javascript">pragma solidity ^<span class="hljs-number">0.4</span><span class="hljs-number">.19</span>;
+
+import <span class="hljs-string">"./zombiefactory.sol"</span>;
+
+contract KittyInterface {
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getKitty</span><span class="hljs-params">(uint256 _id)</span> <span class="hljs-title">external</span> <span class="hljs-title">view</span> <span class="hljs-title">returns</span> <span class="hljs-params">( bool isGestating, bool isReady, uint256 cooldownIndex, uint256 nextActionAt, uint256 siringWithId, uint256 birthTime, uint256 matronId, uint256 sireId, uint256 generation, uint256 genes )</span>; } <span class="hljs-title">contract</span> <span class="hljs-title">ZombieFeeding</span> <span class="hljs-title">is</span> <span class="hljs-title">ZombieFactory</span> {</span>
+
+  KittyInterface kittyContract;
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">setKittyContractAddress</span><span class="hljs-params">(address _address)</span> <span class="hljs-title">external</span> <span class="hljs-title">onlyOwner</span> {</span>
+    kittyContract = KittyInterface(_address);
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">_triggerCooldown</span><span class="hljs-params">(Zombie storage _zombie)</span> <span class="hljs-title">internal</span> {</span>
+    _zombie.readyTime = uint32(now + cooldownTime);
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">_isReady</span><span class="hljs-params">(Zombie storage _zombie)</span> <span class="hljs-title">internal</span> <span class="hljs-title">view</span> <span class="hljs-title">returns</span> <span class="hljs-params">(bool)</span> {</span>
+      <span class="hljs-keyword">return</span> (_zombie.readyTime &lt;= now);
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">feedAndMultiply</span><span class="hljs-params">(uint _zombieId, uint _targetDna, string _species)</span> <span class="hljs-title">internal</span> {</span>
+    <span class="hljs-built_in">require</span>(msg.sender == zombieToOwner[_zombieId]);
+    Zombie storage myZombie = zombies[_zombieId];
+    <span class="hljs-built_in">require</span>(_isReady(myZombie));
+    _targetDna = _targetDna % dnaModulus;
+    uint newDna = (myZombie.dna + _targetDna) / <span class="hljs-number">2</span>;
+    <span class="hljs-keyword">if</span> (keccak256(_species) == keccak256(<span class="hljs-string">"kitty"</span>)) {
+      newDna = newDna - newDna % <span class="hljs-number">100</span> + <span class="hljs-number">99</span>;
+    }
+    _createZombie(<span class="hljs-string">"NoName"</span>, newDna);
+    _triggerCooldown(myZombie);
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">feedOnKitty</span><span class="hljs-params">(uint _zombieId, uint _kittyId)</span> <span class="hljs-title">public</span> {</span>
+    uint kittyDna;
+    (,,,,,,,,,kittyDna) = kittyContract.getKitty(_kittyId);
+    feedAndMultiply(_zombieId, kittyDna, <span class="hljs-string">"kitty"</span>);
+  }
+}
+</code></pre> 
+  <p>zombiehelper.sol</p> 
+  <pre class="prettyprint"><code class=" hljs d"><span class="hljs-keyword">pragma</span> solidity ^<span class="hljs-number">0.4</span>.19;
+
+<span class="hljs-keyword">import</span> <span class="hljs-string">"./zombiefeeding.sol"</span>;
+
+contract ZombieHelper <span class="hljs-keyword">is</span> ZombieFeeding {
+
+  modifier aboveLevel(<span class="hljs-built_in">uint</span> _level, <span class="hljs-built_in">uint</span> _zombieId) {
+    require(zombies[_zombieId].level &gt;= _level);
+    _;
+  }
+
+  <span class="hljs-built_in">function</span> changeName(<span class="hljs-built_in">uint</span> _zombieId, <span class="hljs-built_in">string</span> _newName) external aboveLevel(<span class="hljs-number">2</span>, _zombieId) {
+    require(msg.sender == zombieToOwner[_zombieId]);
+    zombies[_zombieId].name = _newName;
+  }
+
+  <span class="hljs-built_in">function</span> changeDna(<span class="hljs-built_in">uint</span> _zombieId, <span class="hljs-built_in">uint</span> _newDna) external aboveLevel(<span class="hljs-number">20</span>, _zombieId) {
+    require(msg.sender == zombieToOwner[_zombieId]);
+    zombies[_zombieId].dna = _newDna;
+  }
+
+  <span class="hljs-built_in">function</span> getZombiesByOwner(address _owner) external view returns(<span class="hljs-built_in">uint</span>[]) {
+    <span class="hljs-built_in">uint</span>[] memory result = <span class="hljs-keyword">new</span> <span class="hljs-built_in">uint</span>[](ownerZombieCount[_owner]);
+    <span class="hljs-built_in">uint</span> counter = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span> (<span class="hljs-built_in">uint</span> i = <span class="hljs-number">0</span>; i &lt; zombies.length; i++) {
+      <span class="hljs-keyword">if</span> (zombieToOwner[i] == _owner) {
+        result[counter] = i;
+        counter++;
+      }
+    }
+    <span class="hljs-keyword">return</span> result;
+  }
+
+}</code></pre> 
+ </div> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/markdown_views-ea0013b516.css"> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/langzxz/article/details/82194921,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/langzxz/article/details/82194921,&quot;}">阅读更多</a> 
+ <a class="btn" href="https://passport.csdn.net/account/login?utm_source=csdn_blog_pc_more_login" target="_self" id="btn-lobinreadmore" data-track-view="{&quot;mod&quot;:&quot;popu_557&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/langzxz/article/details/82194921,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_557&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/langzxz/article/details/82194921,&quot;}">登录后自动展开</a> 
+</div>

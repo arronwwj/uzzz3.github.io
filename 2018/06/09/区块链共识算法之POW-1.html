@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>区块链共识算法之POW（1） | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="区块链共识算法之POW（1）" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="&nbsp; 共识机制是区块链的核心基石，是区块链系统安全性的重要保障。区块链是 一个去中心化的系统，共识机制通过数学的方式，让分散在全球各地成千上万的节点就区块的创建达成一致的意见。共识机制中还包含了促使区块链系统有效运 转的激励机制，是区块链建立信任的基础。 &nbsp;&nbsp;&nbsp;&nbsp;区块链公链常用的共识机制有 POW、POS、DPOS、BFT 以及多种机制混合而成的共识机制等。共识是指系统节点达成一致的过程，而分布式系统的一致性体现在三个方面: &nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;最终性(Termination): 所有进程最终会在有限步数中结束并选取一 个值, 算法不会无尽执行下去。 &nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;统一性(Agreement): 所有进程必须同意同一个值。 &nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;合法性(Validity): 输出内容是输入内容按照系统规则生成的，且输出内容合法。 &nbsp;&nbsp; &nbsp;最终性衡量了达成共识的效率，在一些对交易确认的实时性要求高的场景显 得非常重要，而统一性和合法性表征了共识的安全性。在区块链系统中，去中心 化程度表征了分布式系统的大规模协作程度。因此，我们从效率、安全性和去中 心化程度这三个维度去评价各种共识机制，也就是长铗提出的著名的“不可能三 角”理论。 1. POW共识机制 &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;比特币采用的 POW 工作量证明共识机制，在生成区块时，系统让所有节点 公平地去计算一个随机数，最先寻找到随机数的节点即是这个区块的生产者，并 获得相应的区块奖励。由于哈希函数是散列函数，求解随机数的唯一方法在数学 上只能是穷举，随机性非常好，每个人都可以参与协议的执行。由于梅克尔树根的设置，哈希函数的解的验证过程也能迅速实现。因此，比特币的 POW 共识机 制门槛很低，无需中心化权威的许可，人人都可以参与，并且每一个参与者都无 需身份认证。 &nbsp;&nbsp; &nbsp;同时，中本聪通过工作量证明的机制破解了无门槛分布式系统的“女巫攻击” 问题。对系统发起攻击需要掌握超过 50%的算力，系统的安全保障较强。 &nbsp;&nbsp; &nbsp;POW 共识的优点可归纳为: &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;算法简单，容易实现，节点可自由进入，去中心化程度高。 &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;破坏系统需要投入极大的成本，安全性极高。 &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;区块生产者的选择通过节点求解哈希函数实现，提案的产生、验证到共识的最终达成过程是一个纯数学问题，节点间无需交换额外的信息即可达成共识，整个过程不需要人性的参与。 &nbsp;&nbsp; &nbsp;比特币系统的设定在保证安全性的的前提下，牺牲了一部分最终性。因此，POW 共识算法也存在一些问题: &nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;为了保证去中心化程度，区块的确认时间难以缩短。 &nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;没有最终性，需要检查点机制来弥补最终性，但随着确认次数的增加，达成共识的可能性也呈指数级地增长。 由于这两个方面的问题，一笔交易为了确保安全，要在 6 个新的区块产生后才能在全网得到确认，也就是说一个交易的确认延迟时间大概为 1 小时，这无法 满足现实世界中对交易实时性要求很高的应用场景。 &nbsp;&nbsp; &nbsp;另一方面，POW 共识算法带来了硬件设备的大量浪费。随着比特币价值的 增长，比特币算力竞赛经历了从 CPU 到 GPU，再到 ASIC 专用芯片的阶段。算力强大的 ASIC 芯片矿机将挖矿算法硬件化，而 ASIC 芯片矿机在淘汰后，没有 其他的用途，造成了大量的硬件浪费。 2.POW共识机制的回归 (1) 各种共识机制的比较 &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;比特币是解决了拜占庭将军问题的分布式账本，在完全开放的环境中，实现 了数据的一致性和安全性。但比特币采用的POW 共识机制被广泛质疑为: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;◼ 消耗大量能源和硬件设备; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;◼ 区块同步时间长，扩展性弱，TPS 低。 于是效率更高、被认为更加节能环保的 POS、DPOS、BFT 等共识机制相继 问世，并得到广泛的应用。各种共识机制的特点: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;◼ 在 POS 共识机制下，全网节点根据权益大小按照某种规则参与区块生 产者的选举，共识过程中节点系统开放。但选举过程效率低下，同时由 于选举过程复杂，伴随着许多安全问题。 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;◼ DPOS 共识通过代理人制度，大幅度提升了 POS 共识的选举效率。但 在共识过程中，节点系统是封闭的，而且去中心化程度低 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;◼ BFT 类的共识机制性能较高并具备良好的最终性，但其容错率低，且由 于节点的扩展性问题，更加适用于相对封闭的节点系统。 &nbsp; &nbsp;具体优缺点如下表： 共识机制 优势 劣势 POW 1. 安全稳定，节点自由度高 2. 去中心化程度高，节点系统开放 1.扩展性弱，性能低 2.没有最终性 3.造成硬件设备浪费 POS 1. 能源耗费少 2. 去中心化程度较高，节点系统开放 1.实现过程复杂&nbsp; 2. 存在安全漏洞 DPOS 1.能源耗费少 2. 性能高 3. 具备最终性 去中心化程度弱,节点系统相对封闭 BFT 1.性能较高&nbsp; 2. 具备最终性&nbsp; 3. 安全性好 1.去中心化程度弱，节点系统 封闭 2. 容错率低 &nbsp; (2) POW 共识机制能源消耗的必要性 &nbsp;&nbsp; &nbsp;正如张首晟教授所言，现实世界的熵总是在增加的6。POW 共识机制将虚拟 世界和现实世界连接起来，分布式系统中达成共识的过程是一个熵减的过程，这 需要现实世界的熵增来平衡，能量消耗即是提供熵增的平衡方式。 &nbsp;&nbsp; &nbsp;相比于 POW 共识把系统的安全性交给了数学和能量消耗，POS 共识把系 统的安全性交给了人性的博弈。POS 共识是虚拟世界中的一个封闭系统，如果 共识的达成没有付出任何代价，共识的可靠性就可能存疑，人性博弈过程中的混 乱一定会暴露出来。 &nbsp;&nbsp; &nbsp;POS 的升级模式 DPOS 共识机制的共识过程类似于精英代议制，是一种常 设特权的治理架构，容易产生腐化。卢梭对代议制的描述是:“民意一旦被代表， 终究会被扭曲”。DPOS 共识机制是为了效率而生的，它更加适用于对性能要求 极高的相对封闭的商业系统。 &nbsp;&nbsp; &nbsp;而对于 BFT 共识机制，由于节点扩展性的缺陷，其共识节点的选择过程一 样是封闭或者需要验证的，因而也更加适用于相对封闭的应用环境。 &nbsp;&nbsp; &nbsp;信任的产生是需要付出代价的，POW 共识机制所消耗的能量，不仅不是缺 陷，反而是信任产生过程中最有效的平衡机制。 (3) POW 共识在新一代公链中的大规模应用 &nbsp;&nbsp; &nbsp;就现实可执行性角度而言，BitMEX 的研究报告7指出，POW 共识机制解决 了区块链分叉的选择、数字货币分发、谁产生区块、什么时间产生区块这四个问 题，而改进的 POS 共识机制只是解决了区块链分叉的选择问题，其他三个问题 都是开放的，需要更好的解决路径。 &nbsp;&nbsp; &nbsp;包括 Bytom、Aeternity、Aelf、Zilliqa 在内的新一代公链都包含了 POW 共识机制，第二代公链以太坊第三阶段的 Metropolis 也仍是 POS 和 POW 的 混合体。 公链项目 共识机制 Bytom POW : 人工智能&nbsp; ASIC&nbsp; 芯片友好型&nbsp; POW&nbsp; 共识机制。 Aeternity POW+POS : POW&nbsp; 机制生产区块，重大决策由&nbsp; POS&nbsp; 机制完成，赋予代币持有者权利。 Aelf POW+POS : 主链采用&nbsp; POS&nbsp; 共识机制，侧链采用&nbsp; POW&nbsp; 共识机制。 POS&nbsp; 共识机制的管理成本很高，因而适用于主链，侧链采用 POW&nbsp; 共识机制可安全、自主运行。 Zilliqa POW+PBFT : 利用&nbsp; POW&nbsp; 共识机制的安全性对节点进行验证，验证过的节点交于&nbsp; PBFT&nbsp; 共识机制决策。 Ethereum&nbsp; 第三阶段 Metropolis POW+POS : POW&nbsp; 共识机制生产区块，只是在每&nbsp; 100&nbsp; 个区块处利用&nbsp; POS&nbsp; 人为的设置检查点，赋予最终性。 &nbsp;&nbsp; &nbsp;上表所列的公链共识机制选择告诉我们，尽管许多公链有自己独特的设计哲 学，但出于安全性考虑，它们依然绕不开 POW 共识机制的保护。对于开放的、 自治度高的公链环境，POW 共识机制有更好的适用性;而 POS 共识过程的管 理成本很高，在算法更改、分叉选择等重大决策过程中，POS 共识机制才有其 使用价值，但这已经是一种相对中心化的决策机制。 (4) Bytom 的 POW 共识算法 &nbsp;&nbsp; &nbsp;虽然 POW 共识机制的能源消耗是一种有效的平衡机制，但是 POW 算法的 ASIC 芯片在淘汰之后的大量硬件浪费问题仍需引起关注。Bytom 采用的人工智 能 ASIC 友好型 POW 算法能够减少资源和设备浪费，提升去中心化水平，为 POW 共识机制的进化提供了一个极具建设性的方案。 &nbsp;&nbsp; &nbsp;Bytom 在 POW 共识机制中引入了 Tensority 算法，是区块链挖矿和人工 智能的桥梁。Tensority 算法包含的矩阵乘法是人工智能中最通用的算法，几乎 所有人工智能设备都能友好地兼容这种算法。同时，Tensority 算法选取的数据 类型是 int8，是一种在插电型 AI 设备通用的数据类型。Tensority 算法的这些 设计可以让智能摄像头、正在充电的 AI 手机等通用型人工智能设备都能参与比 原币挖矿。Tensority 算法可能带来以下的一些场景: &nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;区块链共识所需的计算也可以应用于 AI 硬件加速服务，这将产生更大 的社会效益。 &nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;人工智能友好型挖矿将扩大市场对人工智能 ASIC 芯片的需求，促进芯 片产业的发展，这与当前 GPU 友好型 PoW 区块链对 GPU 市场的提振 效应如出一辙。 &nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;降低了矿工部署算力的成本，当矿机被淘汰或者闲置时，仍然可以用于 人工智能的加速服务，避免硬件资源的浪费。 &nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;更多通用型人工智能设备将参与到区块链挖矿中，这将有助于扩大区块 链的渗透率。 区块链、后端技术交流！ 阅读更多" />
+<meta property="og:description" content="&nbsp; 共识机制是区块链的核心基石，是区块链系统安全性的重要保障。区块链是 一个去中心化的系统，共识机制通过数学的方式，让分散在全球各地成千上万的节点就区块的创建达成一致的意见。共识机制中还包含了促使区块链系统有效运 转的激励机制，是区块链建立信任的基础。 &nbsp;&nbsp;&nbsp;&nbsp;区块链公链常用的共识机制有 POW、POS、DPOS、BFT 以及多种机制混合而成的共识机制等。共识是指系统节点达成一致的过程，而分布式系统的一致性体现在三个方面: &nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;最终性(Termination): 所有进程最终会在有限步数中结束并选取一 个值, 算法不会无尽执行下去。 &nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;统一性(Agreement): 所有进程必须同意同一个值。 &nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;合法性(Validity): 输出内容是输入内容按照系统规则生成的，且输出内容合法。 &nbsp;&nbsp; &nbsp;最终性衡量了达成共识的效率，在一些对交易确认的实时性要求高的场景显 得非常重要，而统一性和合法性表征了共识的安全性。在区块链系统中，去中心 化程度表征了分布式系统的大规模协作程度。因此，我们从效率、安全性和去中 心化程度这三个维度去评价各种共识机制，也就是长铗提出的著名的“不可能三 角”理论。 1. POW共识机制 &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;比特币采用的 POW 工作量证明共识机制，在生成区块时，系统让所有节点 公平地去计算一个随机数，最先寻找到随机数的节点即是这个区块的生产者，并 获得相应的区块奖励。由于哈希函数是散列函数，求解随机数的唯一方法在数学 上只能是穷举，随机性非常好，每个人都可以参与协议的执行。由于梅克尔树根的设置，哈希函数的解的验证过程也能迅速实现。因此，比特币的 POW 共识机 制门槛很低，无需中心化权威的许可，人人都可以参与，并且每一个参与者都无 需身份认证。 &nbsp;&nbsp; &nbsp;同时，中本聪通过工作量证明的机制破解了无门槛分布式系统的“女巫攻击” 问题。对系统发起攻击需要掌握超过 50%的算力，系统的安全保障较强。 &nbsp;&nbsp; &nbsp;POW 共识的优点可归纳为: &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;算法简单，容易实现，节点可自由进入，去中心化程度高。 &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;破坏系统需要投入极大的成本，安全性极高。 &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;区块生产者的选择通过节点求解哈希函数实现，提案的产生、验证到共识的最终达成过程是一个纯数学问题，节点间无需交换额外的信息即可达成共识，整个过程不需要人性的参与。 &nbsp;&nbsp; &nbsp;比特币系统的设定在保证安全性的的前提下，牺牲了一部分最终性。因此，POW 共识算法也存在一些问题: &nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;为了保证去中心化程度，区块的确认时间难以缩短。 &nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;没有最终性，需要检查点机制来弥补最终性，但随着确认次数的增加，达成共识的可能性也呈指数级地增长。 由于这两个方面的问题，一笔交易为了确保安全，要在 6 个新的区块产生后才能在全网得到确认，也就是说一个交易的确认延迟时间大概为 1 小时，这无法 满足现实世界中对交易实时性要求很高的应用场景。 &nbsp;&nbsp; &nbsp;另一方面，POW 共识算法带来了硬件设备的大量浪费。随着比特币价值的 增长，比特币算力竞赛经历了从 CPU 到 GPU，再到 ASIC 专用芯片的阶段。算力强大的 ASIC 芯片矿机将挖矿算法硬件化，而 ASIC 芯片矿机在淘汰后，没有 其他的用途，造成了大量的硬件浪费。 2.POW共识机制的回归 (1) 各种共识机制的比较 &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;比特币是解决了拜占庭将军问题的分布式账本，在完全开放的环境中，实现 了数据的一致性和安全性。但比特币采用的POW 共识机制被广泛质疑为: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;◼ 消耗大量能源和硬件设备; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;◼ 区块同步时间长，扩展性弱，TPS 低。 于是效率更高、被认为更加节能环保的 POS、DPOS、BFT 等共识机制相继 问世，并得到广泛的应用。各种共识机制的特点: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;◼ 在 POS 共识机制下，全网节点根据权益大小按照某种规则参与区块生 产者的选举，共识过程中节点系统开放。但选举过程效率低下，同时由 于选举过程复杂，伴随着许多安全问题。 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;◼ DPOS 共识通过代理人制度，大幅度提升了 POS 共识的选举效率。但 在共识过程中，节点系统是封闭的，而且去中心化程度低 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;◼ BFT 类的共识机制性能较高并具备良好的最终性，但其容错率低，且由 于节点的扩展性问题，更加适用于相对封闭的节点系统。 &nbsp; &nbsp;具体优缺点如下表： 共识机制 优势 劣势 POW 1. 安全稳定，节点自由度高 2. 去中心化程度高，节点系统开放 1.扩展性弱，性能低 2.没有最终性 3.造成硬件设备浪费 POS 1. 能源耗费少 2. 去中心化程度较高，节点系统开放 1.实现过程复杂&nbsp; 2. 存在安全漏洞 DPOS 1.能源耗费少 2. 性能高 3. 具备最终性 去中心化程度弱,节点系统相对封闭 BFT 1.性能较高&nbsp; 2. 具备最终性&nbsp; 3. 安全性好 1.去中心化程度弱，节点系统 封闭 2. 容错率低 &nbsp; (2) POW 共识机制能源消耗的必要性 &nbsp;&nbsp; &nbsp;正如张首晟教授所言，现实世界的熵总是在增加的6。POW 共识机制将虚拟 世界和现实世界连接起来，分布式系统中达成共识的过程是一个熵减的过程，这 需要现实世界的熵增来平衡，能量消耗即是提供熵增的平衡方式。 &nbsp;&nbsp; &nbsp;相比于 POW 共识把系统的安全性交给了数学和能量消耗，POS 共识把系 统的安全性交给了人性的博弈。POS 共识是虚拟世界中的一个封闭系统，如果 共识的达成没有付出任何代价，共识的可靠性就可能存疑，人性博弈过程中的混 乱一定会暴露出来。 &nbsp;&nbsp; &nbsp;POS 的升级模式 DPOS 共识机制的共识过程类似于精英代议制，是一种常 设特权的治理架构，容易产生腐化。卢梭对代议制的描述是:“民意一旦被代表， 终究会被扭曲”。DPOS 共识机制是为了效率而生的，它更加适用于对性能要求 极高的相对封闭的商业系统。 &nbsp;&nbsp; &nbsp;而对于 BFT 共识机制，由于节点扩展性的缺陷，其共识节点的选择过程一 样是封闭或者需要验证的，因而也更加适用于相对封闭的应用环境。 &nbsp;&nbsp; &nbsp;信任的产生是需要付出代价的，POW 共识机制所消耗的能量，不仅不是缺 陷，反而是信任产生过程中最有效的平衡机制。 (3) POW 共识在新一代公链中的大规模应用 &nbsp;&nbsp; &nbsp;就现实可执行性角度而言，BitMEX 的研究报告7指出，POW 共识机制解决 了区块链分叉的选择、数字货币分发、谁产生区块、什么时间产生区块这四个问 题，而改进的 POS 共识机制只是解决了区块链分叉的选择问题，其他三个问题 都是开放的，需要更好的解决路径。 &nbsp;&nbsp; &nbsp;包括 Bytom、Aeternity、Aelf、Zilliqa 在内的新一代公链都包含了 POW 共识机制，第二代公链以太坊第三阶段的 Metropolis 也仍是 POS 和 POW 的 混合体。 公链项目 共识机制 Bytom POW : 人工智能&nbsp; ASIC&nbsp; 芯片友好型&nbsp; POW&nbsp; 共识机制。 Aeternity POW+POS : POW&nbsp; 机制生产区块，重大决策由&nbsp; POS&nbsp; 机制完成，赋予代币持有者权利。 Aelf POW+POS : 主链采用&nbsp; POS&nbsp; 共识机制，侧链采用&nbsp; POW&nbsp; 共识机制。 POS&nbsp; 共识机制的管理成本很高，因而适用于主链，侧链采用 POW&nbsp; 共识机制可安全、自主运行。 Zilliqa POW+PBFT : 利用&nbsp; POW&nbsp; 共识机制的安全性对节点进行验证，验证过的节点交于&nbsp; PBFT&nbsp; 共识机制决策。 Ethereum&nbsp; 第三阶段 Metropolis POW+POS : POW&nbsp; 共识机制生产区块，只是在每&nbsp; 100&nbsp; 个区块处利用&nbsp; POS&nbsp; 人为的设置检查点，赋予最终性。 &nbsp;&nbsp; &nbsp;上表所列的公链共识机制选择告诉我们，尽管许多公链有自己独特的设计哲 学，但出于安全性考虑，它们依然绕不开 POW 共识机制的保护。对于开放的、 自治度高的公链环境，POW 共识机制有更好的适用性;而 POS 共识过程的管 理成本很高，在算法更改、分叉选择等重大决策过程中，POS 共识机制才有其 使用价值，但这已经是一种相对中心化的决策机制。 (4) Bytom 的 POW 共识算法 &nbsp;&nbsp; &nbsp;虽然 POW 共识机制的能源消耗是一种有效的平衡机制，但是 POW 算法的 ASIC 芯片在淘汰之后的大量硬件浪费问题仍需引起关注。Bytom 采用的人工智 能 ASIC 友好型 POW 算法能够减少资源和设备浪费，提升去中心化水平，为 POW 共识机制的进化提供了一个极具建设性的方案。 &nbsp;&nbsp; &nbsp;Bytom 在 POW 共识机制中引入了 Tensority 算法，是区块链挖矿和人工 智能的桥梁。Tensority 算法包含的矩阵乘法是人工智能中最通用的算法，几乎 所有人工智能设备都能友好地兼容这种算法。同时，Tensority 算法选取的数据 类型是 int8，是一种在插电型 AI 设备通用的数据类型。Tensority 算法的这些 设计可以让智能摄像头、正在充电的 AI 手机等通用型人工智能设备都能参与比 原币挖矿。Tensority 算法可能带来以下的一些场景: &nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;区块链共识所需的计算也可以应用于 AI 硬件加速服务，这将产生更大 的社会效益。 &nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;人工智能友好型挖矿将扩大市场对人工智能 ASIC 芯片的需求，促进芯 片产业的发展，这与当前 GPU 友好型 PoW 区块链对 GPU 市场的提振 效应如出一辙。 &nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;降低了矿工部署算力的成本，当矿机被淘汰或者闲置时，仍然可以用于 人工智能的加速服务，避免硬件资源的浪费。 &nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;更多通用型人工智能设备将参与到区块链挖矿中，这将有助于扩大区块 链的渗透率。 区块链、后端技术交流！ 阅读更多" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/06/09/%E5%8C%BA%E5%9D%97%E9%93%BE%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95%E4%B9%8BPOW-1.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/06/09/%E5%8C%BA%E5%9D%97%E9%93%BE%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95%E4%B9%8BPOW-1.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-06-09T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"&nbsp; 共识机制是区块链的核心基石，是区块链系统安全性的重要保障。区块链是 一个去中心化的系统，共识机制通过数学的方式，让分散在全球各地成千上万的节点就区块的创建达成一致的意见。共识机制中还包含了促使区块链系统有效运 转的激励机制，是区块链建立信任的基础。 &nbsp;&nbsp;&nbsp;&nbsp;区块链公链常用的共识机制有 POW、POS、DPOS、BFT 以及多种机制混合而成的共识机制等。共识是指系统节点达成一致的过程，而分布式系统的一致性体现在三个方面: &nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;最终性(Termination): 所有进程最终会在有限步数中结束并选取一 个值, 算法不会无尽执行下去。 &nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;统一性(Agreement): 所有进程必须同意同一个值。 &nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;合法性(Validity): 输出内容是输入内容按照系统规则生成的，且输出内容合法。 &nbsp;&nbsp; &nbsp;最终性衡量了达成共识的效率，在一些对交易确认的实时性要求高的场景显 得非常重要，而统一性和合法性表征了共识的安全性。在区块链系统中，去中心 化程度表征了分布式系统的大规模协作程度。因此，我们从效率、安全性和去中 心化程度这三个维度去评价各种共识机制，也就是长铗提出的著名的“不可能三 角”理论。 1. POW共识机制 &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;比特币采用的 POW 工作量证明共识机制，在生成区块时，系统让所有节点 公平地去计算一个随机数，最先寻找到随机数的节点即是这个区块的生产者，并 获得相应的区块奖励。由于哈希函数是散列函数，求解随机数的唯一方法在数学 上只能是穷举，随机性非常好，每个人都可以参与协议的执行。由于梅克尔树根的设置，哈希函数的解的验证过程也能迅速实现。因此，比特币的 POW 共识机 制门槛很低，无需中心化权威的许可，人人都可以参与，并且每一个参与者都无 需身份认证。 &nbsp;&nbsp; &nbsp;同时，中本聪通过工作量证明的机制破解了无门槛分布式系统的“女巫攻击” 问题。对系统发起攻击需要掌握超过 50%的算力，系统的安全保障较强。 &nbsp;&nbsp; &nbsp;POW 共识的优点可归纳为: &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;算法简单，容易实现，节点可自由进入，去中心化程度高。 &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;破坏系统需要投入极大的成本，安全性极高。 &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;区块生产者的选择通过节点求解哈希函数实现，提案的产生、验证到共识的最终达成过程是一个纯数学问题，节点间无需交换额外的信息即可达成共识，整个过程不需要人性的参与。 &nbsp;&nbsp; &nbsp;比特币系统的设定在保证安全性的的前提下，牺牲了一部分最终性。因此，POW 共识算法也存在一些问题: &nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;为了保证去中心化程度，区块的确认时间难以缩短。 &nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;没有最终性，需要检查点机制来弥补最终性，但随着确认次数的增加，达成共识的可能性也呈指数级地增长。 由于这两个方面的问题，一笔交易为了确保安全，要在 6 个新的区块产生后才能在全网得到确认，也就是说一个交易的确认延迟时间大概为 1 小时，这无法 满足现实世界中对交易实时性要求很高的应用场景。 &nbsp;&nbsp; &nbsp;另一方面，POW 共识算法带来了硬件设备的大量浪费。随着比特币价值的 增长，比特币算力竞赛经历了从 CPU 到 GPU，再到 ASIC 专用芯片的阶段。算力强大的 ASIC 芯片矿机将挖矿算法硬件化，而 ASIC 芯片矿机在淘汰后，没有 其他的用途，造成了大量的硬件浪费。 2.POW共识机制的回归 (1) 各种共识机制的比较 &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;比特币是解决了拜占庭将军问题的分布式账本，在完全开放的环境中，实现 了数据的一致性和安全性。但比特币采用的POW 共识机制被广泛质疑为: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;◼ 消耗大量能源和硬件设备; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;◼ 区块同步时间长，扩展性弱，TPS 低。 于是效率更高、被认为更加节能环保的 POS、DPOS、BFT 等共识机制相继 问世，并得到广泛的应用。各种共识机制的特点: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;◼ 在 POS 共识机制下，全网节点根据权益大小按照某种规则参与区块生 产者的选举，共识过程中节点系统开放。但选举过程效率低下，同时由 于选举过程复杂，伴随着许多安全问题。 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;◼ DPOS 共识通过代理人制度，大幅度提升了 POS 共识的选举效率。但 在共识过程中，节点系统是封闭的，而且去中心化程度低 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;◼ BFT 类的共识机制性能较高并具备良好的最终性，但其容错率低，且由 于节点的扩展性问题，更加适用于相对封闭的节点系统。 &nbsp; &nbsp;具体优缺点如下表： 共识机制 优势 劣势 POW 1. 安全稳定，节点自由度高 2. 去中心化程度高，节点系统开放 1.扩展性弱，性能低 2.没有最终性 3.造成硬件设备浪费 POS 1. 能源耗费少 2. 去中心化程度较高，节点系统开放 1.实现过程复杂&nbsp; 2. 存在安全漏洞 DPOS 1.能源耗费少 2. 性能高 3. 具备最终性 去中心化程度弱,节点系统相对封闭 BFT 1.性能较高&nbsp; 2. 具备最终性&nbsp; 3. 安全性好 1.去中心化程度弱，节点系统 封闭 2. 容错率低 &nbsp; (2) POW 共识机制能源消耗的必要性 &nbsp;&nbsp; &nbsp;正如张首晟教授所言，现实世界的熵总是在增加的6。POW 共识机制将虚拟 世界和现实世界连接起来，分布式系统中达成共识的过程是一个熵减的过程，这 需要现实世界的熵增来平衡，能量消耗即是提供熵增的平衡方式。 &nbsp;&nbsp; &nbsp;相比于 POW 共识把系统的安全性交给了数学和能量消耗，POS 共识把系 统的安全性交给了人性的博弈。POS 共识是虚拟世界中的一个封闭系统，如果 共识的达成没有付出任何代价，共识的可靠性就可能存疑，人性博弈过程中的混 乱一定会暴露出来。 &nbsp;&nbsp; &nbsp;POS 的升级模式 DPOS 共识机制的共识过程类似于精英代议制，是一种常 设特权的治理架构，容易产生腐化。卢梭对代议制的描述是:“民意一旦被代表， 终究会被扭曲”。DPOS 共识机制是为了效率而生的，它更加适用于对性能要求 极高的相对封闭的商业系统。 &nbsp;&nbsp; &nbsp;而对于 BFT 共识机制，由于节点扩展性的缺陷，其共识节点的选择过程一 样是封闭或者需要验证的，因而也更加适用于相对封闭的应用环境。 &nbsp;&nbsp; &nbsp;信任的产生是需要付出代价的，POW 共识机制所消耗的能量，不仅不是缺 陷，反而是信任产生过程中最有效的平衡机制。 (3) POW 共识在新一代公链中的大规模应用 &nbsp;&nbsp; &nbsp;就现实可执行性角度而言，BitMEX 的研究报告7指出，POW 共识机制解决 了区块链分叉的选择、数字货币分发、谁产生区块、什么时间产生区块这四个问 题，而改进的 POS 共识机制只是解决了区块链分叉的选择问题，其他三个问题 都是开放的，需要更好的解决路径。 &nbsp;&nbsp; &nbsp;包括 Bytom、Aeternity、Aelf、Zilliqa 在内的新一代公链都包含了 POW 共识机制，第二代公链以太坊第三阶段的 Metropolis 也仍是 POS 和 POW 的 混合体。 公链项目 共识机制 Bytom POW : 人工智能&nbsp; ASIC&nbsp; 芯片友好型&nbsp; POW&nbsp; 共识机制。 Aeternity POW+POS : POW&nbsp; 机制生产区块，重大决策由&nbsp; POS&nbsp; 机制完成，赋予代币持有者权利。 Aelf POW+POS : 主链采用&nbsp; POS&nbsp; 共识机制，侧链采用&nbsp; POW&nbsp; 共识机制。 POS&nbsp; 共识机制的管理成本很高，因而适用于主链，侧链采用 POW&nbsp; 共识机制可安全、自主运行。 Zilliqa POW+PBFT : 利用&nbsp; POW&nbsp; 共识机制的安全性对节点进行验证，验证过的节点交于&nbsp; PBFT&nbsp; 共识机制决策。 Ethereum&nbsp; 第三阶段 Metropolis POW+POS : POW&nbsp; 共识机制生产区块，只是在每&nbsp; 100&nbsp; 个区块处利用&nbsp; POS&nbsp; 人为的设置检查点，赋予最终性。 &nbsp;&nbsp; &nbsp;上表所列的公链共识机制选择告诉我们，尽管许多公链有自己独特的设计哲 学，但出于安全性考虑，它们依然绕不开 POW 共识机制的保护。对于开放的、 自治度高的公链环境，POW 共识机制有更好的适用性;而 POS 共识过程的管 理成本很高，在算法更改、分叉选择等重大决策过程中，POS 共识机制才有其 使用价值，但这已经是一种相对中心化的决策机制。 (4) Bytom 的 POW 共识算法 &nbsp;&nbsp; &nbsp;虽然 POW 共识机制的能源消耗是一种有效的平衡机制，但是 POW 算法的 ASIC 芯片在淘汰之后的大量硬件浪费问题仍需引起关注。Bytom 采用的人工智 能 ASIC 友好型 POW 算法能够减少资源和设备浪费，提升去中心化水平，为 POW 共识机制的进化提供了一个极具建设性的方案。 &nbsp;&nbsp; &nbsp;Bytom 在 POW 共识机制中引入了 Tensority 算法，是区块链挖矿和人工 智能的桥梁。Tensority 算法包含的矩阵乘法是人工智能中最通用的算法，几乎 所有人工智能设备都能友好地兼容这种算法。同时，Tensority 算法选取的数据 类型是 int8，是一种在插电型 AI 设备通用的数据类型。Tensority 算法的这些 设计可以让智能摄像头、正在充电的 AI 手机等通用型人工智能设备都能参与比 原币挖矿。Tensority 算法可能带来以下的一些场景: &nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;区块链共识所需的计算也可以应用于 AI 硬件加速服务，这将产生更大 的社会效益。 &nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;人工智能友好型挖矿将扩大市场对人工智能 ASIC 芯片的需求，促进芯 片产业的发展，这与当前 GPU 友好型 PoW 区块链对 GPU 市场的提振 效应如出一辙。 &nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;降低了矿工部署算力的成本，当矿机被淘汰或者闲置时，仍然可以用于 人工智能的加速服务，避免硬件资源的浪费。 &nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;更多通用型人工智能设备将参与到区块链挖矿中，这将有助于扩大区块 链的渗透率。 区块链、后端技术交流！ 阅读更多","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/06/09/%E5%8C%BA%E5%9D%97%E9%93%BE%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95%E4%B9%8BPOW-1.html","headline":"区块链共识算法之POW（1）","dateModified":"2018-06-09T00:00:00+08:00","datePublished":"2018-06-09T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/06/09/%E5%8C%BA%E5%9D%97%E9%93%BE%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95%E4%B9%8BPOW-1.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>区块链共识算法之POW（1）</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp; 共识机制是区块链的核心基石，是区块链系统安全性的重要保障。区块链是 一个去中心化的系统，共识机制通过数学的方式，让分散在全球各地成千上万的节点就区块的创建达成一致的意见。共识机制中还包含了促使区块链系统有效运 转的激励机制，是区块链建立信任的基础。</span>
+  </div>
+  <p style="background-color:rgb(255,255,255);"><span style="font-size:18px;">&nbsp;&nbsp;&nbsp;&nbsp;区块链公链常用的共识机制有 POW、POS、DPOS、BFT 以及多种机制混合而成的共识机制等。共识是指系统节点达成一致的过程，而分布式系统的一致性体现在三个方面:</span></p>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;最终性(Termination): 所有进程最终会在有限步数中结束并选取一 个值, 算法不会无尽执行下去。</span>
+  </div>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;统一性(Agreement): 所有进程必须同意同一个值。</span>
+  </div>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;合法性(Validity): 输出内容是输入内容按照系统规则生成的，且输出内容合法。</span>
+  </div>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp;&nbsp; &nbsp;最终性衡量了达成共识的效率，在一些对交易确认的实时性要求高的场景显 得非常重要，而统一性和合法性表征了共识的安全性。在区块链系统中，去中心 化程度表征了分布式系统的大规模协作程度。因此，我们从效率、安全性和去中 心化程度这三个维度去评价各种共识机制，也就是长铗提出的著名的“不可能三 角”理论。</span>
+  </div>
+  <h2 style="background-color:rgb(255,255,255);"><span style="font-size:18px;">1. POW共识机制</span></h2>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;比特币采用的 POW 工作量证明共识机制，在生成区块时，系统让所有节点 公平地去计算一个随机数，最先寻找到随机数的节点即是这个区块的生产者，并 获得相应的区块奖励。由于哈希函数是散列函数，求解随机数的唯一方法在数学 上只能是穷举，随机性非常好，每个人都可以参与协议的执行。由于梅克尔树根的设置，哈希函数的解的验证过程也能迅速实现。因此，比特币的 POW 共识机 制门槛很低，无需中心化权威的许可，人人都可以参与，并且每一个参与者都无 需身份认证。</span>
+  </div>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp;&nbsp; &nbsp;同时，中本聪通过工作量证明的机制破解了无门槛分布式系统的“女巫攻击” 问题。对系统发起攻击需要掌握超过 50%的算力，系统的安全保障较强。</span>
+  </div>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp;&nbsp; &nbsp;POW 共识的优点可归纳为:</span>
+  </div>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;算法简单，容易实现，节点可自由进入，去中心化程度高。</span>
+  </div>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;破坏系统需要投入极大的成本，安全性极高。</span>
+  </div>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;区块生产者的选择通过节点求解哈希函数实现，提案的产生、验证到共识的最终达成过程是一个纯数学问题，节点间无需交换额外的信息即可达成共识，整个过程不需要人性的参与。</span>
+  </div>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp;&nbsp; &nbsp;比特币系统的设定在保证安全性的的前提下，牺牲了一部分最终性。因此，POW 共识算法也存在一些问题:</span>
+  </div>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;为了保证去中心化程度，区块的确认时间难以缩短。</span>
+  </div>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;没有最终性，需要检查点机制来弥补最终性，但随着确认次数的增加，达成共识的可能性也呈指数级地增长。 由于这两个方面的问题，一笔交易为了确保安全，要在 6 个新的区块产生后才能在全网得到确认，也就是说一个交易的确认延迟时间大概为 1 小时，这无法 满足现实世界中对交易实时性要求很高的应用场景。</span>
+  </div>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp;&nbsp; &nbsp;另一方面，POW 共识算法带来了硬件设备的大量浪费。随着比特币价值的 增长，比特币算力竞赛经历了从 CPU 到 GPU，再到 ASIC 专用芯片的阶段。算力强大的 ASIC 芯片矿机将挖矿算法硬件化，而 ASIC 芯片矿机在淘汰后，没有 其他的用途，造成了大量的硬件浪费。</span>
+  </div>
+  <p></p>
+  <p></p>
+  <h2 style="background-color:rgb(255,255,255);"><span style="font-size:18px;">2.POW共识机制的回归</span></h2>
+  <h2 style="background-color:rgb(255,255,255);">(1) 各种共识机制的比较</h2>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;比特币是解决了拜占庭将军问题的分布式账本，在完全开放的环境中，实现 了数据的一致性和安全性。但比特币采用的POW 共识机制被广泛质疑为:</span>
+  </div>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;◼ 消耗大量能源和硬件设备;</span>
+  </div>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;◼ 区块同步时间长，扩展性弱，TPS 低。</span>
+   <span style="font-size:18px;">于是效率更高、被认为更加节能环保的 POS、DPOS、BFT 等共识机制相继 问世，并得到广泛的应用。各种共识机制的特点:</span>
+  </div>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;◼ 在 POS 共识机制下，全网节点根据权益大小按照某种规则参与区块生 产者的选举，共识过程中节点系统开放。但选举过程效率低下，同时由 于选举过程复杂，伴随着许多安全问题。</span>
+  </div>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;◼ DPOS 共识通过代理人制度，大幅度提升了 POS 共识的选举效率。但</span>
+   <span style="font-size:18px;">在共识过程中，节点系统是封闭的，而且去中心化程度低</span>
+  </div>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;◼ BFT 类的共识机制性能较高并具备良好的最终性，但其容错率低，且由</span>
+   <span style="font-size:18px;">于节点的扩展性问题，更加适用于相对封闭的节点系统。</span>
+  </div>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp; &nbsp;具体优缺点如下表：<br></span>
+  </div>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <table style="border-spacing:0px;">
+    <colgroup>
+     <col>
+     <col>
+     <col>
+    </colgroup>
+    <tbody>
+     <tr>
+      <td style="border-color:rgb(219,219,219);">
+       <div style="text-align:center;">
+        <span style="font-weight:700;"><span style="font-size:12px;">共识机制</span></span>
+       </div></td>
+      <td style="border-color:rgb(219,219,219);">
+       <div style="text-align:center;">
+        <span style="font-weight:700;"><span style="font-size:12px;">优势</span></span>
+       </div></td>
+      <td style="border-color:rgb(219,219,219);">
+       <div style="text-align:center;">
+        <span style="font-weight:700;"><span style="font-size:12px;">劣势</span></span>
+       </div></td>
+     </tr>
+     <tr>
+      <td style="border-color:rgb(219,219,219);"><span style="font-family:'Helvetica Neue';">POW</span></td>
+      <td style="border-color:rgb(219,219,219);">
+       <div>
+        <span style="font-family:'Helvetica Neue';">1. 安全稳定，节点自由度高</span>
+       </div>
+       <div>
+        <span style="font-family:'Helvetica Neue';">2. 去中心化程度高，节点系统开放</span>
+       </div>
+       <div></div></td>
+      <td style="border-color:rgb(219,219,219);">
+       <div>
+        <span style="font-family:'Helvetica Neue';">1.扩展性弱，性能低</span>
+       </div>
+       <div>
+        <span style="font-family:'Helvetica Neue';">2.没有最终性</span>
+       </div>
+       <div>
+        <span style="font-family:'Helvetica Neue';">3.造成硬件设备浪费</span>
+       </div>
+       <div></div></td>
+     </tr>
+     <tr>
+      <td style="border-color:rgb(219,219,219);"><span><span style="font-family:'Helvetica Neue';">POS</span><br></span></td>
+      <td style="border-color:rgb(219,219,219);">
+       <div>
+        <span style="font-family:'Helvetica Neue';">1. 能源耗费少</span>
+       </div>
+       <div>
+        <span style="font-family:'Helvetica Neue';">2. 去中心化程度较高，节点系统开放</span>
+       </div>
+       <div></div></td>
+      <td style="border-color:rgb(219,219,219);">
+       <div>
+        <span style="font-family:'Helvetica Neue';">1.实现过程复杂&nbsp;</span>
+       </div>
+       <div>
+        <span><span style="font-family:'Helvetica Neue';">2. 存在安全漏洞</span><br></span>
+       </div></td>
+     </tr>
+     <tr>
+      <td style="border-color:rgb(219,219,219);"><span><span style="font-family:'Helvetica Neue';">DPOS</span><br></span></td>
+      <td style="border-color:rgb(219,219,219);">
+       <div>
+        <span style="font-family:'Helvetica Neue';">1.能源耗费少</span>
+       </div>
+       <div>
+        <span style="font-family:'Helvetica Neue';">2. 性能高</span>
+       </div>
+       <div>
+        <span style="font-family:'Helvetica Neue';">3. 具备最终性</span>
+       </div>
+       <div></div></td>
+      <td style="border-color:rgb(219,219,219);"><span><span style="font-family:'Helvetica Neue';">去中心化程度弱,</span><span style="font-family:'Helvetica Neue';">节点系统相对封闭</span></span></td>
+     </tr>
+     <tr>
+      <td style="border-color:rgb(219,219,219);"><span><span style="font-family:'Helvetica Neue';">BFT</span><br></span></td>
+      <td style="border-color:rgb(219,219,219);">
+       <div>
+        <span style="font-family:'Helvetica Neue';">1.性能较高&nbsp;</span>
+       </div>
+       <div>
+        <span style="font-family:'Helvetica Neue';">2. 具备最终性&nbsp;</span>
+       </div>
+       <div>
+        <span style="font-family:'Helvetica Neue';">3. 安全性好</span>
+       </div></td>
+      <td style="border-color:rgb(219,219,219);">
+       <div>
+        <span style="font-family:'Helvetica Neue';">1.去中心化程度弱，节点系统 封闭</span>
+       </div>
+       <div>
+        <span style="font-family:'Helvetica Neue';">2. 容错率低</span>
+       </div></td>
+     </tr>
+    </tbody>
+   </table>
+  </div>
+  <h3 style="background-color:rgb(255,255,255);">&nbsp; (2) POW 共识机制能源消耗的必要性</h3>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp;&nbsp; &nbsp;正如张首晟教授所言，现实世界的熵总是在增加的6。POW 共识机制将虚拟 世界和现实世界连接起来，分布式系统中达成共识的过程是一个熵减的过程，这 需要现实世界的熵增来平衡，能量消耗即是提供熵增的平衡方式。</span>
+  </div>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp;&nbsp; &nbsp;相比于 POW 共识把系统的安全性交给了数学和能量消耗，POS 共识把系 统的安全性交给了人性的博弈。POS 共识是虚拟世界中的一个封闭系统，如果 共识的达成没有付出任何代价，共识的可靠性就可能存疑，人性博弈过程中的混 乱一定会暴露出来。</span>
+  </div>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp;&nbsp; &nbsp;POS 的升级模式 DPOS 共识机制的共识过程类似于精英代议制，是一种常 设特权的治理架构，容易产生腐化。卢梭对代议制的描述是:“民意一旦被代表， 终究会被扭曲”。DPOS 共识机制是为了效率而生的，它更加适用于对性能要求 极高的相对封闭的商业系统。</span>
+  </div>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp;&nbsp; &nbsp;而对于 BFT 共识机制，由于节点扩展性的缺陷，其共识节点的选择过程一 样是封闭或者需要验证的，因而也更加适用于相对封闭的应用环境。</span>
+  </div>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp;&nbsp; &nbsp;信任的产生是需要付出代价的，POW 共识机制所消耗的能量，不仅不是缺 陷，反而是信任产生过程中最有效的平衡机制。</span>
+  </div>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="color:rgb(79,79,79);font-size:22px;"><strong>(3) POW 共识在新一代公链中的大规模应用</strong></span>
+  </div>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp;&nbsp; &nbsp;就现实可执行性角度而言，BitMEX 的研究报告7指出，POW 共识机制解决 了区块链分叉的选择、数字货币分发、谁产生区块、什么时间产生区块这四个问</span>
+   <span style="font-size:18px;">题，而改进的 POS 共识机制只是解决了区块链分叉的选择问题，其他三个问题 都是开放的，需要更好的解决路径。</span>
+  </div>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp;&nbsp; &nbsp;包括 Bytom、Aeternity、Aelf、Zilliqa 在内的新一代公链都包含了 POW 共识机制，第二代公链以太坊第三阶段的 Metropolis 也仍是 POS 和 POW 的 混合体。</span>
+  </div>
+  <table title="Page 25" style="border-spacing:0px;color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <colgroup>
+    <col>
+    <col>
+   </colgroup>
+   <tbody>
+    <tr>
+     <td style="border-color:rgb(0,0,0);background-color:rgb(255,0,0);"><span style="font-size:18px;"><span style="font-weight:700;">公链项目</span></span>
+      <div></div></td>
+     <td style="border-color:rgb(0,0,0);background-color:rgb(255,0,0);"><span style="font-size:18px;"><span style="font-weight:700;">共识机制</span></span>
+      <div></div></td>
+    </tr>
+    <tr>
+     <td style="border-color:rgb(0,0,0);">
+      <div>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;"><span style="font-weight:700;">Bytom</span></span>
+      </div>
+      <div></div></td>
+     <td style="border-color:rgb(0,0,0);">
+      <div></div>
+      <div>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;"><span style="font-weight:700;">POW</span></span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;"><span style="font-weight:700;">:</span></span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;">人工智能&nbsp;</span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;">ASIC&nbsp;</span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;">芯片友好型&nbsp;</span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;">POW&nbsp;</span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;">共识机制。</span>
+      </div></td>
+    </tr>
+    <tr>
+     <td style="border-color:rgb(0,0,0);">
+      <div>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;"><span style="font-weight:700;">Aeternity</span></span>
+      </div>
+      <div></div></td>
+     <td style="border-color:rgb(0,0,0);">
+      <div>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;"><span style="font-weight:700;">POW+POS</span></span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;"><span style="font-weight:700;">:</span></span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;">POW&nbsp;</span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;">机制生产区块，重大决策由&nbsp;</span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;">POS&nbsp;</span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;">机制完成，赋予代币持有者权利。</span>
+      </div></td>
+    </tr>
+    <tr>
+     <td style="border-color:rgb(0,0,0);">
+      <div>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;"><span style="font-weight:700;">Aelf</span></span>
+      </div></td>
+     <td style="border-color:rgb(0,0,0);">
+      <div>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;"><span style="font-weight:700;">POW+POS</span></span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;"><span style="font-weight:700;">:</span></span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;">主链采用&nbsp;</span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;">POS&nbsp;</span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;">共识机制，侧链采用&nbsp;</span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;">POW&nbsp;</span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;">共识机制。</span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;">POS&nbsp;</span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;">共识机制的管理成本很高，因而适用于主链，侧链采用</span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;">POW&nbsp;</span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;">共识机制可安全、自主运行。</span>
+      </div></td>
+    </tr>
+    <tr>
+     <td style="border-color:rgb(0,0,0);">
+      <div></div>
+      <div>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;"><span style="font-weight:700;">Zilliqa</span></span>
+      </div></td>
+     <td style="border-color:rgb(0,0,0);">
+      <div></div>
+      <div>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;"><span style="font-weight:700;">POW+PBFT</span></span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;"><span style="font-weight:700;">:</span></span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;">利用&nbsp;</span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;">POW&nbsp;</span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;">共识机制的安全性对节点进行验证，验证过的节点交于&nbsp;</span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;">PBFT&nbsp;</span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;">共识机制决策。</span>
+      </div></td>
+    </tr>
+    <tr>
+     <td style="border-color:rgb(0,0,0);">
+      <div></div>
+      <div>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;"><span style="font-weight:700;">Ethereum&nbsp;</span></span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;"><span style="font-weight:700;">第三阶段</span></span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;"><span style="font-weight:700;">Metropolis</span></span>
+      </div>
+      <div></div></td>
+     <td style="border-color:rgb(0,0,0);">
+      <div></div>
+      <div>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;"><span style="font-weight:700;">POW+POS</span></span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;">:</span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;">POW&nbsp;</span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;">共识机制生产区块，只是在每&nbsp;</span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;">100&nbsp;</span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;">个区块处利用&nbsp;</span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;">POS&nbsp;</span>
+       <span style="font-size:11pt;font-family:MicrosoftYaHei;">人为的设置检查点，赋予最终性。</span>
+      </div></td>
+    </tr>
+   </tbody>
+  </table>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp;&nbsp; &nbsp;上表所列的公链共识机制选择告诉我们，尽管许多公链有自己独特的设计哲 学，但出于安全性考虑，它们依然绕不开 POW 共识机制的保护。对于开放的、 自治度高的公链环境，POW 共识机制有更好的适用性;而 POS 共识过程的管 理成本很高，在算法更改、分叉选择等重大决策过程中，POS 共识机制才有其 使用价值，但这已经是一种相对中心化的决策机制。</span>
+  </div>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="color:rgb(79,79,79);font-size:22px;"><strong>(4) Bytom 的 POW 共识算法</strong></span>
+  </div>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp;&nbsp; &nbsp;虽然 POW 共识机制的能源消耗是一种有效的平衡机制，但是 POW 算法的 ASIC 芯片在淘汰之后的大量硬件浪费问题仍需引起关注。Bytom 采用的人工智</span>
+   <span style="font-size:18px;">能 ASIC 友好型 POW 算法能够减少资源和设备浪费，提升去中心化水平，为 POW 共识机制的进化提供了一个极具建设性的方案。</span>
+  </div>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp;&nbsp; &nbsp;Bytom 在 POW 共识机制中引入了 Tensority 算法，是区块链挖矿和人工 智能的桥梁。Tensority 算法包含的矩阵乘法是人工智能中最通用的算法，几乎 所有人工智能设备都能友好地兼容这种算法。同时，Tensority 算法选取的数据 类型是 int8，是一种在插电型 AI 设备通用的数据类型。Tensority 算法的这些 设计可以让智能摄像头、正在充电的 AI 手机等通用型人工智能设备都能参与比 原币挖矿。Tensority 算法可能带来以下的一些场景:</span>
+  </div>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;区块链共识所需的计算也可以应用于 AI 硬件加速服务，这将产生更大 的社会效益。</span>
+  </div>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;人工智能友好型挖矿将扩大市场对人工智能 ASIC 芯片的需求，促进芯 片产业的发展，这与当前 GPU 友好型 PoW 区块链对 GPU 市场的提振 效应如出一辙。</span>
+  </div>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;降低了矿工部署算力的成本，当矿机被淘汰或者闲置时，仍然可以用于 人工智能的加速服务，避免硬件资源的浪费。</span>
+  </div>
+  <div style="color:rgb(51,51,51);font-size:14px;background-color:rgb(255,255,255);">
+   <span style="font-size:18px;">&nbsp;&nbsp; &nbsp;◼&nbsp;&nbsp;更多通用型人工智能设备将参与到区块链挖矿中，这将有助于扩大区块 链的渗透率。</span>
+  </div>
+  <p></p>
+  <img src="https://img-blog.csdn.net/20180609185048462" alt="">区块链、后端技术交流！ 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/wgwgnihao/article/details/80635162,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/wgwgnihao/article/details/80635162,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

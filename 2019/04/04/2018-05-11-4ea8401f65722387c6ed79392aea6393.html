@@ -1,0 +1,125 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <p>0.参考资料</p>
+  <p>&nbsp;&nbsp;https://github.com/EOSIO/eos/wiki</p>
+  <p>1. eos的github地址</p>https://github.com/EOSIO/eos
+  <br>
+  <br>
+  <br>2.下载eos源码
+  <p></p>
+  <pre style="font-family:'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;font-size:13.6px;line-height:1.45;background-color:rgb(246,248,250);color:rgb(36,41,46);">git clone https://github.com/EOSIO/eos --recursive</pre>3. readme.MD
+  <br>&nbsp; beta测试版本
+  <br>&nbsp; 支持7种os，推荐ubuntu 16.04
+  <br>&nbsp; 编译、运行、使用的文档参考 https://github.com/EOSIO/eos/wiki
+  <br>
+  <br>
+  <br>4.https://github.com/EOSIO/eos/wiki
+  <br>&nbsp; 4.1 glossary 一些名词解释
+  <br>&nbsp; 4.2 Setting Up A Local Environment 设置环境变量
+  <br>&nbsp; &nbsp; 4.2.1 overview &nbsp;
+  <br>&nbsp; &nbsp; &nbsp; 三个可执行程序：nodeos是服务端; cleos是区块链的命令行接口和钱包管理; keosd管理eos钱包
+  <br>&nbsp; &nbsp; &nbsp; 这三个可执行程序可以在一个单节点上部署。
+  <br>&nbsp; &nbsp; &nbsp; 三者的关系：cleos管理nodeos和keosd;nodeos管理一个节点，通过这个节点跟整个eos网络的无数节点进行交互; keosd管理钱包。&nbsp;
+  <br>&nbsp; &nbsp; 4.2.2 getting the code
+  <br>&nbsp; &nbsp; &nbsp; git clone https://github.com/EOSIO/eos --recursive
+  <br>&nbsp; &nbsp; 4.2.3 building eosio
+  <br>&nbsp; &nbsp; &nbsp; 确保操作系统。然后运行 ./eosio_build.sh
+  <br>&nbsp; &nbsp; &nbsp; 安装过程需要多次输入root密码。编译过程比较长。
+  <br>&nbsp; &nbsp; 4.2.4 creating and launching a single node testnet
+  <br>&nbsp; &nbsp; &nbsp; 编译完成后，启动单节点的测试网络
+  <br>&nbsp; &nbsp; &nbsp; cd build/programs/nodeos
+  <br>&nbsp; &nbsp; &nbsp; ./nodeos -e -p eosio --plugin eosio::wallet_api_plugin --plugin eosio::chain_api_plugin --plugin eosio::account_history_api_plugin&nbsp;
+  <br>&nbsp; &nbsp; &nbsp; 正常启动后，会不断滚动形如:
+  <br>&nbsp; &nbsp; &nbsp; 3343000ms thread-0 &nbsp; producer_plugin.cpp:239 &nbsp; &nbsp; &nbsp; block_production_loo ] eosio generated block 408af1a5... #321 @ 2018-05-10T06:55:43.000 with 0 trxs, lib: 320
+  <br>&nbsp; &nbsp; &nbsp; 3343502ms thread-0 &nbsp; producer_plugin.cpp:239 &nbsp; &nbsp; &nbsp; block_production_loo ] eosio generated block 464e6a30... #322 @ 2018-05-10T06:55:43.500 with 0 trxs, lib: 321
+  <br>&nbsp; &nbsp; &nbsp; ....
+  <br>&nbsp; &nbsp; &nbsp; 运行关系：nodeos运行一个单producter的eosio。如果nodeos启动参数有“--plugin eosio::wallet_api_plugin”，那么它可以管理eos钱包。
+  <br>&nbsp; &nbsp; 4.2.5 docker （暂时不需要）
+  <br>&nbsp; &nbsp; 4.2.6 troubleshooting guide （暂时不需要）
+  <br>&nbsp; 4.3 Programs &amp; Tools
+  <br>&nbsp; &nbsp; 4.3.1 nodeos&nbsp;
+  <br>&nbsp; &nbsp; &nbsp; 核心 eosio 守护进程，运行 eos节点。
+  <br>&nbsp; &nbsp; 4.3.2 cleos
+  <br>&nbsp; &nbsp; &nbsp; cleos (client os)是命令行工具，跟nodeos提供 rest api接口进行交互。比如，创建链上的区块和transaction，设置区块链状态，签名，操作钱包，操作网络，向区块链发送智能合约，把区块推送到链上等等。
+  <br>&nbsp; &nbsp; &nbsp; 命令 "build/programs/cleos$ ./cleos -h" 打印帮助信息 &nbsp; &nbsp; &nbsp;
+  <br>&nbsp; &nbsp; 4.3.3 keosd
+  <br>&nbsp; &nbsp; &nbsp; eosio钱包守护进行，载入钱包插件，提供http接口和rpc api
+  <br>&nbsp; &nbsp; 4.3.4 launcher
+  <br>&nbsp; &nbsp; &nbsp; 这个进程为部署多节点eos网络提供辅助功能，在各节点之间发布配置文件，启动多节点的nodeos实例等等。
+  <br>&nbsp; &nbsp; 4.3.5 snapshot
+  <br>&nbsp; &nbsp; &nbsp; nodejs的进程，创建crowdsale合约的snapshot，配置创始区块等等。
+  <br>&nbsp; &nbsp; 4.3.6 eosiocpp
+  <br>&nbsp; &nbsp; &nbsp; 这是一个工具，生成abi规范的c++代码。比如，命令"eosiocpp -g abi.json types.hpp"。这块有比较多的细节，暂时还不太懂。
+  <br>&nbsp; 4.4 Public Testnet目前不可用
+  <br>&nbsp; 4.5 Accounts &amp; Permissions
+  <br>&nbsp; &nbsp; 4.5.1 Wallets
+  <br>&nbsp; &nbsp; &nbsp; wallet存储若干个key。这些key跟多个account相关联。钱包有两种状态：锁，解锁。登录钱包需要密码。cleos跟keosd做命令交互管理钱包。
+  <br>&nbsp; &nbsp; 4.5.2 Accounts
+  <br>&nbsp; &nbsp; &nbsp; 把transaction提交到区块链上需要acount，account是一个拥有标志。
+  <br>&nbsp; &nbsp; 4.5.3 Authorities and Permissions
+  <br>&nbsp; &nbsp; &nbsp; 每个account有两个本地命令的授权：owner和active。owner：一个account的拥有者，只有极少数transaction需要这种授权，owner最好存放在冷存储cold storage不要让任何其他人知道。active，转移资金，投票生产者，以及一些 account的变动操作。除了这两种授权，还可以自定义授权。授权需要指定到一个或者多个public key或者有效的acount name。
+  <br>&nbsp; &nbsp; 4.5.4 Putting it all Together
+  <br>&nbsp; &nbsp; &nbsp; 本节是示例。描述如何使用account提交transaction，可以用一个账户提交，也可以多个账户提交。相当简单直接。
+  <br>&nbsp; 4.6 CLI Wallet
+  <br>&nbsp; &nbsp; 4.6.1 Overview
+  <br>&nbsp; &nbsp; &nbsp; keosd在本地运行，在本地存储私钥。
+  <br>&nbsp; &nbsp; 4.6.2 How to run keosd
+  <br>&nbsp; &nbsp; &nbsp; ./keosd，配置文件目录
+  <br>&nbsp; &nbsp; &nbsp; 然后，cleos 创建钱包，打开钱包，锁钱包，解锁钱包，向钱包导入私钥，list钱包。
+  <br>&nbsp; &nbsp; &nbsp; 如前所述，可以用nodeos管理钱包，这样，就不需要启动keosd了，但不推荐同时使用keosd和nodes管理钱包。
+  <br>&nbsp; &nbsp; &nbsp;&nbsp;
+  <br>&nbsp; 4.7 Cleos Command Reference
+  <br>&nbsp; &nbsp; cleos的具体用法和demo。
+  <br>&nbsp; 4.8 Persistence API
+  <br>&nbsp; &nbsp; 4.8.1 Overview
+  <br>&nbsp; &nbsp; &nbsp; rosio提供一组服务和接口，让智能合约的开发者实现状态持久化，这种持久话可以跨越action,transaction和boundaries。持久化包括：服务将状态持久化到数据库; 在检索数据库内容的时候，强化查询能力;智能合约开发使用的各种服务的c++接口;库和系统开发者使用的核心服务调用的c api。 &nbsp;
+  <br>&nbsp; &nbsp; &nbsp; eosio的智能合约以Actions的方式执行。Action需要一个执行环境，也就是action context。一个action context给action提供必需的资源，比如内存。action在内存里保存各种状态。在执行一个action之前，eosio先建立一个干净的工作内存。在实际情况下，并发/并行的其他的action的执行可能会改变内存里的某些变量。因此，唯一可行的方式，是把变量进行持久化，在需要的时候再从数据库读出使用。
+  <br>&nbsp; &nbsp; 4.8.2 The EOSIO Multi-Index API
+  <br>&nbsp; &nbsp; &nbsp; eosio多索引api，为eosio数据库提供c++接口。主要是提供灵活的查询方式，让智能合约的开发者读写修改持久化状态数据。然后提供了一个demo，交通工具数据库示例。
+  <br>&nbsp; &nbsp; 4.8.3 C++ API Reference
+  <br>&nbsp; &nbsp; &nbsp; 创建table，创建index，以及各种使用方式。
+  <br>&nbsp; 4.9 Smart Contracts
+  <br>&nbsp; &nbsp; 4.9.1 Introduction to EOSIO Smart Contract
+  <br>&nbsp; &nbsp; &nbsp; 智能合约基于WASM。WASM被google,ms，apple等多家公司支持。最成熟的wasm工具链是clang/llvm和c/c++编译器。rust,python，solidity等其他语言也有类似的工具链，但语言太简单了，性能也不够好，不推荐使用。
+  <br>&nbsp; &nbsp; &nbsp; 智能合约的通信方式是action和共享内存。智能合约可以读取另一个智能合约的状态。一个智能合约里可以定义两种通信模型：inline和defered。inline, 可以保证当前tranction能执行action或者unwind，无论成功失败都不会有通知，inline在一个智能合约里执行。defered，以被调度执行，可以timeout，可以跨智能合约执行。
+  <br>&nbsp; &nbsp; &nbsp; 一个transaction可以有若干个action.
+  <br>&nbsp; &nbsp; &nbsp; action的type是base32编码的64位整数。 &nbsp; &nbsp; &nbsp;
+  <br>&nbsp; &nbsp; 4.9.2 Smart Contract Files
+  <br>&nbsp; &nbsp; &nbsp; eosiocpp工具，生成智能合约的源码文件。
+  <br>&nbsp; &nbsp; 4.9.3 Debugging Smart Contracts
+  <br>&nbsp; &nbsp; &nbsp; 智能合约在私有测试网络的本地eos节点进行调试。这里给出示例和步骤。
+  <br>&nbsp; 4.10 Tutorials（智能合约教程）
+  <br>&nbsp; &nbsp; 4.10.1 Getting Started with Smart Contracts
+  <br>&nbsp; &nbsp; &nbsp; 启动一个单节点的私有区块链
+  <br>&nbsp; &nbsp; &nbsp; 创建钱包
+  <br>&nbsp; &nbsp; &nbsp; 导入一个bios智能合约
+  <br>&nbsp; &nbsp; &nbsp; 创建account帐号
+  <br>&nbsp; &nbsp; 4.10.2 Eosio.token, Exchange, and Eosio.msig Contracts
+  <br>&nbsp; &nbsp; &nbsp; 创建一个eosio.token智能合约并部署。按照步骤执行既可。
+  <br>&nbsp; &nbsp; 4.10.3 Hello World Tutorial
+  <br>&nbsp; &nbsp; &nbsp; 用c++开发并部署一个智能合约。
+  <br>&nbsp; &nbsp; 4.10.4 Comprehensive Accounts &amp; Wallets Tutorial
+  <br>&nbsp; &nbsp; &nbsp; 更全面的account和wallet教程
+  <br>&nbsp; &nbsp; 4.10.5 Tic-Tac-Toe
+  <br>&nbsp; &nbsp; &nbsp; 用智能合约开发一个区块链上的游戏，完整demo。
+  <br>&nbsp; 4.11 Testnet
+  <br>&nbsp; &nbsp; 4.11.1 Single Host Multi-Node (Private) Testnet
+  <br>&nbsp; &nbsp; &nbsp; 测试网络，在一台主机上部署多个节点。
+  <br>&nbsp; 4.12 Releases
+  <br>&nbsp; &nbsp; &nbsp; 各版本信息。
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/lizhe_dashuju/article/details/80284192,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/lizhe_dashuju/article/details/80284192,&quot;}">阅读更多</a> 
+</div>

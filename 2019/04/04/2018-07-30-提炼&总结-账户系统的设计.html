@@ -1,0 +1,24 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div class="markdown_views"> 
+  <h3 id="最简单">最简单</h3> 
+  <p>一般而言，系统内都会有用户模块，如果涉及到钱、积分、兑换券之类的，那么最好搞一套账户模块。</p> 
+  <p>简单的账户模块分为两部分，账户和流水记录。 <br> <img src="https://upload-images.jianshu.io/upload_images/207122-a9800b23f41f1e64.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="最简单的账户模块" title=""></p> 
+  <p>在这种简单的模块内，典型的场景是用户做了某个操作，达到了预设条件，于是系统给予奖励，生成一条流水记录，该用户的账户内的金额也随之增加。用户也可以进行消费或提现，此时生成流水记录后，该用户的账户内金额是减少的。当然，用户还可以进行充值。</p> 
+  <h3 id="稍微复杂点">稍微复杂点</h3> 
+  <p>如果有人民币、积分、甚至美元等多个金融体系，那就要为每个用户创建一一对应的多个账户。如果涉及转换，那么一次转换就会生成两条流水记录，一条用于转出用户减少金额，另一条用户转入用户增加金额。</p> 
+  <p>不论是在系统内对账户金额做增减，还是在涉及和第三方（支付宝、微信红包，等等）进行通讯的情况下，都会存在不成功的情况。这种场景需要确定两个问题，一是如何确定是哪条流水记录失败了，二是采取哪种回滚方式。</p> 
+  <p>对于第一个问题，需要给定一个序列号用于标记。简单一点的使用高精度的当前时间，还可以使用UUID、数据库中表的Sequence生成器，更复杂一点的如Twitter的<a href="https://github.com/twitter/snowflake" rel="nofollow">snowflake</a>，这个算法可以保证全局唯一。</p> 
+  <p>可以通过操作原始流水记录来回滚，但更优的是再创建一条反向的流水记录专门用来回滚。在信用卡上进行取消消费是使用第二种，这种方法可以保证流水记录不被修改，保持了账户操作的一致性——一条流水对应一次增减，而不是多次，利于理解。</p> 
+  <p>某些生成流水的操作具有危险性，比如提现（其实提现也是一种和第三方通讯的动作，这里的第三方是各个银行）。如有必要，会对这类操作进行人工审核。那么是在生成流水前还是生成后审核呢？</p> 
+  <h3 id="再复杂点">再复杂点</h3> 
+  <p>对上面所提到的各个方面做综合考虑，进行细化。同时，之前的流水都是由某些动作导致的，属于“凭空产生”，系统内的总金额是不断增加的。现在虽然同样也是由某些动作引起，但是要求系统内的账户总额是相平的。 <br> <img src="https://upload-images.jianshu.io/upload_images/207122-1d10e0560c6984cd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="账户" title=""></p> 
+  <p><img src="https://upload-images.jianshu.io/upload_images/207122-47a661d0a6230cee.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="交易" title=""></p> 
+  <p>首先账户分为用户账户和业务账户。业务账户初始值为0，但是可以不断透支。一个用户完成某个动作，产生的一条从对应的业务账户到该用户对应账户的交易记录。至于具体是哪个账户，可以按照需求增加，比如积分账户、红包账户、人民币账户、提现账户等等。同理，交易记录也可分为红包、充值、转账、提现等等。</p> 
+  <p>而交易记录根据是否需要审核，决定是直接生成流水记录，还是通过审核记录来生成流水记录。</p> 
+  <p>虽然这样做有点绕，但也更有条理，不易出错了。</p> 
+ </div> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/markdown_views-ea0013b516.css"> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/threegirl/article/details/81286832,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/threegirl/article/details/81286832,&quot;}">阅读更多</a> 
+</div>

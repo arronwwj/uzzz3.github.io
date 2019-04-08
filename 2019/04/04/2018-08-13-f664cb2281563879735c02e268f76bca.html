@@ -1,0 +1,24 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <h1>原文翻译</h1> 
+  <p>8. Simplified Payment Verification</p> 
+  <p>It is possible to verify payments without running a full network node. A user only needs to keep a copy of the block headers of the longest proof-of-work chain, which he can get by querying network nodes until he's convinced he has the longest chain, and obtain the Merkle branch linking the transaction to the block it's timestamped in. He can't check the transaction for himself, but by linking it to a place in the chain, he can see that a network node has accepted it, and blocks added after it further confirm the network has accepted it.</p> 
+  <p><img alt="" class="has" src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180813163434791?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NDY3MzY1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"> &nbsp;</p> 
+  <p>As such, the verification is reliable as long as honest nodes control the network, but is more vulnerable if the network is overpowered by an attacker. While network nodes can verify transactions for themselves, the simplified method can be fooled by an attacker's fabricated transactions for as long as the attacker can continue to overpower the network. One strategy to protect against this would be to accept alerts from network nodes when they detect an invalid block, prompting the user's software to download the full block and alerted transactions to confirm the inconsistency. Businesses that receive frequent payments will probably still want to run their own nodes for more independent security and quicker verification.</p> 
+  <p>不通过运行一个全节点来验证支付是可能的，一个用户只需要保存一份最长工作量证明链区块头的拷贝，通过不断向网络节点请求就可以获得该拷贝，直到它确信它拿到的是最长链。并且包含将交易连接到将其时间戳化的区块里的Merkle 分支。他不能自行检查交易，但通过将他连接到链的某一个位置，他可以看见一个节点已经接受它了，添加在其之后的区块确认节点已经接受了它。</p> 
+  <p>如此一来，这样的验证过程只要可信节点控制着网络就是可靠的，但如果网络被攻击者控制，他就更加脆弱。当网络节点可以为自己确认交易，只要攻击者还可以继续控制网络，这种简单的方案就可能会被攻击者的虚假交易欺骗。一种抵抗这种攻击的保护策略是从节点接收它们检测到非法区块的警报提示用户的软件下载完整的块并警告交易以确认不一致。为了更多的独立安全性和更快的验证，经常收到支付的生意可能依旧希望运行它们自己的全节点。</p> 
+  <h1>细节解读</h1> 
+  <p>&nbsp;</p> 
+  <hr>
+  <p>《Bitcoin: A Peer-to-Peer Electronic Cash System》论文原文地址如下：<a href="https://bitcoin.org/bitcoin.pdf" rel="nofollow">https://bitcoin.org/bitcoin.pdf</a></p> 
+  <hr>
+  <p>版权所有声明</p> 
+  <p>版权所有归属作者，未经允许不得转载、复制或用作它途。否则作者将具有追究法律责任的权利。</p> 
+  <p>Copyright Clarify</p> 
+  <p>Copyright ownership belongs to the author, shall not be reproduced, copied, or used in other ways without permission. Otherwise, the author will have the right to pursue legal responsibilities.</p> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/qq_27467365/article/details/81632397,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/qq_27467365/article/details/81632397,&quot;}">阅读更多</a> 
+</div>

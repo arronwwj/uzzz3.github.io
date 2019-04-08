@@ -1,0 +1,183 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <p style="text-align:center;"><span style="color:rgb(102,102,102);font-family:Arial;font-size:14px;line-height:24px;text-indent:28px;">区块链爱好者（QQ：53016353）</span><br></p> 
+  <p>Bitpay开源了它们的Bitcore库包，我们可以使用它来基于Node.js发送信息到区块链。该库包能让我们生产比特币交易，却不用花费几天时间下载完整的区块链账本。</p> 
+  <br>
+  <br> 想象比特币和区块链如同笔和新的页面纸张，为了在“纸张”（Blockchain）上写字你需要墨水。在这个比喻中的“墨水”是指你用来创建交易的比特币。我们在里面写一个交易数据被称为“op_return”。一个op_return是操作码，你写在里面的消息就像使用数字墨水在世界范围的电子表格上写信息。
+  <br>
+  <br>
+  <br> P_Return限制40字符，这是微博大小140字的1/3不到，你可以存储一些有趣的数据。这样应用程序就可以显示监管链，购买证明，或数字公证文件等新方法。
+  <br>
+  <br>
+  <br> 当你在区块链创建交易，它会在世界各地的数千台运行比特币软件的电脑上广播，所以这些交易op_return几秒钟也分布在整个网络。一旦数据被写入，它是不可能改变它。
+  <br>
+  <br>
+  <br> 这改变了我们可以创建应用程序的方式，因为一旦事务被创建后，我们能得到确保不变，因为不会以任何方式改变。另外，数据可以被能访问区块链的任何人验证。他们所需要的是正确的交易ID。
+  <br>
+  <br>
+  <br> 下面看看如何写一个区块链信息。前提是安装好Node.js
+  <br>
+  <br>
+  <br> 首先，创建一个新目录：
+  <br>
+  <br>
+  <br> mkdir 'HelloWorld'
+  <br>
+  <br>
+  <br> 进入目录，安装两个库包，bitcore和bitcore-explorers：
+  <br>
+  <br>
+  <br> sudo npm install bitcore@0.13.0 &amp;&amp; sudo npm install bitcore-explorers
+  <br>
+  <br>
+  <br> 为确保安装正确：键入HelloWorld ls，可看到一个叫node_modules目录。
+  <br>
+  <br>
+  <br> 打开文本编辑器开始编码，创建一个文件HelloWorld.js：
+  <br>
+  <br>
+  <br> var bitcore = require('bitcore');
+  <br> var explorers = require(‘bitcore-explorers');
+  <br> 这样就能调用这两个库包：比如：
+  <br>
+  <br>
+  <br> var insight = new explorers.Insight();
+  <br>
+  <br>
+  <br> 创建比特币钱包
+  <br>
+  <br>
+  <br> 我们从一个地方发少量比特币到另外一个地方，那就意味着需要两件事：比特币接受地址，和一个我们自己能控制的自己的比特币地址。
+  <br>
+  <br>
+  <br> 比特币是基于公有和私有key，你能创建你私有key的SHA-256 哈希创建公有key，那么你如何创建私有key？
+  <br>
+  <br>
+  <br> 有许多办法，最简单的是使用RushWallet.com产生实际的钱包，这对于长期存储比特币是不推荐的方法，却适合这里教程：
+  <br>
+  <br>
+  <br> 1.访问 &nbsp;
+  <br>
+  <br>
+  <br> 2.创建钱包
+  <br>
+  <br>
+  <br> 3.创建完钱包，在"Your Bitcoin Address"会看到公有地址，复制存储到HelloWorld.js的变量“publicAddress”.
+  <br>
+  <br>
+  <br> 4.点击设置按钮，选择Export Keys，复制存储到HelloWorld.js的变量“privateKey”.
+  <br>
+  <br>
+  <br> 下面是到目前为止的代码：
+  <br>
+  <br>
+  <br> var bitcore = require('bitcore');
+  <br> var explorers = require('bitcore-explorers');
+  <br> var insight = new explorers.Insight();
+  <br>
+  <br>
+  <br> var publicAddress = '1DuFRRFEJvchWpTQiDqMk3DW3mP9XZ3UTa';
+  <br> var privateKey = '5KG7bZhGX5jaCD46cxbN1tX6nq1zSa4gAZ4baKmw277RKGbH3qc'
+  <br> 发送目标地址1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1是Stoshi的第一个钱包地址。赋值给bitcoinRecipient变量。
+  <br>
+  <br>
+  <br> 还需要几个变量，第一个是挖矿费，这是我们发送交易给区块链的基础费用，相当于邮票邮费。
+  <br>
+  <br>
+  <br> var minerFee = 667;
+  <br>
+  <br>
+  <br> 下面是发送给区块链的信息：
+  <br>
+  <br>
+  <br> var blockchainMessage = 'Hello Satoshi!';
+  <br>
+  <br>
+  <br> 你可以发送一便是到测试目标地址，首先检查我们公用地址的余额。
+  <br>
+  <br>
+  <br> var bitcore = require('bitcore');
+  <br> var explorers = require('bitcore-explorers');
+  <br> var insight = new explorers.Insight();
+  <br>
+  <br>
+  <br> var publicAddress = '18JYiBktnAzbS2sEZSrdKgSEFwLjXvW9Uy';
+  <br> var privateKey = ‘5HxKWX4pkze3AiB4yWrdZKMYrf9hWYdAVp3TnkpYMiGbxnLuLWN’
+  <br>
+  <br>
+  <br> insight.getUnspentUtxos(publicAddress, function (error, utxos) {
+  <br> console.log('utxos' + ' :' + JSON.stringify(utxos, undefined, 2));
+  <br> });
+  <br> 你应该看到如下信息：
+  <br>
+  <br>
+  <br> utxos :[
+  <br> &nbsp; {
+  <br> &nbsp; "address": "18JYiBktnAzbS2sEZSrdKgSEFwLjXvW9Uy",
+  <br> &nbsp; "txid": "6c2e97cd1[author]0[/author]9[author]0[/author]6ad89fdd1[author]0[/author]c1f[author]0[/author]68fc2[author]0[/author]ECC7[author]0[/author]9a9dcc152dab1d7a2c7118a4158",
+  <br> &nbsp; "vout": 1,
+  <br> &nbsp; "scriptPubKey": "76a9145[author]0[/author]1a6c[author]0[/author]e1e7[author]0[/author]3[author]0[/author]1[author]0[/author][author]0[/author]a9a3cdc14b9[author]0[/author]676[author]0[/author]fc45bb388ac",
+  <br> &nbsp; "amount": [author]0[/author].[author]0[/author][author]0[/author][author]0[/author][author]0[/author]42
+  <br> &nbsp; }
+  <br> ]
+  <br> 这里查询UXTO未用交易输出，能看到这个钱包中有多少比特币，下面代码检查我们钱包是否有足够钱支付挖矿费：
+  <br>
+  <br>
+  <br> if (bitcore.Unit.fromBTC(utxos[[author]0[/author]].toObject().amount).toSatoshis() - minerFee &gt; minerFee) &nbsp; &nbsp; {
+  <br> &nbsp; console.log("We've got enough Satoshis!");
+  <br> }
+  <br> 如果得到错误信息，意味着你的钱包没有足够钱支付挖矿费。
+  <br>
+  <br>
+  <br> 单向和广播交易
+  <br>
+  <br>
+  <br> 发送比特币从A点到B点，从一个非常高的水平看，就像是签署一个数字检查。也就是只有你的“签名”，这是一个用你的私钥和过去可从一个比特币地址寄钱UXTO的生成数。这一数字检查可以写到任何比特币地址，op_return会像扮演一份这种检查备注，与交易有关的备注。
+  <br>
+  <br>
+  <br> 一旦交易被签署，我们需要告诉区块链，比特币做的最繁重的工作在这里，但在幕后发生的是：交易被最新版本的电子表格验证，确保你发送的钱是你实际上控制的。一经查实，矿工会记录你的交易，它将在blockchain公开它。
+  <br>
+  <br>
+  <br> 这里是签署和广播交易的片段代码：
+  <br>
+  <br>
+  <br> // Sign the transaction with a combo of your private key, the address you want to pay, and your last UXTO.
+  <br>
+  <br>
+  <br> insight.getUnspentUtxos(publicAddress, function (error, utxos) {
+  <br> console.log('utxos' + ' :' + JSON.stringify(utxos, undefined, 2));
+  <br> if(utxos.length == [author]0[/author]) {
+  <br> &nbsp; console.log("Not enough Satoshis to cover the miner fee.");
+  <br> &nbsp; return
+  <br> } else if (bitcore.Unit.fromBTC(utxos[[author]0[/author]].toObject().amount).toSatoshis() - minerFee &gt; minerFee) &nbsp; &nbsp; {
+  <br> &nbsp; console.log("We've got enough Satoshis!");
+  <br> &nbsp;&nbsp;
+  <br> &nbsp; var transaction = new bitcore.Transaction()
+  <br> &nbsp; &nbsp; .from(utxos[[author]0[/author]]) // using the last UXTO to sign the next transaction
+  <br> &nbsp; &nbsp; .to(bitcoinRecipient, 42[author]0[/author][author]0[/author] - minerFee) // Send 42[author]0[/author][author]0[/author] Satoshi's
+  <br> &nbsp; &nbsp; .addData(blockchainMessage) // Our message to Satoshi
+  <br> &nbsp; &nbsp; .sign(privateKey); // Last step for the digital autograph
+  <br> &nbsp;&nbsp;
+  <br> &nbsp; console.log('transaction_hex: ' + transaction.checkedSerialize());
+  <br> &nbsp;&nbsp;
+  <br> &nbsp; insight.broadcast(transaction, function (error, body) {
+  <br> &nbsp; &nbsp; if (error) {
+  <br> &nbsp; &nbsp; &nbsp; console.log('Error in broadcast: ' + error);
+  <br> &nbsp; &nbsp; }
+  <br> &nbsp; &nbsp; else {
+  <br> &nbsp; &nbsp; &nbsp; console.log("Success! Here's our Transaction ID: " + body);
+  <br> &nbsp; &nbsp; &nbsp; console.log('http://explorer.chain.com/transactions/' + body + "#!transaction-op-return")
+  <br> &nbsp; &nbsp; }
+  <br> &nbsp; });
+  <br> &nbsp; }
+  <br> });
+  <br> 上述代码完成后，运行：
+  <br>
+  <br>
+  <br> node HelloWorld.js 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/jQQ53016353/article/details/78349086,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/jQQ53016353/article/details/78349086,&quot;}">阅读更多</a> 
+</div>

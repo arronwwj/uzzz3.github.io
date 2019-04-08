@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>Ubuntu 下Bitcoin编译,单步调试环境搭建（step by step） | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="Ubuntu 下Bitcoin编译,单步调试环境搭建（step by step）" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="为了不被时代抛弃，连一声再见都不说。最近开始研究bitcoin，主要是对C++比较熟。学习一项新技术，为达到效果，根据个人经验从下面三个方面入手： 1. 买一本介绍原理的书，系统的了解，为什么？因为书是别人智慧的总结，是一个完整的系统知识，站在前人肩膀远胜过网络碎片化知识。 2. 实践是最好的老师，唯有练才能领会其中的精髓。 3. 写博客，输出倒逼输入，强迫你学习之后自动理清思路总结，增加学习效果 ---------------------------------------------------------------------------------------------------------- 以下过程参考网上部分前人的总结实践，首先向他们表示感谢。 比特币 (货币符号: ฿;英文名：Bitcoin;英文缩写: BTC)，是一种用于开源的P2P软件而产生的电子货币。比特币全局图是这样的： 下面开始Bitcoin的实践之旅： 一. 预备知识 本人环境为ubutun14.04 ，。 二. 安装知识 1. 更新系统的安装库，否则很多依赖库无法从服务器获取。 apt-get update 2.先安装一些必要的依赖库 sudo apt-get install build-essential libtool autotools-dev autoconf pkg-config libssl-dev libevent-dev sudo apt-get install libboost-all-dev sudo apt-get install libdb-dev libdb++-dev sudo apt-get install libminiupnpc-dev sudo apt-get install libqt4-dev libprotobuf-dev protobuf-compiler sudo apt-get install libqrencode-dev sudo apt-get -y install libqt5gui5 libqt5core5a libqt5dbus5&nbsp;&nbsp; qttools5-dev qttools5-dev-tools libprotobuf-dev&nbsp;&nbsp; protobuf-compiler libqrencode-dev sudo apt-get install make gcc g++ git 3.下载源码 git clone https://github.com/bitcoin/bitcoin.git 4. 进入git clone的直接进入目录 cd bitcoin 5.配置安装信息 ./configure 如果你遇到这样的提示：configure: error: Found Berkeley DB other than 4.8, required for portable wallets 那就可以这样： ./configure --with-incompatible-bdb 配置完成后显示配置选项 Options used to compile and link: &nbsp; with wallet&nbsp;&nbsp; = yes &nbsp; with gui / qt = yes &nbsp; with qr&nbsp;&nbsp;&nbsp;&nbsp; = yes &nbsp; with zmq&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = no &nbsp; with test&nbsp;&nbsp;&nbsp;&nbsp; = yes &nbsp; with bench&nbsp;&nbsp;&nbsp; = yes &nbsp; with upnp&nbsp;&nbsp;&nbsp;&nbsp; = yes &nbsp; use asm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = yes &nbsp; sanitizers&nbsp;&nbsp;&nbsp; = &nbsp; debug enabled = no &nbsp; gprof enabled = no &nbsp; werror&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = no &nbsp; target os&nbsp;&nbsp;&nbsp;&nbsp; = linux &nbsp; build os&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = &nbsp; CC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = gcc &nbsp; CFLAGS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = -g -O2 CPPFLAGS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =&nbsp;&nbsp; -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2&nbsp; -DHAVE_BUILD_INFO -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 &nbsp; CXX&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = g++ -std=c++11 &nbsp; CXXFLAGS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =&nbsp;&nbsp; -Wstack-protector -fstack-protector-all&nbsp; -Wall -Wextra -Wformat -Wvla -Wformat-security&nbsp; -Wno-unused- parameter&nbsp;&nbsp; -g -O2 &nbsp; LDFLAGS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = -pthread&nbsp; -Wl,-z,relro -Wl,-z,now -pie &nbsp; &nbsp; ARFLAGS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = cr 6.编译，大约10分钟 make 7.安装 sudo make install 8. 运行 bitcoin-qt 运行GUI截图： &nbsp; 9. DDD单步调试 ddd bitcoin-qt&amp; 阅读更多" />
+<meta property="og:description" content="为了不被时代抛弃，连一声再见都不说。最近开始研究bitcoin，主要是对C++比较熟。学习一项新技术，为达到效果，根据个人经验从下面三个方面入手： 1. 买一本介绍原理的书，系统的了解，为什么？因为书是别人智慧的总结，是一个完整的系统知识，站在前人肩膀远胜过网络碎片化知识。 2. 实践是最好的老师，唯有练才能领会其中的精髓。 3. 写博客，输出倒逼输入，强迫你学习之后自动理清思路总结，增加学习效果 ---------------------------------------------------------------------------------------------------------- 以下过程参考网上部分前人的总结实践，首先向他们表示感谢。 比特币 (货币符号: ฿;英文名：Bitcoin;英文缩写: BTC)，是一种用于开源的P2P软件而产生的电子货币。比特币全局图是这样的： 下面开始Bitcoin的实践之旅： 一. 预备知识 本人环境为ubutun14.04 ，。 二. 安装知识 1. 更新系统的安装库，否则很多依赖库无法从服务器获取。 apt-get update 2.先安装一些必要的依赖库 sudo apt-get install build-essential libtool autotools-dev autoconf pkg-config libssl-dev libevent-dev sudo apt-get install libboost-all-dev sudo apt-get install libdb-dev libdb++-dev sudo apt-get install libminiupnpc-dev sudo apt-get install libqt4-dev libprotobuf-dev protobuf-compiler sudo apt-get install libqrencode-dev sudo apt-get -y install libqt5gui5 libqt5core5a libqt5dbus5&nbsp;&nbsp; qttools5-dev qttools5-dev-tools libprotobuf-dev&nbsp;&nbsp; protobuf-compiler libqrencode-dev sudo apt-get install make gcc g++ git 3.下载源码 git clone https://github.com/bitcoin/bitcoin.git 4. 进入git clone的直接进入目录 cd bitcoin 5.配置安装信息 ./configure 如果你遇到这样的提示：configure: error: Found Berkeley DB other than 4.8, required for portable wallets 那就可以这样： ./configure --with-incompatible-bdb 配置完成后显示配置选项 Options used to compile and link: &nbsp; with wallet&nbsp;&nbsp; = yes &nbsp; with gui / qt = yes &nbsp; with qr&nbsp;&nbsp;&nbsp;&nbsp; = yes &nbsp; with zmq&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = no &nbsp; with test&nbsp;&nbsp;&nbsp;&nbsp; = yes &nbsp; with bench&nbsp;&nbsp;&nbsp; = yes &nbsp; with upnp&nbsp;&nbsp;&nbsp;&nbsp; = yes &nbsp; use asm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = yes &nbsp; sanitizers&nbsp;&nbsp;&nbsp; = &nbsp; debug enabled = no &nbsp; gprof enabled = no &nbsp; werror&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = no &nbsp; target os&nbsp;&nbsp;&nbsp;&nbsp; = linux &nbsp; build os&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = &nbsp; CC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = gcc &nbsp; CFLAGS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = -g -O2 CPPFLAGS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =&nbsp;&nbsp; -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2&nbsp; -DHAVE_BUILD_INFO -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 &nbsp; CXX&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = g++ -std=c++11 &nbsp; CXXFLAGS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =&nbsp;&nbsp; -Wstack-protector -fstack-protector-all&nbsp; -Wall -Wextra -Wformat -Wvla -Wformat-security&nbsp; -Wno-unused- parameter&nbsp;&nbsp; -g -O2 &nbsp; LDFLAGS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = -pthread&nbsp; -Wl,-z,relro -Wl,-z,now -pie &nbsp; &nbsp; ARFLAGS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = cr 6.编译，大约10分钟 make 7.安装 sudo make install 8. 运行 bitcoin-qt 运行GUI截图： &nbsp; 9. DDD单步调试 ddd bitcoin-qt&amp; 阅读更多" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/07/28/Ubuntu-%E4%B8%8BBitcoin%E7%BC%96%E8%AF%91,%E5%8D%95%E6%AD%A5%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA-step-by-step.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/07/28/Ubuntu-%E4%B8%8BBitcoin%E7%BC%96%E8%AF%91,%E5%8D%95%E6%AD%A5%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA-step-by-step.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-07-28T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"为了不被时代抛弃，连一声再见都不说。最近开始研究bitcoin，主要是对C++比较熟。学习一项新技术，为达到效果，根据个人经验从下面三个方面入手： 1. 买一本介绍原理的书，系统的了解，为什么？因为书是别人智慧的总结，是一个完整的系统知识，站在前人肩膀远胜过网络碎片化知识。 2. 实践是最好的老师，唯有练才能领会其中的精髓。 3. 写博客，输出倒逼输入，强迫你学习之后自动理清思路总结，增加学习效果 ---------------------------------------------------------------------------------------------------------- 以下过程参考网上部分前人的总结实践，首先向他们表示感谢。 比特币 (货币符号: ฿;英文名：Bitcoin;英文缩写: BTC)，是一种用于开源的P2P软件而产生的电子货币。比特币全局图是这样的： 下面开始Bitcoin的实践之旅： 一. 预备知识 本人环境为ubutun14.04 ，。 二. 安装知识 1. 更新系统的安装库，否则很多依赖库无法从服务器获取。 apt-get update 2.先安装一些必要的依赖库 sudo apt-get install build-essential libtool autotools-dev autoconf pkg-config libssl-dev libevent-dev sudo apt-get install libboost-all-dev sudo apt-get install libdb-dev libdb++-dev sudo apt-get install libminiupnpc-dev sudo apt-get install libqt4-dev libprotobuf-dev protobuf-compiler sudo apt-get install libqrencode-dev sudo apt-get -y install libqt5gui5 libqt5core5a libqt5dbus5&nbsp;&nbsp; qttools5-dev qttools5-dev-tools libprotobuf-dev&nbsp;&nbsp; protobuf-compiler libqrencode-dev sudo apt-get install make gcc g++ git 3.下载源码 git clone https://github.com/bitcoin/bitcoin.git 4. 进入git clone的直接进入目录 cd bitcoin 5.配置安装信息 ./configure 如果你遇到这样的提示：configure: error: Found Berkeley DB other than 4.8, required for portable wallets 那就可以这样： ./configure --with-incompatible-bdb 配置完成后显示配置选项 Options used to compile and link: &nbsp; with wallet&nbsp;&nbsp; = yes &nbsp; with gui / qt = yes &nbsp; with qr&nbsp;&nbsp;&nbsp;&nbsp; = yes &nbsp; with zmq&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = no &nbsp; with test&nbsp;&nbsp;&nbsp;&nbsp; = yes &nbsp; with bench&nbsp;&nbsp;&nbsp; = yes &nbsp; with upnp&nbsp;&nbsp;&nbsp;&nbsp; = yes &nbsp; use asm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = yes &nbsp; sanitizers&nbsp;&nbsp;&nbsp; = &nbsp; debug enabled = no &nbsp; gprof enabled = no &nbsp; werror&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = no &nbsp; target os&nbsp;&nbsp;&nbsp;&nbsp; = linux &nbsp; build os&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = &nbsp; CC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = gcc &nbsp; CFLAGS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = -g -O2 CPPFLAGS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =&nbsp;&nbsp; -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2&nbsp; -DHAVE_BUILD_INFO -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 &nbsp; CXX&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = g++ -std=c++11 &nbsp; CXXFLAGS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =&nbsp;&nbsp; -Wstack-protector -fstack-protector-all&nbsp; -Wall -Wextra -Wformat -Wvla -Wformat-security&nbsp; -Wno-unused- parameter&nbsp;&nbsp; -g -O2 &nbsp; LDFLAGS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = -pthread&nbsp; -Wl,-z,relro -Wl,-z,now -pie &nbsp; &nbsp; ARFLAGS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = cr 6.编译，大约10分钟 make 7.安装 sudo make install 8. 运行 bitcoin-qt 运行GUI截图： &nbsp; 9. DDD单步调试 ddd bitcoin-qt&amp; 阅读更多","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/07/28/Ubuntu-%E4%B8%8BBitcoin%E7%BC%96%E8%AF%91,%E5%8D%95%E6%AD%A5%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA-step-by-step.html","headline":"Ubuntu 下Bitcoin编译,单步调试环境搭建（step by step）","dateModified":"2018-07-28T00:00:00+08:00","datePublished":"2018-07-28T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/07/28/Ubuntu-%E4%B8%8BBitcoin%E7%BC%96%E8%AF%91,%E5%8D%95%E6%AD%A5%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA-step-by-step.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>Ubuntu 下Bitcoin编译,单步调试环境搭建（step by step）</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <p>为了不被时代抛弃，连一声再见都不说。最近开始研究bitcoin，主要是对C++比较熟。学习一项新技术，为达到效果，根据个人经验从下面三个方面入手：</p> 
+  <p>1. 买一本介绍原理的书，系统的了解，为什么？因为书是别人智慧的总结，是一个完整的系统知识，站在前人肩膀远胜过网络碎片化知识。</p> 
+  <p>2. 实践是最好的老师，唯有练才能领会其中的精髓。</p> 
+  <p>3. 写博客，输出倒逼输入，强迫你学习之后自动理清思路总结，增加学习效果</p> 
+  <p>----------------------------------------------------------------------------------------------------------</p> 
+  <p>以下过程参考网上部分前人的总结实践，首先向他们表示感谢。</p> 
+  <p>比特币 (货币符号: ฿;英文名：Bitcoin;英文缩写: BTC)，是一种用于开源的P2P软件而产生的电子货币。比特币全局图是这样的：</p> 
+  <p><a href="http://images.cnitblog.com/blog/15172/201406/281536046176377.png" rel="nofollow"><img alt="Bitcoin_Overview" class="has" src="http://images.cnitblog.com/blog/15172/201406/281536111643511.png"></a></p> 
+  <p>下面开始Bitcoin的实践之旅：</p> 
+  <p>一. 预备知识</p> 
+  <p>本人环境为ubutun14.04 ，。</p> 
+  <p>二. 安装知识</p> 
+  <p>1. 更新系统的安装库，否则很多依赖库无法从服务器获取。</p> 
+  <p>apt-get update</p> 
+  <p>2.先安装一些必要的依赖库</p> 
+  <p>sudo apt-get install build-essential libtool autotools-dev autoconf pkg-config libssl-dev libevent-dev</p> 
+  <p>sudo apt-get install libboost-all-dev</p> 
+  <p>sudo apt-get install libdb-dev libdb++-dev</p> 
+  <p>sudo apt-get install libminiupnpc-dev</p> 
+  <p>sudo apt-get install libqt4-dev libprotobuf-dev protobuf-compiler</p> 
+  <p>sudo apt-get install libqrencode-dev</p> 
+  <p>sudo apt-get -y install libqt5gui5 libqt5core5a libqt5dbus5&nbsp;&nbsp; qttools5-dev qttools5-dev-tools libprotobuf-dev&nbsp;&nbsp; protobuf-compiler libqrencode-dev</p> 
+  <p>sudo apt-get install make gcc g++ git</p> 
+  <p>3.下载源码</p> 
+  <p>git clone https://github.com/bitcoin/bitcoin.git</p> 
+  <p>4. 进入git clone的直接进入目录</p> 
+  <p>cd bitcoin</p> 
+  <p>5.配置安装信息</p> 
+  <p>./configure</p> 
+  <p>如果你遇到这样的提示：configure: error: Found Berkeley DB other than 4.8, required for portable wallets 那就可以这样：</p> 
+  <p>./configure --with-incompatible-bdb</p> 
+  <p>配置完成后显示配置选项</p> 
+  <p>Options used to compile and link:<br> &nbsp; with wallet&nbsp;&nbsp; = yes<br> &nbsp; with gui / qt = yes<br> &nbsp; with qr&nbsp;&nbsp;&nbsp;&nbsp; = yes<br> &nbsp; with zmq&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = no<br> &nbsp; with test&nbsp;&nbsp;&nbsp;&nbsp; = yes<br> &nbsp; with bench&nbsp;&nbsp;&nbsp; = yes<br> &nbsp; with upnp&nbsp;&nbsp;&nbsp;&nbsp; = yes<br> &nbsp; use asm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = yes<br> &nbsp; sanitizers&nbsp;&nbsp;&nbsp; =<br> &nbsp; debug enabled = no<br> &nbsp; gprof enabled = no<br> &nbsp; werror&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = no</p> 
+  <p>&nbsp; target os&nbsp;&nbsp;&nbsp;&nbsp; = linux<br> &nbsp; build os&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =</p> 
+  <p>&nbsp; CC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = gcc<br> &nbsp; CFLAGS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = -g -O2<br> CPPFLAGS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =&nbsp;&nbsp; -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2&nbsp; -DHAVE_BUILD_INFO -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64<br> &nbsp; CXX&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = g++ -std=c++11<br> &nbsp; CXXFLAGS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =&nbsp;&nbsp; -Wstack-protector -fstack-protector-all&nbsp; -Wall -Wextra -Wformat -Wvla -Wformat-security&nbsp; -Wno-unused- parameter&nbsp;&nbsp; -g -O2<br> &nbsp; LDFLAGS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = -pthread&nbsp; -Wl,-z,relro -Wl,-z,now -pie &nbsp;<br> &nbsp; ARFLAGS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = cr</p> 
+  <p>6.编译，大约10分钟</p> 
+  <p>make</p> 
+  <p>7.安装</p> 
+  <p>sudo make install</p> 
+  <p>8. 运行</p> 
+  <p>bitcoin-qt</p> 
+  <p>运行GUI截图：</p> 
+  <p><img alt="" class="has" src="https://img-blog.csdn.net/20180728191402193?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L20wXzM3NjUxNDQ4/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+  <p>&nbsp;</p> 
+  <p>9. DDD单步调试</p> 
+  <p>ddd bitcoin-qt&amp;</p> 
+  <p><br><img alt="" class="has" src="https://img-blog.csdn.net/20180728192429636?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L20wXzM3NjUxNDQ4/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/m0_37651448/article/details/81264032,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/m0_37651448/article/details/81264032,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

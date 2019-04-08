@@ -1,0 +1,108 @@
+<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <div class="article-copyright">
+   版权声明：本文为博主原创文章，未经博主允许不得转载。 https://blog.csdn.net/gx_1983/article/details/82824093 
+ </div> 
+ <div class="markdown_views prism-atom-one-dark"> 
+  <!-- flowchart 箭头图标 勿删 --> 
+  <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+   <path stroke-linecap="round" d="M5,0 0,2.5 5,5z" id="raphael-marker-block" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></path>
+  </svg> 
+  <h1><a id="___0"></a>[区块链从原理到实现] - 区块链中的各种共识算法</h1> 
+  <p><a href="https://blog.csdn.net/gx_1983/article/details/82586494" rel="nofollow">[区块链从原理到实现] - 引用</a></p> 
+  <p>本文将介绍区块链中常用的各种分布式共识算法，对其原理及典型实现做分析。<br> 主要共识算法有：</p> 
+  <ul> 
+   <li>POW</li> 
+   <li>BFT 
+    <ul> 
+     <li>PBFT</li> 
+     <li>IBFT</li> 
+    </ul> </li> 
+   <li>POS 
+    <ul> 
+     <li>POS</li> 
+     <li>DPOS</li> 
+    </ul> </li> 
+   <li>RAFT</li> 
+   <li>PAXOS</li> 
+  </ul> 
+  <h2><a id="IBFT_17"></a>IBFT</h2> 
+  <p>谈到IBFT就不得不提到摩根大通.摩根大通实现了一个基于go-ethereum的区块链,在这个区块链中,摩根替换了共识算法为IBFT(Istanbul BFT),这个IBFT其实就是PBFT,只不过摩根大通把它自己实现的PBFT叫做IBFT,所以IBFT的基本原理与PBFT是一样的,所不同的是,IBFT中把出块和共识的三阶段结合在了一起.<br> 相关链接如下:</p> 
+  <ul> 
+   <li>摩根大通的区块链源代码: <a href="https://github.com/jpmorganchase/quorum" rel="nofollow">https://github.com/jpmorganchase/quorum</a></li> 
+   <li>IBFT共识算法介绍: <a href="https://github.com/ethereum/EIPs/issues/650" rel="nofollow">https://github.com/ethereum/EIPs/issues/650</a><br> IBFT共识中的基本流程也就是下面这个图了:<br> <img alt="IBFT共识流程图" src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180927152333113?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2d4XzE5ODM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"><br> 如果要分析IBFT的具体过程,那么参考上述的摩根区块链中的共识代码.<br> 如果需要具体了解IBFT的运行机制参考上述的IBFT介绍的链接.<br> 后续也会写一个文章专门来分析IBFT的具体执行流程,目前还没有完成.待完成后会把链接添加在此处.</li> 
+  </ul> 
+  <h2><a id="PBFT_29"></a>PBFT</h2> 
+  <p>参考链接: <a href="https://blog.csdn.net/jerry81333/article/details/74303194" rel="nofollow">PBFT算法描述</a><br> 以下分析均来自于上述链接,请自行参考.<br> 对于不需要货币体系的许可链或者私有链而言，绝对信任的节点，以及高效,这些需求POW,POS,DPOS等共识算法并不能够提供，因此对于这样的区块链，传统的一致性算法成为首选，例如:PBFT（拜占庭容错）、PAXOS、RAFT。<br> 拜占庭算法过程示意图如下:<br> <img alt="在这里插入图片描述" src="https://blog.uzzz.org/_p?https://img-blog.csdn.net/20180925190815513?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2d4XzE5ODM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"><br> 其中C为发送请求端，0123为服务端，3为宕机的服务端，具体步骤如下：</p> 
+  <ol> 
+   <li>Request：请求端C发送请求到任意一节点，这里是0</li> 
+   <li>Pre-Prepare：服务端0收到C的请求后进行广播，扩散至123</li> 
+   <li>Prepare：123,收到后记录并再次广播，1-&gt;023，2-&gt;013，3因为宕机无法广播</li> 
+   <li>Commit：0123节点在Prepare阶段，若收到超过一定数量的相同请求，则进入Commit阶段，广播Commit请求</li> 
+   <li>Reply：0123节点在Commit阶段，若收到超过一定数量的相同请求，则对C进行反馈</li> 
+  </ol> 
+  <p>根据上述流程，在 N ≥ 3F + 1 的情況下一致性是可能解決，N为总计算机数，F为有问题的计算机总数</p> 
+  <h2><a id="DPOS_45"></a>DPOS</h2> 
+  <ul> 
+   <li>DPOS准白皮书<br> 原文地址：<a href="https://steemit.com/dpos/@dantheman/dpos-consensus-algorithm-this-missing-white-paper" rel="nofollow">https://steemit.com/dpos/@dantheman/dpos-consensus-algorithm-this-missing-white-paper</a><br> 译文如下：</li> 
+  </ul> 
+  <pre><code>DPOS Consensus Algorithm  - The Missing White Paper
+DPOS共识算法 - 丢失的白皮书（此处说明在开发DPOS的时候是没有这个白皮书的，这个白皮书是后补充的，姑且算作白皮书。）
+
+This is the missing white paper and analysis of delegated proof of stake (DPOS).  The goal of this paper is to provide an analysis of why DPOS works and what makes it robust. An early description of DPOS can be found at bitshares.org; however, that description also includes many aspects that are not part of the actual consensus process.
+这篇文章是补充的白皮书及对DPOS的分析（DPOS:代理股权证明）。本文的目的是对DPOS为什么能够工作及其鲁棒性的分析。早期DPOS的描述可以在bitshares.org找到，但是在这个网站中的描述包含了许多不是实际共识算法的部分（也就是说此文章只是共识算法的描述，更纯粹。）
+
+All blockchains are fundamentally a deterministic state machine acted upon by transactions. Consensus is the process of agreeing on a deterministic order of transactions and filtering invalid transactions. There are many different consensus algorithms that could produce equivalent ordering of transactions, but DPOS has proven robust, secure, and efficient by years of reliable operation on multiple blockchains.
+所有的区块链从本质上来说都是通过交易来处理一个确定性状态机。共识就是对确定性的交易顺序及无效交易达成一致意见的一个过程。有多种不同的共识算法都能够达成一致的交易顺序，但是DPOS被认为是最鲁棒，安全及许多年在多个区块链上使用，被证明是高效的。
+
+Like all consensus algorithms, the most harm the block producers can cause is censorship. All blocks must be valid according to the deterministic open source state machine logic.
+就像所有共识算法一样，区块生产者能引起的最大的伤害就是censorship(审查)。通过确定性开源状态机逻辑，所有区块都必须是有效的。
+
+Summary of DPOS Algorithm
+DPOS算法摘要。
+The DPOS algorithm is divided into two parts: electing a group of block producers and scheduling production. The election process makes sure that stakeholders are ultimately in control because stakeholders lose the most when the network does not operate smoothly. How people are elected has little impact on how consensus is achieved on a minute by minute basis. Therefore, this document will focus on how consensus is reached after the block producers have been chosen.
+DPOS算法分为两部分：1.选举区块生产者；2.调度并产生区块。
+选举过程确保了股票持有者对网络的最根本的控制，因为如果区块链网络不平顺的话，股票持有者的损失最大。
+区块生产者如何被选举出来的对如何在一分钟内共识如何达成几乎没有影响，所以，本文章主要关注区块生产者本选举出来之后的共识过程，而并不关注区块生产者是如何被选举出来的。
+
+To help explain this algorithm I want to assume 3 block producers, A, B, and C. Because consensus requires 2⁄3 + 1 to resolve all cases, this simplified model will assume that producer C is deemed the tie breaker. In the real world there would be 21 or more block producers. Like proof of work, the general rule is that longest chain wins. Any time an honest peer sees a valid strictly longer chain it will switch from its current fork to the longer one.
+I will to show by example how DPOS operates under most conceivable network conditions. These examples should help you understand why DPOS is robust and hard to break.
+为了有助于解释算法，我会假定有3个区块生产者A,B,C。共识需要2/3+1个来解决所有情况，这个简化模型会假设C永远是打破僵局的那个人。在真是世界中，应该有21个或者更多个区块生产者。就像POW一样，一般的规则是最长的链会赢。
+重点：在任何时候，一个诚实的peer看到一个更长的链的时候，它就会从当前的分叉切换到所看到的最长的这个链。
+我会用更多的例子来解释实际情况时各种网络情况下的处理过程。这些例子会帮助你理解为什么DPOS是鲁棒的及难以被破坏的。
+
+Normal Operation
+正常操作。
+Under normal operation block producers take turns producing a block every 3 seconds. 
+Assuming no one misses their turn then this will produce the longest possible chain. It is invalid for a block producer to produce a block at any other time slot than the one they are scheduled for.
+正常操作的时候，区块生产者按照顺序每隔3秒产生一个快。假定每隔生产者在其该出块的时候都出块了，那么就会产生一个最长的链。
+重点： DPOS中对于块生产者来说，在非其出块时间所出的块被视为是无效的。
+
+Minority Fork
+Up to 1⁄3 of the nodes can be malicious or malfunction and create a minority fork. In this case the minority fork will only produce one block every 9 seconds while the majority fork will produce 2 blocks every 9 seconds. Once again, the honest 2⁄3 majority will always be longer than the minority.
+最多1/3个节点可能是故障或者恶意并且创造一个最小分叉.在这种情况下最小分叉只会每9秒产生一个块,而主分支每9秒会产生两个块.所以,这再一次说明了,诚实的2/3主节点总是比不诚实的少数节点要长.(由于按照时间片出块的特性,因为不诚实的节点不能超过1/3,所以出的块肯定比诚实的节点少,这样的话不诚实节点的链肯定是比诚实节点形成的链短.)
+
+Double Production by Disconnected Minority 断开的少数节点产生的同时出多个块的问题.
+The minority can attempt to produce an unlimited number of forks, but all of their forks will be shorter than the majority chain because the minority is limited to growing the chain slower than the majority. 少数派可以试图产生无数的分叉,但是所有这些分叉都比主链要短,因为少数派的数量限制了分叉的链要比主链增长的慢.
+
+Network Fragmentation 网络原因导致的分片.
+It is entirely possible for the network to fragment in which case no fork has a majority of the block producers. In this case the longest chain will fall to the largest minority. When network connectivity is restored the smaller minorities will naturally switch to the longest chain and unambiguous consensus will be restored. 网络问题也可能导致分片,这种情况是没有分叉包含大多数块的生产者(如文章中三个出块节点A,B,C各自为一个分叉进行出块.这种情况下包含最多少数派节点的链就是最长的链.当网络连接恢复之后叫小的少数派就会自然切换到最长的链上.在此种情况下,共识能够正常运行,不存在冲突.)
+注意: DPOS存在分叉.
+
+It is possible for there to be 3 forks where the two longest forks are the same length.  In this case the producers on the 3rd (smaller fork) will break the tie when they rejoin the network.  There is an odd number of producers so it is impossible to maintain a tie for long. Later we will cover producer shuffling which will randomize order of production to ensure that even if two forks have the same number of producers, the forks will grow in different length bursts causing one fork to take over the other.
+有3个分叉,其中两个长度一样,这种情况是由可能发生的.这种情况下,当第三个较短的链上的节点重新加入网络后,这些节点有可能会随机分布到两个长的分叉中.但是因为块生产者是奇数的,所以两个相同的分叉并行增长的时间不会太久,最终会有一个更长的分叉形成. 稍后我们会介绍生产者重新排序,这样就会保证产出的随机性,从而保证了即使有两个分叉有同样的生产者,分叉也会以不同的长度生长,这样就会使得一个分叉的长度超过了另外一个分叉的长度.
+注意: 如果原本是奇数的出块节点坏了一个,变成了偶数,然后这些节点恰好分成了两个分叉,长度相同,这样的话怎么办呢? 原来定期这些节点的出块顺序会重新排列,这样的话就会导致原来长度相同的链会变得不一样长,然后两个分叉就会选择一个,另外一个别丢弃了. (出块顺序定时重新排列解决了偶数节点两个分叉长度相同的问题.)
+
+Double Production by Connected Minority	已连接的少数派在自己的出块时间产生了2个或者多个有效块
+Under this scenario minority B produced two or more alternative blocks on their time slot. The next scheduled producer ( C ), may choose to build off of any one of the alternatives produced by B. When this happens it will become the longest chain and all nodes that selected B1 will switch forks. It does not matter how many alternative blocks a minority of bad producers attempt to propagate, they will never be part of the longest chain for more than a round. 假设B在自己的出块时间产生了2个或者多个有效块,那么到C出块的时候C会选择其中的一个,在其基础上出块,然后被C的选择的分支的长度就变成最长的了,然后A再出块的时候也是在这个分支上进行出块.这样B之前同时产生的块中其余没有被选中你的块就成了无效块就被丢弃了.
+</code></pre> 
+  <p>PoS机制虽然考虑了PoW的不足，但也有缺点：依据权益结余来选择，会导致首富账户的权力更大，有可能支配记账权。股份授权证明机制（Delegated Proof of Stake，DPoS），是对PoW、PoS不足的提出的。下面以比特股为例，理解DPoS的思想。</p> 
+  <p>比特股引入了<strong>见证人</strong>这个概念，<strong>见证人可以生成区块</strong>，每一个持有比特股的人都可以投票选举见证人。得到总同意票数中的前NN个（NN通常定义为101）候选者可以当选为见证人，当选见证人的个数需满足：至少一半的参与投票者相信NN已经充分地去中心化。见证人的候选名单每个维护周期（1天）更新一次。见证人然后随机排列，每个见证人按序有2秒的权限时间生成区块，若见证人在给定的时间片不能生成区块，区块生成权限交给下一时间片对应的见证人。如果见证人提供的算力不稳定或计算机宕机等，持股人可以随时通过投票更换这些见证人。</p> 
+  <p>可以看到，其核心思想是通过缩小参与核心共识过程的节点数量，以提高共识效率。（这里可以认为选举见证人的过程为非核心共识过程，而见证人按序生成区块可以认为是核心共识过程）</p> 
+  <hr> 
+ </div> 
+ <link href="https://csdnimg.cn/release/phoenix/mdeditor/markdown_views-8cccb36679.css" rel="stylesheet"> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/gx_1983/article/details/82824093,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/gx_1983/article/details/82824093,&quot;}">阅读更多</a> 
+ <!-- <a class="btn" href="https://passport.csdn.net/account/login?utm_source=csdn_blog_pc_more_login" target="_self" id="btn-lobinreadmore" data-track-view='{"mod":"popu_557","con":",https://blog.csdn.net/gx_1983/article/details/82824093,"}' data-track-click='{"mod":"popu_557","con":",https://blog.csdn.net/gx_1983/article/details/82824093,"}'>登录后自动展开</a> --> 
+</div>

@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>独家对话V神：详谈以太坊设计与区块链迷思 | 有组织在！</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="独家对话V神：详谈以太坊设计与区块链迷思" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="记者 | 卢鸫翔 “我总偏向将权力分散于网络。这样一来，就没任何组织能轻松获取控制。我不相信巨大的中央组织，天性使然。” —— Bob Taylor，ARPANET缔造者（1932 – 2017） BitTorrent、Napster与Skype兴起，让21世纪初的互联网仿佛沐浴在“P2P春天”——然而始料未及，紧随其后，却是严冬——人们开始追逐集中架构，互联网上最活跃的部分与“去中心”渐行渐远——部分原因在于P2P商业模式与盗版之间的瓜葛。 而如今，以太坊（Ethereum）和其背后的区块链技术拥护者认为，现代密码学的一系列进展，以及对前沿经济理论的应用，是应对“腐蚀”互联网的在线广告激励机制，巨头数据垄断等问题的一剂解药。无论效果如何，这一次，火炬已从Bob Taylor和他的后继者，传递到了Vitalik Buterin这代程序员手中。 「人物志」第4期，Vitalik Buterin这位以太坊设计者，接受了我们的采访。 经验与迷思 区块链大本营：我们都知道你是以太坊的设计者，当下，你正专注于哪些问题？它们为何重要？ Vitalik：最近我主要关注分片技术（sharding）和权益证明（proof of stake）这两个以太坊协议中主要的技术突破口。分片技术将大幅度提高以太坊区块链的交易处理能力，并能显著减少交易费用，使其能应用于更广泛的场景。 分片技术在可拓展性上带来的进步至关重要，它能使公有链应用于更多主流场景。权益证明不同于代价昂贵且十分浪费资源的工作量证明，它可以降低区块链共识的成本。我希望能通过自己的努力把区块链从目前的状态转变成在日常生活中可以明确使用的工具。 区块链大本营：以太坊的设计与发展融合了多个学科领域，不仅与计算机技术有关，还涉及经济、社会乃至人类学理论。你怎样将跨度如此之大的不同理论，应用于以太坊设计？又如何训练和改进自己解决问题的能力和方法？ Vitalik：我投入大量时间阅读所有与这些领域有关的博客和书籍。我喜欢的博客包括乔治梅森大学（George Mason University）经济学家的博客（如Marginal Revolution、Overcoming Bias等）、Interfluidity、一些理性主义者的博客（LessWrong，尤其是Slate Star Codex）。 同时我也在努力阅读新著作，跟上经济学和社会科学的最新研究动态。在数学和密码学领域也是如此，尽管与前者的学习风格不同：这些领域的知识点数量少，但每个都需要花费更多精力才能理解。有时我会写博客介绍我在数学或密码学上的新收获，指导他人的同时巩固自己所学。 “我的终极目标是通过密码学、经济学以及去中心化技术创造更加自由、公平、开放、高效、广泛的人类合作形式。” ——&nbsp;Vitalik Buterin 区块链大本营：与开发以太坊之前相比，你对编程的理解，发生了哪些变化？或者说开发以太坊给你带来怎样的改变？ Vitalik：开发以太坊给我带来很多改变。首先，随着项目的体量逐渐庞大，相比于以太坊创立之初，我亲身参与编程的部分减少了许多；现在，我把大部分精力投入在应对深层挑战的研究之上。其次，我对分布式系统理论、密码学、编程语言在内的广泛领域拥有了更深刻的了解。此外，我对如何设计面向未来的协议，也有了更多认识——在最初的以太坊协议中我发现了诸多技术漏洞，我希望在下个版本中修复，做出一个拓展性更强的以太坊。 区块链大本营：Amara定律说“我们总是高估一项科技所带来的短期效益，却又低估它的长期影响”对于区块链，人们是否过于乐观？短期和长期它会怎样影响我们的社会？ Vitalik：很多人，包括我在内，无疑都对区块链技术过于乐观了，比如持有短期内技术大规模落地，以及迅速将区块链应用于现实世界这类观点。从长期来看，我始终认为上述一切终将实现，但我认为这取决于区块链平台的技术进步——尤其是围绕着易用和扩展——目前尚在开发当中。 区块链大本营：设计以太坊这类复杂系统，你采用怎样的步骤？哪些原则值得遵循？ Vitalik： 精确定义设计目标。 尝试找出至少一种能够达到设计目标的解决方案。 尝试找出更多解决方案。 如果方案类型迥异，就找出并理解这些解决方案本质上的不同；如果受一组共同因素影响，就该尝试去理解完整的因素还应当包含哪些。 到了这一步，你已经有了充足的信息，用来选择看似最优的解决方案。即使如此，也要永远乐于接受那些能够证明你的方案存在缺陷，或并非最优的新发现。 上述是关于“研究”的步骤；若是“开发”，应该从阶段3做起，但要以这样的方式进行：在未来设计方案可能会发生变动的前提下，最不可能无效的方案即是首选。 区块链大本营：如果有机会重新设计以太坊，最大的改变是什么？ Vitalik：从技术的角度，我可能会在设计的第一天就加入一些我们最近正在进行的协议改进，比如权益证明机制、分片技术、更快的虚拟机。即使如此，更有趣的答案应该是从社会学的角度分析，也就是以太坊基金会的管理架构。 我犯的一个最大错误就是我曾经拥有一个庞大的创始团队，但其中很多人都非技术出身，很多人在1-2年后就离开了团队，这拖慢了我们的进度。 另一个错误是我们把太多的精力投入到了业余项目上，致力于成为密码学界的苹果公司，而不是专注于一个特定的模块（比如核心区块链）并将它仔细打磨，然后通过授权机制（授权给第三方完成项目）或与其他团队协作完成剩余的模块。 今天，一些发源于社区的以太坊应用（如Metamask、MyEtherWallet这两款钱包软件）比基金会运营的项目表现更为出色。我们现在也在朝这个方向发展，专注于构建以太坊的核心内部功能（比如相关的科学研究和至关重要的改进），通过授权机制和各种各样的合作来完成整个生态系统的剩余环节，但我们本可以更早完成的。 区块链大本营：在区块链社区中，你看到过哪些对技术的迷思和误解？危害最大的是哪几个？ Vitalik： 区块链能适于任意场合，万物皆可用。 区块链的效率极度低下，因此它只适合一小部分特别有价值的场合，所以对降低交易费的担忧并没有那么重要。 对于ICO，所谓的“安全通证”（security tokens）都是不好的，而所谓的“功能通证”（utility tokens）都是好的（实际上，我认为安全通证的经济行为其实更透明，适合用户使用）。 区块链主要用来提供时间戳以及存在性证明（事实恰相反，区块链主要是用来证明“不存在”，也就是说验证某类行为并没有发生）。 区块链是一种针对隐私问题的解决方案（实际上，去“中心化技术”才是隐私问题的解决方案，区块链最多只算这个解决方案的一部分）。 去中心理论与现实世界 区块链大本营：在你看来，当下所谓的去中心化社会、公司、组织的理论是否已然成熟？若不是，最大的困难，限制或者说不确定因素是什么? Vitalik：我得说“不成熟”。构建应用底层的技术正在逐渐成熟，但还有一些方面很初步，尤其是： 应用底层管理：正如我们从比特币和以太坊关于硬分叉的争论，授权证明代表的选取和其他事项的争论中得到的经验。管理区块链并不是一个能简单用数学公式表达的操作，也不是一个能被计算机理解的操作，它是一种文化，是一系列的协议和参与者共同的期望。如果你仅仅使用算法表示而不把它融入到文化之中，那么它很有可能会失败。 在应用底层上创立去中心化社会组织。 区块链大本营：那你如何获取有关这些领域的经验？或者从哪些历史中能获取灵感？ Vitalik：我们可以看看互联网的历史、开源软件的发展史、区块链兴起前去中心化服务（P2P下载软件BitTorent，去中心化社交软件Diaspora等）的历史、政治制度与组织的历史。区块链以及相应的社会组织与它们有着千丝万缕的联系，尽管它们并不完全相同。 区块链大本营：如你所说，在理论不成熟的当下，如何能确定前进方向并判断决策或选择是否正确？ Vitalik：归根结底，只有把项目推入现实世界，看看市场和大众的反馈才有答案。虽然你总是可以试着更缜密地思考，谨慎地行动，但结果往往出人意料。 区块链大本营：“去中心化”（decentralization）这个词时常与所谓的“下一代互联网”相伴出现。除了“去中心化”，在你看来下一代互联网还需要依托哪些技术？ Vitalik：这取决于我们怎样定义“去中心化”。举个例子，在区块链领域，“去中心化”意味着整个服务并不是由一台服务器掌控，而是分布在多个计算机之间。还有一些去中心化的形式，比如用户有自己的公钥私钥，通过设置的服务管理员不会得到用户的私人信息。 去中心化之外，我认为在互联网不同层面工作的人，需要清楚地认识到这一点：他们正在与竞争者共同运营一个生态：有些人试图在社交媒体上操纵舆论，拒绝服务攻击遍布网络等。我们需要认真思考如何解决这些问题，最理想的情况是不引入中心化的管理。 区块链大本营：提起“竞争者”，也许你知道App.net，它曾闪烁着互联网理想主义的光影（https://www.wired.com/2013/08/the-great-app-net-mistake），这个2012年开启的项目，与时下诸多基于区块链，号称颠覆现有社交应用的项目相近，但在去年宣告失败。原因之一，是缺少高效的商业模式 —— 它曾要颠覆的对象之一Twitter —— 自己运营尚不轻松，小社区面对的问题更多。有种观点是，就算得到足够资金支持，它们也难以挑战一线社区，因为没用户会甘于使用第二梯队的服务。区块链上的去中心化应用是否会遭遇同样的问题？ Vitalik：销售通证/ICO算是一种尝试。不幸的是，提出可持续发展的通证模型并非易事。尽管通证价格很高，但通常外界对通证表现出的投资兴趣与项目的真实质量并无关联。另一个选项是广告业务，但这也有问题，它促使会平台管理者，阻止哪些不显示广告的第三方接入协议。此刻，这是留给所有人思考的开放问题。 后记： 许多年前，当“云计算”还是势不可挡的时髦词汇时，我曾问Larry Wall，这种模式会主宰未来世界吗？ 他对我说，文化总有发散和凝聚的力量，有关文化的问题常常如时钟般来回摆动。在他的生涯中，“中心”抑或“分散”的问题已前后摆动了多次，“我预期摆动还会继续。这些问题会自我纠正，它们离真正的革新有多远便会纠正多远”。 V神空降2018以太坊技术及应用大会·中国，6月3-4日与传奇人物零距离接触，点击「阅读原文」购票 最新热文： 想开发一款区块链杀手级游戏？这篇文章值得好好消化一下 谁不想低门槛接入区块链！这三年，他们为你的方便操碎了心 既得利益者的灭顶之灾：当数字货币结合证券... 孟岩：想抓住EOS的机会，从这四个方向入手吧！ 扫码加入区块链大本营读者群，群满加微信 17600222208 入群 了解更多区块链技术及应用内容 敬请关注： 阅读更多" />
+<meta property="og:description" content="记者 | 卢鸫翔 “我总偏向将权力分散于网络。这样一来，就没任何组织能轻松获取控制。我不相信巨大的中央组织，天性使然。” —— Bob Taylor，ARPANET缔造者（1932 – 2017） BitTorrent、Napster与Skype兴起，让21世纪初的互联网仿佛沐浴在“P2P春天”——然而始料未及，紧随其后，却是严冬——人们开始追逐集中架构，互联网上最活跃的部分与“去中心”渐行渐远——部分原因在于P2P商业模式与盗版之间的瓜葛。 而如今，以太坊（Ethereum）和其背后的区块链技术拥护者认为，现代密码学的一系列进展，以及对前沿经济理论的应用，是应对“腐蚀”互联网的在线广告激励机制，巨头数据垄断等问题的一剂解药。无论效果如何，这一次，火炬已从Bob Taylor和他的后继者，传递到了Vitalik Buterin这代程序员手中。 「人物志」第4期，Vitalik Buterin这位以太坊设计者，接受了我们的采访。 经验与迷思 区块链大本营：我们都知道你是以太坊的设计者，当下，你正专注于哪些问题？它们为何重要？ Vitalik：最近我主要关注分片技术（sharding）和权益证明（proof of stake）这两个以太坊协议中主要的技术突破口。分片技术将大幅度提高以太坊区块链的交易处理能力，并能显著减少交易费用，使其能应用于更广泛的场景。 分片技术在可拓展性上带来的进步至关重要，它能使公有链应用于更多主流场景。权益证明不同于代价昂贵且十分浪费资源的工作量证明，它可以降低区块链共识的成本。我希望能通过自己的努力把区块链从目前的状态转变成在日常生活中可以明确使用的工具。 区块链大本营：以太坊的设计与发展融合了多个学科领域，不仅与计算机技术有关，还涉及经济、社会乃至人类学理论。你怎样将跨度如此之大的不同理论，应用于以太坊设计？又如何训练和改进自己解决问题的能力和方法？ Vitalik：我投入大量时间阅读所有与这些领域有关的博客和书籍。我喜欢的博客包括乔治梅森大学（George Mason University）经济学家的博客（如Marginal Revolution、Overcoming Bias等）、Interfluidity、一些理性主义者的博客（LessWrong，尤其是Slate Star Codex）。 同时我也在努力阅读新著作，跟上经济学和社会科学的最新研究动态。在数学和密码学领域也是如此，尽管与前者的学习风格不同：这些领域的知识点数量少，但每个都需要花费更多精力才能理解。有时我会写博客介绍我在数学或密码学上的新收获，指导他人的同时巩固自己所学。 “我的终极目标是通过密码学、经济学以及去中心化技术创造更加自由、公平、开放、高效、广泛的人类合作形式。” ——&nbsp;Vitalik Buterin 区块链大本营：与开发以太坊之前相比，你对编程的理解，发生了哪些变化？或者说开发以太坊给你带来怎样的改变？ Vitalik：开发以太坊给我带来很多改变。首先，随着项目的体量逐渐庞大，相比于以太坊创立之初，我亲身参与编程的部分减少了许多；现在，我把大部分精力投入在应对深层挑战的研究之上。其次，我对分布式系统理论、密码学、编程语言在内的广泛领域拥有了更深刻的了解。此外，我对如何设计面向未来的协议，也有了更多认识——在最初的以太坊协议中我发现了诸多技术漏洞，我希望在下个版本中修复，做出一个拓展性更强的以太坊。 区块链大本营：Amara定律说“我们总是高估一项科技所带来的短期效益，却又低估它的长期影响”对于区块链，人们是否过于乐观？短期和长期它会怎样影响我们的社会？ Vitalik：很多人，包括我在内，无疑都对区块链技术过于乐观了，比如持有短期内技术大规模落地，以及迅速将区块链应用于现实世界这类观点。从长期来看，我始终认为上述一切终将实现，但我认为这取决于区块链平台的技术进步——尤其是围绕着易用和扩展——目前尚在开发当中。 区块链大本营：设计以太坊这类复杂系统，你采用怎样的步骤？哪些原则值得遵循？ Vitalik： 精确定义设计目标。 尝试找出至少一种能够达到设计目标的解决方案。 尝试找出更多解决方案。 如果方案类型迥异，就找出并理解这些解决方案本质上的不同；如果受一组共同因素影响，就该尝试去理解完整的因素还应当包含哪些。 到了这一步，你已经有了充足的信息，用来选择看似最优的解决方案。即使如此，也要永远乐于接受那些能够证明你的方案存在缺陷，或并非最优的新发现。 上述是关于“研究”的步骤；若是“开发”，应该从阶段3做起，但要以这样的方式进行：在未来设计方案可能会发生变动的前提下，最不可能无效的方案即是首选。 区块链大本营：如果有机会重新设计以太坊，最大的改变是什么？ Vitalik：从技术的角度，我可能会在设计的第一天就加入一些我们最近正在进行的协议改进，比如权益证明机制、分片技术、更快的虚拟机。即使如此，更有趣的答案应该是从社会学的角度分析，也就是以太坊基金会的管理架构。 我犯的一个最大错误就是我曾经拥有一个庞大的创始团队，但其中很多人都非技术出身，很多人在1-2年后就离开了团队，这拖慢了我们的进度。 另一个错误是我们把太多的精力投入到了业余项目上，致力于成为密码学界的苹果公司，而不是专注于一个特定的模块（比如核心区块链）并将它仔细打磨，然后通过授权机制（授权给第三方完成项目）或与其他团队协作完成剩余的模块。 今天，一些发源于社区的以太坊应用（如Metamask、MyEtherWallet这两款钱包软件）比基金会运营的项目表现更为出色。我们现在也在朝这个方向发展，专注于构建以太坊的核心内部功能（比如相关的科学研究和至关重要的改进），通过授权机制和各种各样的合作来完成整个生态系统的剩余环节，但我们本可以更早完成的。 区块链大本营：在区块链社区中，你看到过哪些对技术的迷思和误解？危害最大的是哪几个？ Vitalik： 区块链能适于任意场合，万物皆可用。 区块链的效率极度低下，因此它只适合一小部分特别有价值的场合，所以对降低交易费的担忧并没有那么重要。 对于ICO，所谓的“安全通证”（security tokens）都是不好的，而所谓的“功能通证”（utility tokens）都是好的（实际上，我认为安全通证的经济行为其实更透明，适合用户使用）。 区块链主要用来提供时间戳以及存在性证明（事实恰相反，区块链主要是用来证明“不存在”，也就是说验证某类行为并没有发生）。 区块链是一种针对隐私问题的解决方案（实际上，去“中心化技术”才是隐私问题的解决方案，区块链最多只算这个解决方案的一部分）。 去中心理论与现实世界 区块链大本营：在你看来，当下所谓的去中心化社会、公司、组织的理论是否已然成熟？若不是，最大的困难，限制或者说不确定因素是什么? Vitalik：我得说“不成熟”。构建应用底层的技术正在逐渐成熟，但还有一些方面很初步，尤其是： 应用底层管理：正如我们从比特币和以太坊关于硬分叉的争论，授权证明代表的选取和其他事项的争论中得到的经验。管理区块链并不是一个能简单用数学公式表达的操作，也不是一个能被计算机理解的操作，它是一种文化，是一系列的协议和参与者共同的期望。如果你仅仅使用算法表示而不把它融入到文化之中，那么它很有可能会失败。 在应用底层上创立去中心化社会组织。 区块链大本营：那你如何获取有关这些领域的经验？或者从哪些历史中能获取灵感？ Vitalik：我们可以看看互联网的历史、开源软件的发展史、区块链兴起前去中心化服务（P2P下载软件BitTorent，去中心化社交软件Diaspora等）的历史、政治制度与组织的历史。区块链以及相应的社会组织与它们有着千丝万缕的联系，尽管它们并不完全相同。 区块链大本营：如你所说，在理论不成熟的当下，如何能确定前进方向并判断决策或选择是否正确？ Vitalik：归根结底，只有把项目推入现实世界，看看市场和大众的反馈才有答案。虽然你总是可以试着更缜密地思考，谨慎地行动，但结果往往出人意料。 区块链大本营：“去中心化”（decentralization）这个词时常与所谓的“下一代互联网”相伴出现。除了“去中心化”，在你看来下一代互联网还需要依托哪些技术？ Vitalik：这取决于我们怎样定义“去中心化”。举个例子，在区块链领域，“去中心化”意味着整个服务并不是由一台服务器掌控，而是分布在多个计算机之间。还有一些去中心化的形式，比如用户有自己的公钥私钥，通过设置的服务管理员不会得到用户的私人信息。 去中心化之外，我认为在互联网不同层面工作的人，需要清楚地认识到这一点：他们正在与竞争者共同运营一个生态：有些人试图在社交媒体上操纵舆论，拒绝服务攻击遍布网络等。我们需要认真思考如何解决这些问题，最理想的情况是不引入中心化的管理。 区块链大本营：提起“竞争者”，也许你知道App.net，它曾闪烁着互联网理想主义的光影（https://www.wired.com/2013/08/the-great-app-net-mistake），这个2012年开启的项目，与时下诸多基于区块链，号称颠覆现有社交应用的项目相近，但在去年宣告失败。原因之一，是缺少高效的商业模式 —— 它曾要颠覆的对象之一Twitter —— 自己运营尚不轻松，小社区面对的问题更多。有种观点是，就算得到足够资金支持，它们也难以挑战一线社区，因为没用户会甘于使用第二梯队的服务。区块链上的去中心化应用是否会遭遇同样的问题？ Vitalik：销售通证/ICO算是一种尝试。不幸的是，提出可持续发展的通证模型并非易事。尽管通证价格很高，但通常外界对通证表现出的投资兴趣与项目的真实质量并无关联。另一个选项是广告业务，但这也有问题，它促使会平台管理者，阻止哪些不显示广告的第三方接入协议。此刻，这是留给所有人思考的开放问题。 后记： 许多年前，当“云计算”还是势不可挡的时髦词汇时，我曾问Larry Wall，这种模式会主宰未来世界吗？ 他对我说，文化总有发散和凝聚的力量，有关文化的问题常常如时钟般来回摆动。在他的生涯中，“中心”抑或“分散”的问题已前后摆动了多次，“我预期摆动还会继续。这些问题会自我纠正，它们离真正的革新有多远便会纠正多远”。 V神空降2018以太坊技术及应用大会·中国，6月3-4日与传奇人物零距离接触，点击「阅读原文」购票 最新热文： 想开发一款区块链杀手级游戏？这篇文章值得好好消化一下 谁不想低门槛接入区块链！这三年，他们为你的方便操碎了心 既得利益者的灭顶之灾：当数字货币结合证券... 孟岩：想抓住EOS的机会，从这四个方向入手吧！ 扫码加入区块链大本营读者群，群满加微信 17600222208 入群 了解更多区块链技术及应用内容 敬请关注： 阅读更多" />
+<link rel="canonical" href="http://0.0.0.0:4000/2018/05/16/%E7%8B%AC%E5%AE%B6%E5%AF%B9%E8%AF%9DV%E7%A5%9E-%E8%AF%A6%E8%B0%88%E4%BB%A5%E5%A4%AA%E5%9D%8A%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%8C%BA%E5%9D%97%E9%93%BE%E8%BF%B7%E6%80%9D.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2018/05/16/%E7%8B%AC%E5%AE%B6%E5%AF%B9%E8%AF%9DV%E7%A5%9E-%E8%AF%A6%E8%B0%88%E4%BB%A5%E5%A4%AA%E5%9D%8A%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%8C%BA%E5%9D%97%E9%93%BE%E8%BF%B7%E6%80%9D.html" />
+<meta property="og:site_name" content="有组织在！" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-05-16T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"记者 | 卢鸫翔 “我总偏向将权力分散于网络。这样一来，就没任何组织能轻松获取控制。我不相信巨大的中央组织，天性使然。” —— Bob Taylor，ARPANET缔造者（1932 – 2017） BitTorrent、Napster与Skype兴起，让21世纪初的互联网仿佛沐浴在“P2P春天”——然而始料未及，紧随其后，却是严冬——人们开始追逐集中架构，互联网上最活跃的部分与“去中心”渐行渐远——部分原因在于P2P商业模式与盗版之间的瓜葛。 而如今，以太坊（Ethereum）和其背后的区块链技术拥护者认为，现代密码学的一系列进展，以及对前沿经济理论的应用，是应对“腐蚀”互联网的在线广告激励机制，巨头数据垄断等问题的一剂解药。无论效果如何，这一次，火炬已从Bob Taylor和他的后继者，传递到了Vitalik Buterin这代程序员手中。 「人物志」第4期，Vitalik Buterin这位以太坊设计者，接受了我们的采访。 经验与迷思 区块链大本营：我们都知道你是以太坊的设计者，当下，你正专注于哪些问题？它们为何重要？ Vitalik：最近我主要关注分片技术（sharding）和权益证明（proof of stake）这两个以太坊协议中主要的技术突破口。分片技术将大幅度提高以太坊区块链的交易处理能力，并能显著减少交易费用，使其能应用于更广泛的场景。 分片技术在可拓展性上带来的进步至关重要，它能使公有链应用于更多主流场景。权益证明不同于代价昂贵且十分浪费资源的工作量证明，它可以降低区块链共识的成本。我希望能通过自己的努力把区块链从目前的状态转变成在日常生活中可以明确使用的工具。 区块链大本营：以太坊的设计与发展融合了多个学科领域，不仅与计算机技术有关，还涉及经济、社会乃至人类学理论。你怎样将跨度如此之大的不同理论，应用于以太坊设计？又如何训练和改进自己解决问题的能力和方法？ Vitalik：我投入大量时间阅读所有与这些领域有关的博客和书籍。我喜欢的博客包括乔治梅森大学（George Mason University）经济学家的博客（如Marginal Revolution、Overcoming Bias等）、Interfluidity、一些理性主义者的博客（LessWrong，尤其是Slate Star Codex）。 同时我也在努力阅读新著作，跟上经济学和社会科学的最新研究动态。在数学和密码学领域也是如此，尽管与前者的学习风格不同：这些领域的知识点数量少，但每个都需要花费更多精力才能理解。有时我会写博客介绍我在数学或密码学上的新收获，指导他人的同时巩固自己所学。 “我的终极目标是通过密码学、经济学以及去中心化技术创造更加自由、公平、开放、高效、广泛的人类合作形式。” ——&nbsp;Vitalik Buterin 区块链大本营：与开发以太坊之前相比，你对编程的理解，发生了哪些变化？或者说开发以太坊给你带来怎样的改变？ Vitalik：开发以太坊给我带来很多改变。首先，随着项目的体量逐渐庞大，相比于以太坊创立之初，我亲身参与编程的部分减少了许多；现在，我把大部分精力投入在应对深层挑战的研究之上。其次，我对分布式系统理论、密码学、编程语言在内的广泛领域拥有了更深刻的了解。此外，我对如何设计面向未来的协议，也有了更多认识——在最初的以太坊协议中我发现了诸多技术漏洞，我希望在下个版本中修复，做出一个拓展性更强的以太坊。 区块链大本营：Amara定律说“我们总是高估一项科技所带来的短期效益，却又低估它的长期影响”对于区块链，人们是否过于乐观？短期和长期它会怎样影响我们的社会？ Vitalik：很多人，包括我在内，无疑都对区块链技术过于乐观了，比如持有短期内技术大规模落地，以及迅速将区块链应用于现实世界这类观点。从长期来看，我始终认为上述一切终将实现，但我认为这取决于区块链平台的技术进步——尤其是围绕着易用和扩展——目前尚在开发当中。 区块链大本营：设计以太坊这类复杂系统，你采用怎样的步骤？哪些原则值得遵循？ Vitalik： 精确定义设计目标。 尝试找出至少一种能够达到设计目标的解决方案。 尝试找出更多解决方案。 如果方案类型迥异，就找出并理解这些解决方案本质上的不同；如果受一组共同因素影响，就该尝试去理解完整的因素还应当包含哪些。 到了这一步，你已经有了充足的信息，用来选择看似最优的解决方案。即使如此，也要永远乐于接受那些能够证明你的方案存在缺陷，或并非最优的新发现。 上述是关于“研究”的步骤；若是“开发”，应该从阶段3做起，但要以这样的方式进行：在未来设计方案可能会发生变动的前提下，最不可能无效的方案即是首选。 区块链大本营：如果有机会重新设计以太坊，最大的改变是什么？ Vitalik：从技术的角度，我可能会在设计的第一天就加入一些我们最近正在进行的协议改进，比如权益证明机制、分片技术、更快的虚拟机。即使如此，更有趣的答案应该是从社会学的角度分析，也就是以太坊基金会的管理架构。 我犯的一个最大错误就是我曾经拥有一个庞大的创始团队，但其中很多人都非技术出身，很多人在1-2年后就离开了团队，这拖慢了我们的进度。 另一个错误是我们把太多的精力投入到了业余项目上，致力于成为密码学界的苹果公司，而不是专注于一个特定的模块（比如核心区块链）并将它仔细打磨，然后通过授权机制（授权给第三方完成项目）或与其他团队协作完成剩余的模块。 今天，一些发源于社区的以太坊应用（如Metamask、MyEtherWallet这两款钱包软件）比基金会运营的项目表现更为出色。我们现在也在朝这个方向发展，专注于构建以太坊的核心内部功能（比如相关的科学研究和至关重要的改进），通过授权机制和各种各样的合作来完成整个生态系统的剩余环节，但我们本可以更早完成的。 区块链大本营：在区块链社区中，你看到过哪些对技术的迷思和误解？危害最大的是哪几个？ Vitalik： 区块链能适于任意场合，万物皆可用。 区块链的效率极度低下，因此它只适合一小部分特别有价值的场合，所以对降低交易费的担忧并没有那么重要。 对于ICO，所谓的“安全通证”（security tokens）都是不好的，而所谓的“功能通证”（utility tokens）都是好的（实际上，我认为安全通证的经济行为其实更透明，适合用户使用）。 区块链主要用来提供时间戳以及存在性证明（事实恰相反，区块链主要是用来证明“不存在”，也就是说验证某类行为并没有发生）。 区块链是一种针对隐私问题的解决方案（实际上，去“中心化技术”才是隐私问题的解决方案，区块链最多只算这个解决方案的一部分）。 去中心理论与现实世界 区块链大本营：在你看来，当下所谓的去中心化社会、公司、组织的理论是否已然成熟？若不是，最大的困难，限制或者说不确定因素是什么? Vitalik：我得说“不成熟”。构建应用底层的技术正在逐渐成熟，但还有一些方面很初步，尤其是： 应用底层管理：正如我们从比特币和以太坊关于硬分叉的争论，授权证明代表的选取和其他事项的争论中得到的经验。管理区块链并不是一个能简单用数学公式表达的操作，也不是一个能被计算机理解的操作，它是一种文化，是一系列的协议和参与者共同的期望。如果你仅仅使用算法表示而不把它融入到文化之中，那么它很有可能会失败。 在应用底层上创立去中心化社会组织。 区块链大本营：那你如何获取有关这些领域的经验？或者从哪些历史中能获取灵感？ Vitalik：我们可以看看互联网的历史、开源软件的发展史、区块链兴起前去中心化服务（P2P下载软件BitTorent，去中心化社交软件Diaspora等）的历史、政治制度与组织的历史。区块链以及相应的社会组织与它们有着千丝万缕的联系，尽管它们并不完全相同。 区块链大本营：如你所说，在理论不成熟的当下，如何能确定前进方向并判断决策或选择是否正确？ Vitalik：归根结底，只有把项目推入现实世界，看看市场和大众的反馈才有答案。虽然你总是可以试着更缜密地思考，谨慎地行动，但结果往往出人意料。 区块链大本营：“去中心化”（decentralization）这个词时常与所谓的“下一代互联网”相伴出现。除了“去中心化”，在你看来下一代互联网还需要依托哪些技术？ Vitalik：这取决于我们怎样定义“去中心化”。举个例子，在区块链领域，“去中心化”意味着整个服务并不是由一台服务器掌控，而是分布在多个计算机之间。还有一些去中心化的形式，比如用户有自己的公钥私钥，通过设置的服务管理员不会得到用户的私人信息。 去中心化之外，我认为在互联网不同层面工作的人，需要清楚地认识到这一点：他们正在与竞争者共同运营一个生态：有些人试图在社交媒体上操纵舆论，拒绝服务攻击遍布网络等。我们需要认真思考如何解决这些问题，最理想的情况是不引入中心化的管理。 区块链大本营：提起“竞争者”，也许你知道App.net，它曾闪烁着互联网理想主义的光影（https://www.wired.com/2013/08/the-great-app-net-mistake），这个2012年开启的项目，与时下诸多基于区块链，号称颠覆现有社交应用的项目相近，但在去年宣告失败。原因之一，是缺少高效的商业模式 —— 它曾要颠覆的对象之一Twitter —— 自己运营尚不轻松，小社区面对的问题更多。有种观点是，就算得到足够资金支持，它们也难以挑战一线社区，因为没用户会甘于使用第二梯队的服务。区块链上的去中心化应用是否会遭遇同样的问题？ Vitalik：销售通证/ICO算是一种尝试。不幸的是，提出可持续发展的通证模型并非易事。尽管通证价格很高，但通常外界对通证表现出的投资兴趣与项目的真实质量并无关联。另一个选项是广告业务，但这也有问题，它促使会平台管理者，阻止哪些不显示广告的第三方接入协议。此刻，这是留给所有人思考的开放问题。 后记： 许多年前，当“云计算”还是势不可挡的时髦词汇时，我曾问Larry Wall，这种模式会主宰未来世界吗？ 他对我说，文化总有发散和凝聚的力量，有关文化的问题常常如时钟般来回摆动。在他的生涯中，“中心”抑或“分散”的问题已前后摆动了多次，“我预期摆动还会继续。这些问题会自我纠正，它们离真正的革新有多远便会纠正多远”。 V神空降2018以太坊技术及应用大会·中国，6月3-4日与传奇人物零距离接触，点击「阅读原文」购票 最新热文： 想开发一款区块链杀手级游戏？这篇文章值得好好消化一下 谁不想低门槛接入区块链！这三年，他们为你的方便操碎了心 既得利益者的灭顶之灾：当数字货币结合证券... 孟岩：想抓住EOS的机会，从这四个方向入手吧！ 扫码加入区块链大本营读者群，群满加微信 17600222208 入群 了解更多区块链技术及应用内容 敬请关注： 阅读更多","@type":"BlogPosting","url":"http://0.0.0.0:4000/2018/05/16/%E7%8B%AC%E5%AE%B6%E5%AF%B9%E8%AF%9DV%E7%A5%9E-%E8%AF%A6%E8%B0%88%E4%BB%A5%E5%A4%AA%E5%9D%8A%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%8C%BA%E5%9D%97%E9%93%BE%E8%BF%B7%E6%80%9D.html","headline":"独家对话V神：详谈以太坊设计与区块链迷思","dateModified":"2018-05-16T00:00:00+08:00","datePublished":"2018-05-16T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2018/05/16/%E7%8B%AC%E5%AE%B6%E5%AF%B9%E8%AF%9DV%E7%A5%9E-%E8%AF%A6%E8%B0%88%E4%BB%A5%E5%A4%AA%E5%9D%8A%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%8C%BA%E5%9D%97%E9%93%BE%E8%BF%B7%E6%80%9D.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="/assets/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123344652-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123344652-1');
+    </script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header  class="without-description" >
+        <h1>独家对话V神：详谈以太坊设计与区块链迷思</h1>
+        
+        
+        <ul>
+            <li><a href="https://blog.uzzz.org/" target="_blank"><strong>柚子社区<br/>(国际版)</strong></a></li>
+            <li><a href="https://blog.uzzz.org.cn/" target="_blank"><strong>柚子社区<br/>(国内版)</strong></a></li>
+        </ul>
+        
+        
+        
+      </header>
+      <section>
+
+      <div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog" data-mod="popu_307" data-dsm="post"> 
+ <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-e2445db1a8.css"> 
+ <div class="htmledit_views"> 
+  <div class="rich_media_content"> 
+   <p style="margin-left:8px;text-align:justify;line-height:1.75em;"></p>
+   <p><span style="color:rgb(136,136,136);"><br></span></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="color:rgb(136,136,136);font-size:15px;letter-spacing:.5px;">记者 | 卢鸫翔</span></p>
+   <p><br></p>
+   <p><br></p>
+   <blockquote>
+    <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="color:rgb(136,136,136);"><em><span style="letter-spacing:.5px;font-size:15px;">“我总偏向将权力分散于网络。这样一来，就没任何组织能轻松获取控制。我不相信巨大的中央组织，天性使然。”<br></span></em></span></p>
+    <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="color:rgb(136,136,136);"><em><span style="letter-spacing:.5px;font-size:15px;"><br></span></em></span></p>
+    <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="color:rgb(136,136,136);"><em><span style="letter-spacing:.5px;font-size:15px;">—— Bob Taylor，ARPANET缔造者（1932 – 2017）</span></em></span></p>
+   </blockquote>
+   <p><br></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;"><br></span></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;">BitTorrent、Napster与Skype兴起，让21世纪初的互联网仿佛沐浴在“P2P春天”——然而始料未及，紧随其后，却是严冬——人们开始追逐集中架构，互联网上最活跃的部分与“去中心”渐行渐远——部分原因在于P2P商业模式与盗版之间的瓜葛。</span></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;"><br></span></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;">而如今，以太坊（Ethereum）和其背后的区块链技术拥护者认为，现代密码学的一系列进展，以及对前沿经济理论的应用，是应对“腐蚀”互联网的在线广告激励机制，巨头数据垄断等问题的一剂解药。无论效果如何，</span><span style="letter-spacing:.5px;font-size:15px;color:rgb(0,122,170);">这一次，火炬已从Bob Taylor和他的后继者，传递到了Vitalik Buterin这代程序员手中</span><span style="letter-spacing:.5px;font-size:15px;">。</span></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;"><br></span></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><strong><span style="letter-spacing:.5px;font-size:15px;">「人物志」第4期，Vitalik Buterin这位以太坊设计者，接受了我们的采访</span></strong><span style="letter-spacing:.5px;font-size:15px;">。</span></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;"><br></span></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;"><br></span></p>
+   <h1 class="ql-long-6051229"></h1>
+   <p style="margin-left:8px;line-height:1.75em;text-align:center;"><span style="color:rgb(0,122,170);"><strong><span style="letter-spacing:.5px;font-size:18px;">经验与迷思</span></strong></span></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;"><br></span></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><strong><span style="letter-spacing:.5px;font-size:15px;color:rgb(0,122,170);">区块链大本营：</span></strong><strong><span style="letter-spacing:.5px;font-size:15px;color:rgb(136,136,136);">我们都知道你是以太坊的设计者，当下，你正专注于哪些问题？它们为何重要？</span></strong></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="color:rgb(0,122,170);"><strong><span style="letter-spacing:.5px;font-size:15px;">Vitalik：</span></strong></span><span style="letter-spacing:.5px;font-size:15px;">最近我主要关注分片技术（sharding）和权益证明（proof of stake）这两个以太坊协议中主要的技术突破口。分片技术将大幅度提高以太坊区块链的交易处理能力，并能显著减少交易费用，使其能应用于更广泛的场景。</span></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;"><br></span></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;">分片技术在可拓展性上带来的进步至关重要，它能使公有链应用于更多主流场景。权益证明不同于代价昂贵且十分浪费资源的工作量证明，它可以降低区块链共识的成本。我希望能通过自己的努力把区块链从目前的状态转变成在日常生活中可以明确使用的工具。</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><strong><span style="letter-spacing:.5px;font-size:15px;color:rgb(0,122,170);">区块链大本营：</span></strong><strong><span style="letter-spacing:.5px;font-size:15px;color:rgb(136,136,136);">以太坊的设计与发展融合了多个学科领域，不仅与计算机技术有关，还涉及经济、社会乃至人类学理论。你怎样将跨度如此之大的不同理论，应用于以太坊设计？又如何训练和改进自己解决问题的能力和方法？</span></strong></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><strong><span style="letter-spacing:.5px;font-size:15px;color:rgb(0,122,170);">Vitalik：</span></strong><span style="letter-spacing:.5px;font-size:15px;">我投入大量时间阅读所有与这些领域有关的博客和书籍。我喜欢的博客包括乔治梅森大学（George Mason University）经济学家的博客（如Marginal Revolution、Overcoming Bias等）、Interfluidity、一些理性主义者的博客（LessWrong，尤其是Slate Star Codex）。</span></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;"><br></span></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;">同时我也在努力阅读新著作，跟上经济学和社会科学的最新研究动态。在数学和密码学领域也是如此，尽管与前者的学习风格不同：这些领域的知识点数量少，但每个都需要花费更多精力才能理解。有时我会写博客介绍我在数学或密码学上的新收获，指导他人的同时巩固自己所学。</span></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;"><br></span></p>
+   <p><br></p>
+   <blockquote class="ql-long-8952275">
+    <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;"><em class="ql-author-8952275 ql-commented ql-commented-background" style="color:rgb(77,168,238);">“我</em><em class="ql-commented ql-commented-background ql-author-6051229" style="color:rgb(77,168,238);">的终极目标是</em><em class="ql-commented ql-commented-background ql-author-8952275" style="color:rgb(77,168,238);">通过密码学、经济学以及去中心化技术创造更加自由、公平、开放、高效、广泛的人类合作形式。”</em></span></p>
+    <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;"><em class="ql-commented ql-commented-background ql-author-6051229" style="color:rgb(77,168,238);"><br></em></span></p>
+    <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;"><em class="ql-commented ql-commented-background ql-author-6051229" style="color:rgb(77,168,238);">——&nbsp;</em><span class="ql-commented ql-commented-background ql-author-6051229" style="color:rgb(77,168,238);">Vitalik Buterin</span></span></p>
+   </blockquote>
+   <p><br></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;"><br></span></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><strong><span style="letter-spacing:.5px;font-size:15px;color:rgb(0,122,170);">区块链大本营：</span></strong><strong><span style="letter-spacing:.5px;font-size:15px;color:rgb(136,136,136);">与开发以太坊之前相比，你对编程的理解，发生了哪些变化？或者说开发以太坊给你带来怎样的改变</span></strong><span style="letter-spacing:.5px;font-size:15px;color:rgb(136,136,136);">？</span></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="color:rgb(0,122,170);"><strong><span style="letter-spacing:.5px;font-size:15px;">Vitalik：</span></strong></span><span style="letter-spacing:.5px;font-size:15px;">开发以太坊给我带来很多改变。首先，随着项目的体量逐渐庞大，相比于以太坊创立之初，我亲身参与编程的部分减少了许多；现在，我把大部分精力投入在应对深层挑战的研究之上。其次，我对分布式系统理论、密码学、编程语言在内的广泛领域拥有了更深刻的了解。此外，我对如何设计面向未来的协议，也有了更多认识——在最初的以太坊协议中我发现了诸多技术漏洞，我希望在下个版本中修复，做出一个拓展性更强的以太坊。</span></p>
+   <p class="ql-align-justify"><br></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><strong><span style="letter-spacing:.5px;font-size:15px;color:rgb(0,122,170);">区块链大本营：</span></strong><strong><span style="letter-spacing:.5px;font-size:15px;color:rgb(136,136,136);">Amara定律说“我们总是高估一项科技所带来的短期效益，却又低估它的长期影响”对于区块链，人们是否过于乐观？短期和长期它会怎样影响我们的社会？</span></strong></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;"><strong style="color:rgb(0,122,170);">Vitalik：</strong>很多人，包括我在内，无疑都对区块链技术过于乐观了，比如持有短期内技术大规模落地，以及迅速将区块链应用于现实世界这类观点。从长期来看，我始终认为上述一切终将实现，但我认为这取决于区块链平台的技术进步——尤其是围绕着易用和扩展——目前尚在开发当中。</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="color:rgb(0,122,170);"><strong><span style="letter-spacing:.5px;font-size:15px;">区块链大本营</span></strong></span><strong><span style="letter-spacing:.5px;font-size:15px;color:rgb(0,122,170);">：</span></strong><strong><span style="letter-spacing:.5px;font-size:15px;color:rgb(136,136,136);">设计以太坊这类复杂系统，你采用怎样的步骤？哪些原则值得遵循？</span></strong></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="color:rgb(0,122,170);"><strong><span style="letter-spacing:.5px;font-size:15px;">Vitalik：</span></strong></span></p>
+   <ol class="list-paddingleft-2">
+    <li><p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;">精确定义设计目标。</span></p></li>
+    <li><p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;">尝试找出至少一种能够达到设计目标的解决方案。</span></p></li>
+    <li><p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;">尝试找出更多解决方案。</span></p></li>
+    <li><p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;">如果方案类型迥异，就找出并理解这些解决方案本质上的不同；如果受一组共同因素影响，就该尝试去理解完整的因素还应当包含哪些。</span></p></li>
+    <li><p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;">到了这一步，你已经有了充足的信息，用来选择看似最优的解决方案。即使如此，也要永远乐于接受那些能够证明你的方案存在缺陷，或并非最优的新发现。</span></p></li>
+   </ol>
+   <p><br></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;">上述是关于“研究”的步骤；若是“开发”，应该从阶段3做起，但要以这样的方式进行：在未来设计方案可能会发生变动的前提下，最不可能无效的方案即是首选。</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;"><span style="color:rgb(0,122,170);"><strong>区块链大本营</strong></span><strong><span style="color:rgb(0,122,170);">：</span></strong></span><strong><span style="letter-spacing:.5px;font-size:15px;color:rgb(136,136,136);">如果有机会重新设计以太坊，最大的改变是什么？</span></strong></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><strong><span style="letter-spacing:.5px;font-size:15px;color:rgb(0,122,170);">Vitalik：</span></strong><span style="letter-spacing:.5px;font-size:15px;">从技术的角度，我可能会在设计的第一天就加入一些我们最近正在进行的协议改进，比如权益证明机制、分片技术、更快的虚拟机。</span><span style="font-size:15px;letter-spacing:.5px;">即使如此，更有趣的答案应该是从社会学的角度分析，也就是以太坊基金会的管理架构。</span></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;">我犯的一个最大错误就是我曾经拥有一个庞大的创始团队，但其中很多人都非技术出身，很多人在1-2年后就离开了团队，这拖慢了我们的进度。</span></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;">另一个错误是我们把太多的精力投入到了业余项目上，致力于成为密码学界的苹果公司，而不是专注于一个特定的模块（比如核心区块链）并将它仔细打磨，然后通过授权机制（授权给第三方完成项目）或与其他团队协作完成剩余的模块。</span></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;">今天，一些发源于社区的以太坊应用（如Metamask、MyEtherWallet这两款钱包软件）比基金会运营的项目表现更为出色。我们现在也在朝这个方向发展，专注于构建以太坊的核心内部功能（比如相关的科学研究和至关重要的改进），通过授权机制和各种各样的合作来完成整个生态系统的剩余环节，但我们本可以更早完成的。</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;"><span style="color:rgb(0,122,170);"><strong>区块链大本营</strong></span><strong><span style="color:rgb(0,122,170);">：</span></strong></span><strong><span style="letter-spacing:.5px;font-size:15px;color:rgb(136,136,136);">在区块链社区中，你看到过哪些对技术的迷思和误解？危害最大的是哪几个？</span></strong></p>
+   <p><br></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><strong><span style="letter-spacing:.5px;font-size:15px;color:rgb(0,122,170);">Vitalik：</span></strong></p>
+   <ol class="list-paddingleft-2">
+    <li><p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;">区块链能适于任意场合，万物皆可用。</span></p></li>
+    <li><p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;">区块链的效率极度低下，因此它只适合一小部分特别有价值的场合，所以对降低交易费的担忧并没有那么重要。</span></p></li>
+    <li><p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;">对于ICO，所谓的“安全通证”（security tokens）都是不好的，而所谓的“功能通证”（utility tokens）都是好的（实际上，我认为安全通证的经济行为其实更透明，适合用户使用）。</span></p></li>
+    <li><p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;">区块链主要用来提供时间戳以及存在性证明（事实恰相反，区块链主要是用来证明“不存在”，也就是说验证某类行为并没有发生）。</span></p></li>
+    <li><p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;">区块链是一种针对隐私问题的解决方案（实际上，去“中心化技术”才是隐私问题的解决方案，区块链最多只算这个解决方案的一部分）。</span></p></li>
+   </ol>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"></span></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="font-size:15px;letter-spacing:.5px;"><br></span></p>
+   <h1 class="ql-long-6051229"></h1>
+   <p style="margin-left:8px;line-height:1.75em;text-align:center;"><strong><span style="letter-spacing:.5px;color:rgb(0,122,170);font-size:18px;">去中心理论与现实世界</span></strong></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;"><br></span></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;"><span style="color:rgb(0,122,170);"><strong>区块链大本营</strong></span><strong><span style="color:rgb(0,122,170);">：</span></strong></span><strong><span style="letter-spacing:.5px;font-size:15px;color:rgb(136,136,136);">在你看来，当下所谓的去中心化社会、公司、组织的理论是否已然成熟？若不是，最大的困难，限制或者说不确定因素是什么?</span></strong></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><strong><span style="letter-spacing:.5px;font-size:15px;color:rgb(0,122,170);">Vitalik：</span></strong><span style="letter-spacing:.5px;font-size:15px;">我得说“不成熟”。构建应用底层的技术正在逐渐成熟，但还有一些方面很初步，尤其是：</span></p>
+   <p><br></p>
+   <ul class="ql-long-8952275 list-paddingleft-2" style="margin-left:8px;">
+    <li><p style="line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;color:rgb(0,122,170);">应用底层管理</span><span style="letter-spacing:.5px;font-size:15px;">：正如我们从比特币和以太坊关于硬分叉的争论，授权证明代表的选取和其他事项的争论中得到的经验。管理区块链并不是一个能简单用数学公式表达的操作，也不是一个能被计算机理解的操作，它是一种文化，是一系列的协议和参与者共同的期望。如果你仅仅使用算法表示而不把它融入到文化之中，那么它很有可能会失败。</span></p></li>
+   </ul>
+   <ul class="ql-long-8952275 list-paddingleft-2" style="margin-left:8px;">
+    <li><p style="line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;color:rgb(0,122,170);">在应用底层上创立去中心化社会组织</span><span style="letter-spacing:.5px;font-size:15px;">。</span></p></li>
+   </ul>
+   <p><br></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;"><span style="color:rgb(0,122,170);"><strong>区块链大本营</strong></span><strong><span style="color:rgb(0,122,170);">：</span></strong></span><strong><span style="letter-spacing:.5px;font-size:15px;color:rgb(136,136,136);">那你如何获取有关这些领域的经验？或者从哪些历史中能获取灵感？</span></strong></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="color:rgb(0,122,170);"><strong><span style="letter-spacing:.5px;font-size:15px;">Vitalik</span></strong></span><span style="letter-spacing:.5px;font-size:15px;">：我们可以看看互联网的历史、开源软件的发展史、区块链兴起前去中心化服务（P2P下载软件BitTorent，去中心化社交软件Diaspora等）的历史、政治制度与组织的历史。区块链以及相应的社会组织与它们有着千丝万缕的联系，尽管它们并不完全相同。</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;"><span style="color:rgb(0,122,170);"><strong>区块链大本营</strong></span><strong><span style="color:rgb(0,122,170);">：</span></strong></span><strong><span style="letter-spacing:.5px;font-size:15px;color:rgb(136,136,136);">如你所说，在理论不成熟的当下，如何能确定前进方向并判断决策或选择是否正确？</span></strong></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><strong><span style="letter-spacing:.5px;font-size:15px;color:rgb(0,122,170);">Vitalik：</span></strong><span style="letter-spacing:.5px;font-size:15px;">归根结底，只有把项目推入现实世界，看看市场和大众的反馈才有答案。虽然你总是可以试着更缜密地思考，谨慎地行动，但结果往往出人意料。</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;"><span style="color:rgb(0,122,170);"><strong>区块链大本营</strong></span><strong><span style="color:rgb(0,122,170);">：</span></strong></span><span style="letter-spacing:.5px;font-size:15px;color:rgb(136,136,136);"><strong>“去中心化”（decentralization）这个词时常与所谓的“下一代互联网”相伴出现。除了“去中心化”，在你看来下一代互联网还需要依托哪些技术？</strong></span></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><strong><span style="letter-spacing:.5px;font-size:15px;color:rgb(0,122,170);">Vitalik：</span></strong><span style="letter-spacing:.5px;font-size:15px;">这取决于我们怎样定义“去中心化”。举个例子，在区块链领域，“去中心化”意味着整个服务并不是由一台服务器掌控，而是分布在多个计算机之间。还有一些去中心化的形式，比如用户有自己的公钥私钥，通过设置的服务管理员不会得到用户的私人信息。</span></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;"><br></span></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;">去中心化之外，我认为在互联网不同层面工作的人，需要清楚地认识到这一点：他们正在与竞争者共同运营一个生态：有些人试图在社交媒体上操纵舆论，拒绝服务攻击遍布网络等。我们需要认真思考如何解决这些问题，最理想的情况是不引入中心化的管理。</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;"><span style="color:rgb(0,122,170);"><strong>区块链大本营</strong></span><strong><span style="color:rgb(0,122,170);">：</span></strong></span><strong><span style="letter-spacing:.5px;font-size:15px;color:rgb(136,136,136);">提起“竞争者”，也许你知道</span></strong><strong><span style="letter-spacing:.5px;font-size:15px;color:rgb(136,136,136);">App.net</span></strong><strong><span style="letter-spacing:.5px;font-size:15px;color:rgb(136,136,136);">，它曾闪烁着互联网理想主义的光影（</span></strong><em><span style="text-decoration:underline;"><strong><span style="letter-spacing:.5px;font-size:15px;color:rgb(136,136,136);">https://www.wired.com/2013/08/the-great-app-net-mistake</span></strong></span></em><strong><span style="letter-spacing:.5px;font-size:15px;color:rgb(136,136,136);">），这个2012年开启的项目，与时下诸多基于区块链，号称颠覆现有社交应用的项目相近，但在去年宣告失败。原因之一，是缺少高效的商业模式 —— 它曾要颠覆的对象之一Twitter —— 自己运营尚不轻松，小社区面对的问题更多。有种观点是，就算得到足够资金支持，它们也难以挑战一线社区，因为没用户会甘于使用第二梯队的服务。区块链上的去中心化应用是否会遭遇同样的问题？</span></strong></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><strong><span style="letter-spacing:.5px;font-size:15px;color:rgb(0,122,170);">Vitalik：</span></strong><span style="letter-spacing:.5px;font-size:15px;">销售通证/ICO算是一种尝试。不幸的是，提出可持续发展的通证模型并非易事。尽管通证价格很高，但通常外界对通证表现出的投资兴趣与项目的真实质量并无关联。另一个选项是广告业务，但这也有问题，它促使会平台管理者，阻止哪些不显示广告的第三方接入协议。此刻，这是留给所有人思考的开放问题。</span></p>
+   <p class="ql-align-justify"><br></p>
+   <p class="ql-align-justify"><br></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><strong><span style="letter-spacing:.5px;font-size:15px;">后记：</span></strong></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;"><br></span></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;">许多年前，当“云计算”还是势不可挡的时髦词汇时，我曾问Larry Wall，这种模式会主宰未来世界吗？</span></p>
+   <p><br></p>
+   <p style="margin-left:8px;line-height:1.75em;text-align:justify;"><span style="letter-spacing:.5px;font-size:15px;">他对我说，文化总有发散和凝聚的力量，有关文化的问题常常如时钟般来回摆动。在他的生涯中，“中心”抑或“分散”的问题已前后摆动了多次，“我预期摆动还会继续。这些问题会自我纠正，它们离真正的革新有多远便会纠正多远”。</span></p>
+   <p><br></p>
+   <p><br></p>
+   <p style="line-height:1.75em;margin-left:8px;text-align:center;"><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);">V神空降2018以太坊技术及应用大会·中国，6月3-4日与传奇人物零距离接触，点击「阅读原文」购票</span></strong></p>
+   <p><br></p>
+   <p><br></p>
+   <p><br></p>
+   <p style="line-height:22px;font-size:18px;"><strong>最新热文：</strong></p>
+   <p style="line-height:22px;font-size:18px;"><br></p>
+   <ul class="list-paddingleft-2" style="margin-left:8px;">
+    <li><p><a href="https://mp.weixin.qq.com/s?__biz=MzU2MTE1NDk2Mg==&amp;mid=2247486365&amp;idx=1&amp;sn=d1627ddd953491352ee0c9282a66376e&amp;chksm=fc7c5560cb0bdc76ec8c8ab5452bab2005af7d7cd173c95eacc7ea57e02d5ba74836faae4ced&amp;mpshare=1&amp;scene=21&amp;srcid=0516Cm4XPI4SK8CmdqL8fnJU&amp;key=f4a3d578d71832a2a5279a697692942cff53dcfce943f1c5a9a4f4025551e228332433de6eb6941a3ad92887c6335f574c21e9c3f25433d0bfc28d79794cd5c4854dbf4fdd4247bc07bf6e80f22b8126&amp;ascene=0&amp;uin=MjQ0ODA5ODUwMQ==&amp;devicetype=iMac%20MacBookAir7,2%20OSX%20OSX%2010.12.4%20build(16E195)&amp;version=11020201&amp;lang=zh_CN&amp;pass_ticket=DkJOXu4AjO7GRl5fn5VAXBMxfn9zwLgO/23fRFmjh3Bp6dopoo1xTmqwK1A98s2X#wechat_redirect" rel="nofollow" style="color:rgb(0,122,170);text-decoration:underline;font-size:15px;">想开发一款区块链杀手级游戏？这篇文章值得好好消化一下</a><br></p></li>
+    <li><p><a href="https://mp.weixin.qq.com/s?__biz=MzU2MTE1NDk2Mg==&amp;mid=2247486318&amp;idx=1&amp;sn=745615373fc51141ae291cfb018b71b8&amp;chksm=fc7c5593cb0bdc8534cf4200dd1960339429362eb3610c7abb4f2ee0680f7c2762a0ec985af6&amp;mpshare=1&amp;scene=21&amp;srcid=0514CllrJI3M1fja7VoaeopX&amp;key=9a42aed3c6f8156d40894384d3fbf0e14a37c63d926326ce8fde4e5684c101172862f87ab65e2a6eae87c59202f0633cb64cd3f6b26ee3d904295312b3d836188b26966b91a135168fdaf1b0a9dac4b6&amp;ascene=0&amp;uin=MjQ0ODA5ODUwMQ==&amp;devicetype=iMac%20MacBookAir7,2%20OSX%20OSX%2010.12.4%20build(16E195)&amp;version=11020201&amp;lang=zh_CN&amp;pass_ticket=tCoc6eTin0cKKFX1K1tcdjgSXdK9zFe71UT6DJi9bmnDN6i3n3UyglO6kaR5PHE6#wechat_redirect" rel="nofollow" style="color:rgb(0,122,170);text-decoration:underline;font-size:15px;">谁不想低门槛接入区块链！这三年，他们为你的方便操碎了心</a><br></p></li>
+    <li><p><a href="http://mp.weixin.qq.com/s?__biz=MzU2MTE1NDk2Mg==&amp;mid=2247486290&amp;idx=1&amp;sn=d75a304aafc3af75b8c4222e5a7a93f9&amp;chksm=fc7c55afcb0bdcb94fc923c7c7a4d08ece64575f0ccbd73cc45d473a1079bf6a11aeaa7b69ae&amp;scene=21#wechat_redirect" rel="nofollow" style="color:rgb(0,122,170);text-decoration:underline;font-size:15px;">既得利益者的灭顶之灾：当数字货币结合证券...</a><br></p></li>
+    <li><p><a href="http://mp.weixin.qq.com/s?__biz=MzU2MTE1NDk2Mg==&amp;mid=2247486244&amp;idx=1&amp;sn=b881329f8bb653888aa5d84199c65633&amp;chksm=fc7c55d9cb0bdccff3bd1aa8b0ae03562c109a8fc648674bc091bef73fc95cb863ae5ebdbefd&amp;scene=21#wechat_redirect" rel="nofollow" style="color:rgb(0,122,170);text-decoration:underline;font-size:15px;">孟岩：想抓住EOS的机会，从这四个方向入手吧！</a><br></p></li>
+   </ul>
+   <p><br></p>
+   <p style="color:rgb(62,62,62);"><br></p>
+   <p style="color:rgb(62,62,62);"><br></p>
+   <p style="color:rgb(62,62,62);"><br></p>
+   <p style="margin-left:8px;text-align:center;"></p>
+   <p style="margin-left:8px;text-align:center;"><span style="color:rgb(63,63,63);letter-spacing:.5px;"><strong><span style="font-size:15px;">扫码加入区块链大本营读者群，群满加微信 17600222208 入群</span></strong></span></p>
+   <p><br></p>
+   <p><br></p>
+   <p style="margin-left:8px;"><strong><span style="font-size:15px;letter-spacing:.5px;color:rgb(0,122,170);"></span></strong></p>
+   <p></p>
+   <p><br></p>
+   <p><br></p>
+   <p style="margin-left:8px;text-align:center;"><span style="font-size:15px;letter-spacing:.5px;"><strong><span style="font-size:14px;color:rgb(0,122,170);">了解更多区块链技术及应用内容</span></strong></span></p>
+   <p style="margin-left:8px;text-align:center;"><span style="font-size:15px;letter-spacing:.5px;"><strong><span style="font-size:14px;color:rgb(0,122,170);">敬请关注：</span></strong></span></p>
+   <p style="margin-left:8px;text-align:center;"></p> 
+  </div> 
+ </div> 
+</div> 
+<div class="hide-article-box text-center"> 
+ <a class="btn btn-red-hollow" id="btn-readmore" data-track-view="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/Blockchain_lemon/article/details/80345329,&quot;}" data-track-click="{&quot;mod&quot;:&quot;popu_376&quot;,&quot;con&quot;:&quot;,https://blog.csdn.net/Blockchain_lemon/article/details/80345329,&quot;}">阅读更多</a> 
+</div>
+      <br />
+        <a href="https://blog.uzzz.org/">更多精彩内容</a>
+      </section>
+      
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+        <ul style="display: block;">
+          <li><a href="/" style="line-height: 40px;padding-top:0px;">回首页</a></li>
+        </ul>
+      </header>
+      <header style="right: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/imgqcode.png" style="width:160px;" />
+      </header>
+      
+      <header style="left: 0;position: fixed;bottom: 60px;z-index: 100;background: none;border-bottom:none;">
+          <img src="https://blog.uzzz.org.cn/hou_imgqcode.png" style="width:160px;">
+      </header>
+    </div>
+    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ee64533f3c6a7a284cd39a37ee732c8b";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+    
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>
